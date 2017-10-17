@@ -146,11 +146,23 @@
 
 									</div>
 									<div class="col-sm-2 add-margin text-center">
-										<form:input class="form-control patternvalidation"
-											data-pattern="decimalvalue" maxlength="10"
-											id="applicationFeeDetail${status.index}amount"
-											value="${docs.amount}"
-											path="applicationFeeDetail[${status.index}].amount" />
+										<c:choose>
+											<c:when
+												test="${docs.bpaFee.description eq 'Additional Fees'}">
+												<form:input class="form-control patternvalidation"
+													data-pattern="decimalvalue" maxlength="10"
+													id="applicationFeeDetail${status.index}amount"
+													value="${docs.amount}"
+													path="applicationFeeDetail[${status.index}].amount" />
+											</c:when>
+											<c:otherwise>
+												<form:input class="form-control patternvalidation"
+													data-pattern="decimalvalue" maxlength="10"
+													id="applicationFeeDetail${status.index}amount"
+													value="${docs.amount}" disabled="true"
+													path="applicationFeeDetail[${status.index}].amount" />
+											</c:otherwise>
+										</c:choose>
 										<form:errors
 											path="applicationFeeDetail[${status.index}].amount"
 											cssClass="add-margin error-msg" />
