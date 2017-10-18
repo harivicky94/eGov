@@ -305,7 +305,7 @@ public class TradeLicensePage extends BasePage {
         }
     }
 
-    public String generateLicenseCertificate() {
+    public void generateLicenseCertificate() {
 
         WebElement element = webDriver.findElement(By.id("boundary"));
         for (int i = 0; i <= 2; i++) {
@@ -320,12 +320,9 @@ public class TradeLicensePage extends BasePage {
                 break;
             }
         }
-        WebElement ele = webDriver.findElement(By.xpath("html/body/div[1]/header/nav/div/div[1]/a/div/span"));
-        String actMsg = ele.getText();
+
         webDriver.close();
         switchToPreviouslyOpenedWindow(webDriver);
-        return actMsg;
-
     }
 
     public void enterApplicationNumberReadingFromExcel(SearchTradeDetails searchId) {
@@ -336,7 +333,9 @@ public class TradeLicensePage extends BasePage {
     public String getLegacyLicenseNumber() {
         String licenseNum = webDriver.findElement(By.xpath(".//*[@id='tradeLicense']/div[8]/div[1]/div[2]")).getText();
 //        jsClick(closeLicensePage, webDriver);
-        webDriver.findElement(By.xpath(".//*[@id='buttondiv']/table/tbody/tr/td[2]/button")).click();
+        waitForElementToBeClickable(webDriver.findElement(By.xpath(".//*[@id='buttondiv']/table/tbody/tr/td[2]/button")), webDriver);
+//        webDriver.findElement(By.xpath(".//*[@id='buttondiv']/table/tbody/tr/td[2]/button")).click();
+        ((JavascriptExecutor) webDriver).executeScript("arguments[0].click();", webDriver.findElement(By.xpath(".//*[@id='buttondiv']/table/tbody/tr/td[2]/button")));
         switchToPreviouslyOpenedWindow(webDriver);
         return licenseNum;
     }

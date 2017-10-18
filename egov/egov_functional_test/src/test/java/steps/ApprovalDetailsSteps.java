@@ -18,7 +18,7 @@ public class ApprovalDetailsSteps extends BaseSteps implements En {
                 } else {
                     pageStore.get(ApprovalDetailsPage.class).createGrievance();
                 }
-            } else if (approvalDetailsDataId.equals("sanitaryInspector") || approvalDetailsDataId.equals("commissioner") || approvalDetailsDataId.equals("commissioner2")) {
+            } else if (approvalDetailsDataId.equals("sanitaryInspector") || approvalDetailsDataId.equals("commissioner") || approvalDetailsDataId.equals("commissioner2") || approvalDetailsDataId.equals("TL_SI") || approvalDetailsDataId.equals("TL_Commissioner")) {
                 pageStore.get(ApprovalDetailsPage.class).enterApproverDetails(approvalDetails);
                 pageStore.get(ApprovalDetailsPage.class).forward();
             }

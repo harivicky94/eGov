@@ -4,7 +4,7 @@ Feature: Renewal of trade license
 #  @TradeLicense
   Scenario Outline: Renewal of license with demand generation
 
-    Given creator logs in
+    Given TL_PHS_JA logs in
     And user will select the required screen as "Create New License"
     And he enters trade owner details of new license <tradeDetailsData>
     And he enters trade location details of new license <tradeLocationData>
@@ -18,29 +18,28 @@ Feature: Renewal of trade license
     And he choose to payTax of applicationNumber
     And he chooses to act upon above application number
 
-    And he forwards for approver sanitaryInspector
+    And he forwards for approver TL_SI
     And he confirms to proceed
     And he closes acknowledgement page
     And current user logs out
 
-    When sanitaryInspector logs in
+    When TL_PHS_SI logs in
     And he chooses to act upon above application number
-    And he forwards for approver commissioner
+    And he forwards for approver TL_Commissioner
     And he confirms to proceed
     And he closes acknowledgement page
     And current user logs out
 
-    When commissioner logs in
+    When TL_ADM_Commissioner logs in
     And he chooses to act upon above application number
     And he approves application
     And he confirms to proceed
     And he closes acknowledgement page
     And current user logs out
 
-    When creator logs in
+    When TL_PHS_JA logs in
     And he chooses to act upon above application number
     And he generates the license certificate
-    And user will be notified by "License"
 
     And user will select the required screen as "Search Trade License"
     And he search existing application number
@@ -54,26 +53,27 @@ Feature: Renewal of trade license
     And he choose action "Collect Fees"
     And he choose to payTax of applicationNumber
     And he chooses to act upon above application number
-    And he forwards for approver sanitaryInspector
+
+    And he forwards for approver TL_SI
     And he confirms to proceed
     And he closes acknowledgement page
     And current user logs out
 
-    When sanitaryInspector logs in
+    When TL_PHS_SI logs in
     And he chooses to act upon above application number
-    And he forwards for approver commissioner
+    And he forwards for approver TL_Commissioner
     And he confirms to proceed
     And he closes acknowledgement page
     And current user logs out
 
-    When commissioner logs in
+    When TL_ADM_Commissioner logs in
     And he chooses to act upon above application number
     And he approves application
     And he confirms to proceed
     And he closes acknowledgement page
     And current user logs out
 
-    When creator logs in
+    When TL_PHS_JA logs in
     And he chooses to act upon above application number
     And he generates the license certificate
     And current user logs out
@@ -87,7 +87,7 @@ Feature: Renewal of trade license
   @Sanity @TradeLicense @LicenseRenewal @New
   Scenario Outline: Renewal of Trade License with legacy license
 
-    Given creator logs in
+    Given TL_PHS_JA logs in
     And user will select the required screen as "Create Legacy License"
     And he enters old license number
     And he enters trade owner details of new license <tradeDetailsData>
@@ -107,32 +107,32 @@ Feature: Renewal of trade license
     And current user logs out
 
 
-    When creator logs in
+    When TL_PHS_JA logs in
     And user will select the required screen as "Search Trade License"
     And he choose to search with license number
     And he choose action "Collect Fees"
     And he choose to payTax of applicationNumber
     And he chooses to act upon above application number
-    And he forwards for approver sanitaryInspector
+    And he forwards for approver TL_SI
     And he confirms to proceed
     And he closes acknowledgement page
     And current user logs out
 
-    When sanitaryInspector logs in
+    When TL_PHS_SI logs in
     And he chooses to act upon above application number
-    And he forwards for approver commissioner
+    And he forwards for approver TL_Commissioner
     And he confirms to proceed
     And he closes acknowledgement page
     And current user logs out
 
-    When commissioner logs in
+    When TL_ADM_Commissioner logs in
     And he chooses to act upon above application number
     And he approves application
     And he confirms to proceed
     And he closes acknowledgement page
     And current user logs out
 
-    When creator logs in
+    When TL_PHS_JA logs in
     And he chooses to act upon above application number
     And he generates the license certificate
     And current user logs out
@@ -144,7 +144,7 @@ Feature: Renewal of trade license
 #  @TradeLicense
   Scenario Outline: Renewal of TL -> collect fee -> forward to SI -> forward to Commissioner -> reject
 
-    Given creator logs in
+    Given TL_PHS_JA logs in
     And user will select the required screen as "Create New License"
     And he enters trade owner details of new license <tradeDetailsData>
     And he enters trade location details of new license <tradeLocationData>
@@ -158,29 +158,28 @@ Feature: Renewal of trade license
     And he choose to payTax of applicationNumber
     And he chooses to act upon above application number
 
-    And he forwards for approver sanitaryInspector
+    And he forwards for approver TL_SI
     And he confirms to proceed
     And he closes acknowledgement page
     And current user logs out
 
-    When sanitaryInspector logs in
+    When TL_PHS_SI logs in
     And he chooses to act upon above application number
-    And he forwards for approver commissioner
+    And he forwards for approver TL_Commissioner
     And he confirms to proceed
     And he closes acknowledgement page
     And current user logs out
 
-    When commissioner logs in
+    When TL_ADM_Commissioner logs in
     And he chooses to act upon above application number
     And he approves application
     And he confirms to proceed
     And he closes acknowledgement page
     And current user logs out
 
-    When creator logs in
+    When TL_PHS_JA logs in
     And he chooses to act upon above application number
     And he generates the license certificate
-    And user will be notified by "License"
 
     And user will select the required screen as "Search Trade License"
     And he search existing application number
@@ -194,26 +193,26 @@ Feature: Renewal of trade license
     And he choose action "Collect Fees"
     And he choose to payTax of applicationNumber
     And he chooses to act upon above application number
-    And he forwards for approver sanitaryInspector
+    And he forwards for approver TL_SI
     And he confirms to proceed
     And he closes acknowledgement page
     And current user logs out
 
-    When sanitaryInspector logs in
+    When TL_PHS_SI logs in
     And he chooses to act upon above application number
-    And he forwards for approver commissioner
+    And he forwards for approver TL_Commissioner
     And he confirms to proceed
     And he closes acknowledgement page
     And current user logs out
 
-    When commissioner logs in
+    When TL_ADM_Commissioner logs in
     And he chooses to act upon above application number
     And he rejects the application
     And he confirms to proceed
     And he closes acknowledgement page
     And current user logs out
 
-    When creator logs in
+    When TL_PHS_JA logs in
     And he chooses to act upon above application number
     And he rejects the application
     And he confirms to proceed
@@ -235,7 +234,7 @@ Feature: Renewal of trade license
   Scenario Outline: Renewal of TL -> collect fee -> forward to SI
   -> change trade area and forward to Commissioner -> reject
 
-    Given creator logs in
+    Given TL_PHS_JA logs in
     And user will select the required screen as "Create New License"
     And he enters trade owner details of new license <tradeDetailsData>
     And he enters trade location details of new license <tradeLocationData>
@@ -249,27 +248,27 @@ Feature: Renewal of trade license
     And he choose to payTax of applicationNumber
     And he chooses to act upon above application number
 
-    And he forwards for approver sanitaryInspector
+    And he forwards for approver TL_SI
     And he confirms to proceed
     And he closes acknowledgement page
     And current user logs out
 
-    When sanitaryInspector logs in
+    When TL_PHS_SI logs in
     And he chooses to act upon above application number
     And he changes trade area as "2000"
-    And he forwards for approver commissioner
+    And he forwards for approver TL_Commissioner
     And he confirms to proceed
     And he closes acknowledgement page
     And current user logs out
 
-    When commissioner logs in
+    When TL_ADM_Commissioner logs in
     And he chooses to act upon above application number
     And he rejects the application
     And he confirms to proceed
     And he closes acknowledgement page
     And current user logs out
 
-    When creator logs in
+    When TL_PHS_JA logs in
     And he chooses to act upon above application number
     And he rejects the application
     And he confirms to proceed
@@ -292,7 +291,7 @@ Feature: Renewal of trade license
   @Sanity @TradeLicense @LicenseRenewal
   Scenario Outline: Renewal of Trade License with legacy license and commissioner rejects it
 
-    Given creator logs in
+    Given TL_PHS_JA logs in
     And user will select the required screen as "Create Legacy License"
     And he enters old license number
     And he enters trade owner details of new license <tradeDetailsData>
@@ -312,32 +311,32 @@ Feature: Renewal of trade license
     And current user logs out
 
 
-    When creator logs in
+    When TL_PHS_JA logs in
     And user will select the required screen as "Search Trade License"
     And he choose to search with license number
     And he choose action "Collect Fees"
     And he choose to payTax of applicationNumber
     And he chooses to act upon above application number
-    And he forwards for approver sanitaryInspector
+    And he forwards for approver TL_SI
     And he confirms to proceed
     And he closes acknowledgement page
     And current user logs out
 
-    When sanitaryInspector logs in
+    When TL_PHS_SI logs in
     And he chooses to act upon above application number
-    And he forwards for approver commissioner
+    And he forwards for approver TL_Commissioner
     And he confirms to proceed
     And he closes acknowledgement page
     And current user logs out
 
-    When commissioner logs in
+    When TL_ADM_Commissioner logs in
     And he chooses to act upon above application number
     And he rejects the application
     And he confirms to proceed
     And he closes acknowledgement page
     And current user logs out
 
-    When creator logs in
+    When TL_PHS_JA logs in
     And he chooses to act upon above application number
     And he rejects the application
     And he confirms to proceed
@@ -359,7 +358,7 @@ Feature: Renewal of trade license
   @Sanity @TradeLicense @LicenseRenewal
   Scenario Outline: Renewal of Trade License with legacy license and SI rejects it
 
-    Given creator logs in
+    Given TL_PHS_JA logs in
     And user will select the required screen as "Create Legacy License"
     And he enters old license number
     And he enters trade owner details of new license <tradeDetailsData>
@@ -379,25 +378,25 @@ Feature: Renewal of trade license
     And current user logs out
 
 
-    When creator logs in
+    When TL_PHS_JA logs in
     And user will select the required screen as "Search Trade License"
     And he choose to search with license number
     And he choose action "Collect Fees"
     And he choose to payTax of applicationNumber
     And he chooses to act upon above application number
-    And he forwards for approver sanitaryInspector
+    And he forwards for approver TL_SI
     And he confirms to proceed
     And he closes acknowledgement page
     And current user logs out
 
-    When sanitaryInspector logs in
+    When TL_PHS_SI logs in
     And he chooses to act upon above application number
     And he rejects the application
     And he confirms to proceed
     And he closes acknowledgement page
     And current user logs out
 
-    When creator logs in
+    When TL_PHS_JA logs in
     And he chooses to act upon above application number
     And he rejects the application
     And he confirms to proceed
@@ -419,7 +418,7 @@ Feature: Renewal of trade license
   @Sanity @TradeLicense @LicenseRenewal
   Scenario Outline: Renewal of Trade License with legacy license - JA rejects it before collection
 
-    Given creator logs in
+    Given TL_PHS_JA logs in
     And user will select the required screen as "Create Legacy License"
     And he enters old license number
     And he enters trade owner details of new license <tradeDetailsData>
@@ -439,7 +438,7 @@ Feature: Renewal of trade license
     And current user logs out
 
 
-    When creator logs in
+    When TL_PHS_JA logs in
     And he chooses to act upon above application number
     And he cancel the application
     And he closes acknowledgement page
@@ -460,7 +459,7 @@ Feature: Renewal of trade license
   @Sanity @TradeLicense @LicenseRenewal
   Scenario Outline: Renewal of Trade License with legacy license and second level fee collection
 
-    Given creator logs in
+    Given TL_PHS_JA logs in
     And user will select the required screen as "Create Legacy License"
     And he enters old license number
     And he enters trade owner details of new license <tradeDetailsData>
@@ -480,40 +479,39 @@ Feature: Renewal of trade license
     And current user logs out
 
 
-    When creator logs in
+    When TL_PHS_JA logs in
     And user will select the required screen as "Search Trade License"
     And he choose to search with license number
     And he choose action "Collect Fees"
     And he choose to payTax of applicationNumber
     And he chooses to act upon above application number
-    And he forwards for approver sanitaryInspector
+    And he forwards for approver TL_SI
     And he confirms to proceed
     And he closes acknowledgement page
     And current user logs out
 
-    When sanitaryInspector logs in
+    When TL_PHS_SI logs in
     And he chooses to act upon above application number
     And he changes trade area as "1200"
-    And he forwards for approver commissioner
+    And he forwards for approver TL_Commissioner
     And he confirms to proceed
     And he closes acknowledgement page
     And current user logs out
 
-    When commissioner logs in
+    When TL_ADM_Commissioner logs in
     And he chooses to act upon above application number
     And he approves application
     And he confirms to proceed
     And he closes acknowledgement page
     And current user logs out
 
-    When creator logs in
+    When TL_PHS_JA logs in
     And user will select the required screen as "Search Trade License"
     And he choose to search with license number
     And he choose action "Collect Fees"
     And he choose to payTax of applicationNumber
     And he chooses to act upon above application number
     And he generates the license certificate
-    And user will be notified by "License"
     And current user logs out
 
     Examples:
@@ -523,7 +521,7 @@ Feature: Renewal of trade license
   @Sanity @TradeLicense @LicenseRenewal
   Scenario Outline: Renewal of Trade License with legacy license and rejection before second level fee collection
 
-    Given creator logs in
+    Given TL_PHS_JA logs in
     And user will select the required screen as "Create Legacy License"
     And he enters old license number
     And he enters trade owner details of new license <tradeDetailsData>
@@ -543,26 +541,26 @@ Feature: Renewal of trade license
     And current user logs out
 
 
-    When creator logs in
+    When TL_PHS_JA logs in
     And user will select the required screen as "Search Trade License"
     And he choose to search with license number
     And he choose action "Collect Fees"
     And he choose to payTax of applicationNumber
     And he chooses to act upon above application number
-    And he forwards for approver sanitaryInspector
+    And he forwards for approver TL_SI
     And he confirms to proceed
     And he closes acknowledgement page
     And current user logs out
 
-    When sanitaryInspector logs in
+    When TL_PHS_SI logs in
     And he chooses to act upon above application number
     And he changes trade area as "1200"
-    And he forwards for approver commissioner
+    And he forwards for approver TL_Commissioner
     And he confirms to proceed
     And he closes acknowledgement page
     And current user logs out
 
-    When commissioner logs in
+    When TL_ADM_Commissioner logs in
     And he chooses to act upon above application number
     And he approves application
     And he confirms to proceed
@@ -572,7 +570,7 @@ Feature: Renewal of trade license
     And he closes acknowledgement page
     And current user logs out
 
-    When creator logs in
+    When TL_PHS_JA logs in
     And he chooses to act upon above application number
     And he rejects the application
     And he confirms to proceed

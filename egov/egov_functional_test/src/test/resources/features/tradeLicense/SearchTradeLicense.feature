@@ -7,7 +7,7 @@ Feature: Search Trade License
   @Sanity @TradeLicense
   Scenario: Registered user search trade license with application number
 
-    Given creator logs in
+    Given TL_PHS_JA logs in
     And user will select the required screen as "Search Trade License"
     And he search trade license with application number
     And he checks total number of records
@@ -16,7 +16,7 @@ Feature: Search Trade License
   @Sanity @TradeLicense
   Scenario: Registered user search trade license with license number
 
-    Given creator logs in
+    Given TL_PHS_JA logs in
     And user will select the required screen as "Search Trade License"
     And he search trade license with license number
     And he checks total number of records
@@ -25,7 +25,7 @@ Feature: Search Trade License
   @Sanity @TradeLicense
   Scenario: Registered user search trade license with status
 
-    Given creator logs in
+    Given TL_PHS_JA logs in
     And user will select the required screen as "Search Trade License"
     And he search trade license with status "Cancelled"
     And he checks total number of records
@@ -34,7 +34,7 @@ Feature: Search Trade License
   @Sanity @TradeLicense
   Scenario: Registered user search trade license with status
 
-    Given creator logs in
+    Given TL_PHS_JA logs in
     And user will select the required screen as "Search Trade License"
     And he search trade license with status "Rejected"
     And he checks total number of records

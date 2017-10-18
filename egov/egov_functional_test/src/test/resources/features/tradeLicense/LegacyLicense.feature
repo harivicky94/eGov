@@ -2,9 +2,9 @@ Feature: Legacy license
 
 
    # CREATE LEGENCY TRADE LICENSE #
-  @Sanity @TradeLicense @New
+  @Sanity @TradeLicense @Legacy
   Scenario Outline: Register user create legacy trade license
-    Given creator logs in
+    Given TL_PHS_JA logs in
     And user will select the required screen as "Create Legacy License"
     And he enters old license number
     And he enters trade owner details of new license <tradeDetailsData>
