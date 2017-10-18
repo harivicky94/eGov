@@ -1,6 +1,7 @@
 import groovyx.gpars.GParsPool
 import net.masterthought.cucumber.ReportBuilder
 import org.apache.commons.io.FilenameUtils
+import org.apache.commons.lang.SystemUtils
 
 import java.text.DateFormat
 
@@ -110,7 +111,7 @@ def runCucumberTests() {
     GParsPool.withPool(4) {
         features.eachParallel { File file ->
             javaexec {
-                ignoreExitValue = true
+                ignoreExitValue = false
                 main = "cucumber.api.cli.Main"
                 classpath = sourceSets.test.runtimeClasspath
                 args = ["-p", "pretty", "-p", "json:${reporting.baseDir}/cucumber/${file.name}.json", "--glue", "steps", "-t", getTags("$tags"),
@@ -152,6 +153,8 @@ task generateReport() {
         )
         reportBuilder.generateReports()
         println("\nReport available on: ${reporting.baseDir}/cucumber/feature-overview.html")
+
+        killAllGoogleChromeInstances()
     }
 }
 
@@ -175,3 +178,24 @@ task runInSequence() {
 }
 
 runInSequence.finalizedBy(generateReport)
+
+static def killAllGoogleChromeInstances() {
+    if (SystemUtils.IS_OS_LINUX) {
+        String killAllGoogleChromeLinux = "killall chrome"
+        String killAllGoogleChromeMac = "killall chromedriver"
+        String killAllGoogleChromeStable = "killall google-chrome-stable"
+        String killAllGoogleChromeInJenkins = "killall google-chrome-stable"
+
+        Process p = Runtime.getRuntime().exec(killAllGoogleChromeLinux)
+        p.waitFor()
+
+        Process p1 = Runtime.getRuntime().exec(killAllGoogleChromeMac);
+        p1.waitFor()
+
+        Process p2 = Runtime.getRuntime().exec(killAllGoogleChromeStable);
+        p2.waitFor()
+
+        Process p3 = Runtime.getRuntime().exec(killAllGoogleChromeInJenkins);
+        p3.waitFor()
+    }
+}
