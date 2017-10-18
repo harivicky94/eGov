@@ -166,7 +166,8 @@ public class JournalVoucherDetailsPage extends FinancialPage {
                 if (new Select(webDriver.findElement(By.id("subLedgerlist[" + i + "].detailType.id"))).getFirstSelectedOption().getText().contains("Employee")) {
                     enterText(webDriver.findElement(By.id("subLedgerlist[" + i + "].detailCode")), "946800", webDriver);
                 } else {
-                    enterText(webDriver.findElement(By.id("subLedgerlist[" + i + "].detailCode")), "KMC001", webDriver);
+                    enterText(webDriver.findElement(By.id("subLedgerlist[" + i + "].detailCode")), "KMC", webDriver);
+                    enterTextWithoutClearing(webDriver.findElement(By.id("subLedgerlist[" + i + "].detailCode")), "001", webDriver);
                 }
 
                 clickOnButton(accountCodeDropdown, webDriver);
