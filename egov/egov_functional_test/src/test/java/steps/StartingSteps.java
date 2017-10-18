@@ -15,7 +15,7 @@ public class StartingSteps extends BaseSteps {
     @Before
     public void beforeScenario() throws Exception {
         //Kill All Google Chrome Instances
-//        killAllGoogleChromeInstances();
+        killAllGoogleChromeInstances();
         scenarioContext = new ScenarioContext();
         pageStore = new PageStore();
         pageStore.getDriver().get(Properties.url);
