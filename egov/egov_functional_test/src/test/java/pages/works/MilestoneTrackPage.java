@@ -6,6 +6,8 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import pages.BasePage;
 
+import java.util.concurrent.TimeUnit;
+
 import static com.jayway.awaitility.Awaitility.await;
 import static java.util.concurrent.TimeUnit.SECONDS;
 
@@ -183,8 +185,8 @@ public class MilestoneTrackPage extends BasePage {
     }
 
     public String successMessage() {
-        String msg = getTextFromWeb(creationMsg, driver);
-        return msg;
+        await().atMost(30, TimeUnit.SECONDS).until(()->driver.findElements(By.id("successMessage")).size()==1);
+        return getTextFromWeb(creationMsg, driver);
     }
 
     public void close() {
