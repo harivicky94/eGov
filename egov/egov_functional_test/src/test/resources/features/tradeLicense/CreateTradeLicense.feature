@@ -36,7 +36,7 @@ Feature: Create Trade License
     And current user logs out
 
     When TL_PHS_JA logs in
-    And user will select the required screen as "Search Tde License"
+    And user will select the required screen as "Search Trade License"
     And he search existing application number
     And he choose action "Collect Fees"
     And he choose to payTax of applicationNumber

@@ -164,7 +164,8 @@ public class TradeLicensePage extends BasePage {
         Select select = new Select(location);
         select.selectByIndex(6);
         location.sendKeys(Keys.TAB);
-        new Select(wardSelect).selectByIndex(1);
+        selectAParticularFromDropDown(wardSelect, 1, webDriver);
+//        new Select(wardSelect).selectByIndex(1);
         await().atMost(20, SECONDS).until(() -> new Select(location).getOptions().size() > 1);
         if (!(wardSelect.findElements(By.tagName("option")).size() > 1)) {
             clickOnButton(location, webDriver);
