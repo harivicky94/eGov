@@ -299,4 +299,46 @@ public class EmployeeDetailsPage extends BasePage {
             enterText(element, correctData, driver);
         }
     }
+
+    public void createEmployeeForProductionDump(EmployeeDetails employeeDetails) {
+        await().atMost(60, TimeUnit.SECONDS).until(() -> driver.findElements(By.cssSelector("[class='blockUI']")).size() == 0);
+
+        if(!(driver.findElements(By.cssSelector("[class='blockUI']")).size() == 0)){
+            driver.navigate().refresh();
+            await().atMost(20, TimeUnit.SECONDS).until(() -> driver.findElements(By.cssSelector("[class='blockUI']")).size() == 0);
+        }
+
+        enterText(employeeNameTextBox, employeeDetails.getEmployeeName(), driver);
+        enterText(employeeCodeTextBox, employeeDetails.getUserName(), driver);
+        selectFromDropDown(employeeTypeBox, employeeDetails.getEmployeeType(), driver);
+        selectFromDropDown(employeeStatusBox, employeeDetails.getStatus(), driver);
+        selectFromDropDown(employeeGroupBox, "Central", driver);
+        enterText(dobTextBox, employeeDetails.getDateOfBirth(), driver);
+        if (employeeDetails.getGender().equals("Male")) {
+            selectFromDropDown(genderDropdown, "Male", driver);
+        } else {
+            selectFromDropDown(genderDropdown, "Female", driver);
+        }
+        selectFromDropDown(maritalStatusBox, employeeDetails.getMaritalStatus(), driver);
+        enterText(userNameTextBox, employeeDetails.getUserName(), driver);
+        if (employeeDetails.getIsUserActive().equals("Yes")) {
+            userActive.get(0).isSelected();
+        } else {
+            userActive.get(1).isSelected();
+        }
+        enterText(emailIdTextBox, employeeDetails.getUserName()+"@mail.com", driver);
+        enterText(fatherOrHusbandName, "Father.Spouse Name", driver);
+        enterText(birthPlaceTextBox, "Native/Birth. Place", driver);
+        selectFromDropDown(userBloodGroupBox, "O+", driver);
+        enterText(mobileNumberTextBox, employeeDetails.getMobileNumber(), driver);
+        enterText(passportNoTextBox, "IND" + get6DigitRandomInt(), driver);
+        enterText(gpfNoTextBox, get6DigitRandomInt(), driver);
+        enterText(aadhaarNumberTextBox, "111111" + get6DigitRandomInt(), driver);
+        enterText(panNumberTextBox, "ABCDE" + Integer.toString(Integer.parseInt(get6DigitRandomInt()) / 100) + "F", driver);
+        enterText(bankAccountNumberTextBox, "10101010101010" + get6DigitRandomInt(), driver);
+        enterText(permanentAddressTextBox, employeeDetails.getPermanentAddress(), driver);
+        enterText(permanentCityTextBox, employeeDetails.getPermanentCity(), driver);
+        enterText(dateOfAppointmentTextBox, employeeDetails.getDateOfAppointment(), driver);
+        enterDate(dateOfJoiningTextBox, employeeDetails.getDateOfAppointment(), driver);
+    }
 }

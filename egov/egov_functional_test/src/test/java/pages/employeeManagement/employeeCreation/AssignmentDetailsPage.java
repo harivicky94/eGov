@@ -122,4 +122,19 @@ public class AssignmentDetailsPage extends BasePage {
         }
         clickOnButton(addOrEditButton, webDriver);
     }
+
+    public void enterAssignmentDetailsForProductionDump(AssignmentDetails assignmentDetails) {
+        webDriver.manage().window().maximize();
+        jsClick(webDriver.findElement(By.cssSelector("a[href='#assignmentDetails']")), webDriver);
+        jsClick(addImageButton, webDriver);
+        clickOnButton(isPrimaryTrueRadio, webDriver);
+        enterDate(fromDateTextBox, getCurrentDate(), webDriver);
+        enterDate(toDateTextBox, getFutureDate(30), webDriver);
+        selectFromDropDown(departmentSelectBox, assignmentDetails.getDepartment(), webDriver);
+        selectFromDropDown(designationSelectBox, assignmentDetails.getDesignation(), webDriver);
+        enterDate(toDateTextBox, getFutureDate(300), webDriver);
+        enterText(positionSelectBox, assignmentDetails.getPosition(), webDriver);
+        clickOnButton(webDriver.findElements(By.cssSelector("li[class=ui-menu-item]")).get(0).findElement(By.tagName("div")), webDriver);
+        clickOnButton(addOrEditButton, webDriver);
+    }
 }
