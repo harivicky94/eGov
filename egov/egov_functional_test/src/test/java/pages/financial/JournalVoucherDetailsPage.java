@@ -165,7 +165,14 @@ public class JournalVoucherDetailsPage extends FinancialPage {
                 }
 
                 if (new Select(webDriver.findElement(By.id("subLedgerlist[" + i + "].detailType.id"))).getFirstSelectedOption().getText().contains("Employee")) {
-                    enterText(webDriver.findElement(By.id("subLedgerlist[" + i + "].detailCode")), "946800", webDriver);
+                    enterText(webDriver.findElement(By.id("subLedgerlist[" + i + "].detailCode")), "94680", webDriver);
+                    try {
+                        TimeUnit.SECONDS.sleep(1);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    await().atMost(10, TimeUnit.SECONDS).until(() -> webDriver.findElements(By.cssSelector("[class='yui-ac-bd']  ul li")).size() > 1);
+                    enterTextWithoutClearing(webDriver.findElement(By.id("subLedgerlist[" + i + "].detailCode")), "0", webDriver);
                 } else {
                     enterText(webDriver.findElement(By.id("subLedgerlist[" + i + "].detailCode")), "KMC00", webDriver);
                     try {

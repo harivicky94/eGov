@@ -183,6 +183,7 @@ public class TradeLicensePage extends BasePage {
         enterText(tradeTitleTextBox, tradedetails.getTradeTitle(), webDriver);
         selectFromDropDown(TradeTypeDropBox, tradedetails.gettradeType(), webDriver);
         selectFromDropDown(TradeCategoryDropBox, tradedetails.getTradeCategory(), webDriver);
+
         try {
             clickOnButton(tradeSubCategoryDropBox, webDriver);
         } catch (Exception e) {
