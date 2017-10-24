@@ -1,7 +1,6 @@
 package pages.employeeManagement.employeeCreation;
 
 import entities.employeeManagement.createEmployee.AssignmentDetails;
-import org.joda.time.Seconds;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
@@ -9,7 +8,6 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import pages.BasePage;
 
-import java.security.Key;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -129,11 +127,11 @@ public class AssignmentDetailsPage extends BasePage {
         jsClick(addImageButton, webDriver);
         clickOnButton(isPrimaryTrueRadio, webDriver);
         enterDate(fromDateTextBox, getCurrentDate(), webDriver);
-        enterDate(toDateTextBox, getFutureDate(30), webDriver);
+        enterDate(toDateTextBox, getFutureDate(300), webDriver);
         selectFromDropDown(departmentSelectBox, assignmentDetails.getDepartment(), webDriver);
         selectFromDropDown(designationSelectBox, assignmentDetails.getDesignation(), webDriver);
-        enterDate(toDateTextBox, getFutureDate(300), webDriver);
         enterText(positionSelectBox, assignmentDetails.getPosition(), webDriver);
+
         clickOnButton(webDriver.findElements(By.cssSelector("li[class=ui-menu-item]")).get(0).findElement(By.tagName("div")), webDriver);
         clickOnButton(addOrEditButton, webDriver);
     }

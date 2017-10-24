@@ -1,4 +1,4 @@
-Feature: Create Employees for Testing
+Feature: Create Test Employees for Council Management Module Testing
 
   Scenario Outline: : Create Positions
 
@@ -9,8 +9,9 @@ Feature: Create Employees for Testing
     And current user logs out
 
     Examples:
-      | department     | designation       | position  |
-      |ADMINISTRATION  | Junior Assistant  | AdtaxJA01 |
+      | department     | designation   | position |
+      | ADMINISTRATION | Council Clerk | CMCL01   |
+      | ADMINISTRATION | Commissioner  | CMComm   |
 
   Scenario Outline: Create Employees as Test Data
 
@@ -22,5 +23,6 @@ Feature: Create Employees for Testing
     Then user clicks on submit button
 
     Examples:
-      | employeeDetails             | assignmentDetails    | jurisdictionDetails |
-      | AdTaxJuniorAssistant1       | AdTaxJuniorAssistant1| JurisdictionList1   |
+      | employeeDetails              | assignmentDetails            | jurisdictionDetails |
+      | CouncilMangementClerk        | CouncilMangementClerk        | JurisdictionList1   |
+      | CouncilMangementCommissioner | CouncilMangementCommissioner | JurisdictionList2   |

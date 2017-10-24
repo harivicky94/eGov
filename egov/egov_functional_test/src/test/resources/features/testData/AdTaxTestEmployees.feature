@@ -1,4 +1,4 @@
-Feature: Create Employees for Testing
+Feature: Create Test Employees for Advertisement Tax Module Testing
 
   Scenario Outline: : Create Positions
 
@@ -9,8 +9,10 @@ Feature: Create Employees for Testing
     And current user logs out
 
     Examples:
-      | department     | designation       | position  |
-      |ADMINISTRATION  | Junior Assistant  | AdtaxJA01 |
+      | department     | designation      | position |
+      | ADMINISTRATION | Junior Assistant | JA 1 Adv Tax   |
+      | ADMINISTRATION | Junior Assistant | JA 2 Adv Tax   |
+      | ADMINISTRATION | Commissioner     | ADComm   |
 
   Scenario Outline: Create Employees as Test Data
 
@@ -20,7 +22,10 @@ Feature: Create Employees for Testing
     And user will enter the assignment details as <assignmentDetails>
     And user will enter the jurisdiction details as <jurisdictionDetails>
     Then user clicks on submit button
+    And user will select the required screen as "Search User Role" with condition as "userrole/search"
 
     Examples:
-      | employeeDetails             | assignmentDetails    | jurisdictionDetails |
-      | AdTaxJuniorAssistant1       | AdTaxJuniorAssistant1| JurisdictionList1   |
+      | employeeDetails       | assignmentDetails     | jurisdictionDetails |
+      | AdTaxJuniorAssistant1 | AdTaxJuniorAssistant1 | JurisdictionList1   |
+      | AdTaxJuniorAssistant2 | AdTaxJuniorAssistant2 | JurisdictionList2   |
+      | AdTaxCommissioner     | AdTaxCommissioner     | JurisdictionList3   |
