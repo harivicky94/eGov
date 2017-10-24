@@ -132,15 +132,22 @@ Feature: Create Trade License
     And he search existing application number
     And he choose action "Collect Fees"
     And he choose to payTax of applicationNumber
-    And he chooses to act upon above application number
-    And he generates the license certificate
+#    And he chooses to act upon above application number
+#    And he generates the license certificate
+    And user will select the required screen as "Search Trade License"
+    And he search existing application number
+    And he verifies the application status
+    And user will be notified by "Active"
+    And he verifies the License active
+    And user will be notified by "YES"
+    And he closes search screen
     And current user logs out
 
     Examples:
       | tradeDetailsData         | tradeLocationData           | tradeDetailsData1        |
       | ownerDetailsTradeLicense | locationDetailsTradeLicense | tradeDetailsTradeLicense |
 
-  @TradeLicense @NewLicense
+#  @TradeLicense @NewLicense
   Scenario Outline: Create new TL from JA-> collect fee -> forward to SI -> Change trade area and forward to Commissioner
   -> Approve in commissioner -> reject
 
@@ -203,7 +210,7 @@ Feature: Create Trade License
       | tradeDetailsData         | tradeLocationData           | tradeDetailsData1        |
       | ownerDetailsTradeLicense | locationDetailsTradeLicense | tradeDetailsTradeLicense |
 
-  @TradeLicense @NewLicense
+#  @TradeLicense @NewLicense
   Scenario Outline: Create new TL from JA -> collect fee -> forward to SI
   -> forward to Commissioner reject
 
@@ -263,7 +270,7 @@ Feature: Create Trade License
       | tradeDetailsData         | tradeLocationData           | tradeDetailsData1        |
       | ownerDetailsTradeLicense | locationDetailsTradeLicense | tradeDetailsTradeLicense |
 
-  @TradeLicense @NewLicense
+#  @TradeLicense @NewLicense
   Scenario Outline: Create new TL -> collect fee -> forward to SI -> reject
 
 #    Given TL_PHS_JA logs in
@@ -314,7 +321,7 @@ Feature: Create Trade License
       | tradeDetailsData         | tradeLocationData           | tradeDetailsData1        |
       | ownerDetailsTradeLicense | locationDetailsTradeLicense | tradeDetailsTradeLicense |
 
-  @TradeLicense @NewLicense
+#  @TradeLicense @NewLicense
   Scenario Outline: Create new TL -> collect fee -> reject
 
 #    Given TL_PHS_JA logs in
@@ -355,7 +362,7 @@ Feature: Create Trade License
       | tradeDetailsData         | tradeLocationData           | tradeDetailsData1        |
       | ownerDetailsTradeLicense | locationDetailsTradeLicense | tradeDetailsTradeLicense |
 
-  @TradeLicense @NewLicense
+#  @TradeLicense @NewLicense
   Scenario Outline: Create new TL -> reject
 
 #    Given TL_PHS_JA logs in
