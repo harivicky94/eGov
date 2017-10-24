@@ -14,6 +14,7 @@ Feature: Create Trade License
     And he enters trade location details of new license <tradeLocationData>
     And he enters trade details of new license <tradeDetailsData1>
     And he saves the application
+    And he confirms to proceed
     And he copy trade application number
     And current user logs out
 
@@ -32,6 +33,7 @@ Feature: Create Trade License
     And he enters trade location details of new license <tradeLocationData>
     And he enters trade details of new license <tradeDetailsData1>
     And he saves the application
+    And he confirms to proceed
     And he copy trade application number
     And current user logs out
 
@@ -62,12 +64,19 @@ Feature: Create Trade License
     And he confirms to proceed
     And he closes acknowledgement page
     And he verifies that application not in his inbox
-    And current user logs out
-
-    When TL_PHS_JA logs in
-    And he chooses to act upon above application number
-    And he generates the license certificate
-    And he verifies that application not in his inbox
+#    And current user logs out
+#
+#    When TL_PHS_JA logs in
+#    And he chooses to act upon above application number
+#    And he generates the license certificate
+#    And he verifies that application not in his inbox
+    And user will select the required screen as "Search Trade License"
+    And he search existing application number
+    And he verifies the application status
+    And user will be notified by "Active"
+    And he verifies the License active
+    And user will be notified by "YES"
+    And he closes search screen
     And current user logs out
 
     Examples:
@@ -86,6 +95,7 @@ Feature: Create Trade License
     And he enters trade location details of new license <tradeLocationData>
     And he enters trade details of new license <tradeDetailsData1>
     And he saves the application
+    And he confirms to proceed
     And he copy trade application number
     And current user logs out
 
@@ -141,6 +151,7 @@ Feature: Create Trade License
     And he enters trade location details of new license <tradeLocationData>
     And he enters trade details of new license <tradeDetailsData1>
     And he saves the application
+    And he confirms to proceed
     And he copy trade application number
     And current user logs out
 
@@ -203,6 +214,7 @@ Feature: Create Trade License
     And he enters trade location details of new license <tradeLocationData>
     And he enters trade details of new license <tradeDetailsData1>
     And he saves the application
+    And he confirms to proceed
     And he copy trade application number
     And current user logs out
 
@@ -261,6 +273,7 @@ Feature: Create Trade License
     And he enters trade location details of new license <tradeLocationData>
     And he enters trade details of new license <tradeDetailsData1>
     And he saves the application
+    And he confirms to proceed
     And he copy trade application number
     And current user logs out
 
@@ -311,6 +324,7 @@ Feature: Create Trade License
     And he enters trade location details of new license <tradeLocationData>
     And he enters trade details of new license <tradeDetailsData1>
     And he saves the application
+    And he confirms to proceed
     And he copy trade application number
     And current user logs out
 
@@ -351,6 +365,7 @@ Feature: Create Trade License
     And he enters trade location details of new license <tradeLocationData>
     And he enters trade details of new license <tradeDetailsData1>
     And he saves the application
+    And he confirms to proceed
     And he copy trade application number
     And current user logs out
 

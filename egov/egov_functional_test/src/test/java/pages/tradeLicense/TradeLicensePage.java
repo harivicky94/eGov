@@ -67,6 +67,9 @@ public class TradeLicensePage extends BasePage {
     @FindBy(id = "btnsave")
     private WebElement saveButton;
 
+    @FindBy(id = "Save")
+    private WebElement createButton;
+
     @FindBy(css = "input[class='select2-search__field']")
     private WebElement searchBox;
 
@@ -427,7 +430,11 @@ public class TradeLicensePage extends BasePage {
     }
 
     public void saveApplication() {
-        clickOnButton(saveButton, webDriver);
+        if (webDriver.findElements(By.name("approverComments")).size() == 1) {
+            enterText(webDriver.findElement(By.name("approverComments")), "Comments", webDriver);
+            clickOnButton(createButton, webDriver);
+        } else
+            clickOnButton(saveButton, webDriver);
     }
 }
 

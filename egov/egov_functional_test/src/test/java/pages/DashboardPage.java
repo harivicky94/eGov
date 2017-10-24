@@ -1,6 +1,5 @@
 package pages;
 
-import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -131,5 +130,3 @@ public class DashboardPage extends BasePage {
         Arrays.asList(actMsg.split("\\ ")).contains("No");
     }
 }
-
-
