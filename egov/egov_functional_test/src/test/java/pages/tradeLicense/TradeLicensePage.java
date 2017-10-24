@@ -183,6 +183,7 @@ public class TradeLicensePage extends BasePage {
         enterText(tradeTitleTextBox, tradedetails.getTradeTitle(), webDriver);
         selectFromDropDown(TradeTypeDropBox, tradedetails.gettradeType(), webDriver);
         selectFromDropDown(TradeCategoryDropBox, tradedetails.getTradeCategory(), webDriver);
+        enterText(TradeAreaWeightOfPremises, tradedetails.gettradeAreaWeightOfPremises(), webDriver);
 
         try {
             clickOnButton(tradeSubCategoryDropBox, webDriver);
@@ -211,7 +212,7 @@ public class TradeLicensePage extends BasePage {
             clickOnButton(element1, webDriver);
         }
 
-        enterText(TradeAreaWeightOfPremises, tradedetails.gettradeAreaWeightOfPremises(), webDriver);
+
         enterText(remarksTextBox, tradedetails.getremarks(), webDriver);
         enterText(tradeCommencementDateTextBox, tradedetails.gettradeCommencementDate(), webDriver);
 
