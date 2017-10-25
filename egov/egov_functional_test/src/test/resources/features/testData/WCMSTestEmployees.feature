@@ -1,6 +1,6 @@
-Feature: Create Test Employees for Council Management Module Testing
+Feature: Create Test Employees for Water Charges Module Testing
 
-  Scenario Outline: : Create Positions for Council Management Module
+  Scenario Outline: : Create Positions for Water Charges Module
 
     Given admin logs in
     And user will select the required screen as "Create Position" with condition as "/position"
@@ -9,11 +9,13 @@ Feature: Create Test Employees for Council Management Module Testing
     And current user logs out
 
     Examples:
-      | department     | designation   | position     |
-      | ADMINISTRATION | Council Clerk | CL-Council   |
-      | ADMINISTRATION | Commissioner  | Comm-Council |
+      | department     | designation               | position  |
+      | ADMINISTRATION | Junior Assistant          | JA-WCMS   |
+      | ENGINEERING    | Assistant Engineer        | AE-WCMS   |
+      | ENGINEERING    | Deputy Executive Engineer | DEE-WCMS  |
+      | ADMINISTRATION | Commissioner              | Comm-WCMS |
 
-  Scenario Outline: Create Employees for Council Management Module
+  Scenario Outline: Create Employees for Water Charges Module
 
     Given admin logs in
     And user will select the required screen as "Create Employee" with condition as "/employee"
@@ -28,5 +30,7 @@ Feature: Create Test Employees for Council Management Module Testing
 
     Examples:
       | employeeDetails              | assignmentDetails            | jurisdictionDetails |
-      | CouncilMangementClerk        | CouncilMangementClerk        | JurisdictionList1   |
-      | CouncilMangementCommissioner | CouncilMangementCommissioner | JurisdictionList2   |
+      | WaterJuniorAssistant         | WaterJuniorAssistant         | JurisdictionList1   |
+      | WaterAssistantEngineer       | WaterAssistantEngineer       | JurisdictionList2   |
+      | WaterDeputyExecutiveEngineer | WaterDeputyExecutiveEngineer | JurisdictionList3   |
+      | WaterCommissioner            | WaterCommissioner            | JurisdictionList4   |

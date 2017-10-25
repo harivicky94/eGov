@@ -62,16 +62,15 @@ public final class EmployeeDetailsBuilder {
         return this;
     }
 
-    public EmployeeDetailsBuilder withPermanentPincode(String permanentPincode) {
-        employeeDetails.setPermanentPincode(permanentPincode);
-        return this;
-    }
-
     public EmployeeDetailsBuilder withDateOfAppointment(String dateOfAppointment) {
         employeeDetails.setDateOfAppointment(dateOfAppointment);
         return this;
     }
 
+    public EmployeeDetailsBuilder withEmployeeCode(String employeeCode){
+        employeeDetails.setEmployeeCode(employeeCode);
+        return this;
+    }
     public EmployeeDetails build() {
         return employeeDetails;
     }

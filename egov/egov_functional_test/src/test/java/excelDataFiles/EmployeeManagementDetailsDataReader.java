@@ -33,12 +33,14 @@ public class EmployeeManagementDetailsDataReader extends ExcelReader {
         String mainDepartment = getCellData(assignmentDetailsSheet, dataRow, "MainDepartment").getStringCellValue();
         String designation = getCellData(assignmentDetailsSheet, dataRow, "Designation").getStringCellValue();
         String position = getCellData(assignmentDetailsSheet, dataRow, "Position").getStringCellValue();
+        String roles = getCellData(assignmentDetailsSheet, dataRow, "Roles").getStringCellValue();
 
         return new AssignmentDetailsBuilder()
                 .withIsPrimary(isPrimary)
                 .withDepartment(mainDepartment)
                 .withDesignation(designation)
                 .withPosition(position)
+                .withRoles(roles)
                 .build();
     }
 
@@ -57,10 +59,12 @@ public class EmployeeManagementDetailsDataReader extends ExcelReader {
         String permanentAddress = getCellData(employeeDetailsSheet, dataRow, "PermanentAddress").getStringCellValue();
         String permanentCity = getCellData(employeeDetailsSheet, dataRow, "City").getStringCellValue();
         String dataOfJoining = getCellData(employeeDetailsSheet, dataRow, "DateOfAppointment").getStringCellValue();
+        String employeeCode = getCellData(employeeDetailsSheet, dataRow, "EmployeeCode").getStringCellValue();
 
         return new EmployeeDetailsBuilder()
 
                 .withEMployeeName(employeeName)
+                .withEmployeeCode(employeeCode)
                 .withEmployeeType(employeeType)
                 .withStatus(status)
                 .withDateOfBirth(dateOfBirth)

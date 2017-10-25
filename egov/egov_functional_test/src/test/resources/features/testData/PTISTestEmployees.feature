@@ -1,6 +1,6 @@
-Feature: Create Test Employees for Council Management Module Testing
+Feature: Create Test Employees for Property Tax Module Testing
 
-  Scenario Outline: : Create Positions for Council Management Module
+  Scenario Outline: : Create Positions for Property Tax Module
 
     Given admin logs in
     And user will select the required screen as "Create Position" with condition as "/position"
@@ -9,11 +9,13 @@ Feature: Create Test Employees for Council Management Module Testing
     And current user logs out
 
     Examples:
-      | department     | designation   | position     |
-      | ADMINISTRATION | Council Clerk | CL-Council   |
-      | ADMINISTRATION | Commissioner  | Comm-Council |
+      | department     | designation          | position  |
+      | REVENUE        | Junior Assistant     | JA-PTIS   |
+      | REVENUE        | Bill Collector       | BC-PTIS   |
+      | REVENUE        | UD Revenue Inspector | RI-PTIS   |
+      | ADMINISTRATION | Commissioner         | Comm-PTIS |
 
-  Scenario Outline: Create Employees for Council Management Module
+  Scenario Outline: Create Employees for Property Tax Module
 
     Given admin logs in
     And user will select the required screen as "Create Employee" with condition as "/employee"
@@ -27,6 +29,8 @@ Feature: Create Test Employees for Council Management Module Testing
     And current user logs out
 
     Examples:
-      | employeeDetails              | assignmentDetails            | jurisdictionDetails |
-      | CouncilMangementClerk        | CouncilMangementClerk        | JurisdictionList1   |
-      | CouncilMangementCommissioner | CouncilMangementCommissioner | JurisdictionList2   |
+      | employeeDetails      | assignmentDetails    | jurisdictionDetails |
+      | PTISJuniorAssistant  | PTISJuniorAssistant  | JurisdictionList1   |
+      | PTISBillCollector    | PTISBillCollector    | JurisdictionList2   |
+      | PTISRevenueInspector | PTISRevenueInspector | JurisdictionList3   |
+      | PTISRevenueOfficer   | PTISRevenueOfficer   | JurisdictionList4   |

@@ -1,6 +1,6 @@
-Feature: Create Test Employees for Council Management Module Testing
+Feature: Create Test Employees for Marriage Registration Module Testing
 
-  Scenario Outline: : Create Positions for Council Management Module
+  Scenario Outline: : Create Positions for Marriage Registration Module
 
     Given admin logs in
     And user will select the required screen as "Create Position" with condition as "/position"
@@ -9,11 +9,11 @@ Feature: Create Test Employees for Council Management Module Testing
     And current user logs out
 
     Examples:
-      | department     | designation   | position     |
-      | ADMINISTRATION | Council Clerk | CL-Council   |
-      | ADMINISTRATION | Commissioner  | Comm-Council |
+      | department     | designation      | position         |
+      | ADMINISTRATION | Junior Assistant | JA-MarriageReg   |
+      | ADMINISTRATION | Commissioner     | Comm-MarriageReg |
 
-  Scenario Outline: Create Employees for Council Management Module
+  Scenario Outline: Create Employees for Marriage Registration Module
 
     Given admin logs in
     And user will select the required screen as "Create Employee" with condition as "/employee"
@@ -27,6 +27,6 @@ Feature: Create Test Employees for Council Management Module Testing
     And current user logs out
 
     Examples:
-      | employeeDetails              | assignmentDetails            | jurisdictionDetails |
-      | CouncilMangementClerk        | CouncilMangementClerk        | JurisdictionList1   |
-      | CouncilMangementCommissioner | CouncilMangementCommissioner | JurisdictionList2   |
+      | employeeDetails            | assignmentDetails          | jurisdictionDetails |
+      | MarriageRegJuniorAssistant | MarriageRegJuniorAssistant | JurisdictionList1   |
+      | MarriageRegCommissioner    | MarriageRegCommissioner    | JurisdictionList2   |

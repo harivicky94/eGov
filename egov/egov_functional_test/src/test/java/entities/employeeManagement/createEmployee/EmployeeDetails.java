@@ -15,12 +15,28 @@ public class EmployeeDetails {
     private String permanentPincode;
     private String dateOfAppointment;
     private String employeeName;
+    private String employeeCode;
+    private String roles;
 
-    public String getEmployeeType() { return employeeType; }
+    public String getEmployeeCode() {
+        return employeeCode;
+    }
 
-    public String getEmployeeName() { return employeeName; }
+    public void setEmployeeCode(String employeeCode) {
+        this.employeeCode = employeeCode;
+    }
 
-    public void setEmployeeName(String employeeName) { this.employeeName = employeeName; }
+    public String getEmployeeType() {
+        return employeeType;
+    }
+
+    public String getEmployeeName() {
+        return employeeName;
+    }
+
+    public void setEmployeeName(String employeeName) {
+        this.employeeName = employeeName;
+    }
 
     public void setEmployeeType(String employeeType) {
         this.employeeType = employeeType;

@@ -73,6 +73,21 @@ public class AssignmentDetailsPage extends BasePage {
     @FindBy(id = "assignments.govtOrderNumber-error")
     private WebElement govtOrderNumbererror;
 
+    @FindBy(id = "userroleUpdateBtn")
+    private WebElement userRoleUpdateButton;
+
+    @FindBy(css = "select[id='multiselect']")
+    private WebElement selectRoles;
+
+    @FindBy(id = "multiselect_rightSelected")
+    private WebElement multiselectRightSelected;
+
+    @FindBy(id = "multiselect_leftSelected")
+    private WebElement multiselectLeftSelected;
+
+    @FindBy(css = ".btn.btn-default")
+    private WebElement roleCloseButton;
+
     //    @FindBy(xpath = ".//*[@id='agreementTableBody']/td[14]/button[1]")
     @FindBy(css = "td[data-label= 'Action'] button")
     private List<WebElement> editButtons;
@@ -97,11 +112,11 @@ public class AssignmentDetailsPage extends BasePage {
         selectFromDropDown(departmentSelectBox, assignmentDetails.getDepartment(), webDriver);
         selectFromDropDown(designationSelectBox, assignmentDetails.getDesignation(), webDriver);
 
-        if(readFrom.equalsIgnoreCase("TRUE")){
+        if (readFrom.equalsIgnoreCase("TRUE")) {
             enterDate(toDateTextBox, getFutureDate(300), webDriver);
             enterText(positionSelectBox, assignmentDetails.getPosition(), webDriver);
-        }else
-        await().atMost(10, SECONDS).until(() -> webDriver.findElements(By.cssSelector("[class='col-sm-6'] [id='assignments.position']")).size() == 1);
+        } else
+            await().atMost(10, SECONDS).until(() -> webDriver.findElements(By.cssSelector("[class='col-sm-6'] [id='assignments.position']")).size() == 1);
         designationSelectBox.sendKeys(Keys.TAB);
         await().atMost(25, SECONDS).until(() -> webDriver.findElements(By.cssSelector("li[class=ui-menu-item]")).size() >= 1);
 
@@ -131,8 +146,27 @@ public class AssignmentDetailsPage extends BasePage {
         selectFromDropDown(departmentSelectBox, assignmentDetails.getDepartment(), webDriver);
         selectFromDropDown(designationSelectBox, assignmentDetails.getDesignation(), webDriver);
         enterText(positionSelectBox, assignmentDetails.getPosition(), webDriver);
-
+        try {
+            TimeUnit.SECONDS.sleep(2);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         clickOnButton(webDriver.findElements(By.cssSelector("li[class=ui-menu-item]")).get(0).findElement(By.tagName("div")), webDriver);
         clickOnButton(addOrEditButton, webDriver);
+    }
+
+    public void userRoleDetailsForProductionDump(AssignmentDetails userRoleDetails) {
+        clickOnButton(userRoleUpdateButton, webDriver);
+        if (userRoleDetails.getRoles().contains(",")) {
+            for (int i = 0; i < userRoleDetails.getRoles().split(",").length; i++) {
+                selectFromDropDown(selectRoles, userRoleDetails.getRoles().split(",")[i], webDriver);
+            }
+        } else {
+            selectFromDropDown(selectRoles, userRoleDetails.getRoles(), webDriver);
+        }
+        clickOnButton(multiselectRightSelected, webDriver);
+        clickOnButton(userRoleUpdateButton, webDriver);
+        clickOnButton(roleCloseButton, webDriver);
+        switchToPreviouslyOpenedWindow(webDriver);
     }
 }

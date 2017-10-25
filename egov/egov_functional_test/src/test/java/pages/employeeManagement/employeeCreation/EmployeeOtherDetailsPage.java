@@ -1,5 +1,6 @@
 package pages.employeeManagement.employeeCreation;
 
+import entities.employeeManagement.createEmployee.EmployeeDetails;
 import entities.employeeManagement.createEmployee.JurisdictionDetails;
 import org.junit.Assert;
 import org.openqa.selenium.By;
@@ -149,6 +150,10 @@ public class EmployeeOtherDetailsPage extends BasePage {
 
     @FindBy(id = "education.university-error")
     private WebElement universityError;
+
+    //roles
+    @FindBy(id = "user_name")
+    private WebElement selectUserName;
 
     private WebDriver webDriver;
 
@@ -340,5 +345,12 @@ public class EmployeeOtherDetailsPage extends BasePage {
         selectFromDropDown(yearOfPassingSelectBox, "2002", webDriver);
         checkField(universityTextBox, universityError, "1234", "Test", "Only alphabets with special characters allowed.");
         clickOnButton(webDriver.findElement(By.id("educationAddOrUpdate")), webDriver);
+    }
+
+    public void userRoleDetailsForProductionDump(EmployeeDetails userRoleDetails) {
+        enterText(selectUserName, userRoleDetails.getEmployeeCode(), webDriver);
+        await().atMost(10, TimeUnit.SECONDS).until(() -> webDriver.findElements(By.className("tt-dataset-0")).size() == 1);
+        clickOnButton(webDriver.findElement(By.className("tt-dataset-0")), webDriver);
+
     }
 }

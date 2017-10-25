@@ -1,6 +1,6 @@
-Feature: Create Test Employees for Council Management Module Testing
+Feature: Create Test Employees for Trade License Module Testing
 
-  Scenario Outline: : Create Positions for Council Management Module
+  Scenario Outline: : Create Positions for Trade License Module
 
     Given admin logs in
     And user will select the required screen as "Create Position" with condition as "/position"
@@ -9,11 +9,12 @@ Feature: Create Test Employees for Council Management Module Testing
     And current user logs out
 
     Examples:
-      | department     | designation   | position     |
-      | ADMINISTRATION | Council Clerk | CL-Council   |
-      | ADMINISTRATION | Commissioner  | Comm-Council |
+      | department                   | designation      | position |
+      | PUBLIC HEALTH AND SANITATION | Junior Assistant | JA-TL    |
+      | PUBLIC HEALTH AND SANITATION | Sanity Inspector | SI-TL    |
+      | ADMINISTRATION               | Commissioner     | Comm-TL  |
 
-  Scenario Outline: Create Employees for Council Management Module
+  Scenario Outline: Create Employees for Trade License Module
 
     Given admin logs in
     And user will select the required screen as "Create Employee" with condition as "/employee"
@@ -27,6 +28,7 @@ Feature: Create Test Employees for Council Management Module Testing
     And current user logs out
 
     Examples:
-      | employeeDetails              | assignmentDetails            | jurisdictionDetails |
-      | CouncilMangementClerk        | CouncilMangementClerk        | JurisdictionList1   |
-      | CouncilMangementCommissioner | CouncilMangementCommissioner | JurisdictionList2   |
+      | employeeDetails      | assignmentDetails    | jurisdictionDetails |
+      | TradeJuniorAssistant | TradeJuniorAssistant | JurisdictionList1   |
+      | TradeSanityInspector | TradeSanityInspector | JurisdictionList2   |
+      | TradeCommissioner    | TradeCommissioner    | JurisdictionList3   |

@@ -3,28 +3,22 @@ package entities.employeeManagement.createEmployee;
 public class AssignmentDetails {
 
     private String isPrimary;
-
     private String fromDate;
-
     private String toDate;
-
     private String department;
-
     private String designation;
-
     private String position;
-
     private String grade;
-
     private String function;
-
     private String functionary;
-
     private String fund;
-
     private boolean isHOD;
-
     private String govtOrderNumber;
+    private String roles;
+
+    public String getRoles() { return roles; }
+
+    public void setRoles(String roles) { this.roles = roles; }
 
     public String getIsPrimary() {
         return isPrimary;
@@ -66,9 +60,7 @@ public class AssignmentDetails {
         this.designation = designation;
     }
 
-    public String getPosition() {
-        return position;
-    }
+    public String getPosition() { return position; }
 
     public void setPosition(String position) {
         this.position = position;

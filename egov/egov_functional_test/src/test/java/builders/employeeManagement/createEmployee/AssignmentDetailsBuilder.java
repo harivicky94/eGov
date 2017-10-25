@@ -69,6 +69,11 @@ public class AssignmentDetailsBuilder {
         return this;
     }
 
+    public AssignmentDetailsBuilder withRoles(String roles){
+        assignmentDetails.setRoles(roles);
+        return this;
+    }
+
     public AssignmentDetails build() {
         return assignmentDetails;
     }

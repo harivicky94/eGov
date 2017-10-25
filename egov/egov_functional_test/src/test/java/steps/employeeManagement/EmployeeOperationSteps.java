@@ -1,6 +1,5 @@
 package steps.employeeManagement;
 
-import cucumber.api.PendingException;
 import cucumber.api.java8.En;
 import entities.employeeManagement.createEmployee.AssignmentDetails;
 import entities.employeeManagement.createEmployee.EmployeeDetails;
@@ -87,6 +86,13 @@ public class EmployeeOperationSteps extends BaseSteps implements En {
             AssignmentDetails assignmentDetails = new EmployeeManagementDetailsDataReader(productionDumpDataFileName).getAssignmentDetails(assignmentDetailsDataId);
             pageStore.get(AssignmentDetailsPage.class).enterAssignmentDetailsForProductionDump(assignmentDetails);
         });
-
+        And("^user selects user name for searching role as (\\w+)$", (String userRoleID) -> {
+            EmployeeDetails userRoleDetails = new EmployeeManagementDetailsDataReader(productionDumpDataFileName).getEmployeeDetails(userRoleID);
+            pageStore.get(EmployeeOtherDetailsPage.class).userRoleDetailsForProductionDump(userRoleDetails);
+        });
+        And("^user updates particular roles for an employee as (\\w+)$", (String rolesId) -> {
+            AssignmentDetails userRoles = new EmployeeManagementDetailsDataReader((productionDumpDataFileName)).getAssignmentDetails(rolesId);
+            pageStore.get(AssignmentDetailsPage.class).userRoleDetailsForProductionDump(userRoles);
+        });
     }
 }
