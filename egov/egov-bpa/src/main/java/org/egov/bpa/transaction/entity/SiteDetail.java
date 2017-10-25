@@ -96,7 +96,7 @@ public class SiteDetail extends AbstractAuditable {
     private String surveynumberType;
     @Length(min = 1, max = 24)
     private String oldSurveyNumber;
-    @Length(min = 1, max = 24)
+    @Length(min = 1, max = 128)
     private String reSurveyNumber;
     @Length(min = 1, max = 24)
     private String townSurveyNumber;
@@ -116,13 +116,13 @@ public class SiteDetail extends AbstractAuditable {
     @JoinColumn(name = "electionBoundary")
     private Boundary electionBoundary;
     @Length(min = 1, max = 128)
-    private String citytown; // required ??
+    private String citytown;
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "street")
     private Boundary street;
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "village")
-    private VillageName village; // required ??
+    private VillageName village;
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "postalAddress")

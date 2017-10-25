@@ -58,7 +58,7 @@
 				<div class="col-sm-5 text-right">
 					<spring:message code="lbl.applicationFee.feeType" />
 				</div>
-				<div class="col-sm-2 text-center">
+				<div class="col-sm-2 text-right">
 					<spring:message code="lbl.applicationFee.amount" />
 				</div>
 			</div>
@@ -69,8 +69,8 @@
 					<div class="col-sm-5 add-margin check-text text-right">
 						<c:out value="${docs.bpaFee.description}" />
 					</div>
-					<div class="col-sm-2 add-margin text-center">
-						<c:out value="${docs.amount}" />
+					<div class="col-sm-2 add-margin text-right">
+						<fmt:formatNumber type="number" maxFractionDigits="2" value="${docs.amount}" />
 					</div>
 				</div>
 			</c:forEach>

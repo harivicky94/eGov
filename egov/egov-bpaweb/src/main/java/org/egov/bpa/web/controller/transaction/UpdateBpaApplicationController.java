@@ -327,6 +327,8 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
         model.addAttribute("currentState", application.getCurrentState().getValue());
         model.addAttribute(BPA_APPLICATION, application);
         model.addAttribute("electionBoundary", application.getSiteDetail().get(0).getElectionBoundary().getId());
+        model.addAttribute("electionBoundaryName", application.getSiteDetail().get(0).getElectionBoundary().getName());
+        model.addAttribute("revenueBoundaryName", application.getSiteDetail().get(0).getAdminBoundary().getName());
         model.addAttribute("bpaPrimaryDept", bpaUtils.getAppconfigValueByKeyNameForDefaultDept());
         model.addAttribute("nocCheckListDetails", checkListDetailService
                 .findActiveCheckListByServiceType(application.getServiceType().getId(), CHECKLIST_TYPE_NOC));

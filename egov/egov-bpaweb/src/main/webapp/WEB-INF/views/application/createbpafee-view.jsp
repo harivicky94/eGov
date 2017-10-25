@@ -149,8 +149,8 @@
 											value="${docs.applicationFee.id}" />
 
 									</div>
-									<div class="col-sm-2 add-margin text-center">
-										<form:input class="form-control patternvalidation"
+									<div class="col-sm-2 add-margin text-right">
+										<form:input class="form-control patternvalidation text-right"
 											data-pattern="decimalvalue" maxlength="10"
 											id="applicationFeeDetail${status.index}amount"
 											value="${docs.amount}" readonly="true"

@@ -123,7 +123,7 @@
 								<div class="col-sm-5 text-right">
 									<spring:message code="lbl.applicationFee.feeType" />
 								</div>
-								<div class="col-sm-2 text-center">
+								<div class="col-sm-2 text-right">
 									<spring:message code="lbl.applicationFee.amount" />
 								</div>
 							</div>
@@ -145,18 +145,18 @@
 											value="${docs.applicationFee.id}" />
 
 									</div>
-									<div class="col-sm-2 add-margin text-center">
+									<div class="col-sm-2 add-margin text-right">
 										<c:choose>
 											<c:when
 												test="${docs.bpaFee.description eq 'Additional Fees'}">
-												<form:input class="form-control patternvalidation"
-													data-pattern="decimalvalue" maxlength="10"
+												<form:input class="form-control patternvalidation text-right"
+													data-pattern="number" maxlength="10"
 													id="applicationFeeDetail${status.index}amount"
 													value="${docs.amount}"
 													path="applicationFeeDetail[${status.index}].amount" />
 											</c:when>
 											<c:otherwise>
-												<form:input class="form-control patternvalidation"
+												<form:input class="form-control patternvalidation text-right"
 													data-pattern="decimalvalue" maxlength="10"
 													id="applicationFeeDetail${status.index}amount"
 													value="${docs.amount}" disabled="true"

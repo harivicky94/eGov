@@ -67,6 +67,8 @@
 <%-- <form:hidden path="" id="approverName" name="approverName" /> --%>
 <form:hidden path="" name="workFlowAction" id="workFlowAction" />
 <form:hidden path="" id="electionBoundary" value="${electionBoundary}" />
+<form:hidden path="" id="revenueBoundaryName" value="${revenueBoundaryName}" />
+<form:hidden path="" id="electionBoundaryName" value="${electionBoundaryName}" />
 <form:hidden path="" id="defaultDepartment" value="${bpaPrimaryDept}" />
 
 <form:hidden path="" name="stateType" id="stateType" value="${stateType}"/>	
