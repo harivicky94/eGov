@@ -141,6 +141,11 @@
 					<div class="panel panel-primary" data-collapsed="0">
 						<jsp:include page="applicationhistory-view.jsp"></jsp:include>
 					</div>
+					<c:if test="${showRejectionReasons}">
+						<div class="panel panel-primary" data-collapsed="0">
+							<jsp:include page="rejection-reasons.jsp"></jsp:include>
+						</div>
+					</c:if>
 				</div>
 				<div id="document-info" class="tab-pane fade">
 					<div class="panel panel-primary" data-collapsed="0">

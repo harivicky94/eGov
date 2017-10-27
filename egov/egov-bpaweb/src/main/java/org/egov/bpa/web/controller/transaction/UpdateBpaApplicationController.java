@@ -46,6 +46,7 @@
  */
 package org.egov.bpa.web.controller.transaction;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_APPROVED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CANCELLED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CREATED;
@@ -54,10 +55,12 @@ import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_FIELD_INS;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_NOCUPDATED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_RECORD_APPROVED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_REGISTERED;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_REJECTED;
 import static org.egov.bpa.utils.BpaConstants.APPLN_STATUS_FIELD_INSPECTION_INITIATED;
 import static org.egov.bpa.utils.BpaConstants.BPA_STATUS_SUPERINDENT_APPROVED;
 import static org.egov.bpa.utils.BpaConstants.CHECKLIST_TYPE_NOC;
 import static org.egov.bpa.utils.BpaConstants.CREATE_ADDITIONAL_RULE_CREATE;
+import static org.egov.bpa.utils.BpaConstants.FIELD_INSPECTION_COMPLETED;
 import static org.egov.bpa.utils.BpaConstants.FWDINGTOLPINITIATORPENDING;
 import static org.egov.bpa.utils.BpaConstants.GENERATEPERMITORDER;
 import static org.egov.bpa.utils.BpaConstants.ST_CODE_05;
@@ -176,8 +179,13 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
         if ( APPLICATION_STATUS_APPROVED.equals(application.getStatus().getCode())
                 || APPLICATION_STATUS_DIGI_SIGNED.equalsIgnoreCase(application.getStatus().getCode())) {
             model.addAttribute("showpermitconditions", true);
-            model.addAttribute("permitConditions", permitConditionsService.findAll());
+            model.addAttribute("permitConditions", permitConditionsService.findByConditionTypeOrderByOrderNumberAsc("PermitCondition"));
         }
+        if ( APPLICATION_STATUS_NOCUPDATED.equals(application.getStatus().getCode())
+                || APPLICATION_STATUS_REJECTED.equalsIgnoreCase(application.getStatus().getCode()) || (APPLICATION_STATUS_FIELD_INS.equalsIgnoreCase(application.getStatus().getCode()) && FIELD_INSPECTION_COMPLETED.equalsIgnoreCase(application.getState().getValue()))) {
+            model.addAttribute("showRejectionReasons", true);
+            model.addAttribute("rejectionReasons", permitConditionsService.findByConditionTypeOrderByOrderNumberAsc("Rejection"));
+        }    
         model.addAttribute("workFlowByNonEmp", applicationBpaService.applicationinitiatedByNonEmployee(application));
         model.addAttribute(APPLICATION_HISTORY,
                 bpaThirdPartyService.getHistory(application));
@@ -437,8 +445,10 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
         if (APPLICATION_STATUS_CANCELLED.equalsIgnoreCase(bpaApplication.getStatus().getCode())) {
             bpaSmsAndEmailService.sendSMSAndEmail(bpaAppln);
         }
-        if (workFlowAction != null && workFlowAction.equalsIgnoreCase(GENERATEPERMITORDER)) {
+        if (isNotBlank(workFlowAction) && GENERATEPERMITORDER.equalsIgnoreCase(workFlowAction)) {
             return "redirect:/application/generatepermitorder/" + bpaAppln.getApplicationNumber();
+        } else if (isNotBlank(workFlowAction) && WF_CANCELAPPLICATION_BUTTON.equalsIgnoreCase(workFlowAction)) {
+            return "redirect:/application/rejectionnotice/" + bpaAppln.getApplicationNumber();
         }
         return BPA_APPLICATION_RESULT;
     }

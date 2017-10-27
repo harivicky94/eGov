@@ -52,7 +52,6 @@ import java.util.List;
 import org.egov.bpa.master.entity.PermitConditions;
 import org.egov.bpa.master.repository.PermitConditionsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -63,8 +62,8 @@ public class PermitConditionsService {
     @Autowired
     private PermitConditionsRepository permitConditionsRepository;
 
-    public List<PermitConditions> findAll() {
-        return permitConditionsRepository.findAll(new Sort(Sort.Direction.ASC, "ordernumber"));
+    public List<PermitConditions> findByConditionTypeOrderByOrderNumberAsc(String type) {
+        return permitConditionsRepository.findByConditionTypeOrderByOrderNumberAsc(type);
     }
 
 }

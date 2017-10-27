@@ -71,6 +71,8 @@ jQuery(document).ready(function() {
 	} else if($('#wfstateDesc').val() == 'LP Reply Received'){
 		removeWorkFlowMandatoryAndHideDepartmentDetails();
 		$("#buttonSubmit").show();
+	} else if($('#wfstateDesc').val() == 'Rejected'){
+		$(".show-row").hide();
 	}
 	
 	function removeWorkFlowMandatoryAndHideDepartmentDetails() {

@@ -46,10 +46,14 @@
  */
 package org.egov.bpa.transaction.service.notice;
 
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_MODULE_TYPE;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_REJECTED;
 import static org.egov.bpa.utils.BpaConstants.BPADEMANDNOTICETITLE;
+import static org.egov.bpa.utils.BpaConstants.BPAREJECTIONFILENAME;
 import static org.egov.bpa.utils.BpaConstants.BPA_ADM_FEE;
 import static org.egov.bpa.utils.BpaConstants.BPA_DEMAND_NOTICE_TYPE;
+import static org.egov.bpa.utils.BpaConstants.BPA_REJECTION_NOTICE_TYPE;
 import static org.egov.bpa.utils.BpaConstants.BUILDINGDEVELOPPERMITFILENAME;
 import static org.egov.bpa.utils.BpaConstants.BUILDINGPERMITFILENAME;
 import static org.egov.bpa.utils.BpaConstants.DEMANDNOCFILENAME;
@@ -94,6 +98,7 @@ import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.utils.DateUtils;
+import org.egov.infra.workflow.entity.StateHistory;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -201,6 +206,30 @@ public class BpaNoticeService {
         reportOutput.setReportFormat(ReportFormat.PDF);
         return reportOutput;
     }
+    
+    public ReportOutput generateRejectionNotice(final BpaApplication bpaApplication,
+            final Map<String, Object> ulbDetailsReportParams)
+            throws IOException {
+        ReportRequest reportInput = null;
+        ReportOutput reportOutput = new ReportOutput();
+        String fileName = "bpa-rejection-notice".concat(String.valueOf(bpaApplication.getApplicationNumber()));
+        BpaNotice bpaNotice = findByApplicationAndNoticeType(bpaApplication, BPA_REJECTION_NOTICE_TYPE);
+        if (bpaNotice != null && bpaNotice.getNoticeFileStore() != null) {
+            final FileStoreMapper fmp = bpaNotice.getNoticeFileStore();
+            final File file = fileStoreService.fetch(fmp, APPLICATION_MODULE_TYPE);
+            reportOutput.setReportOutputData(FileUtils.readFileToByteArray(file));
+        } else {
+            final Map<String, Object> reportParams = buildParametersForReport(bpaApplication);
+            reportParams.putAll(ulbDetailsReportParams);
+            reportParams.putAll(buildParametersForDemandDetails(bpaApplication));
+            reportInput = new ReportRequest(BPAREJECTIONFILENAME, bpaApplication, reportParams);
+            reportOutput = reportService.createReport(reportInput);
+            saveBpaNotices(bpaApplication, reportOutput, fileName, BPA_REJECTION_NOTICE_TYPE);
+        }
+        reportOutput.setReportFormat(ReportFormat.PDF);
+        return reportOutput;
+    }
+
 
     private BpaNotice saveBpaNotices(final BpaApplication application, ReportOutput reportOutput, String fileName,
             String noticeType) {
@@ -231,6 +260,7 @@ public class BpaNoticeService {
                         ? bpaApplication.getOwner().getUser().getAddress().get(0).getStreetRoadLine() : "");
         reportParams.put("applicationDate", DateUtils.getDefaultFormattedDate(bpaApplication.getApplicationDate()));
         reportParams.put("permitConditions", buildPermitConditions(bpaApplication));
+        reportParams.put("rejectionReasons", buildRejectionReasons(bpaApplication));
         String amenities = bpaApplication.getApplicationAmenity().stream().map(ServiceType::getDescription)
                 .collect(Collectors.joining(", "));
         if (bpaApplication.getApplicationAmenity().isEmpty()) {
@@ -285,7 +315,7 @@ public class BpaNoticeService {
     }
 
     private String buildPermitConditions(final BpaApplication bpaApplication) {
-        int order = 1;
+
         StringBuilder permitConditions = new StringBuilder();
         if (bpaApplication.getServiceType().getCode().equals(ST_CODE_14)
                 || bpaApplication.getServiceType().getCode().equals(ST_CODE_15)) {
@@ -307,15 +337,7 @@ public class BpaNoticeService {
                         .append(String.valueOf("\n\n12").concat(") ").concat(bpaApplication.getAdditionalPermitConditions()));
             }
         } else {
-            for (PermitConditions pc : bpaApplication.getPermitConditions()) {
-                if (bpaApplication.getPermitConditions().size() - 1 == order - 1
-                        && StringUtils.isBlank(bpaApplication.getAdditionalPermitConditions())) {
-                    permitConditions.append(String.valueOf(order).concat(") ").concat(pc.getDescription()));
-                } else {
-                    permitConditions.append(String.valueOf(order).concat(") ").concat(pc.getDescription()).concat("\n\n"));
-                }
-                order++;
-            }
+            int order = buildPredefinedPermitConditionOrRejectReasons(bpaApplication, permitConditions);
             if (StringUtils.isNotBlank(bpaApplication.getAdditionalPermitConditions())) {
                 permitConditions.append(
                         String.valueOf(order).concat(") ").concat(bpaApplication.getAdditionalPermitConditions()));
@@ -323,7 +345,39 @@ public class BpaNoticeService {
         }
         return permitConditions.toString();
     }
+    
+    private String buildRejectionReasons(final BpaApplication bpaApplication) {
+        StringBuilder rejectReasons = new StringBuilder();
+        int order = buildPredefinedPermitConditionOrRejectReasons(bpaApplication, rejectReasons);
+        StateHistory stateHistory = bpaApplication.getStateHistory().stream()
+                .filter(history -> history.getValue().equalsIgnoreCase(APPLICATION_STATUS_REJECTED))
+                .findAny().orElse(null);
+        rejectReasons.append(
+                "\n\n".concat(String.valueOf(order).concat(") "))
+                        .concat(stateHistory != null ? stateHistory.getComments() : EMPTY).concat("\n\n"));
+        if (StringUtils.isNotBlank(bpaApplication.getAdditionalRejectionReasons())) {
+            rejectReasons.append(
+                    String.valueOf(order + 1).concat(") ").concat(bpaApplication.getAdditionalRejectionReasons()));
+        }
+        return rejectReasons.toString();
+    }
 
+    private int buildPredefinedPermitConditionOrRejectReasons(final BpaApplication bpaApplication,
+            StringBuilder permitConditions) {
+        int order = 1;
+        for (PermitConditions pc : bpaApplication.getPermitConditions()) {
+            if (bpaApplication.getPermitConditions().size() - 1 == order - 1
+                    && StringUtils.isBlank(bpaApplication.getAdditionalPermitConditions())
+                    && StringUtils.isNotBlank(bpaApplication.getAdditionalRejectionReasons())) {
+                permitConditions.append(String.valueOf(order).concat(") ").concat(pc.getDescription()));
+            } else {
+                permitConditions.append(String.valueOf(order).concat(") ").concat(pc.getDescription()).concat("\n\n"));
+            }
+            order++;
+        }
+        return order;
+    }
+    
     private String getMessageFromPropertyFile(String key) {
         return bpaMessageSource.getMessage(key, null, null);
     }

@@ -46,11 +46,13 @@
  */
 package org.egov.bpa.master.repository;
 
+import java.util.List;
+
 import org.egov.bpa.master.entity.PermitConditions;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PermitConditionsRepository extends JpaRepository<PermitConditions, Long> {
-
+    List<PermitConditions> findByConditionTypeOrderByOrderNumberAsc(String conditionType);
 }

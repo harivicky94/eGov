@@ -51,6 +51,7 @@ $(document)
 					var viewurl = '/bpa/application/view/';
 					var demandNoticeurl = '/bpa/application/demandnotice/';
 					var permitorderurl = '/bpa/application/generatepermitorder/';
+					var rejectionnoticeurl = '/bpa/application/rejectionnotice/';
 					$('#btnSearch').click(function() {
 						callAjaxSearch();
 					});
@@ -138,6 +139,10 @@ $(document)
 																return ('<select class="dropchange">'+commonOptions+'<option  value='
 																		+ permitorderurl
 																		+ row.applicationNumber + '>Generate Permit Order</option></select>');
+															} else if (row.status == 'Cancelled' && row.pendingAction == 'END') {
+																return ('<select class="dropchange">'+commonOptions+'<option  value='
+																		+ rejectionnoticeurl
+																		+ row.applicationNumber + '>Print Rejection Notice</option></select>');
 															} else {
 																return ('<select class="dropchange">'+commonOptions+'></select>');
 															}

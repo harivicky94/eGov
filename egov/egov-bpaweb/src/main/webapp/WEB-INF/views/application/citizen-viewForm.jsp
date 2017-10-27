@@ -182,6 +182,13 @@
 							</td> 
 						</c:if>
 						
+						<c:if test="${bpaApplication.status.code eq 'Cancelled' && bpaApplication.state ne null}">
+							<td> <a	href="/bpa/application/rejectionnotice/${bpaApplication.applicationNumber}" class="btn btn-primary">
+										 Print Rejection Notice
+								    </a>
+							</td> 
+						</c:if>
+						
 						<td>&nbsp;<input type="button" name="button2" id="button2" value="Close"
 							class="btn btn-default" onclick="window.close();" />
 						</td>

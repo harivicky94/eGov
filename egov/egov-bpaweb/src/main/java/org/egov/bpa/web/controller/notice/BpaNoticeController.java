@@ -49,6 +49,7 @@ package org.egov.bpa.web.controller.notice;
 
 import static org.egov.bpa.utils.BpaConstants.BUILDINGPERMITFILENAME;
 import static org.egov.bpa.utils.BpaConstants.DEMANDNOCFILENAME;
+import static org.egov.bpa.utils.BpaConstants.BPAREJECTIONFILENAME;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -68,9 +69,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
@@ -86,7 +86,7 @@ public class BpaNoticeController {
     @Autowired
     private BpaNoticeService bpaReportService;
 
-    @RequestMapping(value = "/application/demandnotice/{applicationNumber}", method = RequestMethod.GET)
+    @GetMapping("/application/demandnotice/{applicationNumber}")
     @ResponseBody
     public ResponseEntity<byte[]> viewDemandNoticeReport(@PathVariable final String applicationNumber, HttpServletRequest request)
             throws IOException {
@@ -99,7 +99,7 @@ public class BpaNoticeController {
         return new ResponseEntity<>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
     }
 
-    @RequestMapping(value = "/application/generatepermitorder/{applicationNumber}", method = RequestMethod.GET)
+    @GetMapping("/application/generatepermitorder/{applicationNumber}")
     @ResponseBody
     public ResponseEntity<byte[]> generateBuildingPermitOrder(@PathVariable final String applicationNumber,
             HttpServletRequest request) throws IOException {
@@ -109,6 +109,19 @@ public class BpaNoticeController {
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType(APPLICATION_PDF));
         headers.add(CONTENT_DISPOSITION, INLINE_FILENAME + BUILDINGPERMITFILENAME + "order" + PDFEXTN);
+        return new ResponseEntity<>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
+    }
+    
+    @GetMapping("/application/rejectionnotice/{applicationNumber}")
+    @ResponseBody
+    public ResponseEntity<byte[]> generateRejectionNotice(@PathVariable final String applicationNumber,
+            HttpServletRequest request) throws IOException {
+        Map<String, Object> ulbDetailsReportParams = buildUlbDetails(request);
+        ReportOutput reportOutput = bpaReportService
+                .generateRejectionNotice(applicationBpaService.findByApplicationNumber(applicationNumber), ulbDetailsReportParams);
+        final HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.parseMediaType(APPLICATION_PDF));
+        headers.add(CONTENT_DISPOSITION, INLINE_FILENAME + BPAREJECTIONFILENAME + PDFEXTN);
         return new ResponseEntity<>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
     }
 

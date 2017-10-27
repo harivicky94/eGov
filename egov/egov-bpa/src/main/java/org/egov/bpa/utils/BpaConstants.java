@@ -121,6 +121,7 @@ public class BpaConstants {
     public static final String WF_REJECT_STATE = "Rejected";
     public static final String WF_END_STATE = "END";
     public static final String CREATE_ADDITIONAL_RULE_CREATE = "CREATEBPAAPPLICATION";
+    public static final String FIELD_INSPECTION_COMPLETED = "Field Inspection completed";
     // application status constants
     private static final String APPROVED = "Approved";
     public static final String APPLICATION_STATUS_APPROVED = APPROVED;
@@ -131,6 +132,8 @@ public class BpaConstants {
     public static final String APPLICATION_STATUS_NOCUPDATED = "NOC Updated";
     public static final String APPLICATION_STATUS_CANCELLED = "Cancelled";
     public static final String BPA_STATUS_SUPERINDENT_APPROVED = "Superintendent Approved";
+    public static final String APPLICATION_STATUS_REJECTED = "Rejected";
+    public static final String APPLN_STATUS_FIELD_INSPECTION_INITIATED = "Field Inspection initiated";
     // document realted constants
     public static final String STAKE_HOLDER_CHECK_LIST_TYPE = "STAKEHOLDERDOCUMENT";
     public static final String CHECKLIST_TYPE_NOC = "NOC";
@@ -185,7 +188,6 @@ public class BpaConstants {
     public static final String AUTOCALCULATEFEEBYINSPECTION = "BPA_AUTOCALCULATE_FEE";
     public static final String BPASTATUS_MODULETYPE_REGISTRATIONFEE = "APPLICATIONFEE";
     public static final String BPASTATUS_REGISTRATIONFEE_APPROVED = APPROVED;
-    public static final String APPLN_STATUS_FIELD_INSPECTION_INITIATED = "Field Inspection initiated";
     public static final String BPA_ADM_FEE = "Application Fee";
     public static final String BPA_PERMIT_FEE = "Permit Fees";
     public static final String BPA_WELL_FEE = "Charges for Well";
@@ -213,11 +215,13 @@ public class BpaConstants {
     public static final String INDUSTRIAL = "Industrial";
     public static final String RESIDENTIAL = "Residential";
     public static final String MIXED_OCCUPANCY = "Mixed";
-    // notices file name
+    // notices file name and type
     public static final String BUILDINGPERMITFILENAME = "buildingpermit";
     public static final String BUILDINGDEVELOPPERMITFILENAME = "buildingdeveloppermit";
+    public static final String BPAREJECTIONFILENAME = "bparejectionnotice";
     public static final String PERMIT_ORDER_NOTICE_TYPE = "PermitOrder";
     public static final String BPA_DEMAND_NOTICE_TYPE = "DemandNotice";
+    public static final String BPA_REJECTION_NOTICE_TYPE = "RejectionNotice";
     // button name constants
     public static final String WF_APPROVE_BUTTON = "Approve";
     public static final String WF_REJECT_BUTTON = "REJECT";

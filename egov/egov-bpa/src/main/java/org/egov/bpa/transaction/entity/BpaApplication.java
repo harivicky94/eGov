@@ -221,6 +221,7 @@ public class BpaApplication extends StateAware {
     private String additionalPermitConditions;
     @OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<BpaNotice> bpaNotice = new ArrayList<>(0);
+    private String additionalRejectionReasons;
 
     @Override
     public Long getId() {
@@ -733,4 +734,12 @@ public class BpaApplication extends StateAware {
         getBpaNotice().add(bpaNotice);
     }
 
+    public String getAdditionalRejectionReasons() {
+        return additionalRejectionReasons;
+    }
+
+    public void setAdditionalRejectionReasons(String additionalRejectionReasons) {
+        this.additionalRejectionReasons = additionalRejectionReasons;
+    }
+    
 }

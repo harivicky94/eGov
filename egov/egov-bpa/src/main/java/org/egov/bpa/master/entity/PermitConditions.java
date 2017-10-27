@@ -69,7 +69,8 @@ public class PermitConditions extends AbstractAuditable {
     private Long id;
     private String code;
     private String description;
-    private String ordernumber;
+    private String orderNumber;
+    private String conditionType;
 
     public Long getId() {
         return id;
@@ -95,12 +96,19 @@ public class PermitConditions extends AbstractAuditable {
         this.description = description;
     }
 
-    public String getOrdernumber() {
-        return ordernumber;
+    public String getOrderNumber() {
+        return orderNumber;
     }
 
-    public void setOrdernumber(String ordernumber) {
-        this.ordernumber = ordernumber;
+    public void setOrdernumber(String orderNumber) {
+        this.orderNumber = orderNumber;
     }
 
+    public String getConditionType() {
+        return conditionType;
+    }
+
+    public void setConditionType(String conditionType) {
+        this.conditionType = conditionType;
+    }
 }

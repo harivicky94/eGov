@@ -89,57 +89,79 @@ jQuery(document)
 										var action = document
 												.getElementById("workFlowAction").value;
 										if (action == 'Reject') {
-											$('#Reject').attr('formnovalidate',
-													'true');
+											$('#Reject').attr('formnovalidate', 'true');
+											
 											bootbox
-													.confirm(
-															"Do you really want to Reject the application?",
-															function(result) {
-																if (result) {
-																	var approvalComent = $(
-																			'#approvalComent')
-																			.val();
-																	if (approvalComent == "") {
-																		bootbox.alert("Please enter rejection comments!");
-																		$('#approvalComent').focus();
-																		return true;
-																	} else {
-																		if (validateForm(validator))
-																			validateWorkFlowApprover(action);
-																		
-																		$('.loader-class').modal('show', {
-																			backdrop : 'static'
-																		});
-																		document.forms[0].submit();
-																	}
-																}
+											.confirm({
+												message : 'Do you really want to Reject the application ?',
+												buttons : {
+													'cancel' : {
+														label : 'No',
+														className : 'btn-danger'
+													},
+													'confirm' : {
+														label : 'Yes',
+														className : 'btn-primary'
+													}
+												},
+												callback : function(result) {
+													if (result) {
+														var approvalComent = $(
+																'#approvalComent')
+																.val();
+														if (approvalComent == "") {
+															bootbox.alert("Please enter rejection comments!");
+															$('#approvalComent').focus();
+															return true;
+														} else {
+															if (validateForm(validator))
+																validateWorkFlowApprover(action);
+															
+															$('.loader-class').modal('show', {
+																backdrop : 'static'
 															});
+															document.forms[0].submit();
+														}
+													} else {
+														e.stopPropagation();
+														e.preventDefault();
+													}
+												}
+											});
+											
 											return false;
 										}
 
 										if (action == 'CANCEL APPLICATION') {
-											$('#Cancel').attr('formnovalidate',
-													'true');
+											$('#Cancel').attr('formnovalidate', 'true');
 											bootbox
-													.confirm(
-															"Do you really want to Cancel the application?",
-															function(result) {
-																if (result) {
-																	var approvalComent = $('#approvalComent').val();
-																	if (approvalComent == "") {
-																		bootbox.alert("Please enter cancellation comments!");
-																		return true;
-																	} else {
-																		if (validateForm(validator))
-																			validateWorkFlowApprover(action);
-																		
-																		$('.loader-class').modal('show', {
-																			backdrop : 'static'
-																		});
-																		document.forms[0].submit();
-																	}
-																}
-															});
+											.confirm({
+												message : 'Do you really want to Cancel the application ?',
+												buttons : {
+													'cancel' : {
+														label : 'No',
+														className : 'btn-danger'
+													},
+													'confirm' : {
+														label : 'Yes',
+														className : 'btn-primary'
+													}
+												},
+												callback : function(result) {
+													if (result) {
+														if (validateForm(validator))
+															validateWorkFlowApprover(action);
+														
+														$('.loader-class').modal('show', {
+															backdrop : 'static'
+														});
+														document.forms[0].submit();
+													} else {
+														e.stopPropagation();
+														e.preventDefault();
+													}
+												}
+											});
 											return false;
 										}
 										validateWorkFlowApprover(action);
