@@ -2,6 +2,8 @@ package steps;
 
 import cucumber.api.PendingException;
 import cucumber.api.java8.En;
+import entities.employeeManagement.createEmployee.EmployeeDetails;
+import excelDataFiles.EmployeeManagementDetailsDataReader;
 import pages.DashboardPage;
 
 public class DashboardSteps extends BaseSteps implements En {
@@ -38,8 +40,14 @@ public class DashboardSteps extends BaseSteps implements En {
                 pageStore.get(DashboardPage.class).openApplication(scenarioContext.getAssessmentNumber());
             }
         });
+
         And("^he verifies that application not in his inbox$", () -> {
             pageStore.get(DashboardPage.class).verifyApplication(scenarioContext.getApplicationNumber());
+        });
+
+        And("^user on reset password screen enter the employee code as (\\w+)$", (String employeeDetails) -> {
+            EmployeeDetails employee = new EmployeeManagementDetailsDataReader(productionDumpDataFileName).getEmployeeDetails(employeeDetails);
+            pageStore.get(DashboardPage.class).enterPasswordResetDetails(employee);
         });
     }
 }

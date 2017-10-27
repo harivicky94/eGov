@@ -1,6 +1,6 @@
 Feature: Create Test Employees for Property Tax Module Testing
 
-  Scenario Outline: : Create Positions for Property Tax Module
+  Scenario Outline: Create Positions for Property Tax Module
 
     Given admin logs in
     And user will select the required screen as "Create Position" with condition as "/position"

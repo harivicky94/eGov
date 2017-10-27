@@ -1,6 +1,6 @@
 Feature: Create Test Employees for Collections Module Testing
 
-  Scenario Outline: : Create Positions for Collections Module
+  Scenario Outline: Create Positions for Collections Module
 
     Given admin logs in
     And user will select the required screen as "Create Position" with condition as "/position"

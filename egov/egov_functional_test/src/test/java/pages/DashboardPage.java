@@ -1,5 +1,6 @@
 package pages;
 
+import entities.employeeManagement.createEmployee.EmployeeDetails;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -92,10 +93,10 @@ public class DashboardPage extends BasePage {
     public void openApplication(String number) {
         driver.navigate().refresh();
         WebElement element = getApplicationRow(number);
-        try{
-            clickOnButton(element , driver);
-        }catch (Exception e){
-            jsClick(element,driver);
+        try {
+            clickOnButton(element, driver);
+        } catch (Exception e) {
+            jsClick(element, driver);
         }
         switchToNewlyOpenedWindow(driver);
     }
@@ -125,8 +126,27 @@ public class DashboardPage extends BasePage {
 
     public void verifyApplication(String applicationNumber) {
         driver.navigate().refresh();
-        enterText(inboxsearch,applicationNumber,driver);
+        enterText(inboxsearch, applicationNumber, driver);
         String actMsg = driver.findElement(By.xpath(".//*[@id='official_inbox']/tbody/tr/td")).getText();
         Arrays.asList(actMsg.split("\\ ")).contains("No");
+    }
+
+    public void enterPasswordResetDetails(EmployeeDetails employee) {
+        enterText(driver.findElement(By.id("username")), employee.getUserName(), driver);
+        try {
+            TimeUnit.SECONDS.sleep(2);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        clickOnButton(driver.findElement(By.className("tt-dropdown-menu")), driver);
+        enterText(driver.findElement(By.cssSelector("[name='password']")), "kurnool_eGov@123", driver);
+        clickOnButton(driver.findElement(By.id("submitbtn")), driver);
+        try {
+            TimeUnit.SECONDS.sleep(5);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        clickOnButton(driver.findElement(By.cssSelector(".btn.btn-default")), driver);
+        switchToPreviouslyOpenedWindow(driver);
     }
 }

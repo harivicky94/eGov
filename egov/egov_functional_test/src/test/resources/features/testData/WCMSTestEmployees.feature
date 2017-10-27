@@ -1,6 +1,6 @@
 Feature: Create Test Employees for Water Charges Module Testing
 
-  Scenario Outline: : Create Positions for Water Charges Module
+  Scenario Outline: Create Positions for Water Charges Module
 
     Given admin logs in
     And user will select the required screen as "Create Position" with condition as "/position"

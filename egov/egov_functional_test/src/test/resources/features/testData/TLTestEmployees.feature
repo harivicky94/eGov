@@ -1,6 +1,6 @@
 Feature: Create Test Employees for Trade License Module Testing
 
-  Scenario Outline: : Create Positions for Trade License Module
+  Scenario Outline: Create Positions for Trade License Module
 
     Given admin logs in
     And user will select the required screen as "Create Position" with condition as "/position"

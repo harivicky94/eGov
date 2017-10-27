@@ -1,6 +1,6 @@
 Feature: Create Test Employees for Marriage Registration Module Testing
 
-  Scenario Outline: : Create Positions for Marriage Registration Module
+  Scenario Outline: Create Positions for Marriage Registration Module
 
     Given admin logs in
     And user will select the required screen as "Create Position" with condition as "/position"

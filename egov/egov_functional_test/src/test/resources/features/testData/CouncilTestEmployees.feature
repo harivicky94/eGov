@@ -1,6 +1,6 @@
 Feature: Create Test Employees for Council Management Module Testing
 
-  Scenario Outline: : Create Positions for Council Management Module
+  Scenario Outline: Create Positions for Council Management Module
 
     Given admin logs in
     And user will select the required screen as "Create Position" with condition as "/position"

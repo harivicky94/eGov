@@ -1,6 +1,6 @@
 Feature: Create Employees for Testing
 
-  Scenario Outline: : Create Positions
+  Scenario Outline: Create Positions
 
     Given admin logs in
     And user will select the required screen as "Create Position" with condition as "/position"

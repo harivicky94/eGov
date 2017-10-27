@@ -1,6 +1,6 @@
 Feature: Create Test Employees for Sewerage Tax Module Testing
 
-  Scenario Outline: : Create Positions for Sewerage Tax Module
+  Scenario Outline: Create Positions for Sewerage Tax Module
 
     Given admin logs in
     And user will select the required screen as "Create Position" with condition as "/position"

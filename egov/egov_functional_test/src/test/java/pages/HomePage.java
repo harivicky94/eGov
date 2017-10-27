@@ -36,7 +36,7 @@ public class HomePage extends BasePage {
     public void loginAs(LoginDetails loginDetails) {
         enterText(userNameTextBox, loginDetails.getLoginId(), driver);
         enterText(passwordTextBox, loginDetails.getPassword(), driver);
-        driver.manage().deleteCookieNamed("JSESSIONID");
+//        driver.manage().deleteCookieNamed("JSESSIONID");
         try {
             TimeUnit.SECONDS.sleep(2);
         } catch (InterruptedException e) {
