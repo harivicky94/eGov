@@ -182,7 +182,8 @@ public class ApplicationBpaFeeCalculationService {
                                 if (checkIsWorkAlreadyStarted(application)
                                         && BpaConstants.getServicesForValidation().contains(bpaFee.getServiceType().getCode())) {
                                     amount = amount.multiply(BigDecimal.valueOf(3));
-                                } else if (checkIsEligibleForDiscountOnPermitFee(inputArea, bpaFee.getServiceType().getCode())) {
+                                } else if (checkIsEligibleForDiscountOnPermitFee(inputArea, bpaFee.getServiceType().getCode(),
+                                        application.getOccupancy().getDescription())) {
                                     amount = calculateAndGetDiscountedPermitFee(inputArea.multiply(feeAmount)); // 50% off if area
                                                                                                                 // less than 150
                                                                                                                 // mts
@@ -303,8 +304,9 @@ public class ApplicationBpaFeeCalculationService {
      * @param serviceTypeCode
      * @return is eligible for permit fee 50% waive off ?
      */
-    private Boolean checkIsEligibleForDiscountOnPermitFee(final BigDecimal inputUnit, final String serviceTypeCode) {
-        return BpaConstants.getServicesForValidation().contains(serviceTypeCode)
+    private Boolean checkIsEligibleForDiscountOnPermitFee(final BigDecimal inputUnit, final String serviceTypeCode,
+            final String occupancyType) {
+        return RESIDENTIAL.equalsIgnoreCase(occupancyType) && BpaConstants.getServicesForValidation().contains(serviceTypeCode)
                 && inputUnit.compareTo(BigDecimal.valueOf(150)) <= 0 ? true : false;
     }
 
