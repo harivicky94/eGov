@@ -20,7 +20,7 @@ Feature: Create/search Advertisement
 
    # Create Advertisement
 
-#    And creator logs in
+    And creator logs in
     And user will select the required screen as "create advertisement"
     And he enters advertisement details as <advertisementDetails>
     And he enter agency name
@@ -32,7 +32,7 @@ Feature: Create/search Advertisement
     Then user will be notified by "successfully"
     And current user logs out
 
-    And commissioner logs in
+    And AdTaxCommissioner logs in
     And he chooses to act upon above application number
     And he approves the advertisement application
     Then user will be notified by "approved"
@@ -40,7 +40,7 @@ Feature: Create/search Advertisement
 
   #  Collect Advertisement Tax by Agency wise
 
-    And creator logs in
+    And AdTaxJuniorAssistant2 logs in
     And user will select the required screen as "Collect Advertisement Tax"
     And he choose to collect advertisement tax by agency wise
     And he selects the agency for Tax/Fees collection

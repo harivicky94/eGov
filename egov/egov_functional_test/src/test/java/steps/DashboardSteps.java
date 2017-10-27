@@ -45,7 +45,7 @@ public class DashboardSteps extends BaseSteps implements En {
             pageStore.get(DashboardPage.class).verifyApplication(scenarioContext.getApplicationNumber());
         });
 
-        And("^user on reset password screen enter the employee code as (\\w+)$", (String employeeDetails) -> {
+        And("^user on reset password screen enter the employee name as (\\w+)$", (String employeeDetails) -> {
             EmployeeDetails employee = new EmployeeManagementDetailsDataReader(productionDumpDataFileName).getEmployeeDetails(employeeDetails);
             pageStore.get(DashboardPage.class).enterPasswordResetDetails(employee);
         });

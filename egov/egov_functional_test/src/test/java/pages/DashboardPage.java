@@ -132,7 +132,7 @@ public class DashboardPage extends BasePage {
     }
 
     public void enterPasswordResetDetails(EmployeeDetails employee) {
-        enterText(driver.findElement(By.id("username")), employee.getUserName(), driver);
+        enterText(driver.findElement(By.id("username")), employee.getEmployeeName(), driver);
         try {
             TimeUnit.SECONDS.sleep(2);
         } catch (InterruptedException e) {

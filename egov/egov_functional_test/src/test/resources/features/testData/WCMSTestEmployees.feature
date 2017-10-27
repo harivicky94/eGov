@@ -26,6 +26,8 @@ Feature: Create Test Employees for Water Charges Module Testing
     And user will select the required screen as "Search User Role" with condition as "userrole/search"
     And user selects user name for searching role as <employeeDetails>
     And user updates particular roles for an employee as <assignmentDetails>
+    And user will select the required screen as "Reset Password"
+    And user on reset password screen enter the employee name as <employeeDetails>
     And current user logs out
 
     Examples:
