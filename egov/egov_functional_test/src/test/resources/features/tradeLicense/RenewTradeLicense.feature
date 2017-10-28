@@ -1,88 +1,6 @@
 Feature: Renewal of trade license
 
 
-#  @TradeLicense
-  Scenario Outline: Renewal of license with demand generation
-
-    Given TL_PHS_JA logs in
-    And user will select the required screen as "Create New License"
-    And he enters trade owner details of new license <tradeDetailsData>
-    And he enters trade location details of new license <tradeLocationData>
-    And he enters trade details of new license <tradeDetailsData1>
-    And he saves the application
-    And he copy trade application number
-
-    And user will select the required screen as "Search Trade License"
-    And he search existing application number
-    And he choose action "Collect Fees"
-    And he choose to payTax of applicationNumber
-    And he chooses to act upon above application number
-
-    And he forwards for approver TL_SI
-    And he confirms to proceed
-    And he closes acknowledgement page
-    And current user logs out
-
-    When TL_PHS_SI logs in
-    And he chooses to act upon above application number
-    And he forwards for approver TL_Commissioner
-    And he confirms to proceed
-    And he closes acknowledgement page
-    And current user logs out
-
-    When TL_ADM_Commissioner logs in
-    And he chooses to act upon above application number
-    And he approves application
-    And he confirms to proceed
-    And he closes acknowledgement page
-    And current user logs out
-
-    When TL_PHS_JA logs in
-    And he chooses to act upon above application number
-    And he generates the license certificate
-
-    And user will select the required screen as "Search Trade License"
-    And he search existing application number
-    And he choose action "Generate Demand"
-    And he generates demand
-    And user will be notified by "successfully"
-    And he choose action "Renew License"
-    And he copy trade license number
-    And he choose to renew trade license
-    And he choose to search with license number
-    And he choose action "Collect Fees"
-    And he choose to payTax of applicationNumber
-    And he chooses to act upon above application number
-
-    And he forwards for approver TL_SI
-    And he confirms to proceed
-    And he closes acknowledgement page
-    And current user logs out
-
-    When TL_PHS_SI logs in
-    And he chooses to act upon above application number
-    And he forwards for approver TL_Commissioner
-    And he confirms to proceed
-    And he closes acknowledgement page
-    And current user logs out
-
-    When TL_ADM_Commissioner logs in
-    And he chooses to act upon above application number
-    And he approves application
-    And he confirms to proceed
-    And he closes acknowledgement page
-    And current user logs out
-
-    When TL_PHS_JA logs in
-    And he chooses to act upon above application number
-    And he generates the license certificate
-    And current user logs out
-
-    Examples:
-      | tradeDetailsData         | tradeLocationData           | tradeDetailsData1        |
-      | ownerDetailsTradeLicense | locationDetailsTradeLicense | tradeDetailsTradeLicense |
-
-
     # Trade License Renewal #
   @Sanity @TradeLicense @LicenseRenewal @New
   Scenario Outline: Renewal of Trade License with legacy license
@@ -130,11 +48,14 @@ Feature: Renewal of trade license
     And he approves application
     And he confirms to proceed
     And he closes acknowledgement page
-    And current user logs out
 
-    When TL_PHS_JA logs in
-    And he chooses to act upon above application number
-    And he generates the license certificate
+    And user will select the required screen as "Search Trade License"
+    And he search existing application number
+    And he verifies the application status
+    And user will be notified by "Active"
+    And he verifies the License active
+    And user will be notified by "YES"
+    And he closes search screen
     And current user logs out
 
     Examples:
@@ -288,7 +209,7 @@ Feature: Renewal of trade license
       | ownerDetailsTradeLicense | locationDetailsTradeLicense | tradeDetailsTradeLicense |
 
 
-  @Sanity @TradeLicense @LicenseRenewal
+#  @Sanity @TradeLicense @LicenseRenewal
   Scenario Outline: Renewal of Trade License with legacy license and commissioner rejects it
 
     Given TL_PHS_JA logs in
@@ -510,15 +431,21 @@ Feature: Renewal of trade license
     And he choose to search with license number
     And he choose action "Collect Fees"
     And he choose to payTax of applicationNumber
-    And he chooses to act upon above application number
-    And he generates the license certificate
+
+    And user will select the required screen as "Search Trade License"
+    And he search existing application number
+    And he verifies the application status
+    And user will be notified by "Active"
+    And he verifies the License active
+    And user will be notified by "YES"
+    And he closes search screen
     And current user logs out
 
     Examples:
       | tradeDetailsData         | tradeLocationData           | tradeDetailsData1        |
       | ownerDetailsTradeLicense | locationDetailsTradeLicense | tradeDetailsTradeLicense |
 
-  @Sanity @TradeLicense @LicenseRenewal
+#  @Sanity @TradeLicense @LicenseRenewal
   Scenario Outline: Renewal of Trade License with legacy license and rejection before second level fee collection
 
     Given TL_PHS_JA logs in

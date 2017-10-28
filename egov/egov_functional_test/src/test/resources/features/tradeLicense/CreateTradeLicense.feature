@@ -23,7 +23,7 @@ Feature: Create Trade License
       | ownerDetailsTradeLicense | locationDetailsTradeLicense | tradeDetailsTradeLicense |
 
   # Create Trade License with work flow #
-  @Sanity @TradeLicense @NewLicense @New
+  @Sanity @TradeLicense @NewLicense @Test
   Scenario Outline: Register User create trade license with work flows
 
 #    Given TL_PHS_JA logs in
