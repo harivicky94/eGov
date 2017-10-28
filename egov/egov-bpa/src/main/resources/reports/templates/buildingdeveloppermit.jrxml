@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-10-04T12:43:30 -->
+<!-- 2017-10-28T19:33:27 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="buildingpermit" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="576a1e58-ecb3-4d56-971a-5d1fe019af29">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -25,6 +25,7 @@
 	<parameter name="serviceTypeDesc" class="java.lang.String"/>
 	<parameter name="permitConditions" class="java.lang.String"/>
 	<parameter name="certificateValidity" class="java.lang.String"/>
+	<parameter name="additionalNotes" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -163,14 +164,30 @@
 				<textFieldExpression><![CDATA[$P{cityName}]]></textFieldExpression>
 			</textField>
 		</band>
-		<band height="50">
-			<textField>
-				<reportElement x="1" y="0" width="555" height="50" uuid="324377c1-bc50-463e-8afd-a77c55f7384f"/>
-				<textElement textAlignment="Left">
+		<band height="31">
+			<textField isStretchWithOverflow="true">
+				<reportElement x="0" y="6" width="555" height="25" uuid="324377c1-bc50-463e-8afd-a77c55f7384f"/>
+				<textElement textAlignment="Justified">
 					<font fontName="SansSerif" size="10" isBold="true" isItalic="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{certificateValidity}]]></textFieldExpression>
 			</textField>
+		</band>
+		<band height="78">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="0" y="28" width="556" height="50" isRemoveLineWhenBlank="true" uuid="9632dfde-1026-4871-a33e-ef580281554c"/>
+				<textElement textAlignment="Justified">
+					<font fontName="SansSerif" size="10" isBold="false" isItalic="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{additionalNotes}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="10" width="84" height="19" uuid="2a4bc9eb-498a-4435-87be-6a73abc23144"/>
+				<textElement>
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Note : ]]></text>
+			</staticText>
 		</band>
 	</detail>
 </jasperReport>

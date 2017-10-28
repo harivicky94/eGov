@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="buildingpermit" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="576a1e58-ecb3-4d56-971a-5d1fe019af29">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="76"/>
+	<property name="ireport.y" value="168"/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<import value="org.egov.infra.reporting.util.*"/>
 	<import value="org.egov.infstr.utils.*"/>
@@ -30,6 +30,7 @@
 	<parameter name="duplicateWatermarkPath" class="java.lang.String"/>
 	<parameter name="designation" class="java.lang.String"/>
 	<parameter name="permitConditions" class="java.lang.String"/>
+	<parameter name="additionalNotes" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -135,7 +136,7 @@
 		</band>
 		<band height="35">
 			<subreport>
-				<reportElement x="0" y="0" width="555" height="35" isRemoveLineWhenBlank="true" uuid="1f313474-b095-4a9a-891c-f4a17562ea2b">
+				<reportElement x="0" y="0" width="544" height="35" isRemoveLineWhenBlank="true" uuid="1f313474-b095-4a9a-891c-f4a17562ea2b">
 					<printWhenExpression><![CDATA[new Boolean($F{applicationFloorDetails}.size()!= 0)]]></printWhenExpression>
 				</reportElement>
 				<subreportParameter name="occupancy">
@@ -183,14 +184,30 @@
 				<textFieldExpression><![CDATA[$P{currentDate}]]></textFieldExpression>
 			</textField>
 		</band>
-		<band height="50">
-			<textField>
-				<reportElement x="0" y="0" width="555" height="50" uuid="2b2b25e5-a5a3-4cd1-9a1e-ac2a185f56aa"/>
-				<textElement>
+		<band height="19">
+			<textField isStretchWithOverflow="true">
+				<reportElement x="0" y="0" width="555" height="19" uuid="2b2b25e5-a5a3-4cd1-9a1e-ac2a185f56aa"/>
+				<textElement textAlignment="Justified">
 					<font fontName="SansSerif" size="10" isBold="true" isItalic="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{certificateValidity}]]></textFieldExpression>
 			</textField>
+		</band>
+		<band height="82">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="0" y="32" width="555" height="50" isRemoveLineWhenBlank="true" uuid="ddf1c398-b89d-4848-a77a-00127ab0084d"/>
+				<textElement textAlignment="Justified">
+					<font fontName="SansSerif" size="10" isBold="false" isItalic="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{additionalNotes}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="13" width="83" height="19" uuid="4f8885ad-48ed-402b-bfb3-0593a059f2e5"/>
+				<textElement>
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Note : ]]></text>
+			</staticText>
 		</band>
 	</detail>
 </jasperReport>

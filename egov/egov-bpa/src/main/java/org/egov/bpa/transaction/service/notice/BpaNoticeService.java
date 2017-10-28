@@ -49,6 +49,7 @@ package org.egov.bpa.transaction.service.notice;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_MODULE_TYPE;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_REJECTED;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CANCELLED;
 import static org.egov.bpa.utils.BpaConstants.BPADEMANDNOTICETITLE;
 import static org.egov.bpa.utils.BpaConstants.BPAREJECTIONFILENAME;
 import static org.egov.bpa.utils.BpaConstants.BPA_ADM_FEE;
@@ -259,8 +260,12 @@ public class BpaNoticeService {
                 bpaApplication.getOwner() != null && !bpaApplication.getOwner().getUser().getAddress().isEmpty()
                         ? bpaApplication.getOwner().getUser().getAddress().get(0).getStreetRoadLine() : "");
         reportParams.put("applicationDate", DateUtils.getDefaultFormattedDate(bpaApplication.getApplicationDate()));
-        reportParams.put("permitConditions", buildPermitConditions(bpaApplication));
-        reportParams.put("rejectionReasons", buildRejectionReasons(bpaApplication));
+        if(APPLICATION_STATUS_CANCELLED.equalsIgnoreCase(bpaApplication.getStatus().getCode())) {
+            reportParams.put("rejectionReasons", buildRejectionReasons(bpaApplication));
+        } else {
+            reportParams.put("permitConditions", buildPermitConditions(bpaApplication));
+        }
+        reportParams.put("additionalNotes", getBuildingCommonPermitNotes());
         String amenities = bpaApplication.getApplicationAmenity().stream().map(ServiceType::getDescription)
                 .collect(Collectors.joining(", "));
         if (bpaApplication.getApplicationAmenity().isEmpty()) {
@@ -310,8 +315,16 @@ public class BpaNoticeService {
             validityExpiryDate = calculateCertExpryDate(new DateTime(planPermissionDate),
                     getMessageFromPropertyFile("common.services.certificate.expiry"));
         }
-        certificateValidatiy.append("\n\nNote : This certificate is valid upto ").append(validityExpiryDate).append(" Only.");
+        certificateValidatiy.append("\n\nValidity : This certificate is valid upto ").append(validityExpiryDate).append(" Only.");
         return certificateValidatiy.toString();
+    }
+    
+    private String getBuildingCommonPermitNotes() {
+        StringBuilder permitNotes = new StringBuilder();
+        permitNotes.append(getMessageFromPropertyFile("build.permit.note1"))
+                .append(getMessageFromPropertyFile("build.permit.note2")).append(getMessageFromPropertyFile("build.permit.note3"))
+                .append(getMessageFromPropertyFile("build.permit.note4"));
+        return permitNotes.toString();
     }
 
     private String buildPermitConditions(final BpaApplication bpaApplication) {
