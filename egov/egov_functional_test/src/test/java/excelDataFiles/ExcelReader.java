@@ -85,10 +85,12 @@ public class ExcelReader {
 
         String id = convertNumericToString(registeredUserSheet, dataRow, "id");
         String password = getCellData(registeredUserSheet, dataRow, "password").getStringCellValue();
-        boolean hasZone = getCellData(registeredUserSheet, dataRow, "hasZone").getBooleanCellValue();
+//        boolean hasZone = getCellData(registeredUserSheet, dataRow, "hasZone").getBooleanCellValue();
 
         return new LoginDetailsBuilder().withLoginId(id).withPassword(password)
-                .withHasZone(hasZone).build();
+//                .withHasZone(hasZone)
+                .build();
+
     }
 
     public ApprovalDetails getFinanceApprovalDetails(String approvalDetailsDataId) {
