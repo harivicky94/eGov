@@ -3,8 +3,7 @@ Feature: Create/renewal/closure of sewerage connection
   User should be able to create/change/closure of sewerage connection
 
   Background:It will run the data entry screen of property tax
-
-    Given commissioner logs in
+    Given PTISCommissioner logs in
     And user will select the required screen as "Data entry screen" with condition as "ptis"
     And he creates a new assessment for a private residential property
     Then dataEntry Details saved successfully
@@ -15,7 +14,7 @@ Feature: Create/renewal/closure of sewerage connection
   @SewerageTax @Sanity
   Scenario Outline: create change closure of sewerage connection
 
-    Given creator logs in
+    Given SewerageJuniorAssistant logs in
     And user will select the required screen as "Property Tax"
     And he chooses to collect tax for above assessment number
     And he chooses to pay tax
@@ -32,20 +31,20 @@ Feature: Create/renewal/closure of sewerage connection
     And he collect the charges and closes the acknowledgement
     And current user logs out
 
-    When assistantEngineer logs in
+    When SewerageAssistantEngineer logs in
     And he chooses to act upon above application number
     And he forward to DEE and close the acknowledgement
     Then user will be notified by "forwarded"
     And current user logs out
 
-    When deputyExecutiveEngineer logs in
+    When SewerageDeputyExecutiveEngineer logs in
     And he chooses to act upon above application number
     And he approve the above sewerage application
     And he closes the sewerage acknowledgement
     Then user will be notified by "successfully"
     And current user logs out
 
-    When creator logs in
+    When SewerageJuniorAssistant logs in
     And he chooses to act upon above application number
     And he generates estimation notice for above sewerage application
     And user will select the required screen as "Collect Sewerage Charges"
@@ -57,21 +56,21 @@ Feature: Create/renewal/closure of sewerage connection
     Then user will be notified by "forwarded"
     And current user logs out
 
-    When Executive_engineer logs in
+    When SewerageExecutiveEngineer logs in
     And he chooses to act upon above application number
     And he approve the above sewerage application
     And he closes the sewerage acknowledgement
     Then user will be notified by "successfully"
     And current user logs out
 
-    When creator logs in
+    When SewerageJuniorAssistant logs in
     And he chooses to act upon above application number
     And he generate workOrder for above sewerage connection
     And he forward to assistant engineer and closes the acknowledgement
     Then user will be notified by "forwarded"
     And current user logs out
 
-    When assistantEngineer logs in
+    When SewerageAssistantEngineer logs in
     And he chooses to act upon above application number
     And he execute connection and closes the acknowledgement
     Then user will be notified by "completed"
@@ -81,7 +80,7 @@ Feature: Create/renewal/closure of sewerage connection
      #############  change of sewerage connection ###########
      #########################################################
 
-    Given creator logs in
+    Given SewerageJuniorAssistant logs in
     And user will select the required screen as "search connection" with condition as "stms"
     And he search for above sewerage connection
     And he increses the number of closets <changeDocuments>
@@ -93,20 +92,20 @@ Feature: Create/renewal/closure of sewerage connection
     And he collect the charges and closes the acknowledgement
     And current user logs out
 
-    When assistantEngineer logs in
+    When SewerageAssistantEngineer logs in
     And he chooses to act upon above application number
     And he forward to DEE for change and close the acknowledgement
     Then user will be notified by "forwarded"
     And current user logs out
 
-    When deputyExecutiveEngineer logs in
+    When SewerageDeputyExecutiveEngineer logs in
     And he chooses to act upon above application number
     And he approve the above sewerage application
     And he closes the sewerageChange acknowledgement
     Then user will be notified by "successfully"
     And current user logs out
 
-    When creator logs in
+    When SewerageJuniorAssistant logs in
     And he chooses to act upon above application number
     And he generates estimation notice for above sewerage application
 
@@ -119,21 +118,21 @@ Feature: Create/renewal/closure of sewerage connection
     Then user will be notified by "forwarded"
     And current user logs out
 
-    When Executive_engineer logs in
+    When SewerageExecutiveEngineer logs in
     And he chooses to act upon above application number
     And he approve the above sewerage application
     And he closes the sewerageChange acknowledgement
     Then user will be notified by "successfully"
     And current user logs out
 
-    When creator logs in
+    When SewerageJuniorAssistant logs in
     And he chooses to act upon above application number
     And he generate workOrder for above sewerage connection
     And he forward to assistant engineer for change in closets and closes the acknowledgement
     Then user will be notified by "forwarded"
     And current user logs out
 
-    When assistantEngineer logs in
+    When SewerageAssistantEngineer logs in
     And he chooses to act upon above application number
     And he execute connection for change and closes the acknowledgement
     Then user will be notified by "completed"
@@ -143,7 +142,7 @@ Feature: Create/renewal/closure of sewerage connection
      #############  closure of sewerage connection ###########
      #########################################################
 
-    Given creator logs in
+    Given SewerageJuniorAssistant logs in
     And user will select the required screen as "search connection" with condition as "stms"
     And he search for above sewerage application for closure
     And he put remarks and forward the application
@@ -151,26 +150,26 @@ Feature: Create/renewal/closure of sewerage connection
     Then user will be notified by "forwarded"
     And current user logs out
 
-    When assistantEngineer logs in
+    When SewerageAssistantEngineer logs in
     And he chooses to act upon above application number
     And he forwards to DEE for closure and close the acknowledgement
     Then user will be notified by "forwarded"
     And current user logs out
 
-    When deputyExecutiveEngineer logs in
+    When SewerageDeputyExecutiveEngineer logs in
     And he chooses to act upon above application number
     And he forwards to executive engineer for closure and close the acknowledgement
     Then user will be notified by "forwarded"
     And current user logs out
 
-    When Executive_engineer logs in
+    When SewerageExecutiveEngineer logs in
     And he chooses to act upon above application number
     And he approve the above sewerage application
     And he closes the seweargeClosure acknowledgement
     Then user will be notified by "successfully"
     And current user logs out
 
-    When creator logs in
+    When SewerageJuniorAssistant logs in
     And he chooses to act upon above application number
     And he generates closure notice
     And current user logs out
@@ -184,16 +183,14 @@ Feature: Create/renewal/closure of sewerage connection
 #  @SewerageTax @Sanity
   Scenario: Generate demand bill for legacy sewerage connection
 
-    Given commissioner logs in
+    Given PTISCommissioner logs in
     And user will select the required screen as "Data Entry Screen" with condition as "stms"
     And he enter details for legacy sewerage connection
     And he submit the application of legacy sewerage connection and closes the acknowledgement
     Then user will be notified by "successfully."
     And current user logs out
 
-    When creator logs in
+    When SewerageJuniorAssistant logs in
     And user will select the required screen as "search connection" with condition as "stms"
     And he search application and generate demand bill
     And current user logs out
-
-

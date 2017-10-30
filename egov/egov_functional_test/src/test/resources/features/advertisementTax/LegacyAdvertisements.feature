@@ -2,10 +2,10 @@ Feature: Create/Update LegacyAdvertisements
   As a registered user of system
   I am able to create/update legacyAdvertisements
 
-  @AdvertisementTax  @WIP
+  @AdvertisementTax  @Sanity
   Scenario Outline: Create/Update LegacyAdvertisements
 
-    When admin logs in
+    When AdTaxJuniorAssistant1 logs in
     And user will select the required screen as "create legacy advertisement"
     And he enters advertisement details as <advertisementDetails>
     And he enters permission details as <permissionDetails>
@@ -27,10 +27,10 @@ Feature: Create/Update LegacyAdvertisements
       | advertisement2       | permission2       | locality2       | structure2       |
       | advertisement3       | permission3       | locality3       | structure3       |
 
-  @AdvertisementTax  @WIP
+  @AdvertisementTax  @Sanity
   Scenario Outline: Create/Renewal LegacyAdvertisements
 
-    When admin logs in
+    When AdTaxJuniorAssistant1 logs in
     And user will select the required screen as "create legacy advertisement"
     And he enters advertisement details as <advertisementDetails>
     And he enters permission details as <permissionDetails>
@@ -46,7 +46,7 @@ Feature: Create/Update LegacyAdvertisements
     Then user will be notified by "forwarded"
     And current user logs out
 
-    And commissioner logs in
+    And AdTaxCommissioner logs in
     And he chooses to act upon above application number
     And he approves the advertisement application
     Then user will be notified by "Successful"

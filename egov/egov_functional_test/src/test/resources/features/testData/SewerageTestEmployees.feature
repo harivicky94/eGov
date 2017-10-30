@@ -13,7 +13,7 @@ Feature: Create Test Employees for Sewerage Tax Module Testing
       | ADMINISTRATION | Junior Assistant          | JA-Sewarage  |
       | ENGINEERING    | Assistant Engineer        | AE-Sewarage  |
       | ENGINEERING    | Deputy Executive Engineer | DEE-Sewarage |
-      | ENGINEERING    | Executive Engineer        | EE-Sewarage  |
+      | ENGINEERING    | Executive Engineer        | EE-Sewerage  |
 
   Scenario Outline: Create Employees for Sewerage Tax Module
 

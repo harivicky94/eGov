@@ -108,13 +108,16 @@ public class EmployeeDetailsPage extends BasePage {
     private WebElement aadhaarNumberTextBox;
 
     @FindBy(id = "bank")
-    private WebElement bankBox;
+    private WebElement bankName;
 
     @FindBy(id = "bankBranch")
-    private WebElement bankBranchBox;
+    private WebElement bankBranchName;
 
     @FindBy(id = "bankAccount")
     private WebElement bankAccountNumberTextBox;
+
+    @FindBy(id = "ifscCode")
+    private WebElement IFSCCode;
 
     @FindBy(id = "user.altContactNumber")
     private WebElement altContactNumberTextBox;
@@ -246,7 +249,10 @@ public class EmployeeDetailsPage extends BasePage {
         enterText(gpfNoTextBox, get6DigitRandomInt(), driver);
         enterText(aadhaarNumberTextBox, "111111" + get6DigitRandomInt(), driver);
         enterText(panNumberTextBox, "ABCDE" + Integer.toString(Integer.parseInt(get6DigitRandomInt()) / 100) + "F", driver);
+        selectFromDropDown(bankName, "STATE BANK OF INDIA", driver);
+        selectFromDropDown(bankBranchName, "Main Branch Kurnool", driver);
         enterText(bankAccountNumberTextBox, "10101010101010" + get6DigitRandomInt(), driver);
+        enterText(IFSCCode,"ABCD0"+get6DigitRandomInt() ,driver);
         enterText(permanentAddressTextBox, employeeDetails.getPermanentAddress(), driver);
         enterText(permanentCityTextBox, employeeDetails.getPermanentCity(), driver);
 //        enterText(permanentPincodeTextBox, employeeDetails.getPermanentPincode(), driver);
@@ -335,6 +341,9 @@ public class EmployeeDetailsPage extends BasePage {
         enterText(gpfNoTextBox, get6DigitRandomInt(), driver);
         enterText(aadhaarNumberTextBox, "111111" + get6DigitRandomInt(), driver);
         enterText(panNumberTextBox, "ABCDE" + Integer.toString(Integer.parseInt(get6DigitRandomInt()) / 100) + "F", driver);
+        selectFromDropDown(bankName, "STATE BANK OF INDIA", driver);
+        selectFromDropDown(bankBranchName, "Main Branch Kurnool", driver);
+        enterText(IFSCCode,"ABCD0"+get6DigitRandomInt() ,driver);
         enterText(bankAccountNumberTextBox, "10101010101010" + get6DigitRandomInt(), driver);
         enterText(permanentAddressTextBox, employeeDetails.getPermanentAddress(), driver);
         enterText(permanentCityTextBox, employeeDetails.getPermanentCity(), driver);

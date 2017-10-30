@@ -44,7 +44,7 @@ public class LegacyAdvertisementsSteps extends BaseSteps implements En {
         And("^he request for renewal and forward to commissioner$", () -> {
             pageStore.get(LegacyAdvertisementsPage.class).requestForRenewal();
 
-            String approverDetailsDataId = "commissioner1";
+            String approverDetailsDataId = "AdTaxCommissioner";
 
             ApprovalDetails approverDetails = new ExcelReader(approvalDetailsTestDataFileName).getApprovalDetails(approverDetailsDataId);
             pageStore.get(ApprovalDetailsPage.class).enterApprovalDetails(approverDetails);
