@@ -13,6 +13,7 @@ Feature: Create Test Employees for Property Tax Module Testing
       | REVENUE        | Junior Assistant     | JA-PTIS   |
       | REVENUE        | Bill Collector       | BC-PTIS   |
       | REVENUE        | UD Revenue Inspector | RI-PTIS   |
+      | REVENUE        | Revenue Officer      | RO-PTIS   |
       | ADMINISTRATION | Commissioner         | Comm-PTIS |
 
   Scenario Outline: Create Employees for Property Tax Module
@@ -36,3 +37,4 @@ Feature: Create Test Employees for Property Tax Module Testing
       | PTISBillCollector    | PTISBillCollector    | JurisdictionList2   |
       | PTISRevenueInspector | PTISRevenueInspector | JurisdictionList3   |
       | PTISRevenueOfficer   | PTISRevenueOfficer   | JurisdictionList4   |
+      | PTISCommissioner     | PTISCommissioner     | JurisdictionList3   |

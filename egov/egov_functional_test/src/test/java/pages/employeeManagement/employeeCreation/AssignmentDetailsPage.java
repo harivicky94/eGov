@@ -169,4 +169,12 @@ public class AssignmentDetailsPage extends BasePage {
         clickOnButton(roleCloseButton, webDriver);
         switchToPreviouslyOpenedWindow(webDriver);
     }
+
+    private String checkLastCharacterIsSpaceOrNot(String s) {
+        int size = s.length();
+        if (String.valueOf(s.charAt(size - 1)).equals(" "))
+            return s.replace(s.substring(s.length() - 1), "");
+        else
+            return s;
+    }
 }

@@ -378,7 +378,7 @@ public class PropertyDetailsPage extends BasePage {
         selectFromDropDown(floorNumberSelection, floorDetails.getFloorNumber(), webDriver);
         selectFromDropDown(classificationOfBuildingSelection, floorDetails.getClassificationOfBuilding(), webDriver);
         selectFromDropDown(natureOfUsageSelection, floorDetails.getNatureOfUsage(), webDriver);
-        enterText(firmNameTextBox, floorDetails.getFirmName(), webDriver);
+//        enterText(firmNameTextBox, floorDetails.getFirmName(), webDriver);
         selectFromDropDown(occupancySelection, floorDetails.getOccupancy(), webDriver);
         enterText(occupantNameTextBox, floorDetails.getOccupantName(), webDriver);
         enterDate(constructionDateTextBox, floorDetails.getConstructionDate(), webDriver);
