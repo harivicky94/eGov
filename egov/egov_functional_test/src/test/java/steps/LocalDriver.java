@@ -34,6 +34,7 @@ public class LocalDriver {
         if (browser.equals("chrome")) {
             setChromeDriverBasedOnOperatingSystem();
             ChromeOptions options = new ChromeOptions();
+            options.addArguments("--incognito");
             options.addArguments("start-maximized");
             options.addArguments("allow-running-insecure-content");
             options.addArguments("--disable-extensions");
