@@ -9,7 +9,7 @@ Feature: Create New Property
   @Sanity @PropertyTax @new
   Scenario Outline: Registered user creating a new property in the system
 
-    Given juniorAssistant logs in
+    Given PTISJuniorAssistant logs in
     And user will select the required screen as "Create New Property"
     And he enters property header details as <propertyHeaderDetails>
     And he enters owner details for the first owner as <ownerDetails>
@@ -21,30 +21,30 @@ Feature: Create New Property
     And he enters floor details as <floorDetails>
     And he click on floors Details entered
     And he enters document type details as <documentDetails>
-    And he forwards for approval to billCollector
+    And he forwards for approval to PTISBillCollector
     And he will copy the acknowledgement message with assessment number createProperty-create
     Then user will be notified by "Successfully"
     And current user logs out
 
-    When billCollector logs in
+    When PTISBillCollector logs in
     And he chooses to act upon above assessment number
-    And he forwards for approval to revenueInspector
+    And he forwards for approval to PTISRevenueInspector
     And current user closes acknowledgement
     And current user logs out
 
-    When revenueInspector logs in
+    When PTISRevenueInspector logs in
     And he chooses to act upon above assessment number
     And he forwards for approval to revenueOfficer
     And current user closes acknowledgement
     And current user logs out
 
-    When revenueOfficer logs in
+    When PTISRevenueOfficer logs in
     And he chooses to act upon above assessment number
-    And he forwards for approval to commissioner
+    And he forwards for approval to PTISCommissioner
     And current user closes acknowledgement
     And current user logs out
 
-    When commissioner logs in
+    When PTISCommissioner logs in
     And he chooses to act upon above assessment number
     And he approved the property with remarks "property approved"
     Then create property details get saved successfully by generating assesssment number
