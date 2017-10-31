@@ -145,7 +145,7 @@ public class BasePage {
 
     protected void switchToNewlyOpenedWindow(WebDriver driver) {
         await().atMost(20, SECONDS).until(() -> driver.getWindowHandles().size() > 1);
-        driver.manage().window().maximize();
+//        driver.manage().window().maximize();
         for (String winHandle : driver.getWindowHandles()) {
             driver.switchTo().window(winHandle);
         }

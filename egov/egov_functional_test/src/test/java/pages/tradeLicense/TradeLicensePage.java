@@ -257,7 +257,13 @@ public class TradeLicensePage extends BasePage {
 //        clickOnButton(printClose, webDriver);
         await().atMost(20,TimeUnit.SECONDS).until(()->webDriver.findElements(By.className("title2")).size()==1);
         webDriver.close();
-        switchToPreviouslyOpenedWindow(webDriver);
+//        clickOnButton(webDriver.findElement(By.name("buttonClose")), webDriver);
+        for (String winHandle : webDriver.getWindowHandles()) {
+            String title = webDriver.switchTo().window(winHandle).getCurrentUrl();
+            if (title.equals(getEnvironmentURL() + "/tl/search/license#no-back")) {
+                break;
+            }
+        }
         clickOnButton(closeSearch, webDriver);
         switchToPreviouslyOpenedWindow(webDriver);
         webDriver.navigate().refresh();
