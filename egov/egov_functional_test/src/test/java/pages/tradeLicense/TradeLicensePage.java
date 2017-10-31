@@ -418,9 +418,13 @@ public class TradeLicensePage extends BasePage {
     }
 
     public void applicationRejection() {
-        enterText(approverRemarkTextBox, "Rejected", webDriver);
-        clickOnButton(rejectButton, webDriver);
+        if (webDriver.findElements(By.name("approverComments")).size() == 1) {
+            enterText(webDriver.findElement(By.name("approverComments")), "Comments", webDriver);
+            clickOnButton(rejectButton, webDriver);
+        } else
+            clickOnButton(rejectButton, webDriver);
     }
+
 
     public String applicationStatus() {
         String status = webDriver.findElement(By.xpath(".//*[@id='tblSearchTrade']/tbody/tr[1]/td[11]")).getText();
@@ -438,11 +442,11 @@ public class TradeLicensePage extends BasePage {
     }
 
     public void saveApplication() {
-//        if (webDriver.findElements(By.name("approverComments")).size() == 1) {
+        if (webDriver.findElements(By.name("approverComments")).size() == 1) {
             enterText(webDriver.findElement(By.name("approverComments")), "Comments", webDriver);
             clickOnButton(createButton, webDriver);
-//        } else
-//            clickOnButton(saveButton, webDriver);
+        } else
+            clickOnButton(saveButton, webDriver);
     }
 }
 
