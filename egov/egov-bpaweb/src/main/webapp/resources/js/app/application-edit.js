@@ -177,6 +177,12 @@ jQuery(document)
 
 										}
 										if ($('#wfstateDesc').val() != 'NEW') {
+											if($('#showPermitConditions').val()) {
+												if($('.permitConditions:checked').length <= 0){
+													bootbox.alert('Please select atleast one permit condition is mandatory');
+													return false;
+												}
+											}
 											return validateForm(validator);
 										}
 									});

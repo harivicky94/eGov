@@ -40,8 +40,15 @@
 package org.egov.bpa.transaction.service;
 
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_APPROVED;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CREATED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_FIELD_INS;
+import static org.egov.bpa.utils.BpaConstants.BPAFEETYPE;
+import static org.egov.bpa.utils.BpaConstants.BPASTATUS_MODULETYPE;
+import static org.egov.bpa.utils.BpaConstants.CHECKLIST_TYPE_NOC;
 import static org.egov.bpa.utils.BpaConstants.FILESTORE_MODULECODE;
+import static org.egov.bpa.utils.BpaConstants.ROLE_CITIZEN;
+import static org.egov.bpa.utils.BpaConstants.WF_NEW_STATE;
+import static org.egov.bpa.utils.BpaConstants.WF_SURVEYOR_FORWARD_BUTTON;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -179,7 +186,7 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
             application.getSiteDetail().get(0)
                     .setLandUsage((bpaSchemeLandUsageService.findById(application.getSiteDetail().get(0).getLandUsageId())));
         buildRegistrarOfficeForVillage(application);
-        final BpaStatus bpaStatus = getStatusByCodeAndModuleType(BpaConstants.APPLICATION_STATUS_CREATED);
+        final BpaStatus bpaStatus = getStatusByCodeAndModuleType(APPLICATION_STATUS_CREATED);
         application.setStatus(bpaStatus);
         setSource(application);
         Long approvalPosition = null;
@@ -191,8 +198,8 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
             if (application.getAdmissionfeeAmount() != null
                     && application.getAdmissionfeeAmount().compareTo(BigDecimal.ZERO) == 0) {
                 wfmatrix = bpaUtils.getWfMatrixByCurrentState(application,
-                        BpaConstants.WF_NEW_STATE);
-                curentState = BpaConstants.WF_NEW_STATE;
+                        WF_NEW_STATE);
+                curentState = WF_NEW_STATE;
             }
             if (wfmatrix != null)
                 approvalPosition = bpaUtils.getUserPositionIdByZone(wfmatrix.getNextDesignation(),
@@ -202,15 +209,15 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
             bpaUtils.redirectToBpaWorkFlow(approvalPosition, application, curentState, null, null,
                     null);
         }
-        if (workFlowAction != null && workFlowAction.equals(BpaConstants.WF_SURVEYOR_FORWARD_BUTTON)
+        if (workFlowAction != null && workFlowAction.equals(WF_SURVEYOR_FORWARD_BUTTON)
                 && (bpaUtils.logedInuseCitizenOrBusinessUser())) {
-            final WorkFlowMatrix wfmatrix = bpaUtils.getWfMatrixByCurrentState(application, BpaConstants.WF_NEW_STATE);
+            final WorkFlowMatrix wfmatrix = bpaUtils.getWfMatrixByCurrentState(application, WF_NEW_STATE);
             if (wfmatrix != null)
                 approvalPosition = bpaUtils.getUserPositionIdByZone(wfmatrix.getNextDesignation(),
                         application.getSiteDetail().get(0) != null
                                 && application.getSiteDetail().get(0).getElectionBoundary() != null
                                         ? application.getSiteDetail().get(0).getElectionBoundary().getId() : null);
-            bpaUtils.redirectToBpaWorkFlow(approvalPosition, application, BpaConstants.WF_NEW_STATE,
+            bpaUtils.redirectToBpaWorkFlow(approvalPosition, application, WF_NEW_STATE,
                     application.getApprovalComent(), null, null);
         }
         return applicationBpaRepository.save(application);
@@ -236,17 +243,21 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
     public void persistBpaNocDocuments(final BpaApplication application) {
         final Map<Long, CheckListDetail> generalDocumentAndId = new HashMap<>();
         checkListDetailService
-                .findActiveCheckListByServiceType(application.getServiceType().getId(), BpaConstants.CHECKLIST_TYPE_NOC)
+                .findActiveCheckListByServiceType(application.getServiceType().getId(), CHECKLIST_TYPE_NOC)
                 .forEach(document -> generalDocumentAndId.put(document.getId(), document));
         addDocumentsToFileStore(application, generalDocumentAndId);
     }
 
     public BpaStatus getStatusByCodeAndModuleType(final String code) {
-        return bpaStatusService.findByModuleTypeAndCode(BpaConstants.BPASTATUS_MODULETYPE, code);
+        return bpaStatusService.findByModuleTypeAndCode(BPASTATUS_MODULETYPE, code);
     }
 
     @Transactional
     public void saveAndFlushApplication(final BpaApplication application) {
+        if (!application.getApplicationAmenity().isEmpty()
+                && APPLICATION_STATUS_CREATED.equalsIgnoreCase(application.getStatus().getCode())) {
+            application.setDemand(applicationBpaBillService.createDemand(application));
+        }
         persistPostalAddress(application);
         buildRegistrarOfficeForVillage(application);
         buildSchemeLandUsage(application);
@@ -300,7 +311,7 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         }
         final BpaApplication updatedApplication = applicationBpaRepository.save(application);
         if (updatedApplication.getCurrentState() != null
-                && !updatedApplication.getCurrentState().getValue().equals(BpaConstants.WF_NEW_STATE)) {
+                && !updatedApplication.getCurrentState().getValue().equals(WF_NEW_STATE)) {
             bpaUtils.redirectToBpaWorkFlow(approvalPosition, application, application.getCurrentState().getValue(),
                     application.getApprovalComent(), workFlowAction, amountRule);
         }
@@ -315,7 +326,7 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         BigDecimal admissionfeeAmount;
         if (serviceType != null)
             admissionfeeAmount = getTotalFeeAmountByPassingServiceTypeandArea(serviceType, amenityList,
-                    BpaConstants.BPAFEETYPE);
+                    BPAFEETYPE);
         else
             admissionfeeAmount = BigDecimal.ZERO;
         return admissionfeeAmount;
@@ -344,7 +355,7 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
     public BigDecimal getTotalFeeAmountByPassingServiceTypeAndAmenities(List<Long> serviceTypeIds) {
         BigDecimal totalAmount = BigDecimal.ZERO;
         if (!serviceTypeIds.isEmpty()) {
-            final Criteria feeCrit = applicationBpaBillService.getBpaFeeCriteria(serviceTypeIds, BpaConstants.BPAFEETYPE);
+            final Criteria feeCrit = applicationBpaBillService.getBpaFeeCriteria(serviceTypeIds, BPAFEETYPE);
             @SuppressWarnings("unchecked")
             final List<BpaFeeDetail> bpaFeeDetails = feeCrit.list();
             for (final BpaFeeDetail feeDetail : bpaFeeDetails)
@@ -414,7 +425,7 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
             return Arrays.asList(files).stream().filter(file -> !file.isEmpty()).map(file -> {
                 try {
                     return fileStoreService.store(file.getInputStream(), file.getOriginalFilename(),
-                            file.getContentType(), BpaConstants.FILESTORE_MODULECODE);
+                            file.getContentType(), FILESTORE_MODULECODE);
                 } catch (final Exception e) {
                     throw new ApplicationRuntimeException("Error occurred while getting inputstream", e);
                 }
@@ -452,7 +463,7 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         applicantUser.setPassword(passwordEncoder.encode(bpaApplication.getOwner().getUser().getMobileNumber()));
         applicantUser.setType(UserType.CITIZEN);
         applicantUser.setActive(true);
-        applicantUser.addRole(roleService.getRoleByName(BpaConstants.ROLE_CITIZEN));
+        applicantUser.addRole(roleService.getRoleByName(ROLE_CITIZEN));
         applicantUser.addAddress(bpaApplication.getOwner().getPermanentAddress());
         return userService.createUser(applicantUser);
     }

@@ -39,9 +39,12 @@
  */
 package org.egov.bpa.transaction.service.messaging;
 
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CANCELLED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CREATED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_REGISTERED;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_REJECTED;
 import static org.egov.bpa.utils.BpaConstants.CREATEDLETTERTOPARTY;
 import static org.egov.bpa.utils.BpaConstants.EGMODULE_NAME;
 import static org.egov.bpa.utils.BpaConstants.NO;
@@ -54,7 +57,6 @@ import static org.egov.bpa.utils.BpaConstants.YES;
 import java.util.List;
 import java.util.Locale;
 
-import org.apache.commons.lang.StringUtils;
 import org.egov.bpa.master.entity.StakeHolder;
 import org.egov.bpa.transaction.entity.ApplicationStakeHolder;
 import org.egov.bpa.transaction.entity.BpaApplication;
@@ -65,6 +67,7 @@ import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.notification.service.NotificationService;
 import org.egov.infra.utils.DateUtils;
+import org.egov.infra.workflow.entity.StateHistory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
@@ -147,7 +150,7 @@ public class BPASmsAndEmailService {
                     if (bpaApplication.isMailPwdRequired())
                         password = mobileNo;
                     else
-                        password = StringUtils.EMPTY;
+                        password = EMPTY;
                     buildSmsAndEmailForBPANewAppln(bpaApplication, applicantName, mobileNo, email, loginUserName, password);
                 }
                 if (applnStakeHolder.getStakeHolder() != null && applnStakeHolder.getStakeHolder().getIsActive()) {
@@ -155,7 +158,7 @@ public class BPASmsAndEmailService {
                     email = applnStakeHolder.getStakeHolder().getEmailId();
                     mobileNo = applnStakeHolder.getStakeHolder().getMobileNumber();
                     loginUserName = applnStakeHolder.getStakeHolder().getUsername();
-                    password = StringUtils.EMPTY;
+                    password = EMPTY;
                     buildSmsAndEmailForBPANewAppln(bpaApplication, applicantName, mobileNo, email, loginUserName, password);
                 }
             }
@@ -174,20 +177,20 @@ public class BPASmsAndEmailService {
         if (isSmsEnabled() || isEmailEnabled()) {
             buildSmsAndEmailForBPANewAppln(bpaApplication, bpaApplication.getOwner().getUser().getName(),
                     bpaApplication.getOwner().getUser().getMobileNumber(),
-                    bpaApplication.getOwner().getUser().getEmailId(), "", "");
+                    bpaApplication.getOwner().getUser().getEmailId(), EMPTY, EMPTY);
         }
     }
 
     private void buildSmsAndEmailForBPANewAppln(final BpaApplication bpaApplication, final String applicantName,
             final String mobileNo, final String email, final String loginUserName, final String password) {
-        String smsMsg = null;
-        String body = "";
-        String subject = "";
-        String smsCode = "";
-        String mailCode = "";
+        String smsMsg = EMPTY;
+        String body = EMPTY;
+        String subject = EMPTY;
+        String smsCode;
+        String mailCode;
         if ((APPLICATION_STATUS_CREATED).equalsIgnoreCase(bpaApplication.getStatus().getCode()) ||
                 APPLICATION_STATUS_REGISTERED.equalsIgnoreCase(bpaApplication.getStatus().getCode())) {
-            if (StringUtils.isNotEmpty(password)) {
+            if (isNotBlank(password)) {
                 smsCode = MSG_KEY_SMS_BPA_APPLN_NEW_PWD;
                 mailCode = BODY_KEY_EMAIL_BPA_APPLN_NEW_PWD;
             } else {
@@ -201,15 +204,15 @@ public class BPASmsAndEmailService {
             subject = emailSubjectforEmailByCodeAndArgs(SUBJECT_KEY_EMAIL_BPA_APPLN_NEW, bpaApplication.getApplicationNumber());
         } else if (CREATEDLETTERTOPARTY.equalsIgnoreCase(bpaApplication.getStatus().getCode())) {
             smsMsg = smsBodyByCodeAndArgsWithType(MSG_KEY_SMS_LETTERTOPARTY, applicantName,
-                    bpaApplication, SMSEMAILTYPELETTERTOPARTY, "", "");
+                    bpaApplication, SMSEMAILTYPELETTERTOPARTY, EMPTY, EMPTY);
             body = emailBodyByCodeAndArgsWithType(BODY_KEY_EMAIL_LETTERTOPARTY, applicantName,
-                    bpaApplication, SMSEMAILTYPELETTERTOPARTY, "", "");
+                    bpaApplication, SMSEMAILTYPELETTERTOPARTY, EMPTY, EMPTY);
             subject = emailSubjectforEmailByCodeAndArgs(SUBJECT_KEY_EMAIL_LETTERTOPARTY, bpaApplication.getApplicationNumber());
         } else if (APPLICATION_STATUS_CANCELLED.equalsIgnoreCase(bpaApplication.getStatus().getCode())) {
             smsMsg = smsBodyByCodeAndArgsWithType(MSG_KEY_SMS_CANCELL_APPLN, applicantName,
-                    bpaApplication, APPLICATION_STATUS_CANCELLED, "", "");
+                    bpaApplication, APPLICATION_STATUS_CANCELLED, EMPTY, EMPTY);
             body = emailBodyByCodeAndArgsWithType(BODY_KEY_EMAIL_CANCELL_APPLN, applicantName,
-                    bpaApplication, APPLICATION_STATUS_CANCELLED, "", "");
+                    bpaApplication, APPLICATION_STATUS_CANCELLED, EMPTY, EMPTY);
             subject = emailSubjectforEmailByCodeAndArgs(SUBJECT_KEY_EMAIL_CANCELL_APPLN, bpaApplication.getApplicationNumber());
         }
 
@@ -221,9 +224,9 @@ public class BPASmsAndEmailService {
 
     private void buildSmsAndEmailForScheduleAppointment(final BpaAppointmentSchedule scheduleDetails,
             final BpaApplication bpaApplication, final String applicantName, final String mobileNo, final String email) {
-        String smsMsg = null;
-        String body = null;
-        String subject = null;
+        String smsMsg = EMPTY;
+        String body = EMPTY;
+        String subject = EMPTY;
         if (AppointmentSchedulePurpose.DOCUMENTSCRUTINY.equals(scheduleDetails.getPurpose())) {
             if (!scheduleDetails.isPostponed()) {
                 smsMsg = buildMessageDetailsForScheduleAppointment(scheduleDetails, bpaApplication, applicantName,
@@ -257,15 +260,15 @@ public class BPASmsAndEmailService {
                         SUBJECT_KEY_EMAIL_BPA_FIELD_INS_RESCHE);
             }
         }
-        if (mobileNo != null && smsMsg != null)
+        if (isNotBlank(mobileNo) && isNotBlank(smsMsg))
             notificationService.sendSMS(mobileNo, smsMsg);
-        if (email != null && body != null)
+        if (isNotBlank(email) && isNotBlank(body))
             notificationService.sendEmail(email, subject, body);
     }
 
     private String buildMessageDetailsForScheduleAppointment(final BpaAppointmentSchedule scheduleDetails,
             final BpaApplication bpaApplication, String applicantName, String msgKey) {
-        String mesg = null;
+        String mesg = EMPTY;
         if (AppointmentSchedulePurpose.DOCUMENTSCRUTINY.equals(scheduleDetails.getPurpose())) {
             if (!scheduleDetails.isPostponed()) {
                 mesg = bpaMessageSource.getMessage(msgKey,
@@ -328,9 +331,9 @@ public class BPASmsAndEmailService {
 
     private String emailBodyByCodeAndArgsWithType(String code, String applicantName, BpaApplication bpaApplication,
             String type, String loginUserName, String password) {
-        String body = "";
+        String body = EMPTY;
         if (SMSEMAILTYPENEWBPAREGISTERED.equalsIgnoreCase(type)) {
-            if (password != "")
+            if (password != EMPTY)
                 body = bpaMessageSource.getMessage(code,
                         new String[] { applicantName, bpaApplication.getApplicationNumber(), loginUserName, password,
                                 getMunicipalityName() },
@@ -343,19 +346,24 @@ public class BPASmsAndEmailService {
         } else if (SMSEMAILTYPELETTERTOPARTY.equalsIgnoreCase(type))
             body = bpaMessageSource.getMessage(code,
                     new String[] { applicantName, bpaApplication.getApplicationNumber(), getMunicipalityName() }, null);
-        else if (APPLICATION_STATUS_CANCELLED.equalsIgnoreCase(type))
+        else if (APPLICATION_STATUS_CANCELLED.equalsIgnoreCase(type)) {
+            StateHistory stateHistory = bpaApplication.getStateHistory().stream()
+                    .filter(history -> history.getValue().equalsIgnoreCase(APPLICATION_STATUS_REJECTED))
+                    .findAny().orElse(null);
             body = bpaMessageSource.getMessage(code,
-                    new String[] { applicantName, bpaApplication.getApplicationNumber(), bpaApplication.getApprovalComent(),
+                    new String[] { applicantName, bpaApplication.getApplicationNumber(),
+                            isNotBlank(stateHistory.getComments()) ? stateHistory.getComments() : EMPTY,
                             getMunicipalityName() },
                     null);
+        }
         return body;
     }
 
     private String smsBodyByCodeAndArgsWithType(String code, String applicantName, BpaApplication bpaApplication,
             String type, String loginUserName, String password) {
-        String smsMsg = "";
+        String smsMsg = EMPTY;
         if (SMSEMAILTYPENEWBPAREGISTERED.equalsIgnoreCase(type)) {
-            if (password != "")
+            if (isNotBlank(password))
                 smsMsg = bpaMessageSource.getMessage(code,
                         new String[] { applicantName, bpaApplication.getApplicationNumber(), loginUserName, password,
                                 getMunicipalityName() },
@@ -368,11 +376,16 @@ public class BPASmsAndEmailService {
         } else if (SMSEMAILTYPELETTERTOPARTY.equalsIgnoreCase(type))
             smsMsg = bpaMessageSource.getMessage(code,
                     new String[] { applicantName, bpaApplication.getApplicationNumber(), getMunicipalityName() }, null);
-        else if (APPLICATION_STATUS_CANCELLED.equalsIgnoreCase(type))
+        else if (APPLICATION_STATUS_CANCELLED.equalsIgnoreCase(type)) {
+            StateHistory stateHistory = bpaApplication.getStateHistory().stream()
+                    .filter(history -> history.getValue().equalsIgnoreCase(APPLICATION_STATUS_REJECTED))
+                    .findAny().orElse(null);
             smsMsg = bpaMessageSource.getMessage(code,
-                    new String[] { applicantName, bpaApplication.getApplicationNumber(), bpaApplication.getApprovalComent(),
+                    new String[] { applicantName, bpaApplication.getApplicationNumber(),
+                            isNotBlank(stateHistory.getComments()) ? stateHistory.getComments() : EMPTY,
                             getMunicipalityName() },
                     null);
+        }
         return smsMsg;
     }
 

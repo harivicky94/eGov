@@ -391,6 +391,14 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
 
         String workFlowAction = request.getParameter(WORK_FLOW_ACTION);
         String approvalComent = request.getParameter("approvalComent");
+        if (WF_CANCELAPPLICATION_BUTTON.equalsIgnoreCase(workFlowAction)) {
+            StateHistory stateHistory = bpaApplication.getStateHistory().stream()
+                    .filter(history -> history.getValue().equalsIgnoreCase(APPLICATION_STATUS_REJECTED))
+                    .findAny().orElse(null);
+            if (stateHistory != null)
+                approvalComent = stateHistory.getComments();
+        }
+        
         String message;
         Long approvalPosition = null;
         Position pos = null;

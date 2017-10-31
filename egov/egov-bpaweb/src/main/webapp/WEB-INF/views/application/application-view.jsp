@@ -80,6 +80,7 @@
 			<form:hidden  path="" id="amountRule" name="amountRule" value="${amountRule}"/>
 			<form:hidden path="" id="scheduleType" name="scheduleType"
 				value="${scheduleType}" />
+			<form:hidden path="" id="showPermitConditions" value="${showpermitconditions}" />
 			<ul class="nav nav-tabs" id="settingstab">
 				<li class="active"><a data-toggle="tab" href="#applicant-info"
 					data-tabidx=0><spring:message code='lbl.appln.details' /></a></li>
