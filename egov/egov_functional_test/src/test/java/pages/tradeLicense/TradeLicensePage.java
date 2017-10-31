@@ -139,7 +139,7 @@ public class TradeLicensePage extends BasePage {
     @FindBy(id = "generatedemand")
     private WebElement generateDemandButton;
 
-    @FindBy(id = "btncancel")
+    @FindBy(id = "Cancel")
     private WebElement cancelButton;
 
     @FindBy(id = "Reject")
@@ -413,7 +413,8 @@ public class TradeLicensePage extends BasePage {
     }
 
     public void cancelApplication() {
-        clickOnButton(cancelButton, webDriver);
+            enterText(webDriver.findElement(By.name("approverComments")), "Comments", webDriver);
+            clickOnButton(cancelButton, webDriver);
     }
 
     public void applicationRejection() {
@@ -437,11 +438,11 @@ public class TradeLicensePage extends BasePage {
     }
 
     public void saveApplication() {
-        if (webDriver.findElements(By.name("approverComments")).size() == 1) {
+//        if (webDriver.findElements(By.name("approverComments")).size() == 1) {
             enterText(webDriver.findElement(By.name("approverComments")), "Comments", webDriver);
             clickOnButton(createButton, webDriver);
-        } else
-            clickOnButton(saveButton, webDriver);
+//        } else
+//            clickOnButton(saveButton, webDriver);
     }
 }
 

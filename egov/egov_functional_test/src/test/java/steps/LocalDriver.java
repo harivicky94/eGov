@@ -1,7 +1,9 @@
 package steps;
 
 import org.apache.commons.lang.SystemUtils;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
@@ -15,6 +17,12 @@ import java.util.Arrays;
 import java.util.Collections;
 
 public class LocalDriver {
+
+    WebDriver driver;
+
+//    public LocalDriver(WebDriver driver) {
+//        this.driver = driver;
+//    }
 
     public WebDriver getApplicationDriver() {
         String browser = System.getProperty("browser");
@@ -34,7 +42,18 @@ public class LocalDriver {
         if (browser.equals("chrome")) {
             setChromeDriverBasedOnOperatingSystem();
             ChromeOptions options = new ChromeOptions();
-            options.addArguments("--incognito");
+//            driver.get("chrome://extensions-frame");
+//            WebElement checkbox = driver.findElement(By.xpath("//label[@class='incognito-control']/input[@type='checkbox']"));
+//            if (!checkbox.isSelected()) {
+//                checkbox.click();
+//            }
+            WebDriver driver = new ChromeDriver(options);
+            driver.get("chrome://extensions-frame");
+            WebElement checkbox = driver.findElement(By.xpath("//input[@type='checkbox']/ancestor::label[@class='incognito-control']"));
+            if(!checkbox.isSelected()) {
+                checkbox.click();
+            }
+//            options.addArguments("--incognito");
             options.addArguments("start-maximized");
             options.addArguments("allow-running-insecure-content");
             options.addArguments("--disable-extensions");

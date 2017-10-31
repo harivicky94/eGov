@@ -147,7 +147,7 @@ Feature: Create Trade License
       | tradeDetailsData         | tradeLocationData           | tradeDetailsData1        |
       | ownerDetailsTradeLicense | locationDetailsTradeLicense | tradeDetailsTradeLicense |
 
-#  @TradeLicense @NewLicense
+  @TradeLicense @NewLicense
   Scenario Outline: Create new TL from JA-> collect fee -> forward to SI -> Change trade area and forward to Commissioner
   -> Approve in commissioner -> reject
 
@@ -188,13 +188,21 @@ Feature: Create Trade License
     And he confirms to proceed
     And he closes acknowledgement page
     And he chooses to act upon above application number
-    And he cancel the application
+    And he rejects the application
+    And he confirms to proceed
+    And he closes acknowledgement page
+    And current user logs out
+
+    When TL_PHS_SI logs in
+    And he chooses to act upon above application number
+    And he rejects the application
+    And he confirms to proceed
     And he closes acknowledgement page
     And current user logs out
 
     When TL_PHS_JA logs in
     And he chooses to act upon above application number
-    And he rejects the application
+    And he cancel the application
     And he confirms to proceed
     And he closes acknowledgement page
     And user will select the required screen as "Search Trade License"
@@ -251,9 +259,16 @@ Feature: Create Trade License
     And he closes acknowledgement page
     And current user logs out
 
-    When TL_PHS_JA logs in
+    When TL_PHS_SI logs in
     And he chooses to act upon above application number
     And he rejects the application
+    And he confirms to proceed
+    And he closes acknowledgement page
+    And current user logs out
+
+    When TL_PHS_JA logs in
+    And he chooses to act upon above application number
+    And he cancel the application
     And he confirms to proceed
     And he closes acknowledgement page
     And user will select the required screen as "Search Trade License"

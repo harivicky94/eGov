@@ -15,7 +15,7 @@ public class StartingSteps extends BaseSteps {
         scenarioContext = new ScenarioContext();
         pageStore = new PageStore();
         pageStore.getDriver().get(Properties.url);
-        pageStore.getDriver().manage().window().maximize();
+//        pageStore.getDriver().manage().window().maximize();
     }
 
     @After
