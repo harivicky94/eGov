@@ -36,13 +36,13 @@ public class LocalDriver {
         if (browser.equals("chrome")) {
             setChromeDriverBasedOnOperatingSystem();
             ChromeOptions options = new ChromeOptions();
-            options.addArguments("--incognito");
-            WebDriver driver = new ChromeDriver(options);
-            driver.get("chrome://extensions-frame");
-            WebElement checkbox = driver.findElement(By.xpath("//input[@type='checkbox']/ancestor::label[@class='incognito-control']"));
-            if(!checkbox.isSelected()) {
-                checkbox.click();
-            }
+//             options.addArguments("--incognito");
+//             WebDriver driver = new ChromeDriver(options);
+//             driver.get("chrome://extensions-frame");
+//             WebElement checkbox = driver.findElement(By.xpath("//input[@type='checkbox']/ancestor::label[@class='incognito-control']"));
+//             if(!checkbox.isSelected()) {
+//                 checkbox.click();
+//             }
             options.addArguments("start-maximized");
             options.addArguments("allow-running-insecure-content");
             options.addArguments("--disable-extensions");
