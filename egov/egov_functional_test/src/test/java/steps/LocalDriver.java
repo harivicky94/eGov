@@ -18,12 +18,6 @@ import java.util.Collections;
 
 public class LocalDriver {
 
-    WebDriver driver;
-
-//    public LocalDriver(WebDriver driver) {
-//        this.driver = driver;
-//    }
-
     public WebDriver getApplicationDriver() {
         String browser = System.getProperty("browser");
         System.out.println("Browser to be tested on --" + browser);
@@ -42,18 +36,13 @@ public class LocalDriver {
         if (browser.equals("chrome")) {
             setChromeDriverBasedOnOperatingSystem();
             ChromeOptions options = new ChromeOptions();
-//            driver.get("chrome://extensions-frame");
-//            WebElement checkbox = driver.findElement(By.xpath("//label[@class='incognito-control']/input[@type='checkbox']"));
-//            if (!checkbox.isSelected()) {
-//                checkbox.click();
-//            }
+            options.addArguments("--incognito");
             WebDriver driver = new ChromeDriver(options);
             driver.get("chrome://extensions-frame");
             WebElement checkbox = driver.findElement(By.xpath("//input[@type='checkbox']/ancestor::label[@class='incognito-control']"));
             if(!checkbox.isSelected()) {
                 checkbox.click();
             }
-//            options.addArguments("--incognito");
             options.addArguments("start-maximized");
             options.addArguments("allow-running-insecure-content");
             options.addArguments("--disable-extensions");
