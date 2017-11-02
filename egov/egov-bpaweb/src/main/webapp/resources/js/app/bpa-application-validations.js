@@ -290,7 +290,7 @@ $(document).ready(function() {
 	}
 	
 	// making atleast one amenity should be mandatory if service type is selected as amenities 
-	$('#buttonSubmit, #bpaCreate').click(function(){
+	$('#buttonSubmit, #bpaCreate, #bpaSave').click(function(){
 		var seviceTypeName = $( "#serviceType option:selected" ).text();
 		if('Amenities' == seviceTypeName && !$( "#applicationAmenity option:selected" ).val()){
 				bootbox.alert("Please Select Atleast one amenity.");

@@ -58,6 +58,8 @@
 	</div>
 </div>
 <div class="panel-body">
+	<input type="hidden" id="persistedPermitConditions"
+		value="${bpaApplication.permitConditions}">
 	<c:if
 		test="${bpaApplication.serviceType.code ne '14' && bpaApplication.serviceType.code ne '15'}">
 		<table class="table table-bordered  multiheadertbl"
@@ -77,8 +79,8 @@
 							<tr>
 								<td><c:out value="${status.index+1}"></c:out></td>
 								<td><input type="checkbox" name="permitConditions"
-									id="permitConditionId" class="permitConditions" value="${permitCondition.id}"
-									<c:if test="${fn:contains(bpaApplication.permitConditions, permitCondition)}"> checked </c:if>></td>
+									id="permitConditionId" class="permitConditions"
+									value="${permitCondition.id}"></td>
 								<td><c:out value="${permitCondition.description}"></c:out></td>
 							</tr>
 						</c:forEach>
@@ -89,8 +91,8 @@
 							<tr>
 								<td><c:out value="${status.index+1}"></c:out></td>
 								<td><form:checkbox path="permitConditions"
-										id="permitConditionId" class="permitConditions" checked="checked"
-										value="${permitCondition.id}"></form:checkbox></td>
+										id="permitConditionId" class="permitConditions"
+										checked="checked" value="${permitCondition.id}"></form:checkbox></td>
 								<td><c:out value="${permitCondition.description}"></c:out></td>
 							</tr>
 						</c:forEach>
