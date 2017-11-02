@@ -52,7 +52,7 @@ Feature: Register Complaint
     And he verifies that application not in his inbox
     And current user logs out
 
-    When sanitaryInspector1 logs in
+    When TL_PHS_SI logs in
     And he chooses to act upon above application number
     And he marks the staus as processing
     And he forwards for approver LightingSuperintendent
@@ -88,7 +88,7 @@ Feature: Register Complaint
     And he verifies that application not in his inbox
     And current user logs out
 
-    When sanitaryInspector1 logs in
+    When TL_PHS_SI logs in
     And he chooses to act upon above application number
     And he marks the staus as processing
     And he forwards for approver LightingSuperintendent
