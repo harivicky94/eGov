@@ -41,25 +41,32 @@ jQuery(document)
 		.ready(
 				function() {
 					
-					// start -- update checked true for saved permit conditions
-					var persistedPermitConditionsArr = [];
-					var persistedPermitConditions = $(
-							"#persistedPermitConditions").val().substring(1,
-							$("#persistedPermitConditions").val().length - 1)
-							.split(',');
-					$.each(persistedPermitConditions, function(index,
-							permitCondnId) {
-						persistedPermitConditionsArr.push(permitCondnId
-								.split(':')[1].trim());
-					});
 
-					$(".permitConditions").each(
-							function() {
-								if ($.inArray($(this).val(),
-										persistedPermitConditionsArr) >= 0) {
-									$(this).attr('checked', 'checked');
-								}
-							});
+					// start -- update checked true for saved permit conditions
+					var savedPermitCondn = $("#persistedPermitConditions")
+							.val();
+					if (savedPermitCondn) {
+						var persistedPermitConditionsArr = [];
+						var persistedPermitConditions = savedPermitCondn
+								.substring(1, savedPermitCondn.length - 1)
+								.split(',');
+						$.each(persistedPermitConditions, function(index,
+								permitCondnId) {
+							persistedPermitConditionsArr.push(permitCondnId
+									.split(':')[1].trim());
+						});
+
+						$(".permitConditions")
+								.each(
+										function() {
+											if ($
+													.inArray($(this).val(),
+															persistedPermitConditionsArr) >= 0) {
+												$(this).attr('checked',
+														'checked');
+											}
+										});
+					}
 					// end
 					
 					$("#viewBpaApplicationForm").validate({
