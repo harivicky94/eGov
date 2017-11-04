@@ -22,9 +22,9 @@ Feature: Trade license closure
 
     When TL_ADM_Commissioner logs in
     And he chooses to act upon above application number
-#    And he approves the closure
-#    And he confirms to proceed
-    And he saves the application
+    And he approves the closure
+    And he confirms to proceed
+#    And he saves the application
     And he closes acknowledgement page
     And user will select the required screen as "Search Trade License"
     And he choose to search with license number

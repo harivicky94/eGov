@@ -360,7 +360,10 @@ public class TradeLicensePage extends BasePage {
     }
 
     public void chooseToRenewLicense() {
-        jsClick(saveButton, webDriver);
+        enterText(webDriver.findElement(By.name("approverComments")), "Comments", webDriver);
+        clickOnButton(createButton, webDriver);
+        webDriver.switchTo().activeElement();
+        jsClick(webDriver.findElement(By.cssSelector(".btn.btn-danger")), webDriver);
         jsClick(closeButton, webDriver);
         switchToNewlyOpenedWindow(webDriver);
         jsClick(searchButton, webDriver);
