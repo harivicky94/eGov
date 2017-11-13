@@ -50,7 +50,7 @@ $(document).ready(function($) {
 		}
 		});
 	
-	$('#applicantDiv :input').attr('readOnly', true);
+	$('#applicantDiv :input').attr('disabled', true);
 	$('#gender').attr("style", "pointer-events: none;"); 
 	 
 	if($('#isCitizen').val() == 'true'){

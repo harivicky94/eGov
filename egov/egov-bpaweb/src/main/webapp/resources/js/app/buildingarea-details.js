@@ -134,17 +134,29 @@ jQuery(document).ready(function() {
 		validateUniqueDetails(rowObj.index(),$(rowObj).find('.floorDescription').val(), $(rowObj).find('.floorNumber').val(), $(rowObj).find('.occupancy').val());
 	}); 
 	
-	$(document).on('change','.floorDescription, .occupancy', function() {
+	$(document).on('blur','.floorDescription', function() {
+		var rowObj = $(this).closest('tr');
+		if($(rowObj).find('.floorDescription').val() && $(rowObj).find('.floorDescription').val() == 'Cellar Floor') {
+			$(rowObj).find('.floorNumber').data('pattern','numerichyphen');
+		} else {
+			$(rowObj).find('.floorNumber').data('pattern','number');
+		}
+		patternvalidation();
+		$(rowObj).find('.floorNumber').val('');
 		if(!$("#occupancyapplnlevel").val()) {
 			$('#buildingAreaDetails').find('select').val('');
 			bootbox.alert('Please select main occupancy type.');
 			return false;
 		}
 		setFloorCount();
-		var rowObj = $(this).closest('tr');
 		if(($(rowObj).find('.floorDescription').val() == '' || $(rowObj).find('.floorDescription').val() == 'undefined') && $('#buildingAreaDetails tbody tr').length <= 1) {
 			$("#floorCount").val('');
 		}
+		validateUniqueDetails(rowObj.index(),$(rowObj).find('.floorDescription').val(), $(rowObj).find('.floorNumber').val(), $(rowObj).find('.occupancy').val());
+	});
+	
+	$(document).on('blur','.occupancy', function() {
+		var rowObj = $(this).closest('tr');
 		validateUniqueDetails(rowObj.index(),$(rowObj).find('.floorDescription').val(), $(rowObj).find('.floorNumber').val(), $(rowObj).find('.occupancy').val());
 	});
 	
