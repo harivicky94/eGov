@@ -45,16 +45,18 @@ jQuery(document)
 					// start -- update checked true for saved permit conditions
 					var savedPermitCondn = $("#persistedPermitConditions")
 							.val();
-					if (savedPermitCondn) {
+					if (savedPermitCondn && savedPermitCondn.length > 0) {
 						var persistedPermitConditionsArr = [];
 						var persistedPermitConditions = savedPermitCondn
 								.substring(1, savedPermitCondn.length - 1)
 								.split(',');
-						$.each(persistedPermitConditions, function(index,
-								permitCondnId) {
-							persistedPermitConditionsArr.push(permitCondnId
-									.split(':')[1].trim());
-						});
+						if(persistedPermitConditions[0] && persistedPermitConditions.length > 0) {
+							$.each(persistedPermitConditions, function(index,
+									permitCondnId) {
+								persistedPermitConditionsArr.push(permitCondnId
+										.split(':')[1].trim());
+							});
+						}
 
 						$(".permitConditions")
 								.each(

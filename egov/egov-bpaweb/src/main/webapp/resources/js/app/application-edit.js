@@ -177,7 +177,9 @@ jQuery(document)
 
 										}
 										if ($('#wfstateDesc').val() != 'NEW') {
-											if($('#showPermitConditions').val()) {
+											var serviceTypeName = $("#serviceType").val();
+											if($('#showPermitConditions').val() && serviceTypeName != 'Tower Construction'
+													&& serviceTypeName !=  'Pole Structures') {
 												if($('.permitConditions:checked').length <= 0){
 													bootbox.alert('Please select atleast one permit condition is mandatory');
 													return false;
