@@ -7,6 +7,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.firefox.FirefoxProfile;
 import org.openqa.selenium.firefox.internal.ProfilesIni;
 import org.openqa.selenium.remote.CapabilityType;
@@ -27,9 +28,19 @@ public class LocalDriver {
 
         if (browser.equals("firefox")) {
             ProfilesIni profilesIni = new ProfilesIni();
-            FirefoxProfile firefoxProfile = profilesIni.getProfile("firefoxQa");
+
+            FirefoxProfile firefoxProfile = profilesIni.getProfile("firefoxQA");
             setFirefoxDriverBasedOnOperatingSystem();
-            return new FirefoxDriver(firefoxProfile);
+            FirefoxOptions firefoxOptions = new FirefoxOptions();
+            firefoxOptions.addArguments("start-maximized");
+            firefoxOptions.addArguments("allow-running-insecure-content");
+            firefoxOptions.addArguments("--disable-extensions");
+
+            capabilities.setCapability("marionette", true);
+            capabilities.setCapability(CapabilityType.ForSeleniumServer.ENSURING_CLEAN_SESSION, true);
+            capabilities.setCapability(CapabilityType.ACCEPT_SSL_CERTS, true);
+            firefoxOptions.setProfile(firefoxProfile);
+            return new FirefoxDriver(capabilities);
         }
 
 
