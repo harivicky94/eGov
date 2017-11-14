@@ -29,7 +29,7 @@ public class LocalDriver {
         if (browser.equals("firefox")) {
             ProfilesIni profilesIni = new ProfilesIni();
 
-            FirefoxProfile firefoxProfile = profilesIni.getProfile("firefoxQA");
+            FirefoxProfile firefoxProfile = profilesIni.getProfile("default");
             setFirefoxDriverBasedOnOperatingSystem();
             FirefoxOptions firefoxOptions = new FirefoxOptions();
             firefoxOptions.addArguments("start-maximized");
