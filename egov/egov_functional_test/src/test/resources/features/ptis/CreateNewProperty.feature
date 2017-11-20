@@ -65,7 +65,7 @@ Feature: Create New Property
   @Sanity @PropertyTax
   Scenario: Registered user create property through data entry screen
 
-    Given commissioner logs in
+    Given PTISCommissioner logs in
     And user will select the required screen as "Data entry screen" with condition as "ptis"
     And he creates a new assessment for a private residential property
     Then dataEntry Details saved successfully

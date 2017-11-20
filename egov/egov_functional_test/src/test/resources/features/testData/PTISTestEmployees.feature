@@ -9,12 +9,12 @@ Feature: Create Test Employees for Property Tax Module Testing
     And current user logs out
 
     Examples:
-      | department     | designation          | position  |
-      | REVENUE        | Junior Assistant     | JA-PTIS   |
-      | REVENUE        | Bill Collector       | BC-PTIS   |
-      | REVENUE        | UD Revenue Inspector | RI-PTIS   |
-      | REVENUE        | Revenue Officer      | RO-PTIS   |
-      | ADMINISTRATION | Commissioner         | Comm-PTIS |
+      | department     | designation          | position|
+      | REVENUE        | Junior Assistant     | JA-Property|
+      | REVENUE        | Bill Collector       | BC-Property   |
+      | REVENUE        | UD Revenue Inspector | RI-Property  |
+      | REVENUE        | Revenue Officer      | RO-Property   |
+      | ADMINISTRATION | Commissioner         | Comm-Property |
 
   Scenario Outline: Create Employees for Property Tax Module
 
@@ -33,8 +33,8 @@ Feature: Create Test Employees for Property Tax Module Testing
 
     Examples:
       | employeeDetails      | assignmentDetails    | jurisdictionDetails |
-      | PTISJuniorAssistant  | PTISJuniorAssistant  | JurisdictionList1   |
-      | PTISBillCollector    | PTISBillCollector    | JurisdictionList2   |
-      | PTISRevenueInspector | PTISRevenueInspector | JurisdictionList3   |
-      | PTISRevenueOfficer   | PTISRevenueOfficer   | JurisdictionList4   |
+#      | PTISJuniorAssistant  | PTISJuniorAssistant  | JurisdictionList1   |
+#      | PTISBillCollector    | PTISBillCollector    | JurisdictionList2   |
+#      | PTISRevenueInspector | PTISRevenueInspector | JurisdictionList3   |
+#      | PTISRevenueOfficer   | PTISRevenueOfficer   | JurisdictionList4   |
       | PTISCommissioner     | PTISCommissioner     | JurisdictionList3   |
