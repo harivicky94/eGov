@@ -122,12 +122,24 @@ jQuery(document).ready(function() {
 		validateUniqueDetailsForExistBuild(rowObj.index(),$(rowObj).find('.existFloorDescription').val(), $(rowObj).find('.existFloorNumber').val(), $(rowObj).find('.existOccupancy').val());
 	}); 
 	
-	$(document).on('change','.existFloorDescription, .existOccupancy', function() {
+	$(document).on('blur','.existFloorDescription', function() {
 		if(!$("#occupancyapplnlevel").val()) {
 			$('#existingBuildingAreaDetails').find('select').val('');
 			bootbox.alert('Please select main occupancy type.');
 			return false;
 		}
+		var rowObj = $(this).closest('tr');
+		if($(rowObj).find('.existFloorDescription').val() && $(rowObj).find('.existFloorDescription').val() == 'Cellar Floor') {
+			$(rowObj).find('.existFloorNumber').data('pattern','numerichyphen');
+		} else {
+			$(rowObj).find('.existFloorNumber').data('pattern','number');
+		}
+		patternvalidation();
+		$(rowObj).find('.existFloorNumber').val('');
+		validateUniqueDetailsForExistBuild(rowObj.index(),$(rowObj).find('.existFloorDescription').val(), $(rowObj).find('.existFloorNumber').val(), $(rowObj).find('.existOccupancy').val());
+	});
+	
+	$(document).on('blur','.existOccupancy', function() {
 		var rowObj = $(this).closest('tr');
 		validateUniqueDetailsForExistBuild(rowObj.index(),$(rowObj).find('.existFloorDescription').val(), $(rowObj).find('.existFloorNumber').val(), $(rowObj).find('.existOccupancy').val());
 	});

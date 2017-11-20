@@ -330,7 +330,7 @@ public class BpaNoticeService {
     private String buildPermitConditions(final BpaApplication bpaApplication) {
 
         StringBuilder permitConditions = new StringBuilder();
-        if (bpaApplication.getServiceType().getCode().equals(ST_CODE_14)
+        if (bpaApplication.getPlanPermissionDate() != null && bpaApplication.getServiceType().getCode().equals(ST_CODE_14)
                 || bpaApplication.getServiceType().getCode().equals(ST_CODE_15)) {
             permitConditions.append(getMessageFromPropertyFile("tower.pole.permit.condition1"))
                     .append(getMessageFromPropertyFile("tower.pole.permit.condition2"))
