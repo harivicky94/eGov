@@ -11,7 +11,7 @@ public class HomePageSteps extends BaseSteps implements En {
         Given("^(.*) logs in$", (String currentUser) -> {
             LoginDetails loginDetails = new ExcelReader(loginTestDataFileName).getLoginDetails(currentUser);
 //            if (System.getProperty("env").equalsIgnoreCase("qa"))
-//                loginDetails.setPassword("eGov@123");
+//                loginDetails.setPassword("********");
             pageStore.get(HomePage.class).loginAs(loginDetails);
             scenarioContext.setUser(currentUser);
         });
@@ -19,7 +19,7 @@ public class HomePageSteps extends BaseSteps implements En {
         And("^the next user will be logged in$", () -> {
             LoginDetails loginDetails = new ExcelReader(loginTestDataFileName).getLoginDetails(scenarioContext.getUser());
 //            if (System.getProperty("env").equalsIgnoreCase("qa"))
-//                loginDetails.setPassword("eGov@123");
+//                loginDetails.setPassword("********");
             pageStore.get(HomePage.class).loginAs(loginDetails);
         });
 
