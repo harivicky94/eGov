@@ -1,7 +1,9 @@
 package dataBaseFiles;
 
 import builders.LoginDetailsBuilder;
+import cucumber.api.java8.En;
 import entities.LoginDetails;
+import steps.BaseSteps;
 import steps.PageStore;
 
 import java.sql.ResultSet;
@@ -10,7 +12,7 @@ import java.sql.Statement;
 
 import static steps.BaseSteps.pageStore;
 
-public class DatabaseReader extends PageStore {
+public class DatabaseReader extends BaseSteps implements En {
 
 
     public LoginDetails getLoginDetails(String currentUser) throws SQLException {
