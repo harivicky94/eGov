@@ -2,7 +2,7 @@ Feature: Register Complaint
 
   As a citizen register complaint directly in website
 
-  @Sanity @Grievance
+  @Sanity @Grievance @New
   Scenario Outline: Register a Complaint with Citizen Login
 
     Given citizen logs in
