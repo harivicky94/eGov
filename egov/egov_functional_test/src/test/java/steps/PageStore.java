@@ -2,6 +2,7 @@ package steps;
 
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.PageFactory;
+import utils.Properties;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -50,8 +51,11 @@ public class PageStore {
         try {
             if (conn == null || (conn != null && conn.isClosed())) {
                 Class.forName("org.postgresql.Driver");
-                conn = DriverManager.getConnection("jdbc:postgresql://localhost:5432/Test", "postgres", "akhi2506");
+                conn = DriverManager.getConnection(Properties.dburl, Properties.dbuser, Properties.dbpassword);
                 System.out.println("Connected to Database successfully");
+                System.out.println("DBURL = "+Properties.dburl);
+                System.out.println("DBUser = "+Properties.dbuser);
+                System.out.println("DBPassword = "+Properties.dbpassword);
             }
         } catch (SQLException e) {
             System.out.println(e.toString());

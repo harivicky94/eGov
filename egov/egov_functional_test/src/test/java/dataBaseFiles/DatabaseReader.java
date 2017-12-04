@@ -16,7 +16,7 @@ public class DatabaseReader extends BaseSteps implements En {
 
 
     public LoginDetails getLoginDetails(String currentUser) throws SQLException {
-        String dbquery = "select * from eg_user";
+        String dbquery = "select * from eg_loginTestData";
         Statement stmt = pageStore.dbConnection().createStatement();
         ResultSet rs = stmt.executeQuery(dbquery);
         String id = null;

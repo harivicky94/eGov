@@ -33,6 +33,12 @@ public class PropertiesReader {
         return prop.getProperty("url");
     }
 
+    public String getDburl(){return prop.getProperty("dburl");}
+
+    public String getDbuser(){return prop.getProperty("dbuser");}
+
+    public String getDbpassword(){return prop.getProperty("dbpassword");}
+
     public String getWaitTime() {
         return prop.getProperty("waitTime");
     }
