@@ -73,12 +73,10 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.egov.bpa.master.entity.CheckListDetail;
 import org.egov.bpa.master.entity.Occupancy;
-import org.egov.bpa.master.entity.PermitConditions;
 import org.egov.bpa.master.entity.ServiceType;
 import org.egov.bpa.transaction.entity.enums.ApplicantMode;
 import org.egov.bpa.transaction.entity.enums.GovernmentType;
@@ -165,6 +163,11 @@ public class BpaApplication extends StateAware {
     @Length(min = 1, max = 128)
     private String revisedPermitNumber;
     private Boolean isExistingApprovedPlan = false;
+    private boolean citizenAccepted;
+    private boolean architectAccepted;
+    private Boolean isEconomicallyWeakerSection;
+    private String additionalRejectionReasons;
+
     @OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<SiteDetail> siteDetail = new ArrayList<>(0);
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -185,7 +188,6 @@ public class BpaApplication extends StateAware {
     private List<ApplicationDocument> applicationDocument = new ArrayList<>(0);
     @OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ApplicationNocDocument> applicationNOCDocument = new ArrayList<>(0);
-    private transient List<CheckListDetail> checkListDocumentsForNOC = new ArrayList<>(0);
     @OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @OrderBy("id DESC ")
     private List<Inspection> inspections = new ArrayList<>();
@@ -201,27 +203,28 @@ public class BpaApplication extends StateAware {
     private List<ApplicationStakeHolder> stakeHolder = new ArrayList<>(0);
     @OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ExistingBuildingDetail> existingBuildingDetails = new ArrayList<>(0);
-    @Transient
-    private Long approvalDepartment;
-    @Transient
-    private Long zoneId;
-    @Transient
-    private Long wardId;
-    @Transient
-    private String approvalComent;
-    private boolean citizenAccepted;
-    private boolean architectAccepted;
-    private transient Set<Receipt> receipts = new HashSet<>();
-    @Transient
-    private boolean mailPwdRequired;
-    private Boolean isEconomicallyWeakerSection;
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinTable(name = "egbpa_application_permit_conditions", joinColumns = @JoinColumn(name = "application"), inverseJoinColumns = @JoinColumn(name = "permitcondition"))
-    private List<PermitConditions> permitConditions = new ArrayList<>(0);
-    private String additionalPermitConditions;
+    @OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<ApplicationPermitConditions> dynamicPermitConditions = new ArrayList<>(0);
+    @OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<ApplicationPermitConditions> staticPermitConditions = new ArrayList<>(0);
+    @OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<ApplicationPermitConditions> additionalPermitConditions = new ArrayList<>(0);
+    @OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<ApplicationPermitConditions> rejectionReasons = new ArrayList<>(0);
     @OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<BpaNotice> bpaNotice = new ArrayList<>(0);
-    private String additionalRejectionReasons;
+    
+    private transient Long approvalDepartment;
+    private transient Long zoneId;
+    private transient Long wardId;
+    private transient String approvalComent;
+    private transient Set<Receipt> receipts = new HashSet<>();
+    private transient boolean mailPwdRequired;
+    private transient List<CheckListDetail> checkListDocumentsForNOC = new ArrayList<>(0);
+    private transient List<ApplicationPermitConditions> dynamicPermitConditionsTemp  = new ArrayList<>(0);
+    private transient List<ApplicationPermitConditions> staticPermitConditionsTemp  = new ArrayList<>(0);
+    private transient List<ApplicationPermitConditions> rejectionReasonsTemp  = new ArrayList<>(0);
+    private transient List<ApplicationPermitConditions> additionalPermitConditionsTemp  = new ArrayList<>(0);
 
     @Override
     public Long getId() {
@@ -699,20 +702,20 @@ public class BpaApplication extends StateAware {
             this.buildingDetail.remove(buildingDetail);
     }
 
-    public List<PermitConditions> getPermitConditions() {
-        return permitConditions;
+    public List<ApplicationPermitConditions> getDynamicPermitConditions() {
+        return dynamicPermitConditions;
     }
 
-    public void setPermitConditions(List<PermitConditions> permitConditions) {
-        this.permitConditions = permitConditions;
-    }
-    
-    public String getAdditionalPermitConditions() {
-        return additionalPermitConditions;
+    public void setDynamicPermitConditions(List<ApplicationPermitConditions> dynamicPermitConditions) {
+        this.dynamicPermitConditions = dynamicPermitConditions;
     }
 
-    public void setAdditionalPermitConditions(String additionalPermitConditions) {
-        this.additionalPermitConditions = additionalPermitConditions;
+    public List<ApplicationPermitConditions> getStaticPermitConditions() {
+        return staticPermitConditions;
+    }
+
+    public void setStaticPermitConditions(List<ApplicationPermitConditions> staticPermitConditions) {
+        this.staticPermitConditions = staticPermitConditions;
     }
 
     public boolean isMailPwdRequired() {
@@ -733,6 +736,14 @@ public class BpaApplication extends StateAware {
     public void addNotice(final BpaNotice bpaNotice) {
         getBpaNotice().add(bpaNotice);
     }
+    
+    public List<ApplicationPermitConditions> getRejectionReasons() {
+        return rejectionReasons;
+    }
+
+    public void setRejectionReasons(List<ApplicationPermitConditions> rejectionReasons) {
+        this.rejectionReasons = rejectionReasons;
+    }
 
     public String getAdditionalRejectionReasons() {
         return additionalRejectionReasons;
@@ -741,5 +752,46 @@ public class BpaApplication extends StateAware {
     public void setAdditionalRejectionReasons(String additionalRejectionReasons) {
         this.additionalRejectionReasons = additionalRejectionReasons;
     }
+
+    public List<ApplicationPermitConditions> getAdditionalPermitConditions() {
+        return additionalPermitConditions;
+    }
+
+    public void setAdditionalPermitConditions(List<ApplicationPermitConditions> additionalPermitConditions) {
+        this.additionalPermitConditions = additionalPermitConditions;
+    }
+
+    public List<ApplicationPermitConditions> getDynamicPermitConditionsTemp() {
+        return dynamicPermitConditionsTemp;
+    }
+
+    public void setDynamicPermitConditionsTemp(List<ApplicationPermitConditions> dynamicPermitConditionsTemp) {
+        this.dynamicPermitConditionsTemp = dynamicPermitConditionsTemp;
+    }
+
+    public List<ApplicationPermitConditions> getStaticPermitConditionsTemp() {
+        return staticPermitConditionsTemp;
+    }
+
+    public void setStaticPermitConditionsTemp(List<ApplicationPermitConditions> staticPermitConditionsTemp) {
+        this.staticPermitConditionsTemp = staticPermitConditionsTemp;
+    }
+
+    public List<ApplicationPermitConditions> getRejectionReasonsTemp() {
+        return rejectionReasonsTemp;
+    }
+
+    public void setRejectionReasonsTemp(List<ApplicationPermitConditions> rejectionReasonsTemp) {
+        this.rejectionReasonsTemp = rejectionReasonsTemp;
+    }
+
+    public List<ApplicationPermitConditions> getAdditionalPermitConditionsTemp() {
+        return additionalPermitConditionsTemp;
+    }
+
+    public void setAdditionalPermitConditionsTemp(List<ApplicationPermitConditions> additionalPermitConditionsTemp) {
+        this.additionalPermitConditionsTemp = additionalPermitConditionsTemp;
+    }
     
+
 }

@@ -67,7 +67,7 @@
 					</div>
 				</div>
 			</c:if>
-			<input type="hidden" name="bpaApplication"
+			<input type="hidden" id="applicationId" name="bpaApplication"
 				value="${bpaApplication.id}">
 				<input type="hidden" name="citizenOrBusinessUser"
 				value="${citizenOrBusinessUser}"/>

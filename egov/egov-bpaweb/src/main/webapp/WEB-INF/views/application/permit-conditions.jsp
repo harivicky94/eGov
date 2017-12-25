@@ -58,12 +58,111 @@
 	</div>
 </div>
 <div class="panel-body">
-	<input type="hidden" id="persistedPermitConditions"
-		value="${bpaApplication.permitConditions}">
 	<c:if
 		test="${bpaApplication.serviceType.code ne '14' && bpaApplication.serviceType.code ne '15'}">
+		<div class="panel-heading">
+			<div class="panel-title">Permit Conidtions Type - I</div>
+		</div>
 		<table class="table table-bordered  multiheadertbl"
-			id=bpaupdatenocdetails>
+			id="bpaDynamicPermitConditions">
+			<thead>
+				<tr>
+					<th><spring:message code="lbl.srl.no" /></th>
+					<th><spring:message code="lbl.isrequired" /></th>
+					<th><spring:message code="lbl.condition" /></th>
+					<th>Order No./Vide No.</th>
+					<th>Dtd</th>
+				</tr>
+			</thead>
+			<tbody>
+				<c:choose>
+					<c:when
+						test="${not empty bpaApplication.dynamicPermitConditionsTemp}">
+						<c:forEach var="modifiablePermitCondition"
+							items="${bpaApplication.dynamicPermitConditionsTemp}"
+							varStatus="modifyPCStatus">
+							<tr>
+								<td><form:hidden
+										path="dynamicPermitConditionsTemp[${modifyPCStatus.index}].application"
+										value="${bpaApplication.id}" /> <form:hidden
+										path="dynamicPermitConditionsTemp[${modifyPCStatus.index}].permitCondition"
+										value="${modifiablePermitCondition.permitCondition.id}" /> <form:hidden
+										path="dynamicPermitConditionsTemp[${modifyPCStatus.index}].permitConditionType"
+										value="DYNAMIC_PERMITCONDITION" /> <form:hidden
+										path="dynamicPermitConditionsTemp[${modifyPCStatus.index}].orderNumber"
+										value="${modifyPCStatus.index+1}" /> <c:out
+										value="${modifyPCStatus.index+1}"></c:out></td>
+								<c:choose>
+									<c:when test="${modifiablePermitCondition.required}">
+										<td><input type="checkbox"
+											data-change-to="dynamicPermitConditionsTemp[${modifyPCStatus.index}].required"
+											name="dynamicPermitConditionsTemp[${modifyPCStatus.index}].required"
+											class="modifiablePermitConditions" checked="checked"
+											value="${modifiablePermitCondition.required}" /></td>
+									</c:when>
+									<c:otherwise>
+										<td><input type="checkbox"
+											data-change-to="dynamicPermitConditionsTemp[${modifyPCStatus.index}].required"
+											name="dynamicPermitConditionsTemp[${modifyPCStatus.index}].required"
+											class="modifiablePermitConditions"
+											value="${modifiablePermitCondition.required}" /></td>
+									</c:otherwise>
+								</c:choose>
+								<td><c:out
+										value="${modifiablePermitCondition.permitCondition.description}"></c:out></td>
+								<td><form:input
+										class="form-control permitConditionNumber addremovemandatory"
+										path="dynamicPermitConditionsTemp[${modifyPCStatus.index}].permitConditionNumber" /><span
+									class="error-msg display-hide">Required</span></td>
+								<td><form:input
+										path="dynamicPermitConditionsTemp[${modifyPCStatus.index}].permitConditiondDate"
+										class="form-control datepicker permitConditiondDate addremovemandatory"
+										data-date-end-date="0d" data-inputmask="'mask': 'd/m/y'" /><span
+									class="error-msg display-hide">Required</span></td>
+							</tr>
+						</c:forEach>
+					</c:when>
+					<c:otherwise>
+						<c:forEach var="modifiablePermitCondition"
+							items="${modifiablePermitConditions}" varStatus="modifyPCStatus">
+							<tr>
+								<td><form:hidden
+										path="dynamicPermitConditionsTemp[${modifyPCStatus.index}].application"
+										value="${bpaApplication.id}" /> <form:hidden
+										path="dynamicPermitConditionsTemp[${modifyPCStatus.index}].permitCondition"
+										value="${modifiablePermitCondition.id}" /> <form:hidden
+										path="dynamicPermitConditionsTemp[${modifyPCStatus.index}].permitConditionType"
+										value="DYNAMIC_PERMITCONDITION" /> <form:hidden
+										path="dynamicPermitConditionsTemp[${modifyPCStatus.index}].orderNumber"
+										value="${modifyPCStatus.index+1}" /> <c:out
+										value="${modifyPCStatus.index+1}"></c:out></td>
+								<td><form:checkbox
+										path="dynamicPermitConditionsTemp[${modifyPCStatus.index}].required"
+										id="modifiablePermitConditions"
+										class="modifiablePermitConditions" checked="checked"></form:checkbox></td>
+								<td><c:out value="${modifiablePermitCondition.description}"></c:out>
+								</td>
+								<td><form:input
+										class="form-control permitConditionNumber addremovemandatory"
+										path="dynamicPermitConditionsTemp[${modifyPCStatus.index}].permitConditionNumber"
+										required="true" /><span class="error-msg display-hide">Required</span>
+								</td>
+								<td><form:input
+										path="dynamicPermitConditionsTemp[${modifyPCStatus.index}].permitConditiondDate"
+										class="form-control datepicker permitConditiondDate addremovemandatory"
+										data-date-end-date="0d" data-inputmask="'mask': 'd/m/y'"
+										required="true" /><span class="error-msg display-hide">Required</span></td>
+							</tr>
+						</c:forEach>
+					</c:otherwise>
+				</c:choose>
+			</tbody>
+		</table>
+		<div class="panel-heading">
+			<div class="panel-title">Permit Conidtions Type - II</div>
+		</div>
+		<table class="table table-bordered  multiheadertbl"
+			id="bpaStaticPermitConditions">
 			<thead>
 				<tr>
 					<th><spring:message code="lbl.srl.no" /></th>
@@ -73,27 +172,62 @@
 			</thead>
 			<tbody>
 				<c:choose>
-					<c:when test="${not empty bpaApplication.permitConditions}">
-						<c:forEach var="permitCondition" items="${permitConditions}"
-							varStatus="status">
+					<c:when
+						test="${not empty bpaApplication.staticPermitConditionsTemp}">
+						<c:forEach var="staticPermitCondition"
+							items="${bpaApplication.staticPermitConditionsTemp}"
+							varStatus="staticPCStatus">
 							<tr>
-								<td><c:out value="${status.index+1}"></c:out></td>
-								<td><input type="checkbox" name="permitConditions"
-									id="permitConditionId" class="permitConditions"
-									value="${permitCondition.id}"></td>
-								<td><c:out value="${permitCondition.description}"></c:out></td>
+								<td><form:hidden
+										path="staticPermitConditionsTemp[${staticPCStatus.index}].application"
+										value="${bpaApplication.id}" /> <form:hidden
+										path="staticPermitConditionsTemp[${staticPCStatus.index}].permitCondition"
+										value="${staticPermitCondition.permitCondition.id}" /> <form:hidden
+										path="staticPermitConditionsTemp[${staticPCStatus.index}].permitConditionType"
+										value="STATIC_PERMITCONDITION" /> <form:hidden
+										path="staticPermitConditionsTemp[${staticPCStatus.index}].orderNumber"
+										value="${staticPCStatus.index+1}" /> <c:out
+										value="${staticPCStatus.index+1}"></c:out></td>
+								<c:choose>
+									<c:when test="${staticPermitCondition.required}">
+										<td><input type="checkbox"
+											data-change-to="staticPermitConditionsTemp[${staticPCStatus.index}].required"
+											name="staticPermitConditionsTemp[${staticPCStatus.index}].required"
+											class="staticPermitConditions" checked="checked"
+											value="${staticPermitCondition.required}" /></td>
+									</c:when>
+									<c:otherwise>
+										<td><input type="checkbox"
+											data-change-to="staticPermitConditionsTemp[${staticPCStatus.index}].required"
+											name="staticPermitConditionsTemp[${staticPCStatus.index}].required"
+											class="staticPermitConditions"
+											value="${staticPermitCondition.required}" /></td>
+									</c:otherwise>
+								</c:choose>
+								<td><c:out
+										value="${staticPermitCondition.permitCondition.description}"></c:out></td>
 							</tr>
 						</c:forEach>
 					</c:when>
 					<c:otherwise>
-						<c:forEach var="permitCondition" items="${permitConditions}"
-							varStatus="status">
+						<c:forEach var="staticPermitCondition" items="${permitConditions}"
+							varStatus="staticPCStatus">
 							<tr>
-								<td><c:out value="${status.index+1}"></c:out></td>
-								<td><form:checkbox path="permitConditions"
-										id="permitConditionId" class="permitConditions"
-										checked="checked" value="${permitCondition.id}"></form:checkbox></td>
-								<td><c:out value="${permitCondition.description}"></c:out></td>
+								<td><form:hidden
+										path="staticPermitConditionsTemp[${staticPCStatus.index}].application"
+										value="${bpaApplication.id}" /> <form:hidden
+										path="staticPermitConditionsTemp[${staticPCStatus.index}].permitCondition"
+										value="${staticPermitCondition.id}" /> <form:hidden
+										path="staticPermitConditionsTemp[${staticPCStatus.index}].permitConditionType"
+										value="STATIC_PERMITCONDITION" /> <form:hidden
+										path="staticPermitConditionsTemp[${staticPCStatus.index}].orderNumber"
+										value="${staticPCStatus.index+1}" /> <c:out
+										value="${staticPCStatus.index+1}"></c:out></td>
+								<td><form:checkbox
+										path="staticPermitConditionsTemp[${staticPCStatus.index}].required"
+										class="staticPermitConditions" checked="checked" /></td>
+								<td><c:out value="${staticPermitCondition.description}"></c:out>
+								</td>
 							</tr>
 						</c:forEach>
 					</c:otherwise>
@@ -101,14 +235,70 @@
 			</tbody>
 		</table>
 	</c:if>
-	<div class="form-group">
-		<label class="col-sm-3 control-label text-right"><spring:message
-				code="lbl.addnl.permit.condition" /> </label>
-		<div class="col-sm-9 add-margin">
-			<form:textarea path="additionalPermitConditions" rows="4"
-				class="form-control patternvalidation"
-				id="additionalPermitConditions"
-				value="${additionalPermitConditions}" />
+	<div class="panel-heading">
+		<div class="panel-title">
+			<spring:message code="lbl.addnl.permit.condition" />
 		</div>
+	</div>
+	<table class="table table-bordered  multiheadertbl"
+		id="bpaAdditionalPermitConditions">
+		<thead>
+			<tr>
+				<th><spring:message code="lbl.srl.no" /></th>
+				<th><spring:message code="lbl.condition" /></th>
+			</tr>
+		</thead>
+		<tbody>
+			<c:choose>
+				<c:when
+					test="${not empty bpaApplication.additionalPermitConditionsTemp}">
+					<c:forEach var="addnlPermitCondition"
+						items="${bpaApplication.additionalPermitConditionsTemp}"
+						varStatus="addnlPCStatus">
+						<tr>
+							<td class="text-center"><form:hidden
+									path="additionalPermitConditionsTemp[${addnlPCStatus.index}].application"
+									value="${bpaApplication.id}" />
+								<form:hidden id="additionalPermitCondition"
+									path="additionalPermitConditionsTemp[${addnlPCStatus.index}].permitCondition" />
+								<form:hidden
+									path="additionalPermitConditionsTemp[${addnlPCStatus.index}].permitConditionType"
+									value="ADDITIONAL_PERMITCONDITION" /> <form:hidden
+									class="orderNo"
+									path="additionalPermitConditionsTemp[${addnlPCStatus.index}].orderNumber"
+									value="${addnlPermitCondition.orderNumber}" />
+								<c:out value="${addnlPCStatus.index+1}"></c:out></td>
+							<td><form:textarea
+									path="additionalPermitConditionsTemp[${addnlPCStatus.index}].additionalPermitCondition"
+									rows="2"
+									class="form-control patternvalidation additionalPermitCondition"></form:textarea></td>
+						</tr>
+					</c:forEach>
+				</c:when>
+				<c:otherwise>
+					<tr>
+						<td class="text-center"><form:hidden
+								path="additionalPermitConditionsTemp[0].application"
+								value="${bpaApplication.id}" /> <form:hidden
+								id="additionalPermitCondition"
+								path="additionalPermitConditionsTemp[0].permitCondition"
+								value="${additionalPermitCondition.id}" /> <form:hidden
+								path="additionalPermitConditionsTemp[0].permitConditionType"
+								value="ADDITIONAL_PERMITCONDITION" /> <form:hidden
+								class="orderNo"
+								path="additionalPermitConditionsTemp[0].orderNumber" value="1" />
+							1</td>
+						<td><form:textarea
+								path="additionalPermitConditionsTemp[0].additionalPermitCondition"
+								rows="2"
+								class="form-control patternvalidation additionalPermitConditions"></form:textarea></td>
+					</tr>
+				</c:otherwise>
+			</c:choose>
+		</tbody>
+	</table>
+	<div class="text-right add-padding">
+		<button type="button" class="btn btn-sm btn-primary"
+			id="addAddnlPermitRow">ADD ROW</button>
 	</div>
 </div>

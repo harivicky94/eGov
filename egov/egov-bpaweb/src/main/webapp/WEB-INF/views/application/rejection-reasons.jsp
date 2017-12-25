@@ -61,7 +61,8 @@
 	</div>
 </div>
 <div class="panel-body display-hide">
-	<table class="table table-bordered  multiheadertbl" id=rejectionReasons>
+	<table class="table table-bordered  multiheadertbl"
+		id="bpaStaticPermitConditions">
 		<thead>
 			<tr>
 				<th><spring:message code="lbl.srl.no" /></th>
@@ -71,42 +72,129 @@
 		</thead>
 		<tbody>
 			<c:choose>
-				<c:when test="${not empty bpaApplication.permitConditions}">
-					<c:forEach var="rejectReason" items="${rejectionReasons}"
-						varStatus="status">
+				<c:when test="${not empty bpaApplication.rejectionReasonsTemp}">
+					<c:forEach var="rejectionReason"
+						items="${bpaApplication.rejectionReasonsTemp}"
+						varStatus="rejectPCStatus">
 						<tr>
-							<td><c:out value="${status.index+1}"></c:out></td>
-							<td><input type="checkbox" name="permitConditions"
-								id="rejectionReasonsId" class="rejectionReasons"
-								value="${rejectReason.id}"
-								<c:if test="${fn:contains(bpaApplication.permitConditions, rejectReason)}"> checked </c:if>></td>
-							<td><c:out value="${rejectReason.description}"></c:out></td>
+							<td><form:hidden
+									path="rejectionReasonsTemp[${rejectPCStatus.index}].application"
+									value="${bpaApplication.id}" /> <form:hidden
+									path="rejectionReasonsTemp[${rejectPCStatus.index}].permitCondition"
+									value="${staticPermitCondition.permitCondition.id}" /> <form:hidden
+									path="rejectionReasonsTemp[${rejectPCStatus.index}].permitConditionType"
+									value="REJECTION_REASON" /> <form:hidden
+									path="rejectionReasonsTemp[${rejectPCStatus.index}].orderNumber"
+									value="${rejectPCStatus.index+1}" /> <c:out
+									value="${rejectPCStatus.index+1}"></c:out></td>
+							<c:choose>
+								<c:when test="${rejectionReason.required}">
+									<td><input type="checkbox"
+										data-change-to="rejectionReasonsTemp[${rejectPCStatus.index}].required"
+										name="rejectionReasonsTemp[${rejectPCStatus.index}].required"
+										class="rejectionReasons" checked="checked"
+										value="${rejectionReason.required}" /></td>
+								</c:when>
+								<c:otherwise>
+									<td><input type="checkbox"
+										data-change-to="rejectionReasonsTemp[${rejectPCStatus.index}].required"
+										name="rejectionReasonsTemp[${rejectPCStatus.index}].required"
+										class="rejectionReasons" value="${rejectionReason.required}" /></td>
+								</c:otherwise>
+							</c:choose>
+							<td><c:out
+									value="${rejectionReason.permitCondition.description}"></c:out></td>
 						</tr>
 					</c:forEach>
 				</c:when>
 				<c:otherwise>
-					<c:forEach var="rejectReason" items="${rejectionReasons}"
-						varStatus="status">
+					<c:forEach var="rejectionReason" items="${rejectionReasons}"
+						varStatus="rejectPCStatus">
 						<tr>
-							<td><c:out value="${status.index+1}"></c:out></td>
-							<td><form:checkbox path="permitConditions"
-									id="rejectionReasonsId" class="rejectionReasons"
-									value="${rejectReason.id}"></form:checkbox></td>
-							<td><c:out value="${rejectReason.description}"></c:out></td>
+							<td><form:hidden
+									path="rejectionReasonsTemp[${rejectPCStatus.index}].application"
+									value="${bpaApplication.id}" /> <form:hidden
+									path="rejectionReasonsTemp[${rejectPCStatus.index}].permitCondition"
+									value="${rejectionReason.id}" /> <form:hidden
+									path="rejectionReasonsTemp[${rejectPCStatus.index}].permitConditionType"
+									value="REJECTION_REASON" /> <form:hidden
+									path="rejectionReasonsTemp[${rejectPCStatus.index}].orderNumber"
+									value="${rejectPCStatus.index+1}" /> <c:out
+									value="${rejectPCStatus.index+1}"></c:out></td>
+							<td><form:checkbox
+									path="rejectionReasonsTemp[${rejectPCStatus.index}].required"
+									class="rejectionReasons" /></td>
+							<td><c:out value="${rejectionReason.description}"></c:out></td>
 						</tr>
 					</c:forEach>
 				</c:otherwise>
 			</c:choose>
 		</tbody>
 	</table>
-	<div class="form-group">
-		<label class="col-sm-3 control-label text-right"><spring:message
-				code="lbl.addnl.reject.reasons" /> </label>
-		<div class="col-sm-9 add-margin">
-			<form:textarea path="additionalRejectionReasons" rows="4"
-				class="form-control patternvalidation"
-				id="additionalRejectionReasons"
-				value="${additionalRejectionReasons}" />
+	<div class="panel-heading">
+		<div class="panel-title">
+			<spring:message code="lbl.addnl.reject.reasons" />
 		</div>
+	</div>
+	<table class="table table-bordered  multiheadertbl"
+		id="bpaAdditionalPermitConditions">
+		<thead>
+			<tr>
+				<th><spring:message code="lbl.srl.no" /></th>
+				<th><spring:message code="lbl.condition" /></th>
+			</tr>
+		</thead>
+		<tbody>
+			<c:choose>
+				<c:when
+					test="${not empty bpaApplication.additionalPermitConditionsTemp}">
+					<c:forEach var="addnlPermitCondition"
+						items="${bpaApplication.additionalPermitConditionsTemp}"
+						varStatus="addnlPCStatus">
+						<tr>
+							<td class="text-center"><form:hidden
+									path="additionalPermitConditionsTemp[${addnlPCStatus.index}].application"
+									value="${bpaApplication.id}" />
+								<form:hidden id="additionalPermitCondition"
+									path="additionalPermitConditionsTemp[${addnlPCStatus.index}].permitCondition" />
+								<form:hidden
+									path="additionalPermitConditionsTemp[${addnlPCStatus.index}].permitConditionType"
+									value="ADDITIONAL_PERMITCONDITION" /> <form:hidden
+									class="serialNo"
+									path="additionalPermitConditionsTemp[${addnlPCStatus.index}].orderNumber"
+									value="${addnlPermitCondition.orderNumber}" />
+								<c:out value="${addnlPCStatus.index+1}"></c:out></td>
+							<td><form:textarea
+									path="additionalPermitConditionsTemp[${addnlPCStatus.index}].additionalPermitCondition"
+									rows="2"
+									class="form-control patternvalidation additionalPermitCondition"></form:textarea></td>
+						</tr>
+					</c:forEach>
+				</c:when>
+				<c:otherwise>
+					<tr>
+						<td class="text-center"><form:hidden
+								path="additionalPermitConditionsTemp[0].application"
+								value="${bpaApplication.id}" /> <form:hidden
+								id="additionalPermitCondition"
+								path="additionalPermitConditionsTemp[0].permitCondition"
+								value="${additionalPermitCondition.id}" /> <form:hidden
+								path="additionalPermitConditionsTemp[0].permitConditionType"
+								value="ADDITIONAL_PERMITCONDITION" /> <form:hidden
+								class="serialNo"
+								path="additionalPermitConditionsTemp[0].orderNumber" value="1" />
+							1</td>
+						<td><form:textarea
+								path="additionalPermitConditionsTemp[0].additionalPermitCondition"
+								rows="2"
+								class="form-control patternvalidation additionalPermitConditions"></form:textarea></td>
+					</tr>
+				</c:otherwise>
+			</c:choose>
+		</tbody>
+	</table>
+	<div class="text-right add-padding">
+		<button type="button" class="btn btn-sm btn-primary"
+			id="addAddnlPermitRow">ADD ROW</button>
 	</div>
 </div>

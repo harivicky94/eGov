@@ -58,10 +58,6 @@
 	<div class="panel-title header-color">
 		<spring:message code="lbl.plint.carpet.details" />
 	</div>
-	<div class="text-right add-padding">
-		<button type="button" class="btn btn-sm btn-primary"
-			id="addBuildAreaRow">ADD ROW</button>
-	</div>
 	<input type="hidden" id="buildingFloorList"
 		value="${buildingFloorList}"> <input type="hidden"
 		id="occupancyList" value="${occupancyList}"> <input
@@ -240,6 +236,10 @@
 			</tr>
 		</tfoot>
 	</table>
+	<div class="text-right add-padding">
+		<button type="button" class="btn btn-sm btn-primary"
+			id="addBuildAreaRow">ADD ROW</button>
+	</div>
 	<div class="form-group">
 		<div class="col-sm-12 add-margin">
 			<form:checkbox path="buildingDetail[0].additionalFeePaymentAccepted"

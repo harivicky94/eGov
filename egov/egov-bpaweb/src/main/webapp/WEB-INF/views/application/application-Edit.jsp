@@ -60,7 +60,7 @@
 			<form:hidden path="" value="${areaInSqMtr}" id="areaInSqMtr" name="areaInSqMtr"/>
 			<form:hidden path="" value="${currentDesignation}" id="currentDesignation" name="currentDesignation"/>
 			<form:hidden path="" value="${isApproveValid}" id="isApproveValid" name="isApproveValid"/>
-			
+			<form:hidden path="" id="applicationId" value="${bpaApplication.id}" />
 			<form:hidden path="" id="wfstateDesc"
 				value="${bpaApplication.state.value}" />
 			<form:hidden path="" id="mode" name="mode" value="${mode}" />

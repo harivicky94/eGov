@@ -57,10 +57,6 @@
 	<div class="panel-title header-color">
 		<spring:message code="lbl.plint.carpet.details" />
 	</div>
-	<div class="text-right add-padding">
-		<button type="button" class="btn btn-sm btn-primary"
-			id="addExistBuildFloorRow">ADD ROW</button>
-	</div>
 	<input type="hidden" id="buildingFloorListForExistingBuild"
 		value="${buildingFloorList}"> <input type="hidden"
 		id="occupancyListForExistingBuild" value="${occupancyList}"> <input
@@ -232,6 +228,10 @@
 			</tr>
 		</tfoot>
 	</table>
+	<div class="text-right add-padding">
+		<button type="button" class="btn btn-sm btn-primary"
+			id="addExistBuildFloorRow">ADD ROW</button>
+	</div>
 	<form:hidden id="existTotalPlintArea" path="existingBuildingDetails[0].totalPlintArea" />
 </div>
 

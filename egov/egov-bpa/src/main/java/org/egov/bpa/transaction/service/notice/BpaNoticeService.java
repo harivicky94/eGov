@@ -48,8 +48,8 @@ package org.egov.bpa.transaction.service.notice;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_MODULE_TYPE;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_REJECTED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CANCELLED;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_REJECTED;
 import static org.egov.bpa.utils.BpaConstants.BPADEMANDNOTICETITLE;
 import static org.egov.bpa.utils.BpaConstants.BPAREJECTIONFILENAME;
 import static org.egov.bpa.utils.BpaConstants.BPA_ADM_FEE;
@@ -80,14 +80,16 @@ import java.util.stream.Collectors;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.WordUtils;
-import org.egov.bpa.master.entity.PermitConditions;
 import org.egov.bpa.master.entity.ServiceType;
+import org.egov.bpa.transaction.entity.ApplicationPermitConditions;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.BpaNotice;
 import org.egov.bpa.transaction.entity.BuildingDetail;
 import org.egov.bpa.transaction.entity.Response;
+import org.egov.bpa.transaction.entity.enums.PermitConditionType;
 import org.egov.bpa.transaction.repository.BpaNoticeRepository;
 import org.egov.bpa.transaction.service.ApplicationBpaService;
+import org.egov.bpa.transaction.service.BpaApplicationPermitConditionsService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.utils.BpaUtils;
 import org.egov.commons.Installment;
@@ -127,6 +129,8 @@ public class BpaNoticeService {
     private BpaNoticeRepository bpaNoticeRepository;
     @Autowired
     private ApplicationBpaService applicationBpaService;
+    @Autowired
+    private BpaApplicationPermitConditionsService bpaApplicationPermitConditionsService;
 
     public BpaNotice findByApplicationAndNoticeType(final BpaApplication application, final String noticeType) {
         return bpaNoticeRepository.findByApplicationAndNoticeType(application, noticeType);
@@ -207,7 +211,7 @@ public class BpaNoticeService {
         reportOutput.setReportFormat(ReportFormat.PDF);
         return reportOutput;
     }
-    
+
     public ReportOutput generateRejectionNotice(final BpaApplication bpaApplication,
             final Map<String, Object> ulbDetailsReportParams)
             throws IOException {
@@ -230,7 +234,6 @@ public class BpaNoticeService {
         reportOutput.setReportFormat(ReportFormat.PDF);
         return reportOutput;
     }
-
 
     private BpaNotice saveBpaNotices(final BpaApplication application, ReportOutput reportOutput, String fileName,
             String noticeType) {
@@ -260,7 +263,7 @@ public class BpaNoticeService {
                 bpaApplication.getOwner() != null && !bpaApplication.getOwner().getUser().getAddress().isEmpty()
                         ? bpaApplication.getOwner().getUser().getAddress().get(0).getStreetRoadLine() : "");
         reportParams.put("applicationDate", DateUtils.getDefaultFormattedDate(bpaApplication.getApplicationDate()));
-        if(APPLICATION_STATUS_CANCELLED.equalsIgnoreCase(bpaApplication.getStatus().getCode())) {
+        if (APPLICATION_STATUS_CANCELLED.equalsIgnoreCase(bpaApplication.getStatus().getCode())) {
             reportParams.put("rejectionReasons", buildRejectionReasons(bpaApplication));
         } else {
             reportParams.put("permitConditions", buildPermitConditions(bpaApplication));
@@ -318,7 +321,7 @@ public class BpaNoticeService {
         certificateValidatiy.append("\n\nValidity : This certificate is valid upto ").append(validityExpiryDate).append(" Only.");
         return certificateValidatiy.toString();
     }
-    
+
     private String getBuildingCommonPermitNotes() {
         StringBuilder permitNotes = new StringBuilder();
         permitNotes.append(getMessageFromPropertyFile("build.permit.note1"))
@@ -330,6 +333,8 @@ public class BpaNoticeService {
     private String buildPermitConditions(final BpaApplication bpaApplication) {
 
         StringBuilder permitConditions = new StringBuilder();
+        List<ApplicationPermitConditions> additionalPermitConditions = bpaApplicationPermitConditionsService
+                .findAllByApplicationAndPermitConditionType(bpaApplication, PermitConditionType.ADDITIONAL_PERMITCONDITION);
         if (bpaApplication.getPlanPermissionDate() != null && bpaApplication.getServiceType().getCode().equals(ST_CODE_14)
                 || bpaApplication.getServiceType().getCode().equals(ST_CODE_15)) {
             permitConditions.append(getMessageFromPropertyFile("tower.pole.permit.condition1"))
@@ -345,52 +350,80 @@ public class BpaNoticeService {
                     .append(getMessageFromPropertyFileWithParameters("tower.pole.permit.condition10",
                             bpaApplication.getPlanPermissionDate().toString()))
                     .append(getMessageFromPropertyFile("tower.pole.permit.condition11"));
-            if (StringUtils.isNotBlank(bpaApplication.getAdditionalPermitConditions())) {
-                permitConditions
-                        .append(String.valueOf("\n\n12").concat(") ").concat(bpaApplication.getAdditionalPermitConditions()));
-            }
+            int order = 12;
+            buildAdditionalPermitConditionsOrRejectionReason(permitConditions, additionalPermitConditions, order);
         } else {
-            int order = buildPredefinedPermitConditionOrRejectReasons(bpaApplication, permitConditions);
-            if (StringUtils.isNotBlank(bpaApplication.getAdditionalPermitConditions())) {
-                permitConditions.append(
-                        String.valueOf(order).concat(") ").concat(bpaApplication.getAdditionalPermitConditions()));
-            }
+            int order = buildApplicationPermitConditions(bpaApplication, permitConditions);
+            buildAdditionalPermitConditionsOrRejectionReason(permitConditions, additionalPermitConditions, order);
         }
         return permitConditions.toString();
     }
-    
+
+    private void buildAdditionalPermitConditionsOrRejectionReason(StringBuilder permitConditions,
+            List<ApplicationPermitConditions> additionalPermitConditions, int order) {
+        int additionalOrder = order;
+        if (!additionalPermitConditions.isEmpty()
+                && StringUtils.isNotBlank(additionalPermitConditions.get(0).getAdditionalPermitCondition())) {
+            for (ApplicationPermitConditions addnlPermitConditions : additionalPermitConditions) {
+                permitConditions.append(
+                        String.valueOf(additionalOrder).concat(") ").concat(addnlPermitConditions.getAdditionalPermitCondition())
+                                .concat("\n\n"));
+                additionalOrder++;
+            }
+        }
+    }
+
     private String buildRejectionReasons(final BpaApplication bpaApplication) {
+        List<ApplicationPermitConditions> additionalPermitConditions = bpaApplicationPermitConditionsService
+                .findAllByApplicationAndPermitConditionType(bpaApplication, PermitConditionType.ADDITIONAL_PERMITCONDITION);
         StringBuilder rejectReasons = new StringBuilder();
-        int order = buildPredefinedPermitConditionOrRejectReasons(bpaApplication, rejectReasons);
+        int order = buildPredefinedRejectReasons(bpaApplication, rejectReasons);
         StateHistory stateHistory = bpaApplication.getStateHistory().stream()
                 .filter(history -> history.getValue().equalsIgnoreCase(APPLICATION_STATUS_REJECTED))
                 .findAny().orElse(null);
-        rejectReasons.append(
-                "\n\n".concat(String.valueOf(order).concat(") "))
-                        .concat(stateHistory != null ? stateHistory.getComments() : EMPTY).concat("\n\n"));
-        if (StringUtils.isNotBlank(bpaApplication.getAdditionalRejectionReasons())) {
-            rejectReasons.append(
-                    String.valueOf(order + 1).concat(") ").concat(bpaApplication.getAdditionalRejectionReasons()));
-        }
+        rejectReasons.append(String.valueOf(order).concat(") ")
+                .concat(stateHistory != null ? stateHistory.getComments() : EMPTY).concat("\n\n"));
+        buildAdditionalPermitConditionsOrRejectionReason(rejectReasons, additionalPermitConditions, order);
         return rejectReasons.toString();
     }
 
-    private int buildPredefinedPermitConditionOrRejectReasons(final BpaApplication bpaApplication,
+    private int buildPredefinedRejectReasons(final BpaApplication bpaApplication,
             StringBuilder permitConditions) {
         int order = 1;
-        for (PermitConditions pc : bpaApplication.getPermitConditions()) {
-            if (bpaApplication.getPermitConditions().size() - 1 == order - 1
-                    && StringUtils.isBlank(bpaApplication.getAdditionalPermitConditions())
-                    && StringUtils.isNotBlank(bpaApplication.getAdditionalRejectionReasons())) {
-                permitConditions.append(String.valueOf(order).concat(") ").concat(pc.getDescription()));
-            } else {
-                permitConditions.append(String.valueOf(order).concat(") ").concat(pc.getDescription()).concat("\n\n"));
+        for (ApplicationPermitConditions rejectReason : bpaApplication.getRejectionReasons()) {
+            if (rejectReason.isRequired()
+                    && PermitConditionType.REJECTION_REASON.equals(rejectReason.getPermitConditionType())) {
+                permitConditions
+                        .append(String.valueOf(order).concat(") ").concat(rejectReason.getPermitCondition().getDescription())
+                                .concat("\n\n"));
+                order++;
             }
-            order++;
         }
         return order;
     }
-    
+
+    private int buildApplicationPermitConditions(final BpaApplication bpaApplication,
+            StringBuilder permitConditions) {
+        int order = 1;
+        for (ApplicationPermitConditions applnPermit : bpaApplication.getDynamicPermitConditions()) {
+            if (applnPermit.isRequired()
+                    && PermitConditionType.DYNAMIC_PERMITCONDITION.equals(applnPermit.getPermitConditionType())) {
+                permitConditions
+                        .append(String.valueOf(order).concat(") ").concat(applnPermit.getPermitCondition().getDescription())
+                                .concat(applnPermit.getPermitConditionNumber()).concat(" Dtd ")
+                                .concat(DateUtils.toDefaultDateFormat(applnPermit.getPermitConditiondDate())).concat(".")
+                                .concat("\n\n"));
+                order++;
+            } else if (applnPermit.isRequired()
+                    && PermitConditionType.STATIC_PERMITCONDITION.equals(applnPermit.getPermitConditionType())) {
+                permitConditions.append(String.valueOf(order).concat(") ")
+                        .concat(applnPermit.getPermitCondition().getDescription()).concat("\n\n"));
+                order++;
+            }
+        }
+        return order;
+    }
+
     private String getMessageFromPropertyFile(String key) {
         return bpaMessageSource.getMessage(key, null, null);
     }

@@ -41,13 +41,16 @@ package org.egov.bpa.transaction.service;
 
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_APPROVED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CREATED;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_DIGI_SIGNED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_FIELD_INS;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_REJECTED;
 import static org.egov.bpa.utils.BpaConstants.BPAFEETYPE;
 import static org.egov.bpa.utils.BpaConstants.BPASTATUS_MODULETYPE;
 import static org.egov.bpa.utils.BpaConstants.CHECKLIST_TYPE_NOC;
 import static org.egov.bpa.utils.BpaConstants.FILESTORE_MODULECODE;
 import static org.egov.bpa.utils.BpaConstants.ROLE_CITIZEN;
 import static org.egov.bpa.utils.BpaConstants.WF_NEW_STATE;
+import static org.egov.bpa.utils.BpaConstants.WF_REJECT_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_SURVEYOR_FORWARD_BUTTON;
 
 import java.io.IOException;
@@ -167,6 +170,8 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
     private RegistrarOfficeVillageService registrarOfficeVillageService;
     @Autowired
     private ExistingBuildingFloorDetailsService existingBuildingFloorDetailsService;
+    @Autowired
+    private BpaApplicationPermitConditionsService bpaApplicationPermitConditionsService;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -240,6 +245,28 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         return application.getZoneId() != null ? application.getZoneId() : null;
     }
 
+    private void buildPermitConditions(final BpaApplication application) {
+
+        bpaApplicationPermitConditionsService.delete(application.getDynamicPermitConditions());
+        bpaApplicationPermitConditionsService.delete(application.getStaticPermitConditions());
+        bpaApplicationPermitConditionsService.delete(application.getAdditionalPermitConditions());
+        application.getDynamicPermitConditions().clear();
+        application.getStaticPermitConditions().clear();
+        application.getAdditionalPermitConditions().clear();
+        application.setDynamicPermitConditions(application.getDynamicPermitConditionsTemp());
+        application.setStaticPermitConditions(application.getStaticPermitConditionsTemp());
+        application.setAdditionalPermitConditions(application.getAdditionalPermitConditionsTemp());
+    }
+
+    private void buildRejectionReasons(final BpaApplication application) {
+        bpaApplicationPermitConditionsService.delete(application.getAdditionalPermitConditions());
+        bpaApplicationPermitConditionsService.delete(application.getAdditionalPermitConditions());
+        application.getAdditionalPermitConditions().clear();
+        application.getAdditionalPermitConditions().clear();
+        application.setRejectionReasons(application.getRejectionReasonsTemp());
+        application.setAdditionalPermitConditions(application.getAdditionalPermitConditionsTemp());
+    }
+
     public void persistBpaNocDocuments(final BpaApplication application) {
         final Map<Long, CheckListDetail> generalDocumentAndId = new HashMap<>();
         checkListDetailService
@@ -258,6 +285,8 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
                 && APPLICATION_STATUS_CREATED.equalsIgnoreCase(application.getStatus().getCode())) {
             application.setDemand(applicationBpaBillService.createDemand(application));
         }
+
+        buildPermitConditions(application);
         persistPostalAddress(application);
         buildRegistrarOfficeForVillage(application);
         buildSchemeLandUsage(application);
@@ -308,6 +337,15 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
                 && FORWARDED_DIGI_SIGN.equalsIgnoreCase(application.getState().getNextAction())) {
             application.setPlanPermissionNumber(generatePlanPermissionNumber(application));
             application.setPlanPermissionDate(new Date());
+        }
+        if (APPLICATION_STATUS_APPROVED.equals(application.getStatus().getCode())
+                || APPLICATION_STATUS_DIGI_SIGNED.equalsIgnoreCase(application.getStatus().getCode())) {
+            buildPermitConditions(application);
+        }
+
+        if (WF_REJECT_BUTTON.equalsIgnoreCase(workFlowAction)
+                || APPLICATION_STATUS_REJECTED.equalsIgnoreCase(application.getStatus().getCode())) {
+            buildRejectionReasons(application);
         }
         final BpaApplication updatedApplication = applicationBpaRepository.save(application);
         if (updatedApplication.getCurrentState() != null
@@ -467,4 +505,5 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         applicantUser.addAddress(bpaApplication.getOwner().getPermanentAddress());
         return userService.createUser(applicantUser);
     }
+
 }

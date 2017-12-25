@@ -85,6 +85,8 @@ import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.BpaAppointmentSchedule;
 import org.egov.bpa.transaction.entity.LettertoParty;
 import org.egov.bpa.transaction.entity.enums.AppointmentSchedulePurpose;
+import org.egov.bpa.transaction.entity.enums.PermitConditionType;
+import org.egov.bpa.transaction.service.BpaApplicationPermitConditionsService;
 import org.egov.bpa.transaction.service.InspectionService;
 import org.egov.bpa.transaction.service.LettertoPartyService;
 import org.egov.bpa.utils.BpaConstants;
@@ -148,6 +150,8 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
     private LettertoPartyService lettertoPartyService;
     @Autowired
     private PermitConditionsService permitConditionsService;
+    @Autowired
+    private BpaApplicationPermitConditionsService bpaApplicationPermitConditionsService;
 
     @ModelAttribute
     public BpaApplication getBpaApplication(@PathVariable final String applicationNumber) {
@@ -175,17 +179,31 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
                 || APPLICATION_STATUS_NOCUPDATED.equalsIgnoreCase(application.getStatus().getCode())) {
             model.addAttribute("createlettertoparty", true);
         }
-        
-        if ( APPLICATION_STATUS_APPROVED.equals(application.getStatus().getCode())
+
+        if (APPLICATION_STATUS_APPROVED.equals(application.getStatus().getCode())
                 || APPLICATION_STATUS_DIGI_SIGNED.equalsIgnoreCase(application.getStatus().getCode())) {
             model.addAttribute("showpermitconditions", true);
-            model.addAttribute("permitConditions", permitConditionsService.findByConditionTypeOrderByOrderNumberAsc("PermitCondition"));
+            model.addAttribute("permitConditions", permitConditionsService
+                    .findByConditionTypeOrderByOrderNumberAsc(PermitConditionType.STATIC_PERMITCONDITION.name()));
+            model.addAttribute("modifiablePermitConditions", permitConditionsService
+                    .findByConditionTypeOrderByOrderNumberAsc(PermitConditionType.DYNAMIC_PERMITCONDITION.name()));
+            model.addAttribute("additionalPermitCondition", permitConditionsService
+                    .findByConditionTypeOrderByOrderNumberAsc(PermitConditionType.ADDITIONAL_PERMITCONDITION.name()).get(0));
+            buildApplicationPermitConditions(application);
         }
-        if ( APPLICATION_STATUS_NOCUPDATED.equals(application.getStatus().getCode())
-                || APPLICATION_STATUS_REJECTED.equalsIgnoreCase(application.getStatus().getCode()) || (APPLICATION_STATUS_FIELD_INS.equalsIgnoreCase(application.getStatus().getCode()) && FIELD_INSPECTION_COMPLETED.equalsIgnoreCase(application.getState().getValue()))) {
+        if (APPLICATION_STATUS_NOCUPDATED.equals(application.getStatus().getCode())
+                || APPLICATION_STATUS_REJECTED.equalsIgnoreCase(application.getStatus().getCode())
+                || (APPLICATION_STATUS_FIELD_INS.equalsIgnoreCase(application.getStatus().getCode())
+                        && FIELD_INSPECTION_COMPLETED.equalsIgnoreCase(application.getState().getValue()))) {
             model.addAttribute("showRejectionReasons", true);
+            model.addAttribute("additionalPermitCondition", permitConditionsService
+                    .findByConditionTypeOrderByOrderNumberAsc(PermitConditionType.ADDITIONAL_PERMITCONDITION.name()).get(0));
             model.addAttribute("rejectionReasons", permitConditionsService.findByConditionTypeOrderByOrderNumberAsc("Rejection"));
-        }    
+            application.setRejectionReasonsTemp(bpaApplicationPermitConditionsService
+                    .findAllByApplicationAndPermitConditionType(application, PermitConditionType.REJECTION_REASON));
+            application.setAdditionalPermitConditionsTemp(bpaApplicationPermitConditionsService
+                    .findAllByApplicationAndPermitConditionType(application, PermitConditionType.ADDITIONAL_PERMITCONDITION));
+        }
         model.addAttribute("workFlowByNonEmp", applicationBpaService.applicationinitiatedByNonEmployee(application));
         model.addAttribute(APPLICATION_HISTORY,
                 bpaThirdPartyService.getHistory(application));
@@ -206,6 +224,15 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
                 model.addAttribute(COLLECT_FEE_VALIDATE, "");
         }
         return APPLICATION_VIEW;
+    }
+
+    private void buildApplicationPermitConditions(final BpaApplication application) {
+        application.setDynamicPermitConditionsTemp(bpaApplicationPermitConditionsService
+                .findAllByApplicationAndPermitConditionType(application, PermitConditionType.DYNAMIC_PERMITCONDITION));
+        application.setStaticPermitConditionsTemp(bpaApplicationPermitConditionsService
+                .findAllByApplicationAndPermitConditionType(application, PermitConditionType.STATIC_PERMITCONDITION));
+        application.setAdditionalPermitConditionsTemp(bpaApplicationPermitConditionsService
+                .findAllByApplicationAndPermitConditionType(application, PermitConditionType.ADDITIONAL_PERMITCONDITION));
     }
 
     private void getModeForUpdateApplication(final Model model, List<String> purposeInsList,
@@ -398,7 +425,7 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
             if (stateHistory != null)
                 approvalComent = stateHistory.getComments();
         }
-        
+
         String message;
         Long approvalPosition = null;
         Position pos = null;

@@ -41,6 +41,91 @@ jQuery(document)
 		.ready(
 				function() {
 
+					
+					var tbody = $('#bpaAdditionalPermitConditions').children('tbody');
+					var table = tbody.length ? tbody : $('#bpaAdditionalPermitConditions');
+					var row = '<tr>'+
+					'<td class="text-center"><span class="serialNo text-center" id="slNoInsp">{{sno}}</span><input type="hidden" name="additionalPermitConditionsTemp[{{idx}}].application" value="{{applicationId}}" /><input type="hidden" class="additionalPermitCondition" name="additionalPermitConditionsTemp[{{idx}}].permitConditionType" value="ADDITIONAL_PERMITCONDITION"/><input type="hidden" class="additionalPermitCondition" name="additionalPermitConditionsTemp[{{idx}}].permitCondition" value="{{permitConditionId}}"/><input type="hidden" class="serialNo" data-sno name="additionalPermitConditionsTemp[{{idx}}].orderNumber"/></td>'+
+					'<td><textarea class="form-control patternvalidation additionalPermitCondition" rows="2" name="additionalPermitConditionsTemp[{{idx}}].additionalPermitCondition"/></td>';
+					
+					$('#addAddnlPermitRow').click(function(){
+							var idx=$(tbody).find('tr').length;
+							//Add row
+							var row={
+							       'sno' : idx+1,
+								   'idx': idx,
+							       'permitConditionId':$('#additionalPermitCondition').val(),
+							       'applicationId':$('#applicationId').val()
+							   };
+							addRowFromObject(row);
+							patternvalidation();
+					});
+					
+					function addRowFromObject(rowJsonObj)
+					{
+						table.append(row.compose(rowJsonObj));
+					}
+					
+					String.prototype.compose = (function (){
+						   var re = /\{{(.+?)\}}/g;
+						   return function (o){
+						       return this.replace(re, function (_, k){
+						           return typeof o[k] != 'undefined' ? o[k] : '';
+						       });
+						   }
+					}());
+					
+					
+					$('.modifiablePermitConditions').each(function(){
+						var $hiddenName=$(this).data('change-to');
+						var rowObj = $(this).closest('tr');
+						if($(this).is(':checked')){
+				    		$('input[name="'+$hiddenName+'"]').val(true);
+				    		$(rowObj).find('.addremovemandatory').attr('required',true);
+				    		//$(rowObj).find("span").removeClass('display-hide');
+				    	}
+					});
+					$(".modifiablePermitConditions").change(function(){  
+				    	var $hiddenName=$(this).data('change-to');
+				    	var rowObj = $(this).closest('tr');
+				    	if($(this).is(':checked')){
+				    		$('input[name="'+$hiddenName+'"]').val(true);
+				    		$(rowObj).find('.addremovemandatory').attr('required',true);
+				    		//$(rowObj).find("span").removeClass('display-hide');
+				    	}else{
+				    		$('input[name="'+$hiddenName+'"]').val(false);
+				    		$(rowObj).find('.addremovemandatory').removeAttr('required');
+				    		$(rowObj).find('.addremovemandatory').val('');
+				    		//$(rowObj).find("span").addClass('display-hide');
+				    	}
+				    });
+					
+					$(".staticPermitConditions").change(function(){  
+				    	var $hiddenName=$(this).data('change-to');
+				    	if($(this).is(':checked')){
+				    		$('input[name="'+$hiddenName+'"]').val(true);
+				    	}else{
+				    		$('input[name="'+$hiddenName+'"]').val(false);
+				    	}
+				    });
+					
+					// show mandatory fields on select of dynamic permit conditions
+					$(".addremovemandatory").keyup(function(){
+						if($(this).val()){
+							$(this).closest('td').find("span").addClass('display-hide');
+						}else{
+							$(this).closest('td').find("span").removeClass('display-hide');
+						}
+					 });
+					
+					$('.permitConditiondDate').change(function() { 
+						if($(this).val()){
+							$(this).closest('td').find("span").addClass('display-hide');
+						}else{
+							$(this).closest('td').find("span").removeClass('display-hide');
+						}
+					});
+					
 					// toggle between multiple tab
 					jQuery('form')
 							.validate(
@@ -180,7 +265,9 @@ jQuery(document)
 											var serviceTypeName = $("#serviceType").val();
 											if($('#showPermitConditions').val() && serviceTypeName != 'Tower Construction'
 													&& serviceTypeName !=  'Pole Structures') {
-												if($('.permitConditions:checked').length <= 0){
+												var chkbxLength = $('.modifiablePermitConditions:checked').length;
+												var chkbxLength1 = $('.staticPermitConditions:checked').length;
+												if(chkbxLength <= 0 && chkbxLength1 <= 0){
 													bootbox.alert('Please select atleast one permit condition is mandatory');
 													return false;
 												}

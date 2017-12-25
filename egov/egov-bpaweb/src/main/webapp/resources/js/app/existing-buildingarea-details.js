@@ -128,7 +128,6 @@ jQuery(document).ready(function() {
 			bootbox.alert('Please select main occupancy type.');
 			return false;
 		}
-		var rowObj = $(this).closest('tr');
 		if($(rowObj).find('.existFloorDescription').val() && $(rowObj).find('.existFloorDescription').val() == 'Cellar Floor') {
 			$(rowObj).find('.existFloorNumber').data('pattern','numerichyphen');
 		} else {
@@ -136,6 +135,7 @@ jQuery(document).ready(function() {
 		}
 		patternvalidation();
 		$(rowObj).find('.existFloorNumber').val('');
+		var rowObj = $(this).closest('tr');
 		validateUniqueDetailsForExistBuild(rowObj.index(),$(rowObj).find('.existFloorDescription').val(), $(rowObj).find('.existFloorNumber').val(), $(rowObj).find('.existOccupancy').val());
 	});
 	
