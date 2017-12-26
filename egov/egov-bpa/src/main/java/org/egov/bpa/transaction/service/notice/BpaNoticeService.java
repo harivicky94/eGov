@@ -141,7 +141,7 @@ public class BpaNoticeService {
             throws IOException {
         ReportRequest reportInput = null;
         ReportOutput reportOutput = new ReportOutput();
-        String fileName = "bpa-demand-notice".concat(String.valueOf(bpaApplication.getApplicationNumber()));
+        String fileName = "bpa_demand_notice_" + bpaApplication.getApplicationNumber();
         BpaNotice bpaNotice = findByApplicationAndNoticeType(bpaApplication, BPA_DEMAND_NOTICE_TYPE);
         if (bpaNotice != null && bpaNotice.getNoticeFileStore() != null) {
             final FileStoreMapper fmp = bpaNotice.getNoticeFileStore();
@@ -217,7 +217,7 @@ public class BpaNoticeService {
             throws IOException {
         ReportRequest reportInput = null;
         ReportOutput reportOutput = new ReportOutput();
-        String fileName = "bpa-rejection-notice".concat(String.valueOf(bpaApplication.getApplicationNumber()));
+        String fileName = "bpa_rejection_notice_" + bpaApplication.getApplicationNumber();
         BpaNotice bpaNotice = findByApplicationAndNoticeType(bpaApplication, BPA_REJECTION_NOTICE_TYPE);
         if (bpaNotice != null && bpaNotice.getNoticeFileStore() != null) {
             final FileStoreMapper fmp = bpaNotice.getNoticeFileStore();
@@ -366,8 +366,7 @@ public class BpaNoticeService {
                 && StringUtils.isNotBlank(additionalPermitConditions.get(0).getAdditionalPermitCondition())) {
             for (ApplicationPermitConditions addnlPermitConditions : additionalPermitConditions) {
                 permitConditions.append(
-                        String.valueOf(additionalOrder).concat(") ").concat(addnlPermitConditions.getAdditionalPermitCondition())
-                                .concat("\n\n"));
+                        String.valueOf(additionalOrder) + ") " + addnlPermitConditions.getAdditionalPermitCondition() + "\n\n");
                 additionalOrder++;
             }
         }
@@ -381,8 +380,7 @@ public class BpaNoticeService {
         StateHistory stateHistory = bpaApplication.getStateHistory().stream()
                 .filter(history -> history.getValue().equalsIgnoreCase(APPLICATION_STATUS_REJECTED))
                 .findAny().orElse(null);
-        rejectReasons.append(String.valueOf(order).concat(") ")
-                .concat(stateHistory != null ? stateHistory.getComments() : EMPTY).concat("\n\n"));
+        rejectReasons.append(String.valueOf(order) + ") " + stateHistory != null ? stateHistory.getComments() : EMPTY + "\n\n");
         buildAdditionalPermitConditionsOrRejectionReason(rejectReasons, additionalPermitConditions, order);
         return rejectReasons.toString();
     }
@@ -394,8 +392,7 @@ public class BpaNoticeService {
             if (rejectReason.isRequired()
                     && PermitConditionType.REJECTION_REASON.equals(rejectReason.getPermitConditionType())) {
                 permitConditions
-                        .append(String.valueOf(order).concat(") ").concat(rejectReason.getPermitCondition().getDescription())
-                                .concat("\n\n"));
+                        .append(String.valueOf(order) + ") " + rejectReason.getPermitCondition().getDescription() + "\n\n");
                 order++;
             }
         }
@@ -409,15 +406,14 @@ public class BpaNoticeService {
             if (applnPermit.isRequired()
                     && PermitConditionType.DYNAMIC_PERMITCONDITION.equals(applnPermit.getPermitConditionType())) {
                 permitConditions
-                        .append(String.valueOf(order).concat(") ").concat(applnPermit.getPermitCondition().getDescription())
-                                .concat(applnPermit.getPermitConditionNumber()).concat(" Dtd ")
-                                .concat(DateUtils.toDefaultDateFormat(applnPermit.getPermitConditiondDate())).concat(".")
-                                .concat("\n\n"));
+                        .append(String.valueOf(order) + ") " + applnPermit.getPermitCondition().getDescription()
+                                + applnPermit.getPermitConditionNumber() + " Dtd "
+                                + DateUtils.toDefaultDateFormat(applnPermit.getPermitConditiondDate()) + "." + "\n\n");
                 order++;
             } else if (applnPermit.isRequired()
                     && PermitConditionType.STATIC_PERMITCONDITION.equals(applnPermit.getPermitConditionType())) {
-                permitConditions.append(String.valueOf(order).concat(") ")
-                        .concat(applnPermit.getPermitCondition().getDescription()).concat("\n\n"));
+                permitConditions
+                        .append(String.valueOf(order) + ") " + applnPermit.getPermitCondition().getDescription() + "\n\n");
                 order++;
             }
         }
