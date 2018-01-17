@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,6 +43,7 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.collection.integration.services;
 
@@ -54,6 +62,7 @@ import org.egov.collection.integration.pgi.AtomAdaptor;
 import org.egov.collection.integration.pgi.AxisAdaptor;
 import org.egov.collection.integration.pgi.PaymentResponse;
 import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.utils.DateUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.PersistenceService;
@@ -132,13 +141,15 @@ public class SchedularService {
     @Transactional
     public void reconcileATOM() {
         LOGGER.debug("Inside reconcileATOM");
+        final Calendar fourDaysBackCalender = Calendar.getInstance();
+        fourDaysBackCalender.add(Calendar.DATE, -4);
         final Calendar cal = Calendar.getInstance();
         cal.add(Calendar.MINUTE, -30);
         final Query qry = persistenceService
                 .getSession()
                 .createQuery(
                         "select receipt from org.egov.collection.entity.OnlinePayment as receipt where receipt.status.code=:onlinestatuscode"
-                                + " and receipt.service.code=:paymentservicecode and receipt.createdDate<:thirtyminslesssysdate")
+                                + " and receipt.service.code=:paymentservicecode and receipt.createdDate<:thirtyminslesssysdate order by receipt.id asc")
                 .setMaxResults(50);
         qry.setString("onlinestatuscode", CollectionConstants.ONLINEPAYMENT_STATUS_CODE_PENDING);
         qry.setString("paymentservicecode", CollectionConstants.SERVICECODE_ATOM);
@@ -173,7 +184,15 @@ public class SchedularService {
                                 ApplicationThreadLocals.getCityCode());
                     if (CollectionConstants.PGI_AUTHORISATION_CODE_SUCCESS.equals(paymentResponse.getAuthStatus()))
                         reconciliationService.processSuccessMsg(onlinePaymentReceiptHeader, paymentResponse);
-                    else
+                    else if ((DateUtils.compareDates(onlinePaymentReceiptHeader.getCreatedDate(), fourDaysBackCalender.getTime()))
+                            &&
+                            (onlinePaymentReceiptHeader.getOnlinePayment().getService().getCode().equals(CollectionConstants.SERVICECODE_ATOM) &&
+                                    CollectionConstants.ATOM_AUTHORISATION_CODES_WAITINGFOR_PAY_GATEWAY_RESPONSE
+                                            .contains(paymentResponse.getAuthStatus()))) {
+                        onlinePaymentReceiptHeader.getOnlinePayment().setAuthorisationStatusCode(
+                                paymentResponse.getAuthStatus());
+                        onlinePaymentReceiptHeader.getOnlinePayment().setRemarks(paymentResponse.getErrorDescription());
+                    } else
                         reconciliationService.processFailureMsg(onlinePaymentReceiptHeader, paymentResponse);
 
                     final long elapsedTimeInMillis = System.currentTimeMillis() - startTimeInMilis;

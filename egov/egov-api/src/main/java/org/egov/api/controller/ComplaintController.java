@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,6 +43,7 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 
 package org.egov.api.controller;
@@ -57,7 +65,6 @@ import org.egov.api.controller.core.ApiResponse;
 import org.egov.api.controller.core.ApiUrl;
 import org.egov.api.model.ComplaintAction;
 import org.egov.infra.admin.master.entity.CrossHierarchy;
-import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.CrossHierarchyService;
 import org.egov.infra.admin.master.service.DepartmentService;
@@ -66,8 +73,9 @@ import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.FileStoreUtils;
-import org.egov.infra.utils.StringUtils;
 import org.egov.infra.workflow.entity.StateAware;
+import org.egov.pgr.elasticsearch.entity.ComplaintIndex;
+import org.egov.pgr.elasticsearch.service.ComplaintIndexService;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.ComplaintStatus;
 import org.egov.pgr.entity.ComplaintType;
@@ -84,17 +92,20 @@ import org.egov.pgr.service.ComplaintTypeService;
 import org.egov.pgr.service.PriorityService;
 import org.egov.pgr.service.ReceivingModeService;
 import org.egov.pgr.utils.constants.PGRConstants;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
@@ -115,6 +126,12 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.egov.infra.validation.regex.Constants.EMAIL;
+import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
+import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @org.springframework.web.bind.annotation.RestController
@@ -175,12 +192,16 @@ public class ComplaintController extends ApiController {
     @Autowired
     private ComplaintProcessFlowService complaintProcessFlowService;
 
+    @Autowired
+    private ComplaintIndexService complaintIndexService;
+
     /**
      * This will returns all complaint types
      *
      * @return ComplaintType
      */
-    @RequestMapping(value = {ApiUrl.COMPLAINT_TYPES_BY_CATEGORIES}, method = GET, produces = {MediaType.TEXT_PLAIN_VALUE})
+    @RequestMapping(value = {ApiUrl.COMPLAINT_TYPES_BY_CATEGORIES, "/cross-city/complaint/getComplaintCategories"},
+            method = GET, produces = {TEXT_PLAIN_VALUE})
     public ResponseEntity<String> getAllComplaintCategories() {
         try {
 
@@ -231,7 +252,7 @@ public class ComplaintController extends ApiController {
      *
      * @return ComplaintType
      */
-    @RequestMapping(value = {ApiUrl.COMPLAINT_GET_TYPES}, method = GET, produces = {MediaType.TEXT_PLAIN_VALUE})
+    @RequestMapping(value = {ApiUrl.COMPLAINT_GET_TYPES}, method = GET, produces = {TEXT_PLAIN_VALUE})
     public ResponseEntity<String> getAllTypes() {
         try {
             final List<ComplaintType> complaintTypes = complaintTypeService.findActiveComplaintTypes();
@@ -250,7 +271,7 @@ public class ComplaintController extends ApiController {
      * @return ComplaintType
      */
     @RequestMapping(value = {ApiUrl.COMPLAINT_GET_FREQUENTLY_FILED_TYPES}, method = GET, produces = {
-            MediaType.TEXT_PLAIN_VALUE})
+            TEXT_PLAIN_VALUE})
     public ResponseEntity<String> getFrequentTypes() {
         try {
             final List<ComplaintType> complaintTypes = complaintTypeService.getFrequentlyFiledComplaints();
@@ -261,7 +282,7 @@ public class ComplaintController extends ApiController {
         }
     }
 
-    @RequestMapping(value = ApiUrl.COMPLAINT_CREATE, method = RequestMethod.POST)
+    @RequestMapping(value = {ApiUrl.COMPLAINT_CREATE, "/cross-city/complaint/create"}, method = RequestMethod.POST)
     public ResponseEntity<String> complaintCreate(
             @RequestParam(value = "json_complaint") final String complaintJSON,
             @RequestParam("files") final MultipartFile[] files) {
@@ -271,40 +292,30 @@ public class ComplaintController extends ApiController {
 
             final Complaint complaint = new Complaint();
 
-            if (securityUtils.currentUserType().equals(UserType.EMPLOYEE))
-                if (complaintRequest.containsKey(COMPLAINANT_NAME) &&
-                        complaintRequest.containsKey(COMPLAINANT_MOBILE_NO)) {
+            if (complaintRequest.containsKey(COMPLAINANT_NAME) && complaintRequest.containsKey(COMPLAINANT_MOBILE_NO)) {
 
-                    if (org.apache.commons.lang.StringUtils.isEmpty(complaintRequest.get(COMPLAINANT_NAME).toString())
-                            || org.apache.commons.lang.StringUtils
-                            .isEmpty(complaintRequest.get(COMPLAINANT_MOBILE_NO).toString()))
-                        return getResponseHandler().error(getMessage("msg.complaint.reg.failed.user"));
-
-                    complaint.getComplainant().setName(complaintRequest.get(COMPLAINANT_NAME).toString());
-                    complaint.getComplainant().setMobile(complaintRequest.get(COMPLAINANT_MOBILE_NO).toString());
-
-                    if (complaintRequest.containsKey(COMPLAINANT_EMAIL)) {
-                        final String email = complaintRequest.get(COMPLAINANT_EMAIL).toString();
-                        if (!email.matches("^[A-Za-z0-9+_.-]+@(.+)$"))
-                            return getResponseHandler().error(getMessage("msg.invalid.mail"));
-                        complaint.getComplainant().setEmail(email);
-                    }
-
-                } else if (!complaintRequest.containsKey(COMPLAINANT_NAME) &&
-                        !complaintRequest.containsKey(COMPLAINANT_MOBILE_NO) &&
-                        !complaintRequest.containsKey(COMPLAINANT_EMAIL)) {
-                    final User currentUser = securityUtils.getCurrentUser();
-                    complaint.getComplainant().setName(currentUser.getName());
-                    complaint.getComplainant().setMobile(currentUser.getMobileNumber());
-                    if (!org.apache.commons.lang.StringUtils.isEmpty(currentUser.getEmailId()))
-                        complaint.getComplainant().setEmail(currentUser.getEmailId());
-                } else
+                if (isEmpty(complaintRequest.get(COMPLAINANT_NAME).toString())
+                        || isEmpty(complaintRequest.get(COMPLAINANT_MOBILE_NO).toString()))
                     return getResponseHandler().error(getMessage("msg.complaint.reg.failed.user"));
+
+                complaint.getComplainant().setName(complaintRequest.get(COMPLAINANT_NAME).toString());
+                complaint.getComplainant().setMobile(complaintRequest.get(COMPLAINANT_MOBILE_NO).toString());
+
+                if (complaintRequest.containsKey(COMPLAINANT_EMAIL)) {
+                    final String email = complaintRequest.get(COMPLAINANT_EMAIL).toString().trim();
+                    if (!email.matches(EMAIL))
+                        return getResponseHandler().error(getMessage("msg.invalid.mail"));
+                    complaint.getComplainant().setEmail(email);
+                }
+
+            } else if (!securityUtils.currentUserIsCitizen()) {
+                return getResponseHandler().error(getMessage("msg.complaint.reg.failed.user"));
+            }
 
             if (!complaintRequest.containsKey(COMPLAINT_TYPE_ID))
                 return getResponseHandler().error(getMessage("msg.complaint.type.required"));
 
-            if (!complaintRequest.containsKey(COMPLAINT_DETAILS) || StringUtils.isBlank(complaintRequest.get(COMPLAINT_DETAILS).toString()))
+            if (!complaintRequest.containsKey(COMPLAINT_DETAILS) || isBlank(complaintRequest.get(COMPLAINT_DETAILS).toString()))
                 return getResponseHandler().error(getMessage("msg.complaint.desc.required"));
             else if (complaintRequest.get(COMPLAINT_DETAILS).toString().length() < 10)
                 return getResponseHandler().error(getMessage("msg.complaint.desc.min.required"));
@@ -343,7 +354,7 @@ public class ComplaintController extends ApiController {
 
             String priorityCode = "NORMAL";
 
-            if (complaintRequest.get(receivingModeKey) != null && StringUtils.isNotBlank(complaintRequest.get(receivingModeKey).toString())) {
+            if (complaintRequest.get(receivingModeKey) != null && isNotBlank(complaintRequest.get(receivingModeKey).toString())) {
                 String receivingModeVal = complaintRequest.get(receivingModeKey).toString();
                 receivingMode = receivingModeService.getReceivingModeByCode(receivingModeVal);
                 if (Arrays.asList(highPriorityComplaintSource).contains(receivingModeVal)) {
@@ -425,7 +436,7 @@ public class ComplaintController extends ApiController {
      * @param complaintNo
      * @return Complaint
      */
-    @RequestMapping(value = {ApiUrl.COMPLAINT_DETAIL}, method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
+    @RequestMapping(value = {ApiUrl.COMPLAINT_DETAIL}, method = GET, produces = TEXT_PLAIN_VALUE)
     public ResponseEntity<String> getDetail(@PathVariable final String complaintNo) {
         try {
             if (complaintNo == null)
@@ -456,7 +467,7 @@ public class ComplaintController extends ApiController {
      * @param complaintNo
      * @return Complaint
      */
-    @RequestMapping(value = {ApiUrl.COMPLAINT_STATUS}, method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
+    @RequestMapping(value = {ApiUrl.COMPLAINT_STATUS}, method = GET, produces = TEXT_PLAIN_VALUE)
     public ResponseEntity<String> getStatus(@PathVariable final String complaintNo) {
         try {
             if (complaintNo == null)
@@ -485,7 +496,7 @@ public class ComplaintController extends ApiController {
      * @return Complaint
      */
 
-    @RequestMapping(value = {ApiUrl.COMPLAINT_LATEST}, method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
+    @RequestMapping(value = {ApiUrl.COMPLAINT_LATEST}, method = GET, produces = TEXT_PLAIN_VALUE)
     public ResponseEntity<String> getLatest(@PathVariable("page") final int page, @PathVariable("pageSize") final int pageSize) {
 
         if (page < 1)
@@ -510,7 +521,8 @@ public class ComplaintController extends ApiController {
      * @param locationName
      * @return
      */
-    @RequestMapping(value = {ApiUrl.COMPLAINT_GET_LOCATION}, method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
+    @RequestMapping(value = {ApiUrl.COMPLAINT_GET_LOCATION, "/cross-city/complaint/getLocation"},
+            method = GET, produces = TEXT_PLAIN_VALUE)
     public ResponseEntity<String> getLocation(@RequestParam("locationName") final String locationName) {
         try {
             if (locationName == null || locationName.isEmpty() || locationName.length() < 3)
@@ -532,7 +544,7 @@ public class ComplaintController extends ApiController {
      */
 
     @RequestMapping(value = {
-            ApiUrl.COMPLAINT_RESOLVED_UNRESOLVED_COUNT}, method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
+            ApiUrl.COMPLAINT_RESOLVED_UNRESOLVED_COUNT}, method = GET, produces = TEXT_PLAIN_VALUE)
     public ResponseEntity<String> getComplaintsTotalCount() {
         try {
             return getResponseHandler().success(complaintService.getComplaintsTotalCount());
@@ -550,11 +562,20 @@ public class ComplaintController extends ApiController {
      * @return Complaint
      */
 
-    @RequestMapping(value = {
-            ApiUrl.CITIZEN_COMPLAINT_COUNT}, method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
+    @GetMapping(value = ApiUrl.CITIZEN_COMPLAINT_COUNT, produces = TEXT_PLAIN_VALUE)
     public ResponseEntity<String> getComplaintsCount() {
         try {
             return getResponseHandler().success(complaintService.getMyComplaintsCount());
+        } catch (final Exception e) {
+            LOGGER.error(EGOV_API_ERROR, e);
+            return getResponseHandler().error(getMessage(SERVER_ERROR));
+        }
+    }
+
+    @GetMapping(value = "/cross-city/complaint/count/{mobileNumber}", produces = TEXT_PLAIN_VALUE)
+    public ResponseEntity<String> getComplaintsCount(@PathVariable String mobileNumber) {
+        try {
+            return getResponseHandler().success(complaintIndexService.getCrossCityComplaintsCount(mobileNumber));
         } catch (final Exception e) {
             LOGGER.error(EGOV_API_ERROR, e);
             return getResponseHandler().error(getMessage(SERVER_ERROR));
@@ -572,7 +593,7 @@ public class ComplaintController extends ApiController {
      */
 
     @RequestMapping(value = {
-            ApiUrl.CITIZEN_GET_MY_COMPLAINT}, method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
+            ApiUrl.CITIZEN_GET_MY_COMPLAINT}, method = GET, produces = TEXT_PLAIN_VALUE)
     public ResponseEntity<String> getMyComplaint(@PathVariable("page") final int page,
                                                  @PathVariable("pageSize") final int pageSize,
                                                  @RequestParam(value = "complaintStatus", required = false) final String complaintStatus) {
@@ -583,7 +604,7 @@ public class ComplaintController extends ApiController {
 
             Page<Complaint> pagelist = null;
             boolean hasNextPage = false;
-            if (org.apache.commons.lang.StringUtils.isEmpty(complaintStatus)
+            if (isEmpty(complaintStatus)
                     || complaintStatus.equals(PGRConstants.COMPLAINT_ALL)) {
                 pagelist = complaintService.getMyComplaint(page, pageSize);
                 hasNextPage = pagelist.getTotalElements() > page * pageSize;
@@ -623,7 +644,7 @@ public class ComplaintController extends ApiController {
      * @param distance
      * @return Complaint
      */
-    @RequestMapping(value = ApiUrl.COMPLAINT_NEARBY, method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
+    @RequestMapping(value = ApiUrl.COMPLAINT_NEARBY, method = GET, produces = TEXT_PLAIN_VALUE)
     public ResponseEntity<String> getNearByComplaint(@PathVariable("page") final int page, @RequestParam("lat") final float lat,
                                                      @RequestParam("lng") final float lng, @RequestParam("distance") final long distance,
                                                      @PathVariable("pageSize") final int pageSize) {
@@ -656,7 +677,7 @@ public class ComplaintController extends ApiController {
      * @return file
      */
 
-    @RequestMapping(value = ApiUrl.COMPLAINT_DOWNLOAD_SUPPORT_DOCUMENT, method = RequestMethod.GET)
+    @RequestMapping(value = ApiUrl.COMPLAINT_DOWNLOAD_SUPPORT_DOCUMENT, method = GET)
     public void getComplaintDoc(@PathVariable final String complaintNo,
                                 @RequestParam(value = "fileNo", required = false) Integer fileNo,
                                 @RequestParam(value = "isThumbnail", required = false, defaultValue = "false") final boolean isThumbnail,
@@ -690,7 +711,6 @@ public class ComplaintController extends ApiController {
                     final OutputStream out = response.getOutputStream();
                     IOUtils.write(isThumbnail ? thumbImg.toByteArray() : FileUtils.readFileToByteArray(downloadFile),
                             out);
-                    IOUtils.closeQuietly(out);
                     break;
                 }
                 i++;
@@ -702,11 +722,10 @@ public class ComplaintController extends ApiController {
     }
 
     @RequestMapping(value = ApiUrl.COMPLAINT_DOWNLOAD_SUPPORT_DOCUMENT_BY_ID)
-    public void download(@PathVariable final String fileStoreId, final HttpServletResponse response) throws IOException {
-        fileStoreUtils.fetchFileAndWriteToStream(fileStoreId, PGRConstants.MODULE_NAME, false, response);
+    @ResponseBody
+    public ResponseEntity download(@PathVariable final String fileStoreId) {
+        return fileStoreUtils.fileAsResponseEntity(fileStoreId, PGRConstants.MODULE_NAME, false);
     }
-
-    // ---------------------------------------------------------------------//
 
     /**
      * This will update the status of the complaint.
@@ -716,7 +735,7 @@ public class ComplaintController extends ApiController {
      * @return Complaint
      */
 
-    @RequestMapping(value = ApiUrl.COMPLAINT_UPDATE_STATUS, method = RequestMethod.PUT, produces = MediaType.TEXT_PLAIN_VALUE)
+    @RequestMapping(value = ApiUrl.COMPLAINT_UPDATE_STATUS, method = RequestMethod.PUT, produces = TEXT_PLAIN_VALUE)
     public ResponseEntity<String> updateComplaintStatus(
             @PathVariable final String complaintNo, @RequestBody final JSONObject jsonData) {
 
@@ -727,7 +746,7 @@ public class ComplaintController extends ApiController {
             if ("COMPLETED".equals(complaint.getStatus().getName())) {
                 if (UNSATISFACTORY.equals(citizenfeedback))
                     citizenfeedback = CitizenFeedback.TWO.name();
-                else if (StringUtils.isBlank(citizenfeedback) || SATISFACTORY.equals(citizenfeedback))
+                else if (isBlank(citizenfeedback) || SATISFACTORY.equals(citizenfeedback))
                     citizenfeedback = CitizenFeedback.FIVE.name();
                 complaint.setCitizenFeedback(CitizenFeedback.valueOf(citizenfeedback));
             }
@@ -744,7 +763,8 @@ public class ComplaintController extends ApiController {
 
     }
 
-    @RequestMapping(value = ApiUrl.COMPLAINT_HISTORY, method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
+    @RequestMapping(value = {ApiUrl.COMPLAINT_HISTORY, "/cross-city/complaint/{complaintNo}/complaintHistory"},
+            method = GET, produces = TEXT_PLAIN_VALUE)
     public ResponseEntity<String> getComplaintHistory(@PathVariable final String complaintNo) {
         try {
             final HashMap<String, Object> container = new HashMap<>();
@@ -760,7 +780,7 @@ public class ComplaintController extends ApiController {
     /* EMPLOYEE RELATED COMPLAINT OPERATIONS START */
 
     // get complaint available status and forward departments
-    @RequestMapping(value = ApiUrl.EMPLOYEE_COMPLAINT_ACTIONS, method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
+    @RequestMapping(value = ApiUrl.EMPLOYEE_COMPLAINT_ACTIONS, method = GET, produces = TEXT_PLAIN_VALUE)
     public ResponseEntity<String> getComplaintActions(@PathVariable final String complaintNo) {
         try {
 
@@ -780,7 +800,7 @@ public class ComplaintController extends ApiController {
         }
     }
 
-    @RequestMapping(value = ApiUrl.EMPLOYEE_UPDATE_COMPLAINT, method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    @RequestMapping(value = ApiUrl.EMPLOYEE_UPDATE_COMPLAINT, method = RequestMethod.POST, produces = TEXT_PLAIN_VALUE)
     public ResponseEntity<String> updateComplaintFromEmployee(@PathVariable final String complaintNo,
                                                               @RequestParam(value = "jsonParams", required = false) final String complaintJsonStr,
                                                               @RequestParam("files") final MultipartFile[] files) {
@@ -819,7 +839,7 @@ public class ComplaintController extends ApiController {
     }
 
     @RequestMapping(value = {
-            ApiUrl.EMPLOYEE_GET_ROUTED_COMPLAINT}, method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
+            ApiUrl.EMPLOYEE_GET_ROUTED_COMPLAINT}, method = GET, produces = TEXT_PLAIN_VALUE)
     public ResponseEntity<String> getRoutedComplaints(@PathVariable("page") final int page,
                                                       @PathVariable("pageSize") final int pageSize) {
         if (page < 0)
@@ -832,7 +852,7 @@ public class ComplaintController extends ApiController {
                 hasNextPage = true;
                 list.remove(pageSize);
             }
-            if (list != null) {
+            if (!list.isEmpty()) {
                 for (final StateAware stateAware : list)
                     inboxItems.add(new JsonParser().parse(stateAware.getStateInfoJson()).getAsJsonObject());
                 final ApiResponse res = ApiResponse.newInstance();
@@ -848,8 +868,15 @@ public class ComplaintController extends ApiController {
     }
 
     @RequestMapping(value = {
-            ApiUrl.EMPLOYEE_GET_ROUTED_COMPLAINT_COUNT}, method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
+            ApiUrl.EMPLOYEE_GET_ROUTED_COMPLAINT_COUNT}, method = GET, produces = TEXT_PLAIN_VALUE)
     public ResponseEntity<String> getMyRoutedComplaintCount() {
         return getResponseHandler().setDataAdapter(new ComplaintAdapter()).success(complaintService.getActedUponComplaintCount().size());
+    }
+
+    @GetMapping("/cross-city/complaint/view")
+    public Iterable<ComplaintIndex> viewComplaints(@RequestParam String mobileNumber) {
+        BoolQueryBuilder searchQueryBuilder = QueryBuilders.boolQuery().filter(QueryBuilders.matchAllQuery());
+        searchQueryBuilder.filter(matchQuery("complainantMobile", mobileNumber));
+        return complaintIndexService.searchComplaintIndex(searchQueryBuilder);
     }
 }

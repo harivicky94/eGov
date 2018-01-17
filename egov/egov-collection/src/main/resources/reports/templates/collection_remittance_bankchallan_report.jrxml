@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~     Copyright (C) 2017  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -27,6 +27,13 @@
   ~
   ~         1) All versions of this program, verbatim or modified must carry this
   ~            Legal Notice.
+  ~            Further, all user interfaces, including but not limited to citizen facing interfaces,
+  ~            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+  ~            derived works should carry eGovernments Foundation logo on the top right corner.
+  ~
+  ~            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+  ~            For any further queries on attribution, including queries on brand guidelines,
+  ~            please contact contact@egovernments.org
   ~
   ~         2) Any misrepresentation of the origin of the material is prohibited. It
   ~            is required that all modified versions of this material be marked in
@@ -37,9 +44,10 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~
   -->
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-09-14T10:26:34 -->
+<!-- 2017-12-18T15:25:46 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="remittance_statement_report" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="822" leftMargin="10" rightMargin="10" topMargin="20" bottomMargin="20" uuid="66091296-e2fe-4748-baa1-34b0b8cbb97b">
 	<import value="java.lang.*"/>
 	<import value="org.egov.infra.reporting.util.*"/>
@@ -68,6 +76,7 @@
 		<parameterDescription><![CDATA[REMITTANCE VOUCHER]]></parameterDescription>
 	</parameter>
 	<parameter name="EGOV_REMITTANCE_DATE" class="java.util.Date"/>
+	<parameter name="CITY_LOGO_PATH" class="java.io.InputStream"/>
 	<field name="collectionBankRemittanceReportList" class="java.util.List"/>
 	<background>
 		<band height="555" splitType="Stretch">
@@ -1014,7 +1023,7 @@
 			</textField>
 			<image onErrorType="Blank">
 				<reportElement stretchType="RelativeToBandHeight" x="69" y="0" width="61" height="52" isRemoveLineWhenBlank="true" uuid="ba79a0e8-dc12-41f4-ae3d-db7220caa50c"/>
-				<imageExpression><![CDATA[ReportUtil.logoBasePath()]]></imageExpression>
+				<imageExpression><![CDATA[$P{CITY_LOGO_PATH}]]></imageExpression>
 			</image>
 			<staticText>
 				<reportElement style="Title" x="164" y="7" width="487" height="31" uuid="dd91f0ae-eec1-4e80-b2b4-d885ca1df0b3"/>
@@ -1177,7 +1186,7 @@ $P{EGOV_CHEQUE_AMOUNT}!=0]]></printWhenExpression>
 			</staticText>
 			<image>
 				<reportElement x="177" y="9" width="60" height="60" uuid="d1cda97a-1840-4174-8354-892eaff8b3e7"/>
-				<imageExpression><![CDATA[ReportUtil.logoBasePath()]]></imageExpression>
+				<imageExpression><![CDATA[$P{CITY_LOGO_PATH}]]></imageExpression>
 			</image>
 		</band>
 	</noData>

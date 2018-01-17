@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,28 +43,12 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 /**
  *
  */
 package org.egov.egf.web.actions.voucher;
-
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -65,22 +56,7 @@ import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
-import org.egov.commons.Accountdetailtype;
-import org.egov.commons.Bank;
-import org.egov.commons.Bankaccount;
-import org.egov.commons.Bankbranch;
-import org.egov.commons.CChartOfAccountDetail;
-import org.egov.commons.CChartOfAccounts;
-import org.egov.commons.CFinancialYear;
-import org.egov.commons.CFunction;
-import org.egov.commons.CGeneralLedger;
-import org.egov.commons.CGeneralLedgerDetail;
-import org.egov.commons.CVoucherHeader;
-import org.egov.commons.Functionary;
-import org.egov.commons.Fundsource;
-import org.egov.commons.Relation;
-import org.egov.commons.Scheme;
-import org.egov.commons.SubScheme;
+import org.egov.commons.*;
 import org.egov.commons.service.EntityTypeService;
 import org.egov.commons.service.RelationService;
 import org.egov.commons.utils.BankAccountType;
@@ -119,6 +95,23 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 //import com.exilant.eGov.src.domain.Bank;
 
@@ -176,7 +169,7 @@ public class CommonAction extends BaseFormAction {
     private Integer bankId;
     private List<Map<String, Object>> bankBranchList;
     private Integer branchId;
-    private Integer departmentId;
+    private Long departmentId;
     private Long bankaccountId;
     private String rtgsNumber;
     private String chequeNumber;
@@ -1245,7 +1238,7 @@ public class CommonAction extends BaseFormAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting ajaxValidateChequeNumber...");
         final String index = parameters.get("index")[0];
-        value = instrumentService.isChequeNumberValid(chequeNumber, bankaccountId, departmentId, serialNo) == true ? index
+        value = instrumentService.isChequeNumberValid(chequeNumber, bankaccountId, departmentId.intValue(), serialNo) == true ? index
                 + "~true" : index + "~false";
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed ajaxValidateChequeNumber.");
@@ -1267,7 +1260,7 @@ public class CommonAction extends BaseFormAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting ajaxValidateReassignSurrenderChequeNumber...");
         final String index = parameters.get("index")[0];
-        value = instrumentService.isReassigningChequeNumberValid(chequeNumber, bankaccountId, departmentId, serialNo) == true
+        value = instrumentService.isReassigningChequeNumberValid(chequeNumber, bankaccountId, departmentId.intValue(), serialNo) == true
                 ? index
                         + "~true"
                 : index + "~false";
@@ -1798,11 +1791,12 @@ public class CommonAction extends BaseFormAction {
         this.instrumentService = instrumentService;
     }
 
-    public Integer getDepartmentId() {
+    
+    public Long getDepartmentId() {
         return departmentId;
     }
 
-    public void setDepartmentId(final Integer departmentId) {
+    public void setDepartmentId(final Long departmentId) {
         this.departmentId = departmentId;
     }
 
@@ -1962,7 +1956,7 @@ public class CommonAction extends BaseFormAction {
                             " ph.voucherheaderid=vh.id  " +
                             " and iv.VOUCHERHEADERID is null ");
             if (fundId != null && fundId != 0 && fundId != -1)
-                queryString = queryString.append(" and vh.fundid=" + fundId);
+                queryString = queryString.append(" and vh.fundid=" + fundId.longValue());
             queryString = queryString.append(" and vh.name NOT IN ( '" + FinancialConstants.PAYMENTVOUCHER_NAME_REMITTANCE
                     + "','" + FinancialConstants.PAYMENTVOUCHER_NAME_SALARY + "')");
             queryString = queryString.append("and vh.voucherdate <= :date1 )");
@@ -1970,7 +1964,7 @@ public class CommonAction extends BaseFormAction {
                     .append(" AND bank.id = bankBranch.bankid AND bank.isactive=true AND bankBranch.isactive=true " +
                             "AND bankaccount.type IN ('RECEIPTS_PAYMENTS','PAYMENTS') AND bankBranch.id = bankaccount.branchid");
             if (fundId != null && fundId != 0 && fundId != -1)
-                queryString = queryString.append(" and bankaccount.fundid=" + fundId);
+                queryString = queryString.append(" and bankaccount.fundid=" + fundId.longValue());
 
             // query to fetch vouchers for which cheque has been assigned and surrendered
             queryString = queryString
@@ -1995,7 +1989,7 @@ public class CommonAction extends BaseFormAction {
                             " and iv.voucherheaderid=vh.id and iv.instrumentheaderid=ih.id and " +
                             "ih.id_status=egws.id and egws.description in  ('Surrendered','Surrender_For_Reassign')");
             if (fundId != null && fundId != 0 && fundId != -1)
-                queryString = queryString.append(" and vh.fundid=" + fundId);
+                queryString = queryString.append(" and vh.fundid=" + fundId.longValue());
 
             queryString = queryString.append("  and vh.voucherdate <= :date2 " +
                     " and vh.name NOT IN ( '" + FinancialConstants.PAYMENTVOUCHER_NAME_REMITTANCE + "','"
@@ -2004,7 +1998,7 @@ public class CommonAction extends BaseFormAction {
                     .append(" AND bank.id = bankBranch.bankid AND bank.isactive=true AND bankBranch.isactive=true " +
                             "AND bankaccount.type IN ('RECEIPTS_PAYMENTS','PAYMENTS') AND bankBranch.id = bankaccount.branchid");
             if (fundId != null && fundId != 0 && fundId != -1)
-                queryString = queryString.append(" and bankaccount.fundid=" + fundId);
+                queryString = queryString.append(" and bankaccount.fundid=" + fundId.longValue());
 
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Bank check dates are  " + getAsOnDate() + queryString.toString());
@@ -2064,7 +2058,7 @@ public class CommonAction extends BaseFormAction {
                             "bankBranch.id = bankaccount.branchid and bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS')" +
                             " and  vh1.id=vh.id and iv.VOUCHERHEADERID is null ");
             if (fundId != null && fundId != 0 && fundId != -1)
-                queryString = queryString.append(" and bankaccount.fundid=" + fundId);
+                queryString = queryString.append(" and bankaccount.fundid=" + fundId.longValue());
             if (departmentId != null && departmentId != 0 && departmentId != -1)
                 queryString = queryString.append(" and vmis.departmentid=" + departmentId);
             queryString = queryString
@@ -2097,7 +2091,7 @@ public class CommonAction extends BaseFormAction {
                             +
                             "ih.id_status=egws.id and egws.description in  ('Surrendered','Surrender_For_Reassign')");
             if (fundId != null && fundId != 0 && fundId != -1)
-                queryString = queryString.append(" and bankaccount.fundid=" + fundId);
+                queryString = queryString.append(" and bankaccount.fundid=" + fundId.longValue());
             if (departmentId != null && departmentId != 0 && departmentId != -1)
                 queryString = queryString.append(" and vmis.departmentid=" + departmentId);
             queryString = queryString
@@ -2164,7 +2158,7 @@ public class CommonAction extends BaseFormAction {
                             "bankBranch.id = bankaccount.branchid and bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS')" +
                             " and  vh1.id=vh.id and iv.VOUCHERHEADERID is null ");
             if (fundId != null && fundId != 0 && fundId != -1)
-                queryString = queryString.append(" and bankaccount.fundid=" + fundId);
+                queryString = queryString.append(" and bankaccount.fundid=" + fundId.longValue());
             if (departmentId != null && departmentId != 0 && departmentId != -1)
                 queryString = queryString.append(" and vmis.departmentid=" + departmentId);
             queryString = queryString
@@ -2196,7 +2190,7 @@ public class CommonAction extends BaseFormAction {
                             +
                             "ih.id_status=egws.id and egws.description in  ('Surrendered','Surrender_For_Reassign')");
             if (fundId != null && fundId != 0 && fundId != -1)
-                queryString = queryString.append(" and bankaccount.fundid=" + fundId);
+                queryString = queryString.append(" and bankaccount.fundid=" + fundId.longValue());
             if (departmentId != null && departmentId != 0 && departmentId != -1)
                 queryString = queryString.append(" and vmis.departmentid=" + departmentId);
             queryString = queryString
@@ -2262,7 +2256,7 @@ public class CommonAction extends BaseFormAction {
                             "bankBranch.id = bankaccount.branchid and bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS')" +
                             " and  vh1.id=vh.id and iv.VOUCHERHEADERID is null ");
             if (fundId != null && fundId != 0 && fundId != -1)
-                queryString = queryString.append(" and bankaccount.fundid=" + fundId);
+                queryString = queryString.append(" and bankaccount.fundid=" + fundId.longValue());
             if (departmentId != null && departmentId != 0 && departmentId != -1)
                 queryString = queryString.append(" and vmis.departmentid=" + departmentId);
             queryString = queryString
@@ -2294,7 +2288,7 @@ public class CommonAction extends BaseFormAction {
                             +
                             "ih.id_status=egws.id and egws.description in  ('Surrendered','Surrender_For_Reassign')");
             if (fundId != null && fundId != 0 && fundId != -1)
-                queryString = queryString.append(" and bankaccount.fundid=" + fundId);
+                queryString = queryString.append(" and bankaccount.fundid=" + fundId.longValue());
             if (departmentId != null && departmentId != 0 && departmentId != -1)
                 queryString = queryString.append(" and vmis.departmentid=" + departmentId);
             queryString = queryString
@@ -2364,7 +2358,7 @@ public class CommonAction extends BaseFormAction {
                             +
                             " and  vh1.id=vh.id and iv.VOUCHERHEADERID is null ");
             if (fundId != null && fundId != 0 && fundId != -1)
-                queryString = queryString.append(" and bankaccount.fundid=" + fundId);
+                queryString = queryString.append(" and bankaccount.fundid=" + fundId.longValue());
             queryString = queryString
                     .append(" and gl.debitamount!=0 and gl.debitamount is not null and vh.voucherdate <= :date1")
                     .append(" and ph.bankaccountnumberid=bankaccount.id and ph.type='" + FinancialConstants.MODEOFPAYMENT_CASH
@@ -2398,7 +2392,7 @@ public class CommonAction extends BaseFormAction {
             queryString = queryString
                     .append(" and ih.id_status=egws.id and egws.description in ('Surrendered','Surrender_For_Reassign') ");
             if (fundId != null && fundId != 0 && fundId != -1)
-                queryString = queryString.append(" and bankaccount.fundid=" + fundId);
+                queryString = queryString.append(" and bankaccount.fundid=" + fundId.longValue());
             queryString = queryString
                     .append(" and gl.debitamount!=0 and gl.debitamount is not null and vh.voucherdate <= :date2")
                     .append(" and ph.bankaccountnumberid=bankaccount.id and ph.type='" + FinancialConstants.MODEOFPAYMENT_CASH
@@ -2410,13 +2404,13 @@ public class CommonAction extends BaseFormAction {
                     .list();
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Bank list size is " + bankBranch.size());
-            bankBranchList = new ArrayList<Map<String, Object>>();
-            final List<String> addedBanks = new ArrayList<String>();
+            bankBranchList = new ArrayList<>();
+            final List<String> addedBanks = new ArrayList<>();
             for (final Object[] account : bankBranch) {
                 final String bankBranchName = account[1].toString();
                 if (!addedBanks.contains(bankBranchName)) {
                     addedBanks.add(bankBranchName);
-                    final Map<String, Object> bankBrmap = new HashMap<String, Object>();
+                    final Map<String, Object> bankBrmap = new HashMap<>();
                     bankBrmap.put("bankBranchId", account[0].toString());
                     bankBrmap.put("bankBranchName", bankBranchName);
                     bankBranchList.add(bankBrmap);
@@ -2667,7 +2661,7 @@ public class CommonAction extends BaseFormAction {
                             +
                             " AND coa.id = bankaccount.glcodeid AND bankaccount.type     IN ('RECEIPTS_PAYMENTS','PAYMENTS')"
                             +
-                            " AND bankaccount.fundid    =" + fundId
+                            " AND bankaccount.fundid    =" + fundId.longValue()
                             + " AND bankaccount.branchid = branch.id and branch.bankid = bank.id and  bankaccount.branchid  ="
                             + branchId
                             + " and bankaccount.isactive=true ");
@@ -2696,7 +2690,7 @@ public class CommonAction extends BaseFormAction {
                             " and max_rec.id=ih1.id) ih where ph.voucherheaderid=vh.id  and "
                             +
                             " vh.fundid="
-                            + fundId
+                            + fundId.longValue()
                             +
                             " and vh.status=0 and  ph.voucherheaderid=vh.id and  iv.voucherheaderid=vh.id and iv.instrumentheaderid=ih.id "
                             +
@@ -2715,7 +2709,7 @@ public class CommonAction extends BaseFormAction {
                             " and coa.id=bankaccount.glcodeid and bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS')  and bankaccount.branchid="
                             + branchId);
             if (fundId != null && fundId != 0 && fundId != -1)
-                queryString = queryString.append(" and bankaccount.fundid=" + fundId);
+                queryString = queryString.append(" and bankaccount.fundid=" + fundId.longValue());
 
             final List<Object[]> bankAccounts = persistenceService.getSession().createSQLQuery(queryString.toString())
                     .list();
@@ -2782,7 +2776,7 @@ public class CommonAction extends BaseFormAction {
                             " and  vh1.id=vh.id and iv.VOUCHERHEADERID is null");
 
             if (fundId != null && fundId != 0 && fundId != -1)
-                queryString = queryString.append(" and bankaccount.fundid=" + fundId);
+                queryString = queryString.append(" and bankaccount.fundid=" + fundId.longValue());
             if (departmentId != null && departmentId != 0 && departmentId != -1)
                 queryString = queryString.append(" and vmis.departmentid=" + departmentId);
             queryString = queryString.append(" and ph.bankaccountnumberid=bankaccount.id  and vh.type='"
@@ -2812,7 +2806,7 @@ public class CommonAction extends BaseFormAction {
                             + branchId +
                             " and ih.id_status=egws.id and egws.description in ('Surrendered','Surrender_For_Reassign')");
             if (fundId != null && fundId != 0 && fundId != -1)
-                queryString = queryString.append(" and bankaccount.fundid=" + fundId);
+                queryString = queryString.append(" and bankaccount.fundid=" + fundId.longValue());
             if (departmentId != null && departmentId != 0 && departmentId != -1)
                 queryString = queryString.append(" and vmis.departmentid=" + departmentId);
             queryString = queryString.append(" and ph.bankaccountnumberid=bankaccount.id  and vh.type='"
@@ -2877,7 +2871,7 @@ public class CommonAction extends BaseFormAction {
                             " and  vh1.id=vh.id and iv.VOUCHERHEADERID is null");
 
             if (fundId != null && fundId != 0 && fundId != -1)
-                queryString = queryString.append(" and bankaccount.fundid=" + fundId);
+                queryString = queryString.append(" and bankaccount.fundid=" + fundId.longValue());
             if (departmentId != null && departmentId != 0 && departmentId != -1)
                 queryString = queryString.append(" and vmis.departmentid=" + departmentId);
             queryString = queryString.append(" and ph.bankaccountnumberid=bankaccount.id  and vh.type='"
@@ -2907,7 +2901,7 @@ public class CommonAction extends BaseFormAction {
                             + branchId +
                             " and ih.id_status=egws.id and egws.description in ('Surrendered','Surrender_For_Reassign')");
             if (fundId != null && fundId != 0 && fundId != -1)
-                queryString = queryString.append(" and bankaccount.fundid=" + fundId);
+                queryString = queryString.append(" and bankaccount.fundid=" + fundId.longValue());
             if (departmentId != null && departmentId != 0 && departmentId != -1)
                 queryString = queryString.append(" and vmis.departmentid=" + departmentId);
             queryString = queryString.append(" and ph.bankaccountnumberid=bankaccount.id  and vh.type='"
@@ -2975,7 +2969,7 @@ public class CommonAction extends BaseFormAction {
                             " and  vh1.id=vh.id and iv.VOUCHERHEADERID is null");
 
             if (fundId != null && fundId != 0 && fundId != -1)
-                queryString = queryString.append(" and bankaccount.fundid=" + fundId);
+                queryString = queryString.append(" and bankaccount.fundid=" + fundId.longValue());
             queryString = queryString.append(" and ph.bankaccountnumberid=bankaccount.id and ph.type='"
                     + FinancialConstants.MODEOFPAYMENT_CASH + "' and vh.type='"
                     + FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT + "' and vh.name='"
@@ -3009,7 +3003,7 @@ public class CommonAction extends BaseFormAction {
                             +
                             "ih.id_status=egws.id and egws.description in ('Surrendered','Surrender_For_Reassign')");
             if (fundId != null && fundId != 0 && fundId != -1)
-                queryString = queryString.append(" and bankaccount.fundid=" + fundId);
+                queryString = queryString.append(" and bankaccount.fundid=" + fundId.longValue());
             queryString = queryString.append(" and ph.bankaccountnumberid=bankaccount.id and  ph.type='"
                     + FinancialConstants.MODEOFPAYMENT_CASH + "' and vh.type='"
                     + FinancialConstants.STANDARD_VOUCHER_TYPE_PAYMENT + "' and vh.name='"
@@ -3070,9 +3064,9 @@ public class CommonAction extends BaseFormAction {
         if (getBillRegisterId() != null) {
             final EgBillregister cbill = (EgBillregister) persistenceService.find(" from EgBillregister where id=?",
                     getBillRegisterId());
-            map = voucherService.getDesgBYPassingWfItem(scriptName, cbill, departmentId);
+            map = voucherService.getDesgBYPassingWfItem(scriptName, cbill, departmentId.intValue());
         } else
-            map = voucherService.getDesgBYPassingWfItem(scriptName, null, departmentId);
+            map = voucherService.getDesgBYPassingWfItem(scriptName, null, departmentId.intValue());
 
         designationList = (List<Map<String, Object>>) map.get("designationList");
         if (LOGGER.isDebugEnabled())
@@ -3660,7 +3654,7 @@ public class CommonAction extends BaseFormAction {
     @Action(value = "/voucher/common-ajaxLoadEstimateBudgetDetailsByDepartmentId")
     public String ajaxLoadEstimateBudgetDetailsByDepartmentId() {
         if (departmentId != null && departmentId != 0)
-            budgetDetailList = budgetDetailService.getFunctionFromBudgetDetailByDepartmentId(departmentId.longValue());
+            budgetDetailList = budgetDetailService.getFunctionFromBudgetDetailByDepartmentId(departmentId);
         return "estimateBudgetDetails";
     }
 
@@ -3890,7 +3884,7 @@ public class CommonAction extends BaseFormAction {
             String bankaccountFundQuery = "";
             String voucherheaderFundQuery = "";
             if (fundId != null && fundId != 0 && fundId != -1) {
-                bankaccountFundQuery = " and bankaccount.fundid=" + fundId;
+                bankaccountFundQuery = " and bankaccount.fundid=" + fundId.longValue();
                 voucherheaderFundQuery = "  AND VH.FUNDID=" + fundId;
             }
             StringBuffer queryString = new StringBuffer();
@@ -4028,7 +4022,7 @@ public class CommonAction extends BaseFormAction {
                                 "select  DISTINCT fs from  AccountCheques ac,CFinancialYear fs,ChequeDeptMapping cd  where ac.serialNo = fs.id and  bankAccountId=?"
                                         + " and ac.id=cd.accountCheque and cd.allotedTo.id=?"
                                         + " order by fs.id desc ",
-                                bankaccount, departmentId.longValue());
+                                bankaccount, departmentId);
             }
         } catch (final HibernateException e) {
             LOGGER.error("Exception occured while getting year code " + e.getMessage(),

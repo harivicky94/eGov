@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,6 +43,7 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.ptis.domain.service.revisionPetition;
 
@@ -49,11 +57,13 @@ import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.elasticsearch.entity.ApplicationIndex;
 import org.egov.infra.elasticsearch.service.ApplicationIndexService;
 import org.egov.infra.notification.service.NotificationService;
+import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
@@ -61,7 +71,6 @@ import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.utils.DateUtils;
-import org.egov.infra.web.utils.WebUtils;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.services.PersistenceService;
@@ -96,18 +105,19 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.egov.infra.persistence.entity.Address;
+
 import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.egov.infra.utils.DateUtils.toDefaultDateFormat;
 import static org.egov.ptis.constants.PropertyTaxConstants.ANONYMOUS_USER;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_REVISION_PETITION;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.DATE_FORMAT_DDMMYYY;
 import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_GENERAL_REVISION_PETITION;
 import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_OF_WORK_RP;
 import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_REVISION_PETITION;
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 import static org.egov.ptis.domain.service.property.PropertyService.APPLICATION_VIEW_URL;
-import static org.egov.ptis.constants.PropertyTaxConstants.DATE_FORMAT_DDMMYYY;
 
 public class RevisionPetitionService extends PersistenceService<RevisionPetition, Long> {
     private static final String REVISION_PETITION_CREATED = "CREATED";
@@ -130,7 +140,6 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
     private EisCommonService eisCommonService;
     @Autowired
     private ApplicationIndexService applicationIndexService;
-    private final SimpleDateFormat dateformat = new SimpleDateFormat(DATE_FORMAT_DDMMYYY);
     private static final String CURRENT = "current";
     private static final String HISTORY = "history";
     
@@ -151,7 +160,10 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
     private PtDemandDao ptDemandDAO;
 
     @Autowired
-    private transient UserService userService;
+    private UserService userService;
+
+    @Autowired
+    private CityService cityService;
     
     public RevisionPetitionService() {
         super(RevisionPetition.class);
@@ -205,12 +217,12 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
                         .getDesignationByName(PropertyTaxConstants.REVENUE_CLERK_DESGN);
                 List<Assignment> assignment = assignmentService.findByDesignationAndBoundary(desig.getId(), objection
                         .getBasicProperty().getPropertyID().getZone().getId());
-                if (assignment.size() > 0)
+                if (!assignment.isEmpty())
                     position = assignment.get(0).getPosition();
                 else {
                     assignment = assignmentService
                             .findPrimaryAssignmentForDesignationName(PropertyTaxConstants.REVENUE_CLERK_DESGN);
-                    if (assignment.size() > 0)
+                    if (!assignment.isEmpty())
                         position = assignment.get(0).getPosition();
                 }
 
@@ -412,7 +424,6 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
                                                   final String noticeNo) {
         reportOutput.setReportFormat(ReportFormat.PDF);
         final HashMap<String, Object> reportParams = new HashMap<>();
-        final SimpleDateFormat dateformat = new SimpleDateFormat("dd/MM/yyyy");
         String natureOfWork;
         ReportRequest reportRequest;
         if (objection != null) {
@@ -432,12 +443,11 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
 
             if (objection.getHearings() != null && !objection.getHearings().isEmpty()
                     && objection.getHearings().get(objection.getHearings().size() - 1).getPlannedHearingDt() != null)
-                reportParams.put("hearingNoticeDate", dateformat
-                        .format(objection.getHearings().get(objection.getHearings().size() - 1).getPlannedHearingDt()));
+                reportParams.put("hearingNoticeDate", toDefaultDateFormat(objection.getHearings().get(objection.getHearings().size() - 1).getPlannedHearingDt()));
             else
                 reportParams.put("hearingNoticeDate", "");
-            reportParams.put("currentDate", dateformat.format(new Date()));
-            reportParams.put("recievedOn", dateformat.format(objection.getRecievedOn()));
+            reportParams.put("currentDate", toDefaultDateFormat(new Date()));
+            reportParams.put("recievedOn", toDefaultDateFormat(objection.getRecievedOn()));
             reportParams.put("docNumberObjection", noticeNo);
             reportParams.put("houseNo", objection.getBasicProperty().getAddress().getHouseNoBldgApt());
             reportParams.put("locality", objection.getBasicProperty().getPropertyID().getLocality().getName());
@@ -462,29 +472,23 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
 
         reportOutput.setReportFormat(ReportFormat.PDF);
         final HashMap<String, Object> reportParams = new HashMap<>();
-        final SimpleDateFormat dateformat = new SimpleDateFormat("dd/MM/yyyy");
         String natureOfWork;
         ReportRequest reportRequest;
         if (objection != null) {
             final Map<String, BigDecimal> currentDemand = ptDemandDAO.getDemandCollMap(objection.getProperty());
             final Map<String, BigDecimal> earlierDemand = ptDemandDAO
                     .getDemandCollMap(propertyService.getLatestHistoryProperty(objection.getBasicProperty().getUpicNo()));
-            final HttpServletRequest request = ServletActionContext.getRequest();
-            final String url = WebUtils.extractRequestDomainURL(request, false);
-            final String cityLogo = url.concat(PropertyTaxConstants.IMAGE_CONTEXT_PATH)
-                    .concat((String) request.getSession().getAttribute("citylogo"));
-            final String cityName = request.getSession().getAttribute("citymunicipalityname").toString();
             if (NATURE_OF_WORK_RP.equalsIgnoreCase(objection.getType()))
                 natureOfWork = NATURE_REVISION_PETITION;
             else
                 natureOfWork = NATURE_GENERAL_REVISION_PETITION;
-            reportParams.put("logoPath", cityLogo);
-            reportParams.put("cityName", cityName);
+            reportParams.put("logoPath", cityService.getCityLogoURL());
+            reportParams.put("cityName", cityService.getMunicipalityName());
             reportParams.put("natureOfWork", natureOfWork);
             reportParams.put("recievedBy", objection.getBasicProperty().getFullOwnerName());
             reportParams.put("docNumberObjection", objection.getObjectionNumber());
-            reportParams.put("currentDate", dateformat.format(new Date()));
-            reportParams.put("receivedOn", dateformat.format(objection.getRecievedOn()));
+            reportParams.put("currentDate", toDefaultDateFormat(new Date()));
+            reportParams.put("receivedOn", toDefaultDateFormat(objection.getRecievedOn()));
             reportParams.put("HouseNo", objection.getBasicProperty().getUpicNo());
             reportParams.put("wardNumber", objection.getBasicProperty().getBoundary() != null
                     ? objection.getBasicProperty().getBoundary().getName() : "");
@@ -526,6 +530,7 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
         final String occupancyYear = formatNowYear.format(basicProperty.getPropOccupationDate());
         infoBean.setInstallmentYear(occupancyYear);
         infoBean.setAssessmentNo(basicProperty.getUpicNo());
+        final SimpleDateFormat dateformat = new SimpleDateFormat("dd/MM/yyyy");
         infoBean.setAssessmentDate(dateformat.format(basicProperty.getAssessmentdate()));
         final Ptdemand currDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(property);
 
@@ -554,6 +559,8 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
         infoBean.setApplicationDate(DateUtils.getFormattedDate(objection.getCreatedDate(), DATE_FORMAT_DDMMYYY));
         infoBean.setHearingDate(
                 DateUtils.getFormattedDate(objection.getHearings().get(0).getPlannedHearingDt(), DATE_FORMAT_DDMMYYY));
+		infoBean.setActualHearingDate(
+				DateUtils.getFormattedDate(objection.getHearings().get(0).getActualHearingDt(), DATE_FORMAT_DDMMYYY));
         final User approver = userService.getUserById(ApplicationThreadLocals.getUserId());
         infoBean.setApproverName(approver.getName());
         final BigDecimal revTax = currDemand.getBaseDemand();

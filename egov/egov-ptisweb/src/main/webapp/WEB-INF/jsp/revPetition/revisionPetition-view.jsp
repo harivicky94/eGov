@@ -1,41 +1,49 @@
 <%--
-  ~ eGov suite of products aim to improve the internal efficiency,transparency,
-  ~      accountability and the service delivery of the government  organizations.
+  ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
   ~
-  ~       Copyright (C) 2016  eGovernments Foundation
+  ~     Copyright (C) 2017  eGovernments Foundation
   ~
-  ~       The updated version of eGov suite of products as by eGovernments Foundation
-  ~       is available at http://www.egovernments.org
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
   ~
-  ~       This program is free software: you can redistribute it and/or modify
-  ~       it under the terms of the GNU General Public License as published by
-  ~       the Free Software Foundation, either version 3 of the License, or
-  ~       any later version.
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
   ~
-  ~       This program is distributed in the hope that it will be useful,
-  ~       but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~       GNU General Public License for more details.
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
   ~
-  ~       You should have received a copy of the GNU General Public License
-  ~       along with this program. If not, see http://www.gnu.org/licenses/ or
-  ~       http://www.gnu.org/licenses/gpl.html .
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
   ~
-  ~       In addition to the terms of the GPL license to be adhered to in using this
-  ~       program, the following additional terms are to be complied with:
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
   ~
-  ~           1) All versions of this program, verbatim or modified must carry this
-  ~              Legal Notice.
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~            Further, all user interfaces, including but not limited to citizen facing interfaces,
+  ~            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+  ~            derived works should carry eGovernments Foundation logo on the top right corner.
   ~
-  ~           2) Any misrepresentation of the origin of the material is prohibited. It
-  ~              is required that all modified versions of this material be marked in
-  ~              reasonable ways as different from the original version.
+  ~            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+  ~            For any further queries on attribution, including queries on brand guidelines,
+  ~            please contact contact@egovernments.org
   ~
-  ~           3) This license does not grant any rights to any user of the program
-  ~              with regards to rights under trademark law for use of the trade names
-  ~              or trademarks of eGovernments Foundation.
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
   ~
-  ~     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~
   --%>
 
 <%@ include file="/includes/taglibs.jsp"%>
@@ -174,11 +182,7 @@
 				action = 'revPetition-validateInspectionDetails.action';
 
 			} else if (statusCode == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_INSPECTION_VERIFY}"/>') {
-				//if (validateObjectionOutcome()) {
 					action = 'revPetition-recordObjectionOutcome.action';
-				/* } else
-					return false;
- 				*/
 			}else if(statusCode == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_ACCEPTED}"/>'){
 				action = 'revPetition-recordObjectionOutcome.action';				
 			}
@@ -223,16 +227,8 @@
 			action = 'revPetition-reject.action';
 		} else if (actionName == 'Approve' || actionName == 'Forward') {
 			if (statusCode == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_INSPECTION_VERIFY}"/>') {
-				//if (validateObjectionOutcome()) {
-					/*  if(document.getElementById('approverPositionId').value=="-1") {
-					        bootbox.alert("Please Select the Employee ");
-							return false;
-					    } */
 					action = 'revPetition-recordObjectionOutcome.action?objectionId='
 						+ document.getElementById("model.id").value;
-				/* } else
-					return false; */
-
 			}
 		}
 
@@ -257,7 +253,6 @@
                 }
             }
         }
-        
 	}
 
 	function enableDisableFirmName(obj){ 
@@ -276,7 +271,6 @@
 			}
 		}
 	} 
-
 
 	function showHideLengthBreadth(){
 		var tbl=document.getElementById("floorDetails");
@@ -345,8 +339,6 @@
 		}
 	}
 
-
-		
 </script>
 <script
         src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
@@ -383,8 +375,6 @@
 											name="objection.details.heading"></s:text>
 											</s:else>
 											</a></li>
-								<%-- 				<li id="approvalTab" class="Last"><a id="header_3" href="#" onclick="showApprovalTab();"><s:text name="approval.details.title"></s:text></a></li>
- --%>
 							</ul>
 						</div></td>
 				</tr>
@@ -400,14 +390,12 @@
 							egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_REJECTED) ||
 							egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_ACCEPTED) ))
 							">
-
 									<jsp:include page="modifyPropertyViewForRevPetition.jsp" />
 
 								</s:if>
 								<s:else>
 									<jsp:include page="modifyPropertyForObjectionForm.jsp" />
 								</s:else>
-
 							</s:if>
 							<s:else>
 								<jsp:include page="../view/viewProperty.jsp" />
@@ -453,15 +441,12 @@
 								test="(egwStatus.moduletype.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_MODULE) 
 							&& egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_INSPECTION_COMPLETED))
 							">
-
 							</s:elseif>
 							<s:if test="%{!documentTypes.isEmpty() && allowEditDocument}">
 								<%@ include file="../common/DocumentUploadForm.jsp"%>
 							</s:if>
 							<s:elseif test="%{!documentTypes.isEmpty()}">
-
 								<%@ include file="../common/DocumentUploadView.jsp"%>
-
 							</s:elseif>
 						</div>
 					</td>
@@ -475,25 +460,19 @@
 					<td>
 						<div id="approval_header" class="formmainbox" style="box-shadow:none;">
 							<div id="wfHistoryDiv">
-								<%--    <jsp:include page="../workflow/workflowHistory.jsp"/>
-	  		 --%>
-
 								<s:if
 									test="egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_INSPECTION_COMPLETED)  ||
        					  	egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_HEARING_FIXED)">
-									<%-- <jsp:include page="../workflow/revisionPetition-workflow.jsp"/> --%>
 									<jsp:include page="../workflow/commonWorkflowMatrix.jsp" />
 								</s:if>
 								<s:elseif
 									test="egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_HEARING_COMPLETED)
 							">
-									<%-- <jsp:include page="../workflow/revisionPetition-workflow.jsp"/> --%>
 									<jsp:include page="../workflow/commonWorkflowMatrix.jsp" />
 								</s:elseif>
 								<s:elseif
 									test="egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_CREATED)
 							&& state.value.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_NEW)">
-									<%-- <jsp:include page="../workflow/revisionPetition-workflow.jsp"/> --%>
 									<jsp:include page="../workflow/commonWorkflowMatrix.jsp" />
 								</s:elseif>
 								<s:elseif test="%{egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_INSPECTION_VERIFY) && currentDesignation != null && !@org.egov.ptis.constants.PropertyTaxConstants@COMMISSIONER_DESGN.equalsIgnoreCase(currentDesignation.toUpperCase())}">
@@ -509,21 +488,11 @@
 									</s:else>
 								</s:elseif>
 								<s:else>
+								<s:if test="%{!endorsementNotices.isEmpty() && @org.egov.ptis.constants.PropertyTaxConstants@COMMISSIONER_DESGN.equalsIgnoreCase(currentDesignation.toUpperCase())}">
+								   <jsp:include page="../workflow/endorsement_history.jsp"/>
+							   </s:if>
 									<div align="center">
 										<br>
-										<%--  <table width="100%" border="0" cellspacing="0" cellpadding="0" >
-       			 	<tr>
-						<td class="bluebox" width="6%">&nbsp;</td>
-				    	<td class="bluebox" width="10%"><s:text name='approver.comments'/></td>
-						<td class="bluebox" width="8%"><s:textarea name="workflowBean.comments" id="comments"rows="3" cols="80" onblur="checkLength(this);" /></td>
-						<td class="bluebox" width="15%" colspan="2"></td>
-					</tr>	
-       			 		
-       			 		<s:hidden name="workflowBean.actionName" id="workflowBean.actionName"/>
-       			 		</table>        
-       			 --%>
-       			                    <%-- <jsp:include page="../workflow/commonWorkflowMatrix.jsp" /> --%>
-       			                    
        			                    	<s:if test="%{currentDesignation != null && currentDesignation.toUpperCase().equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@COMMISSIONER_DESGN)}"> 
 					<div id="workflowCommentsDiv" align="center">
 						<table width="100%">

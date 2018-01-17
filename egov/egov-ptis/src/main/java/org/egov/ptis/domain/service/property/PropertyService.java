@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,107 +43,9 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.ptis.domain.service.property;
-
-import static java.lang.Boolean.FALSE;
-import static java.lang.String.format;
-import static java.math.BigDecimal.ZERO;
-import static org.egov.ptis.constants.PropertyTaxConstants.ANONYMOUS_USER;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_AMALGAMATION;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_BIFURCATE_ASSESSENT;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_DEMOLITION;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_GRP;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_NEW_ASSESSENT;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_REVISION_PETITION;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TAX_EXEMTION;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_VACANCY_REMISSION;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_VACANCY_REMISSION_APPROVAL;
-import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.BIGDECIMAL_100;
-import static org.egov.ptis.constants.PropertyTaxConstants.BUILT_UP_PROPERTY;
-import static org.egov.ptis.constants.PropertyTaxConstants.CITIZEN_ROLE;
-import static org.egov.ptis.constants.PropertyTaxConstants.CSC_OPERATOR_ROLE;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_BAL_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_COLL_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_COLL_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.DATE_FORMAT_DDMMYYY;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_ADVANCE;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_CESS;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_LIBRARY_CESS;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_PENALTY_FINES;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_SEWERAGE_TAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_UNAUTHORIZED_PENALTY;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_VACANT_TAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMAND_RSNS_LIST;
-import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
-import static org.egov.ptis.constants.PropertyTaxConstants.FLOOR_MAP;
-import static org.egov.ptis.constants.PropertyTaxConstants.MEESEVA_OPERATOR_ROLE;
-import static org.egov.ptis.constants.PropertyTaxConstants.OPEN_PLOT_UNIT_FLOORNUMBER;
-import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTYTAX_ROLEFORNONEMPLOYEE;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTYTAX_WORKFLOWDEPARTEMENT;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTYTAX_WORKFLOWDEPARTEMENT_FOR_CSCOPERATOR;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTYTAX_WORKFLOWDESIGNATION;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTYTAX_WORKFLOWDESIGNATION_FOR_CSCOPERATOR;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_IS_DEFAULT;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_ADD_OR_ALTER;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_AMALG;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_BIFURCATE;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_DATA_ENTRY;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_STATUS_MARK_DEACTIVE;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN_BIFUR;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROP_SOURCE;
-import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
-import static org.egov.ptis.constants.PropertyTaxConstants.PT_WORKFLOWDESIGNATION_MOBILE;
-import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPSTATVALUE_BY_UPICNO_CODE_ISACTIVE;
-import static org.egov.ptis.constants.PropertyTaxConstants.REVISIONPETITION_STATUS_CODE;
-import static org.egov.ptis.constants.PropertyTaxConstants.ROLE_DATAENTRY_OPERATOR;
-import static org.egov.ptis.constants.PropertyTaxConstants.SQUARE_YARD_TO_SQUARE_METER_VALUE;
-import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_CANCELLED;
-import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
-import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_MODIFY;
-import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_APPROVAL_PENDING;
-import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_CLOSED;
-import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVED;
-import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
-import static org.egov.ptis.constants.PropertyTaxConstants.WTMS_AMALGAMATE_WATER_CONNECTIONS_URL;
-import static org.egov.ptis.constants.PropertyTaxConstants.WTMS_TAXDUE_RESTURL;
-import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_OF_WORK_RP;
-import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_OF_WORK_GRP;
-import java.io.File;
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.stream.Collectors;
-
-import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -202,35 +111,7 @@ import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.document.DocumentTypeDetails;
 import org.egov.ptis.domain.entity.enums.TransactionType;
 import org.egov.ptis.domain.entity.objection.RevisionPetition;
-import org.egov.ptis.domain.entity.property.Apartment;
-import org.egov.ptis.domain.entity.property.BasicProperty;
-import org.egov.ptis.domain.entity.property.Document;
-import org.egov.ptis.domain.entity.property.DocumentType;
-import org.egov.ptis.domain.entity.property.Floor;
-import org.egov.ptis.domain.entity.property.FloorType;
-import org.egov.ptis.domain.entity.property.Property;
-import org.egov.ptis.domain.entity.property.PropertyDepartment;
-import org.egov.ptis.domain.entity.property.PropertyDetail;
-import org.egov.ptis.domain.entity.property.PropertyID;
-import org.egov.ptis.domain.entity.property.PropertyImpl;
-import org.egov.ptis.domain.entity.property.PropertyMaterlizeView;
-import org.egov.ptis.domain.entity.property.PropertyMutation;
-import org.egov.ptis.domain.entity.property.PropertyMutationMaster;
-import org.egov.ptis.domain.entity.property.PropertyOccupation;
-import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
-import org.egov.ptis.domain.entity.property.PropertySource;
-import org.egov.ptis.domain.entity.property.PropertyStatus;
-import org.egov.ptis.domain.entity.property.PropertyStatusValues;
-import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
-import org.egov.ptis.domain.entity.property.PropertyUsage;
-import org.egov.ptis.domain.entity.property.PtApplicationType;
-import org.egov.ptis.domain.entity.property.RoofType;
-import org.egov.ptis.domain.entity.property.StructureClassification;
-import org.egov.ptis.domain.entity.property.TaxExemptionReason;
-import org.egov.ptis.domain.entity.property.VacancyRemission;
-import org.egov.ptis.domain.entity.property.VacancyRemissionApproval;
-import org.egov.ptis.domain.entity.property.WallType;
-import org.egov.ptis.domain.entity.property.WoodType;
+import org.egov.ptis.domain.entity.property.*;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.BoundaryDetails;
 import org.egov.ptis.domain.model.OwnerName;
@@ -252,6 +133,32 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.File;
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
+
+import static java.lang.Boolean.FALSE;
+import static java.lang.String.format;
+import static java.math.BigDecimal.ZERO;
+import static org.egov.ptis.constants.PropertyTaxConstants.*;
 
 /**
  * Service class to perform services related to an Assessment
@@ -279,8 +186,8 @@ public class PropertyService {
 	private Installment currentInstall;
 	private BigDecimal totalAlv = BigDecimal.ZERO;
 	protected PersistenceService<BasicProperty, Long> basicPropertyService;
-	private final Map<Installment, Set<EgDemandDetails>> demandDetails = new HashMap<Installment, Set<EgDemandDetails>>();
-	private Map<Installment, Map<String, BigDecimal>> excessCollAmtMap = new LinkedHashMap<Installment, Map<String, BigDecimal>>();
+	private final Map<Installment, Set<EgDemandDetails>> demandDetails = new HashMap<>();
+	private Map<Installment, Map<String, BigDecimal>> excessCollAmtMap = new LinkedHashMap<>();
 
 	@Autowired
 	private APTaxCalculator taxCalculator;
@@ -526,7 +433,7 @@ public class PropertyService {
 				+ propUsageId + ", propOccId: " + propOccId);
 
 		final Area totBltUpArea = new Area();
-		Float totBltUpAreaVal = new Float(0);
+		Float totBltUpAreaVal = 0F;
 		if (!property.getPropertyDetail().getPropertyTypeMaster().getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) {
 			property.getPropertyDetail().getFloorDetails().clear();
 			int floorUid = 1;
@@ -927,7 +834,7 @@ public class PropertyService {
 	 * @param demandDetailsSet
 	 * @return Map of Installment wise demand details set
 	 */
-	private Map<Installment, Set<EgDemandDetails>> getEgDemandDetailsSetByInstallment(
+	public Map<Installment, Set<EgDemandDetails>> getEgDemandDetailsSetByInstallment(
 			final Set<EgDemandDetails> demandDetailsSet) {
 		final Map<Installment, Set<EgDemandDetails>> newEgDemandDetailsSetByInstallment = new HashMap<>();
 
@@ -1094,8 +1001,6 @@ public class PropertyService {
 		LOGGER.info("oldDemandDtlsMap : " + oldDemandDtlsMap);
 
 		for (final Installment inst : instList) {
-			oldEgDemandDetailsSet = new HashSet<>();
-
 			oldEgDemandDetailsSet = oldDemandDtlsMap.get(inst);
 
 			LOGGER.info("inst==========" + inst);
@@ -1248,7 +1153,7 @@ public class PropertyService {
 		if (newDmndDtls != null && oldDmndDtls != null) {
 			newDmndDtls.setAmtCollected(newDmndDtls.getAmtCollected().add(oldDmndDtls.getAmtCollected()));
 			newDmndDtls.setAmtRebate(newDmndDtls.getAmtRebate().add(oldDmndDtls.getAmtRebate()));
-		} else if (newDmndDtls != null && oldDmndDtls == null) {
+		} else if (newDmndDtls != null) {
 			newDmndDtls.setAmtCollected(ZERO);
 			newDmndDtls.setAmtRebate(ZERO);
 		}
@@ -1742,6 +1647,7 @@ public class PropertyService {
 
 		if (!newProperty.getPropertyDetail().getPropertyTypeMaster().getCode()
 				.equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) {
+			//What to do ?
 		}
 
 		LOGGER.debug("Exiting from creteNewPropertyForObjectionWorkflow");
@@ -1855,7 +1761,7 @@ public class PropertyService {
 	 */
 	public Map<Installment, Map<String, BigDecimal>> populateTaxesForVoucherCreation(final Property property) {
 		LOGGER.debug("Entered into populateTaxesForVoucherCreation, property: " + property);
-		Map<Installment, Map<String, BigDecimal>> amounts = new HashMap<Installment, Map<String, BigDecimal>>();
+		Map<Installment, Map<String, BigDecimal>> amounts = new HashMap<>();
 		if (instTaxMap != null) {
 			/*
 			 * for (Map.Entry<Installment, TaxCalculationInfo> instTaxRec :
@@ -2181,9 +2087,9 @@ public class PropertyService {
 
 	}
 
-	private User getOwnerName(final StateAware stateAwareObject) {
+	private User getOwnerName(final StateAware<Position> stateAwareObject) {
 		User user = null;
-		final Position position = stateAwareObject.getState().getOwnerPosition();
+	        final Position position = stateAwareObject.getState().getOwnerPosition() != null ? stateAwareObject.getState().getOwnerPosition() : stateAwareObject.getState().getPreviousOwner();
 		if (position != null)
 			user = assignmentService.getAssignmentsForPosition(position.getId(), new Date()).get(0).getEmployee();
 		return user;
@@ -2219,8 +2125,7 @@ public class PropertyService {
 				.withStatus(vacancyRemissionApproval.getState().getValue())
 				.withUrl(format(APPLICATION_VIEW_URL, vacancyRemission.getApplicationNumber(), applictionType))
 				.withApplicantAddress(vacancyRemission.getBasicProperty().getAddress().toString())
-				.withOwnername(vacancyRemissionApproval.getState().getValue().contains(WF_STATE_CLOSED) ? null
-						: stateOwner.getUsername() + "::" + stateOwner.getName())
+				.withOwnername(stateOwner.getUsername() + "::" + stateOwner.getName())
 				.withChannel(source).withMobileNumber(owner.getMobileNumber())
 				.withAadharNumber(owner.getAadhaarNumber())
 				.withConsumerCode(vacancyRemission.getBasicProperty().getUpicNo()).withClosed(closureStatus)
@@ -2238,8 +2143,7 @@ public class PropertyService {
 			final VacancyRemissionApproval vacancyRemissionApproval) {
 		applicationIndex.setStatus(vacancyRemissionApproval.getState().getValue());
 		applicationIndex.setApplicantName(owner.getName());
-		applicationIndex.setOwnerName(vacancyRemissionApproval.getState().getValue().contains(WF_STATE_CLOSED) ? null
-				: stateOwner.getUsername() + "::" + stateOwner.getName());
+		applicationIndex.setOwnerName(stateOwner.getUsername() + "::" + stateOwner.getName());
 		applicationIndex.setMobileNumber(owner.getMobileNumber());
 		applicationIndex.setAadharNumber(owner.getAadhaarNumber());
 		applicationIndex.setClosed(vacancyRemissionApproval.getState().getValue().contains(WF_STATE_CLOSED)
@@ -2280,8 +2184,7 @@ public class PropertyService {
 				.withStatus(propertyMutation.getState().getValue())
 				.withUrl(format(APPLICATION_VIEW_URL, propertyMutation.getApplicationNo(), applictionType))
 				.withApplicantAddress(propertyMutation.getBasicProperty().getAddress().toString())
-				.withOwnername(propertyMutation.getState().getValue().contains(WF_STATE_CLOSED) ? null
-						: stateOwner.getUsername() + "::" + stateOwner.getName())
+				.withOwnername(stateOwner.getUsername() + "::" + stateOwner.getName())
 				.withChannel(source).withMobileNumber(owner.getMobileNumber())
 				.withAadharNumber(owner.getAadhaarNumber())
 				.withConsumerCode(propertyMutation.getBasicProperty().getUpicNo()).withClosed(closureStatus)
@@ -2298,8 +2201,7 @@ public class PropertyService {
 			final ApplicationIndex applicationIndex, final User owner) {
 		applicationIndex.setStatus(propertyMutation.getState().getValue());
 		applicationIndex.setApplicantName(owner.getName());
-		applicationIndex.setOwnerName(propertyMutation.getState().getValue().contains(WF_STATE_CLOSED) ? null
-				: stateOwner.getUsername() + "::" + stateOwner.getName());
+		applicationIndex.setOwnerName(stateOwner.getUsername() + "::" + stateOwner.getName());
 		applicationIndex.setMobileNumber(owner.getMobileNumber());
 		applicationIndex.setAadharNumber(owner.getAadhaarNumber());
 		applicationIndex.setClosed(propertyMutation.getState().getValue().contains(WF_STATE_CLOSED) ? ClosureStatus.YES
@@ -2339,8 +2241,7 @@ public class PropertyService {
 				.withStatus(revisionPetition.getState().getValue())
 				.withUrl(format(APPLICATION_VIEW_URL, revisionPetition.getObjectionNumber(), applictionType))
 				.withApplicantAddress(revisionPetition.getBasicProperty().getAddress().toString())
-				.withOwnername(revisionPetition.getState().getValue().contains(WF_STATE_CLOSED) ? null
-						: stateOwner.getUsername() + "::" + stateOwner.getName())
+				.withOwnername(stateOwner.getUsername() + "::" + stateOwner.getName())
 				.withChannel(source).withMobileNumber(owner.getMobileNumber())
 				.withAadharNumber(owner.getAadhaarNumber())
 				.withConsumerCode(revisionPetition.getBasicProperty().getUpicNo()).withClosed(closureStatus)
@@ -2358,8 +2259,7 @@ public class PropertyService {
 		applicationIndex.setStatus(revisionPetition.getState().getValue());
 		if (applictionType.equalsIgnoreCase(APPLICATION_TYPE_REVISION_PETITION)
 				|| applictionType.equalsIgnoreCase(APPLICATION_TYPE_GRP)) {
-			applicationIndex.setOwnerName(revisionPetition.getState().getValue().contains(WF_STATE_CLOSED) ? null
-					: stateOwner.getUsername() + "::" + stateOwner.getName());
+			applicationIndex.setOwnerName(stateOwner.getUsername() + "::" + stateOwner.getName());
 			applicationIndex.setClosed(revisionPetition.getState().getValue().contains(WF_STATE_CLOSED)
 					? ClosureStatus.YES : ClosureStatus.NO);
 			if (!ApprovalStatus.APPROVED.equals(applicationIndex.getApproved()))
@@ -2406,8 +2306,7 @@ public class PropertyService {
 				.withStatus(property.getState().getValue())
 				.withUrl(format(APPLICATION_VIEW_URL, property.getApplicationNo(), applictionType))
 				.withApplicantAddress(property.getBasicProperty().getAddress().toString())
-				.withOwnername(property.getState().getValue().contains(WF_STATE_CLOSED) ? null
-						: stateOwner.getUsername() + "::" + stateOwner.getName())
+				.withOwnername(stateOwner.getUsername() + "::" + stateOwner.getName())
 				.withChannel(source).withMobileNumber(owner.getMobileNumber())
 				.withAadharNumber(owner.getAadhaarNumber()).withConsumerCode(property.getBasicProperty().getUpicNo())
 				.withClosed(closureStatus)
@@ -2434,8 +2333,7 @@ public class PropertyService {
 		if (propertyApplicationTypes().contains(applictionType)) {
 			applicationIndex.setConsumerCode(property.getBasicProperty().getUpicNo());
 			applicationIndex.setApplicantName(owner.getName());
-			applicationIndex.setOwnerName(property.getState().getValue().contains(WF_STATE_CLOSED) ? null
-					: stateOwner.getUsername() + "::" + stateOwner.getName());
+			applicationIndex.setOwnerName(stateOwner.getUsername() + "::" + stateOwner.getName());
 			applicationIndex.setMobileNumber(owner.getMobileNumber());
 			applicationIndex.setAadharNumber(owner.getAadhaarNumber());
 			applicationIndex.setClosed(
@@ -2625,8 +2523,7 @@ public class PropertyService {
 	 * @return
 	 */
 	public BigDecimal convertYardToSquareMeters(final Float vacantLandArea) {
-		Float areaInSqMts = null;
-		areaInSqMts = new Float(vacantLandArea) * new Float(SQUARE_YARD_TO_SQUARE_METER_VALUE);
+		Float areaInSqMts = vacantLandArea * SQUARE_YARD_TO_SQUARE_METER_VALUE;
 		return new BigDecimal(areaInSqMts).setScale(2, BigDecimal.ROUND_HALF_UP);
 	}
 
@@ -2854,8 +2751,7 @@ public class PropertyService {
 		query.setBigDecimal("fromDemand", new BigDecimal(fromDemand));
 		query.setBigDecimal("toDemand", new BigDecimal(toDemand));
 
-		final List<PropertyMaterlizeView> propertyList = query.list();
-		return propertyList;
+		return (List<PropertyMaterlizeView>) query.list();
 	}
 
 	/**
@@ -2889,8 +2785,7 @@ public class PropertyService {
 		if (ownerName != null && !ownerName.trim().isEmpty())
 			query.setString("OwnerName", "%" + ownerName.toUpperCase() + "%");
 
-		final List<PropertyMaterlizeView> propertyList = query.list();
-		return propertyList;
+		return (List<PropertyMaterlizeView>) query.list();
 	}
 
 	/**
@@ -2917,8 +2812,7 @@ public class PropertyService {
 		if (ownerName != null && !ownerName.trim().isEmpty())
 			query.setString("OwnerName", ownerName.toUpperCase() + "%");
 
-		final List<PropertyMaterlizeView> propertyList = query.list();
-		return propertyList;
+		return (List<PropertyMaterlizeView>) query.list();
 	}
 
 	/**
@@ -2956,8 +2850,7 @@ public class PropertyService {
 		if (ownerName != null && !ownerName.trim().isEmpty())
 			query.setString("OwnerName", ownerName.toUpperCase() + "%");
 
-		final List<PropertyMaterlizeView> propertyList = query.list();
-		return propertyList;
+		return (List<PropertyMaterlizeView>) query.list();
 	}
 
 	@ReadOnly
@@ -2970,8 +2863,7 @@ public class PropertyService {
 		final Query query = propPerServ.getSession().createQuery(queryStr.toString());
 		if (StringUtils.isNotBlank(doorNo))
 			query.setString("doorNo", doorNo + "%");
-		final List<PropertyMaterlizeView> propertyList = query.list();
-		return propertyList;
+		return (List<PropertyMaterlizeView>) query.list();
 	}
 
 	@ReadOnly
@@ -2984,8 +2876,7 @@ public class PropertyService {
 		final Query query = propPerServ.getSession().createQuery(queryStr.toString());
 		if (StringUtils.isNotBlank(oldMuncipalNum))
 			query.setString("oldMuncipalNum", oldMuncipalNum);
-		final List<PropertyMaterlizeView> propertyList = query.list();
-		return propertyList;
+		return (List<PropertyMaterlizeView>) query.list();
 	}
 
 	public Map<String, Object> getOldMunicipalNumQuery(final String oldMuncipalNum) {
@@ -3152,8 +3043,7 @@ public class PropertyService {
 		final Query query = propPerServ.getSession().createQuery(queryStr.toString());
 		if (StringUtils.isNotBlank(MobileNo))
 			query.setString("MobileNo", MobileNo);
-		final List<PropertyMaterlizeView> propertyList = query.list();
-		return propertyList;
+		return (List<PropertyMaterlizeView>) query.list();
 	}
 
 	public Assignment getWorkflowInitiator(final PropertyImpl property) {
@@ -3206,13 +3096,13 @@ public class PropertyService {
 		return wfInitiator;
 	}
 
-	public List<Hashtable<String, Object>> populateHistory(final StateAware stateAware) {
-		final List<Hashtable<String, Object>> historyTable = new ArrayList<>();
-		final Hashtable<String, Object> map = new Hashtable<>();
+	public List<HashMap<String, Object>> populateHistory(final StateAware<Position> stateAware) {
+		final List<HashMap<String, Object>> historyTable = new ArrayList<>();
+		final HashMap<String, Object> map = new HashMap<>();
 		User user;
 		Position ownerPosition;
 		if (stateAware.hasState()) {
-			final State state = stateAware.getCurrentState();
+			final State<Position> state = stateAware.getCurrentState();
 			map.put("date", state.getLastModifiedDate());
 			map.put("updatedBy", state.getLastModifiedBy().getUsername() + "::" + state.getLastModifiedBy().getName());
 			map.put("status", state.getValue());
@@ -3225,26 +3115,26 @@ public class PropertyService {
 			} else if (null != user)
 				map.put("user", user.getUsername() + "::" + user.getName());
 			historyTable.add(map);
-			final List<StateHistory> stateHistory = stateAware.getStateHistory();
+			final List<StateHistory<Position>> stateHistory = stateAware.getStateHistory();
 			if (null != state.getHistory() && !state.getHistory().isEmpty()) {
 				Collections.reverse(stateHistory);
-				for (final StateHistory historyState : stateHistory) {
-					final Hashtable<String, Object> HistoryMap = new Hashtable<>(0);
-					HistoryMap.put("date", historyState.getLastModifiedDate());
-					HistoryMap.put("updatedBy", historyState.getLastModifiedBy().getUsername() + "::"
+				for (final StateHistory<Position> historyState : stateHistory) {
+					final HashMap<String, Object> workflowHistory = new HashMap<>();
+					workflowHistory.put("date", historyState.getLastModifiedDate());
+					workflowHistory.put("updatedBy", historyState.getLastModifiedBy().getUsername() + "::"
 							+ historyState.getLastModifiedBy().getName());
-					HistoryMap.put("status", historyState.getValue());
-					HistoryMap.put("comments", null != historyState.getComments() ? historyState.getComments() : "");
+					workflowHistory.put("status", historyState.getValue());
+					workflowHistory.put("comments", null != historyState.getComments() ? historyState.getComments() : "");
 					ownerPosition = historyState.getOwnerPosition();
 					user = historyState.getOwnerUser();
 					if (null != ownerPosition) {
 						final User approverUser = eisCommonService.getUserForPosition(ownerPosition.getId(),
 								historyState.getLastModifiedDate());
-						HistoryMap.put("user",
+						workflowHistory.put("user",
 								null != approverUser ? approverUser.getUsername() + "::" + approverUser.getName() : "");
 					} else if (null != user)
-						HistoryMap.put("user", user.getUsername() + "::" + user.getName());
-					historyTable.add(HistoryMap);
+						workflowHistory.put("user", user.getUsername() + "::" + user.getName());
+					historyTable.add(workflowHistory);
 				}
 			}
 		}
@@ -3357,7 +3247,11 @@ public class PropertyService {
 	public Map<String, BigDecimal> getCurrentPropertyTaxDetails(final Property propertyImpl) {
 		return ptDemandDAO.getDemandCollMap(propertyImpl);
 	}
-
+	
+	public Map<String, BigDecimal> getCurrentPropertyTaxDetailsIncludingPenalty(final Property propertyImpl) {
+            return ptDemandDAO.getDemandCollMapIncludingPenaltyAndAdvance(propertyImpl);
+	}
+    
 	/**
 	 * Returns a map of current tax and balance, based on passed date being in
 	 * first half or second half of the installments for current year
@@ -3385,6 +3279,26 @@ public class PropertyService {
 							.subtract(propertyTaxDetails.get(PropertyTaxConstants.CURR_SECONDHALF_COLL_STR)));
 		}
 		return taxValues;
+	}
+	
+	public Map<String, BigDecimal> getCurrentTaxAndBalanceIncludingPenalty(final Map<String, BigDecimal> propertyTaxDetails,final Date currDate) {
+            final Map<String, BigDecimal> taxValues = new HashMap<>();
+            final Map<String, Installment> currYearInstMap = propertyTaxUtil.getInstallmentsForCurrYear(currDate);
+            final Installment currInstFirstHalf = currYearInstMap.get(PropertyTaxConstants.CURRENTYEAR_FIRST_HALF);
+            if (DateUtils.between(new Date(), currInstFirstHalf.getFromDate(), currInstFirstHalf.getToDate())) {
+                    taxValues.put(PropertyTaxConstants.CURR_DMD_STR,
+                                    propertyTaxDetails.get(PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR));
+                    taxValues.put(PropertyTaxConstants.CURR_BAL_STR,
+                                    (propertyTaxDetails.get(PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR).add(propertyTaxDetails.get(PropertyTaxConstants.CURR_FIRSTHALF_PENALTY_DMD_STR)))
+                                                .subtract((propertyTaxDetails.get(PropertyTaxConstants.CURR_FIRSTHALF_COLL_STR)).add(propertyTaxDetails.get(PropertyTaxConstants.CURR_FIRSTHALF_PENALTY_COLL_STR))));
+            } else {
+                    taxValues.put(PropertyTaxConstants.CURR_DMD_STR,
+                                    propertyTaxDetails.get(PropertyTaxConstants.CURR_SECONDHALF_DMD_STR));
+                    taxValues.put(PropertyTaxConstants.CURR_BAL_STR,
+                            (propertyTaxDetails.get(PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR).add(propertyTaxDetails.get(PropertyTaxConstants.CURR_FIRSTHALF_PENALTY_DMD_STR)).add(propertyTaxDetails.get(PropertyTaxConstants.CURR_SECONDHALF_DMD_STR)).add(propertyTaxDetails.get(PropertyTaxConstants.CURR_SECONDHALF_PENALTY_DMD_STR)))
+                                                .subtract((propertyTaxDetails.get(PropertyTaxConstants.CURR_SECONDHALF_COLL_STR)).add(propertyTaxDetails.get(PropertyTaxConstants.CURR_SECONDHALF_PENALTY_COLL_STR)).add(propertyTaxDetails.get(PropertyTaxConstants.CURR_FIRSTHALF_COLL_STR)).add(propertyTaxDetails.get(PropertyTaxConstants.CURR_FIRSTHALF_PENALTY_COLL_STR))));
+            }
+            return taxValues;
 	}
 
 	/**
@@ -3709,7 +3623,7 @@ public class PropertyService {
 			propertyDetail.setNoofFloors(0);
 			if (!property.getPropertyDetail().getFloorDetails().isEmpty())
 				property.getPropertyDetail().getFloorDetails().clear();
-			property.getPropertyDetail().getTotalBuiltupArea().setArea(new Float(0));
+			property.getPropertyDetail().getTotalBuiltupArea().setArea(0F);
 		}
 	}
 
@@ -3725,7 +3639,7 @@ public class PropertyService {
 		PropertyOccupation occupancy = null;
 		StructureClassification structureClass = null;
 		final Area totBltUpArea = new Area();
-		Float totBltUpAreaVal = new Float(0);
+		Float totBltUpAreaVal = 0F;
 		for (final Floor floorProxy : property.getPropertyDetail().getFloorDetailsProxy())
 			for (final Floor savedFloor : savedFloorDetails) {
 				if (floorProxy != null && savedFloor != null)
@@ -3797,9 +3711,7 @@ public class PropertyService {
 	 * @return
 	 */
 	public List<Assignment> getAssignmentsForDesignation(final String designationName) {
-		List<Assignment> assignmentsList = new ArrayList<>();
-		assignmentsList = assignmentService.findPrimaryAssignmentForDesignationName(designationName);
-		return assignmentsList;
+		return assignmentService.findPrimaryAssignmentForDesignationName(designationName);
 	}
 
 	/**
@@ -4041,59 +3953,71 @@ public class PropertyService {
 	}
 
 	public void copyCollection(final PropertyImpl oldProperty, final PropertyImpl newProperty) {
-		BigDecimal totalColl = BigDecimal.ZERO;
+	    BigDecimal totalColl = BigDecimal.ZERO;
 
-		final Ptdemand ptDemandOld = getCurrrentDemand(oldProperty);
-		final Ptdemand ptDemandNew = getCurrrentDemand(newProperty);
+	    final Ptdemand ptDemandOld = getCurrrentDemand(oldProperty);
+	    final Ptdemand ptDemandNew = getCurrrentDemand(newProperty);
 
-		for (final EgDemandDetails demandDetails : ptDemandOld.getEgDemandDetails())
-			totalColl = totalColl.add(demandDetails.getAmtCollected());
+	    if (ptDemandOld != null) {
+	        for (final EgDemandDetails dmdDetails : ptDemandOld.getEgDemandDetails())
+	            totalColl = totalColl.add(dmdDetails.getAmtCollected());
+	    }
 
-		final Set<String> demandReasons = new LinkedHashSet<>(Arrays.asList(DEMANDRSN_CODE_PENALTY_FINES,
-				DEMANDRSN_CODE_GENERAL_TAX, DEMANDRSN_CODE_VACANT_TAX, DEMANDRSN_CODE_EDUCATIONAL_CESS,
-				DEMANDRSN_CODE_LIBRARY_CESS, DEMANDRSN_CODE_UNAUTHORIZED_PENALTY));
+	    final Set<String> demandReasons = new LinkedHashSet<>(Arrays.asList(DEMANDRSN_CODE_PENALTY_FINES,
+		DEMANDRSN_CODE_GENERAL_TAX, DEMANDRSN_CODE_VACANT_TAX, DEMANDRSN_CODE_EDUCATIONAL_CESS,
+		DEMANDRSN_CODE_LIBRARY_CESS, DEMANDRSN_CODE_UNAUTHORIZED_PENALTY));
 
-		final Map<Installment, Set<EgDemandDetails>> installmentWiseDemandDetails = getEgDemandDetailsSetByInstallment(
-				ptDemandNew.getEgDemandDetails());
-		final List<Installment> installments = new ArrayList<>(installmentWiseDemandDetails.keySet());
-		Collections.sort(installments);
-
-		for (final Installment installment : installments) {
-			for (final String demandReason : demandReasons) {
-				final EgDemandDetails newDemandDetail = getEgDemandDetailsForReason(
-						installmentWiseDemandDetails.get(installment), demandReason);
-
-				if (newDemandDetail != null)
-					if (totalColl.compareTo(BigDecimal.ZERO) > 0)
-						if (totalColl.compareTo(newDemandDetail.getAmount()) <= 0) {
-							newDemandDetail.setAmtCollected(totalColl);
-							newDemandDetail.setModifiedDate(new Date());
-							totalColl = BigDecimal.ZERO;
-						} else {
-							newDemandDetail.setAmtCollected(newDemandDetail.getAmount());
-							newDemandDetail.setModifiedDate(new Date());
-							totalColl = totalColl.subtract(newDemandDetail.getAmount());
-						}
-				if (totalColl.compareTo(BigDecimal.ZERO) == 0)
-					break;
-			}
-			if (totalColl.compareTo(BigDecimal.ZERO) == 0)
-				break;
-		}
-
-		if (totalColl.compareTo(BigDecimal.ZERO) > 0) {
-			final Installment currSecondHalf = propertyTaxUtil.getInstallmentsForCurrYear(new Date())
-					.get(PropertyTaxConstants.CURRENTYEAR_SECOND_HALF);
-			final EgDemandDetails advanceDemandDetails = ptBillServiceImpl.getDemandDetail(ptDemandNew, currSecondHalf,
-					DEMANDRSN_CODE_ADVANCE);
-			if (advanceDemandDetails == null) {
-				final EgDemandDetails demandDetails = ptBillServiceImpl.insertDemandDetails(DEMANDRSN_CODE_ADVANCE,
-						totalColl, currSecondHalf);
-				ptDemandNew.getEgDemandDetails().add(demandDetails);
-			} else
-				advanceDemandDetails.getAmtCollected().add(totalColl);
-		}
+	    if (ptDemandNew != null) {
+	        final Map<Installment, Set<EgDemandDetails>> installmentWiseDemandDetails = getEgDemandDetailsSetByInstallment(
+	                ptDemandNew.getEgDemandDetails());
+	        final List<Installment> installments = new ArrayList<>(installmentWiseDemandDetails.keySet());
+	        Collections.sort(installments);
+        
+	        for (final Installment installment : installments) {
+	            for (final String demandReason : demandReasons) {
+	                final EgDemandDetails newDemandDetail = getEgDemandDetailsForReason(
+	                        installmentWiseDemandDetails.get(installment), demandReason);
+	                totalColl = updateCollection(totalColl, newDemandDetail);
+	            }
+	        }
+    		if (totalColl.compareTo(BigDecimal.ZERO) > 0) {
+                    final Installment currSecondHalf = propertyTaxUtil.getInstallmentsForCurrYear(new Date())
+                            .get(PropertyTaxConstants.CURRENTYEAR_SECOND_HALF);
+                    final EgDemandDetails advanceDemandDetails = ptBillServiceImpl.getDemandDetail(ptDemandNew, currSecondHalf,
+                            DEMANDRSN_CODE_ADVANCE);
+                    if (advanceDemandDetails == null) {
+                        final EgDemandDetails dmdDetails = ptBillServiceImpl.insertDemandDetails(DEMANDRSN_CODE_ADVANCE,
+                                totalColl, currSecondHalf);
+                        ptDemandNew.getEgDemandDetails().add(dmdDetails);
+                    } else
+                        advanceDemandDetails.getAmtCollected().add(totalColl);
+    		}
+	    }
 	}
+
+    /**
+     * @param totalColl
+     * @param newDemandDetail
+     * @return
+     */
+    private BigDecimal updateCollection(BigDecimal totalColl, final EgDemandDetails newDemandDetail) {
+        BigDecimal remaining = totalColl;
+        if (newDemandDetail != null) {
+            newDemandDetail.setAmtCollected(ZERO);
+            if (remaining.compareTo(BigDecimal.ZERO) > 0) {
+                if (remaining.compareTo(newDemandDetail.getAmount()) <= 0) {
+                	newDemandDetail.setAmtCollected(remaining);
+                	newDemandDetail.setModifiedDate(new Date());
+                	remaining = BigDecimal.ZERO;
+                } else {
+                	newDemandDetail.setAmtCollected(newDemandDetail.getAmount());
+                	newDemandDetail.setModifiedDate(new Date());
+                	remaining = remaining.subtract(newDemandDetail.getAmount());
+                }
+            }
+        }
+        return remaining;
+    }
 
 	/**
 	 * Method to push data for citizen portal inbox
@@ -4341,8 +4265,7 @@ public class PropertyService {
 				.withStatus(vacancyRemission.getState().getValue())
 				.withUrl(format(APPLICATION_VIEW_URL, vacancyRemission.getApplicationNumber(), applictionType))
 				.withApplicantAddress(vacancyRemission.getBasicProperty().getAddress().toString())
-				.withOwnername(vacancyRemission.getState().getValue().contains(WF_STATE_CLOSED) ? null
-						: stateOwner.getUsername() + "::" + stateOwner.getName())
+				.withOwnername(stateOwner.getUsername() + "::" + stateOwner.getName())
 				.withChannel(source).withMobileNumber(owner.getMobileNumber())
 				.withAadharNumber(owner.getAadhaarNumber())
 				.withConsumerCode(vacancyRemission.getBasicProperty().getUpicNo()).withClosed(closureStatus)
@@ -4359,8 +4282,7 @@ public class PropertyService {
 			final User owner, final VacancyRemission vacancyRemission) {
 		applicationIndex.setStatus(vacancyRemission.getState().getValue());
 		applicationIndex.setApplicantName(owner.getName());
-		applicationIndex.setOwnerName(vacancyRemission.getState().getValue().contains(WF_STATE_CLOSED) ? null
-				: stateOwner.getUsername() + "::" + stateOwner.getName());
+		applicationIndex.setOwnerName(stateOwner.getUsername() + "::" + stateOwner.getName());
 		applicationIndex.setMobileNumber(owner.getMobileNumber());
 		applicationIndex.setAadharNumber(owner.getAadhaarNumber());
 		applicationIndex.setClosed(vacancyRemission.getState().getValue().contains(WF_STATE_CLOSED) ? ClosureStatus.YES

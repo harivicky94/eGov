@@ -1,61 +1,61 @@
 /*
- * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
- * accountability and the service delivery of the government  organizations.
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ *    accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) <2017>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
- *  The updated version of eGov suite of products as by eGovernments Foundation
- *  is available at http://www.egovernments.org
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
  *
- *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  any later version.
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
  *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program. If not, see http://www.gnu.org/licenses/ or
- *  http://www.gnu.org/licenses/gpl.html .
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
  *
- *  In addition to the terms of the GPL license to be adhered to in using this
- *  program, the following additional terms are to be complied with:
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
  *
- *      1) All versions of this program, verbatim or modified must carry this
- *         Legal Notice.
- * 	Further, all user interfaces, including but not limited to citizen facing interfaces,
- *         Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
- *         derived works should carry eGovernments Foundation logo on the top right corner.
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
  *
- * 	For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
- * 	For any further queries on attribution, including queries on brand guidelines,
- *         please contact contact@egovernments.org
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
- *      2) Any misrepresentation of the origin of the material is prohibited. It
- *         is required that all modified versions of this material be marked in
- *         reasonable ways as different from the original version.
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
  *
- *      3) This license does not grant any rights to any user of the program
- *         with regards to rights under trademark law for use of the trade names
- *         or trademarks of eGovernments Foundation.
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
  *
- *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 
 package org.egov.tl.entity.view;
 
 import org.hibernate.annotations.Immutable;
-import org.hibernate.annotations.Type;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.io.Serializable;
-import java.math.BigInteger;
+import java.math.BigDecimal;
 
 @Entity
 @Immutable
@@ -72,25 +72,24 @@ public class DCBReportResult implements Serializable {
     private String username;
 
     @Column(name = "curr_demand")
-    private BigInteger currentdemand;
+    private BigDecimal currentdemand;
 
     @Column(name = "arr_demand")
-    private BigInteger arreardemand;
+    private BigDecimal arreardemand;
 
     @Column(name = "curr_coll")
-    private BigInteger currentcollection;
+    private BigDecimal currentcollection;
 
     @Column(name = "arr_coll")
-    private BigInteger arrearcollection;
+    private BigDecimal arrearcollection;
 
     @Column(name = "curr_balance")
-    private BigInteger currentbalance;
+    private BigDecimal currentbalance;
 
     @Column(name = "arr_balance")
-    private BigInteger arrearbalance;
+    private BigDecimal arrearbalance;
 
-    @Type(type = "true_false")
-    private Boolean active;
+    private boolean active;
 
     private String licaddress;
 
@@ -104,7 +103,7 @@ public class DCBReportResult implements Serializable {
         return licensenumber;
     }
 
-    public void setLicensenumber(final String licensenumber) {
+    public void setLicensenumber(String licensenumber) {
         this.licensenumber = licensenumber;
     }
 
@@ -112,57 +111,49 @@ public class DCBReportResult implements Serializable {
         return username;
     }
 
-    public void setUsername(final String username) {
+    public void setUsername(String username) {
         this.username = username;
     }
 
-    public BigInteger getTotaldemand() {
-        return (currentdemand == null ? BigInteger.ZERO : currentdemand).add(arreardemand == null ? BigInteger.ZERO
+    public BigDecimal getTotaldemand() {
+        return (currentdemand == null ? BigDecimal.ZERO : currentdemand).add(arreardemand == null ? BigDecimal.ZERO
                 : arreardemand);
     }
 
-    public void setTotaldemand(final BigInteger totaldemand) {
+    public BigDecimal getTotalcollection() {
+        return (currentcollection == null ? BigDecimal.ZERO : currentcollection)
+                .add(arrearcollection == null ? BigDecimal.ZERO : arrearcollection);
     }
 
-    public BigInteger getTotalcollection() {
-        return (currentcollection == null ? BigInteger.ZERO : currentcollection)
-                .add(arrearcollection == null ? BigInteger.ZERO : arrearcollection);
-    }
 
-    public void setTotalcollection(final BigInteger totalcollection) {
-    }
-
-    public BigInteger getCurrentbalance() {
-        return (currentdemand == null ? BigInteger.ZERO : currentdemand).subtract(currentcollection == null ? BigInteger.ZERO
+    public BigDecimal getCurrentbalance() {
+        return (currentdemand == null ? BigDecimal.ZERO : currentdemand).subtract(currentcollection == null ? BigDecimal.ZERO
                 : currentcollection);
     }
 
-    public void setCurrentbalance(final BigInteger currentbalance) {
+    public void setCurrentbalance(BigDecimal currentbalance) {
         this.currentbalance = currentbalance;
     }
 
-    public BigInteger getArrearbalance() {
-        return (arreardemand == null ? BigInteger.ZERO : arreardemand).subtract(arrearcollection == null ? BigInteger.ZERO
+    public BigDecimal getArrearbalance() {
+        return (arreardemand == null ? BigDecimal.ZERO : arreardemand).subtract(arrearcollection == null ? BigDecimal.ZERO
                 : arrearcollection);
     }
 
-    public void setArrearbalance(final BigInteger arrearbalance) {
+    public void setArrearbalance(BigDecimal arrearbalance) {
         this.arrearbalance = arrearbalance;
     }
 
-    public BigInteger getTotalbalance() {
-        return (currentbalance == null ? BigInteger.ZERO : currentbalance).add(arrearbalance == null ? BigInteger.ZERO
+    public BigDecimal getTotalbalance() {
+        return (currentbalance == null ? BigDecimal.ZERO : currentbalance).add(arrearbalance == null ? BigDecimal.ZERO
                 : arrearbalance);
-    }
-
-    public void setTotalbalance(final BigInteger totalbalance) {
     }
 
     public Integer getLicenseid() {
         return licenseid;
     }
 
-    public void setLicenseid(final Integer licenseid) {
+    public void setLicenseid(Integer licenseid) {
         this.licenseid = licenseid;
     }
 
@@ -170,7 +161,7 @@ public class DCBReportResult implements Serializable {
         return licaddress;
     }
 
-    public void setLicaddress(final String licaddress) {
+    public void setLicaddress(String licaddress) {
         this.licaddress = licaddress;
     }
 
@@ -178,7 +169,7 @@ public class DCBReportResult implements Serializable {
         return wardid;
     }
 
-    public void setWardid(final Long wardid) {
+    public void setWardid(Long wardid) {
         this.wardid = wardid;
     }
 
@@ -194,47 +185,47 @@ public class DCBReportResult implements Serializable {
         return locality;
     }
 
-    public void setLocality(final Long locality) {
+    public void setLocality(Long locality) {
         this.locality = locality;
     }
 
-    public BigInteger getCurrentdemand() {
+    public BigDecimal getCurrentdemand() {
         return currentdemand;
     }
 
-    public void setCurrentdemand(final BigInteger currentdemand) {
+    public void setCurrentdemand(BigDecimal currentdemand) {
         this.currentdemand = currentdemand;
     }
 
-    public BigInteger getArreardemand() {
+    public BigDecimal getArreardemand() {
         return arreardemand;
     }
 
-    public void setArreardemand(final BigInteger arreardemand) {
+    public void setArreardemand(BigDecimal arreardemand) {
         this.arreardemand = arreardemand;
     }
 
-    public BigInteger getCurrentcollection() {
+    public BigDecimal getCurrentcollection() {
         return currentcollection;
     }
 
-    public void setCurrentcollection(final BigInteger currentcollection) {
+    public void setCurrentcollection(BigDecimal currentcollection) {
         this.currentcollection = currentcollection;
     }
 
-    public BigInteger getArrearcollection() {
+    public BigDecimal getArrearcollection() {
         return arrearcollection;
     }
 
-    public void setArrearcollection(final BigInteger arrearcollection) {
+    public void setArrearcollection(BigDecimal arrearcollection) {
         this.arrearcollection = arrearcollection;
     }
 
-    public Boolean getActive() {
+    public boolean isActive() {
         return active;
     }
 
-    public void setActive(Boolean active) {
+    public void setActive(boolean active) {
         this.active = active;
     }
 }

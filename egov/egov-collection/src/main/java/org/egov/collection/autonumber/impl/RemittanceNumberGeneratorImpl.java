@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,41 +43,32 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.collection.autonumber.impl;
-
-import java.io.Serializable;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import org.egov.collection.autonumber.RemittanceNumberGenerator;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.commons.CFinancialYear;
-import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
+import org.egov.infra.persistence.utils.GenericSequenceNumberGenerator;
 import org.egov.infra.utils.DateUtils;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class RemittanceNumberGeneratorImpl implements RemittanceNumberGenerator {
+    private static final String APP_NUMBER_SEQ_PREFIX = "SQ_REMITTANCE%s";
 
     @Autowired
-    private ApplicationSequenceNumberGenerator applicationSequenceNumberGenerator;
+    private GenericSequenceNumberGenerator genericSequenceNumberGenerator;
 
     @Override
     public String generateRemittanceNumber(final CFinancialYear financialYear) {
-
-        final String APP_NUMBER_SEQ_PREFIX = "SQ_REMITTANCE%s";
-        final SimpleDateFormat sdf = new SimpleDateFormat("MM");
-        final String formattedDate = sdf.format(new Date());
-
-        final String currentYear = DateUtils.currentDateToYearFormat();
-        final String sequenceName = String.format(APP_NUMBER_SEQ_PREFIX, currentYear);
-        final Serializable sequenceNumber = applicationSequenceNumberGenerator.getNextSequence(sequenceName);
-
-        final String result = String.format("%s/%06d/%s/%s", CollectionConstants.REMITTANCE_NUMBER_PREFIX,
-                sequenceNumber, formattedDate, financialYear.getFinYearRange());
-        return result;
+        final String sequenceName = String.format(APP_NUMBER_SEQ_PREFIX, DateUtils.currentYear());
+        return String.format("%s/%06d/%s/%s", CollectionConstants.REMITTANCE_NUMBER_PREFIX,
+                genericSequenceNumberGenerator.getNextSequence(sequenceName), new DateTime().toString("MM"),
+                financialYear.getFinYearRange());
     }
 
 }

@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,12 +43,12 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.wtms.application.service;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_SECOND_HALF;
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.METERED;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.METERED_CHARGES_REASON_CODE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.MODULE_NAME;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.PROPERTY_MODULE_NAME;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAXREASONCODE;
@@ -62,6 +69,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.validation.ValidationException;
 
+import org.apache.commons.lang.StringUtils;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.FinancialYearDAO;
@@ -177,6 +185,7 @@ public class ConnectionDemandService {
         return entityManager.unwrap(Session.class);
     }
 
+    @Transactional
     public EgDemand createDemand(final WaterConnectionDetails waterConnectionDetails) {
         final Map<String, Object> feeDetails = new HashMap<>();
         DonationDetails donationDetails = null;
@@ -191,8 +200,6 @@ public class ConnectionDemandService {
             waterConnectionDetails.getFieldInspectionDetails().setEstimationCharges(fieldInspectionDetails.getSecurityDeposit()
                     + fieldInspectionDetails.getRoadCuttingCharges() + fieldInspectionDetails.getSupervisionCharges());
         }
-
-        // (!WaterTaxConstants.BPL_CATEGORY.equalsIgnoreCase(waterConnectionDetails.getCategory().getCode()))
         if (waterConnectionDetails.getConnectionType().equals(ConnectionType.NON_METERED) &&
                 !WaterTaxConstants.CHANGEOFUSE.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()))
             donationDetails = getDonationDetails(waterConnectionDetails);
@@ -258,7 +265,7 @@ public class ConnectionDemandService {
             final String demandReason, final String installment, final DemandDetail demandTempObj,
             final WaterConnectionDetails waterConnectionDetails) {
         Installment installObj;
-        if (!waterConnectionDetails.getConnectionType().toString().equalsIgnoreCase(METERED))
+        if (waterConnectionDetails.getConnectionType().equals(ConnectionType.NON_METERED))
             installObj = installmentDao
                     .getInsatllmentByModuleAndDescription(moduleService.getModuleByName(PROPERTY_MODULE_NAME), installment);
         else
@@ -285,7 +292,6 @@ public class ConnectionDemandService {
             demandDetailBean.setEgDemandReason(demandReasonObj);
             demandDetailBean.setCreateDate(new Date());
             demandDetailBean.setModifiedDate(new Date());
-
         }
         return demandDetailBean;
     }
@@ -295,14 +301,13 @@ public class ConnectionDemandService {
         final Query demandQuery = getCurrentSession().getNamedQuery("DEMANDREASONBY_CODE_AND_INSTALLMENTID");
         demandQuery.setParameter(0, demandReason);
         demandQuery.setParameter(1, installment.getId());
-        final EgDemandReason demandReasonObj = (EgDemandReason) demandQuery.uniqueResult();
-        return demandReasonObj;
+        return (EgDemandReason) demandQuery.uniqueResult();
     }
 
     public Map<String, Double> getSplitFee(final WaterConnectionDetails waterConnectionDetails) {
         final EgDemand demand = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
         final Map<String, Double> splitAmount = new HashMap<>();
-        if (demand != null && demand.getEgDemandDetails() != null && demand.getEgDemandDetails().size() > 0)
+        if (demand != null && demand.getEgDemandDetails() != null && !demand.getEgDemandDetails().isEmpty())
             for (final EgDemandDetails detail : demand.getEgDemandDetails())
                 if (WaterTaxConstants.WATERTAX_FIELDINSPECTION_CHARGE
                         .equals(detail.getEgDemandReason().getEgDemandReasonMaster().getCode()))
@@ -323,18 +328,20 @@ public class ConnectionDemandService {
         return splitAmount;
     }
 
+    @SuppressWarnings("unchecked")
     public List<Object> getDmdCollAmtInstallmentWise(final EgDemand egDemand) {
-        final StringBuilder queryStringBuilder = new StringBuilder();
-        queryStringBuilder
-                .append("select dmdRes.id,dmdRes.id_installment, sum(dmdDet.amount) as amount, sum(dmdDet.amt_collected) as amt_collected, "
-                        + "sum(dmdDet.amt_rebate) as amt_rebate, inst.start_date from eg_demand_details dmdDet,eg_demand_reason dmdRes, "
-                        + "eg_installment_master inst,eg_demand_reason_master dmdresmas where dmdDet.id_demand_reason=dmdRes.id "
-                        + "and dmdDet.id_demand =:dmdId and dmdRes.id_installment = inst.id and dmdresmas.id = dmdres.id_demand_reason_master "
-                        + "group by dmdRes.id,dmdRes.id_installment, inst.start_date order by inst.start_date ");
-        return getCurrentSession().createSQLQuery(queryStringBuilder.toString()).setLong("dmdId", egDemand.getId())
+        final StringBuilder queryBuilder = new StringBuilder(600);
+        queryBuilder
+                .append("select dmdRes.id,dmdRes.id_installment, sum(dmdDet.amount) as amount, sum(dmdDet.amt_collected) as amt_collected, ")
+                .append("sum(dmdDet.amt_rebate) as amt_rebate, inst.start_date from eg_demand_details dmdDet,eg_demand_reason dmdRes, ")
+                .append("eg_installment_master inst,eg_demand_reason_master dmdresmas where dmdDet.id_demand_reason=dmdRes.id ")
+                .append("and dmdDet.id_demand =:dmdId and dmdRes.id_installment = inst.id and dmdresmas.id = dmdres.id_demand_reason_master ")
+                .append("group by dmdRes.id,dmdRes.id_installment, inst.start_date order by inst.start_date ");
+        return getCurrentSession().createSQLQuery(queryBuilder.toString()).setLong("dmdId", egDemand.getId())
                 .list();
     }
 
+    @SuppressWarnings("unchecked")
     public List<Object> getDmdCollAmtInstallmentWiseUptoCurrentInstallmemt(final EgDemand egDemand,
             final WaterConnectionDetails waterConnectionDetails) {
         Installment currInstallment;
@@ -344,31 +351,33 @@ public class ConnectionDemandService {
         else
             currInstallment = getCurrentInstallment(WaterTaxConstants.EGMODULE_NAME, WaterTaxConstants.MONTHLY,
                     new Date());
-        final StringBuffer strBuf = new StringBuffer(2000);
-        strBuf.append(
-                "select dmdRes.id,dmdRes.id_installment, sum(dmdDet.amount) as amount, sum(dmdDet.amt_collected) as amt_collected, "
-                        + "sum(dmdDet.amt_rebate) as amt_rebate, inst.start_date from eg_demand_details dmdDet,eg_demand_reason dmdRes, "
-                        + "eg_installment_master inst,eg_demand_reason_master dmdresmas where dmdDet.id_demand_reason=dmdRes.id "
-                        + "and dmdDet.id_demand =:dmdId and inst.start_date<=:currInstallmentDate and dmdRes.id_installment = inst.id and dmdresmas.id = dmdres.id_demand_reason_master "
-                        + "group by dmdRes.id,dmdRes.id_installment, inst.start_date order by inst.start_date ");
-        final Query query = getCurrentSession().createSQLQuery(strBuf.toString())
+        final StringBuilder queryBuilder = new StringBuilder(500);
+        queryBuilder
+                .append(
+                        "select dmdRes.id,dmdRes.id_installment, sum(dmdDet.amount) as amount, sum(dmdDet.amt_collected) as amt_collected, ")
+                .append("sum(dmdDet.amt_rebate) as amt_rebate, inst.start_date from eg_demand_details dmdDet,eg_demand_reason dmdRes, ")
+                .append("eg_installment_master inst,eg_demand_reason_master dmdresmas where dmdDet.id_demand_reason=dmdRes.id ")
+                .append("and dmdDet.id_demand =:dmdId and inst.start_date<=:currInstallmentDate and dmdRes.id_installment = inst.id and dmdresmas.id = dmdres.id_demand_reason_master ")
+                .append("group by dmdRes.id,dmdRes.id_installment, inst.start_date order by inst.start_date ");
+        final Query query = getCurrentSession().createSQLQuery(queryBuilder.toString())
                 .setParameter("dmdId", egDemand.getId())
                 .setParameter("currInstallmentDate", currInstallment.getToDate());
         return query.list();
     }
 
-    public List<Object> getDmdCollAmtInstallmentWiseUptoCurrentFinYear(final EgDemand egDemand,
-            final WaterConnectionDetails waterConnectionDetails) {
+    @SuppressWarnings("unchecked")
+    public List<Object> getDmdCollAmtInstallmentWiseUptoCurrentFinYear(final EgDemand egDemand) {
         final CFinancialYear financialyear = financialYearDAO.getFinancialYearByDate(new Date());
 
-        final StringBuffer strBuf = new StringBuffer(2000);
-        strBuf.append(
-                "select dmdRes.id,dmdRes.id_installment, sum(dmdDet.amount) as amount, sum(dmdDet.amt_collected) as amt_collected, "
-                        + "sum(dmdDet.amt_rebate) as amt_rebate, inst.start_date from eg_demand_details dmdDet,eg_demand_reason dmdRes, "
-                        + "eg_installment_master inst,eg_demand_reason_master dmdresmas where dmdDet.id_demand_reason=dmdRes.id "
-                        + "and dmdDet.id_demand =:dmdId and inst.start_date<=:currFinEndDate and dmdRes.id_installment = inst.id and dmdresmas.id = dmdres.id_demand_reason_master "
-                        + "group by dmdRes.id,dmdRes.id_installment, inst.start_date order by inst.start_date ");
-        final Query query = getCurrentSession().createSQLQuery(strBuf.toString())
+        final StringBuilder queryBuilder = new StringBuilder(500);
+        queryBuilder
+                .append(
+                        "select dmdRes.id,dmdRes.id_installment, sum(dmdDet.amount) as amount, sum(dmdDet.amt_collected) as amt_collected, ")
+                .append("sum(dmdDet.amt_rebate) as amt_rebate, inst.start_date from eg_demand_details dmdDet,eg_demand_reason dmdRes, ")
+                .append("eg_installment_master inst,eg_demand_reason_master dmdresmas where dmdDet.id_demand_reason=dmdRes.id ")
+                .append("and dmdDet.id_demand =:dmdId and inst.start_date<=:currFinEndDate and dmdRes.id_installment = inst.id and dmdresmas.id = dmdres.id_demand_reason_master ")
+                .append("group by dmdRes.id,dmdRes.id_installment, inst.start_date order by inst.start_date ");
+        final Query query = getCurrentSession().createSQLQuery(queryBuilder.toString())
                 .setParameter("dmdId", egDemand.getId()).setParameter("currFinEndDate", financialyear.getEndingDate());
         return query.list();
     }
@@ -383,13 +392,7 @@ public class ConnectionDemandService {
         final WaterConnectionDetails waterConnectionDetails;
         final BillReferenceNumberGenerator billRefeNumber = beanResolver
                 .getAutoNumberServiceFor(BillReferenceNumberGenerator.class);
-
-        if (applicationTypeCode != null && (applicationTypeCode.equals(WaterTaxConstants.CHANGEOFUSE)
-                || applicationTypeCode.equals(WaterTaxConstants.RECONNECTIONCONNECTION)))
-            waterConnectionDetails = waterConnectionDetailsService
-                    .findByApplicationNumberOrConsumerCodeAndStatus(consumerCode, ConnectionStatus.ACTIVE);
-        else
-            waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumberOrConsumerCode(consumerCode);
+        waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumberOrConsumerCode(consumerCode);
         if (ConnectionStatus.INPROGRESS.equals(waterConnectionDetails.getConnectionStatus()))
             currentInstallmentYear = formatYear
                     .format(getCurrentInstallment(WaterTaxConstants.EGMODULE_NAME, WaterTaxConstants.YEARLY, new Date())
@@ -428,12 +431,9 @@ public class ConnectionDemandService {
     }
 
     public EgDemand getDemandByInstAndApplicationNumber(final Installment installment, final String consumerCode) {
-
         final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsRepository
                 .findByApplicationNumberAndInstallment(installment, consumerCode);
-
         return waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
-
     }
 
     /**
@@ -484,16 +484,16 @@ public class ConnectionDemandService {
 
     public void createMeteredDemandDetails(final EgDemand demandObj, final WaterConnectionDetails waterConnectionDetails,
             final BigDecimal billAmount, final Installment installment) {
-        Boolean isDemandDetailExist = false;
+        Boolean demandDetailExists = false;
         for (final EgDemandDetails demandDetails : demandObj.getEgDemandDetails())
             if (demandDetails.getEgDemandReason().getEgInstallmentMaster().equals(installment)) {
-                isDemandDetailExist = true;
+                demandDetailExists = true;
                 break;
             }
-        if (!isDemandDetailExist) {
+        if (!demandDetailExists) {
             final Set<EgDemandDetails> dmdDetailSet = new HashSet<>();
             dmdDetailSet.add(createDemandDetails(Double.parseDouble(billAmount.toString()),
-                    WATERTAXREASONCODE, installment));
+                    METERED_CHARGES_REASON_CODE, installment));
             demandObj.setBaseDemand(demandObj.getBaseDemand().add(billAmount));
             demandObj.setEgInstallmentMaster(installment);
             demandObj.getEgDemandDetails().addAll(dmdDetailSet);
@@ -507,9 +507,7 @@ public class ConnectionDemandService {
                 waterConnectionDetails.addWaterDemandConnection(waterdemandConnection);
                 waterDemandConnectionService.createWaterDemandConnection(waterdemandConnection);
             }
-
         }
-
     }
 
     /**
@@ -520,18 +518,17 @@ public class ConnectionDemandService {
     @Transactional
     public WaterConnectionDetails updateDemandForNonMeteredConnectionDataEntry(
             final WaterConnectionDetails waterConnectionDetails, final String sourceChannel) {
-        EgDemand demandObj;
+        EgDemand demandObj = new EgDemand();
         Installment installObj;
         final List<String> installmentList = new ArrayList<>();
-        propertyTaxUtil.getInstallmentsForCurrYear(new Date()).get(CURRENTYEAR_SECOND_HALF);
-        if (waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand() == null)
-            demandObj = new EgDemand();
-        else
-
-            demandObj = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
+        final EgDemand demand = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
+        final List<WaterDemandConnection> demandList = waterConnectionDetails.getWaterDemandConnection();
+        if (!demandList.isEmpty() && waterConnectionDetails.getLegacy()
+                && waterConnectionDetails.getState() == null && demand != null)
+            demandObj = demand;
         final Set<EgDemandDetails> dmdDetailSet = new HashSet<>();
         for (final DemandDetail demanddetailBean : waterConnectionDetails.getDemandDetailBeanList())
-            if (demanddetailBean.getActualAmount().compareTo(BigDecimal.ZERO) == 1
+            if (demanddetailBean.getActualAmount().compareTo(BigDecimal.ZERO) > 0
                     && demanddetailBean.getActualCollection().compareTo(BigDecimal.ZERO) >= 0
                     && demanddetailBean.getActualCollection().compareTo(demanddetailBean.getActualAmount()) < 1) {
                 demandObj.setBaseDemand(getTotalAmountForBaseDemand(demanddetailBean, demandObj.getBaseDemand()));
@@ -546,7 +543,7 @@ public class ConnectionDemandService {
         demandObj.getEgDemandDetails().clear();
         demandObj.getEgDemandDetails().addAll(dmdDetailSet);
         int listlength = demandObj.getEgDemandDetails().size() - 1;
-        if (!waterConnectionDetails.getConnectionType().toString().equalsIgnoreCase(METERED))
+        if (waterConnectionDetails.getConnectionType().equals(ConnectionType.NON_METERED))
             installObj = installmentDao.getInsatllmentByModuleAndDescription(
                     moduleService.getModuleByName(PROPERTY_MODULE_NAME),
                     waterConnectionDetails.getDemandDetailBeanList().get(listlength).getInstallment());
@@ -557,7 +554,7 @@ public class ConnectionDemandService {
         }
         demandObj.setEgInstallmentMaster(installObj);
         demandObj.setModifiedDate(new Date());
-        if (demandObj.getIsHistory() == null)
+        if (StringUtils.isBlank(demandObj.getIsHistory()))
             demandObj.setIsHistory("N");
         if (demandObj.getCreateDate() == null)
             demandObj.setCreateDate(new Date());
@@ -568,8 +565,8 @@ public class ConnectionDemandService {
             waterConnectionDetails.addWaterDemandConnection(waterdemandConnection);
             waterDemandConnectionService.createWaterDemandConnection(waterdemandConnection);
         }
-
         waterConnectionDetailsService.updateIndexes(waterConnectionDetails, sourceChannel);
+        waterConnectionDetailsRepository.save(waterConnectionDetails);
         return waterConnectionDetails;
     }
 
@@ -580,10 +577,10 @@ public class ConnectionDemandService {
                 .findEgDemandDetailById(demanddetailBean.getId());
         if (demanddetailBean.getId() == null)
             currentTotalAmount = baseDemandAmount.add(demanddetailBean.getActualAmount());
-        else if (demanddetailBean.getActualAmount().compareTo(demandDetailsObj.getAmount()) == -1) {
+        else if (demanddetailBean.getActualAmount().compareTo(demandDetailsObj.getAmount()) < 0) {
             final BigDecimal diffExtraless = demandDetailsObj.getAmount().subtract(demanddetailBean.getActualAmount());
             currentTotalAmount = baseDemandAmount.subtract(diffExtraless);
-        } else if (demanddetailBean.getActualAmount().compareTo(demandDetailsObj.getAmount()) == 1) {
+        } else if (demanddetailBean.getActualAmount().compareTo(demandDetailsObj.getAmount()) > 0) {
             final BigDecimal diffExtra = demanddetailBean.getActualAmount().subtract(demandDetailsObj.getAmount());
             currentTotalAmount = baseDemandAmount.add(diffExtra);
         } else if (demanddetailBean.getActualAmount().compareTo(demandDetailsObj.getAmount()) == 0)
@@ -599,11 +596,11 @@ public class ConnectionDemandService {
                 .findEgDemandDetailById(demanddetailBean.getId());
         if (demanddetailBean.getId() == null)
             currentTotalAmount = demandAmountCollected.add(demanddetailBean.getActualCollection());
-        else if (demanddetailBean.getActualCollection().compareTo(demandDetailsObj.getAmtCollected()) == -1) {
+        else if (demanddetailBean.getActualCollection().compareTo(demandDetailsObj.getAmtCollected()) < 0) {
             final BigDecimal diffExtraless = demandDetailsObj.getAmtCollected()
                     .subtract(demanddetailBean.getActualCollection());
             currentTotalAmount = demandAmountCollected.subtract(diffExtraless);
-        } else if (demanddetailBean.getActualCollection().compareTo(demandDetailsObj.getAmtCollected()) == 1) {
+        } else if (demanddetailBean.getActualCollection().compareTo(demandDetailsObj.getAmtCollected()) > 0) {
             final BigDecimal diffExtra = demanddetailBean.getActualCollection()
                     .subtract(demandDetailsObj.getAmtCollected());
             currentTotalAmount = demandAmountCollected.add(diffExtra);
@@ -642,7 +639,7 @@ public class ConnectionDemandService {
 
     public WaterConnectionDetails updateDemandForNonmeteredConnection(
             final WaterConnectionDetails waterConnectionDetails, Installment installment,
-            final Boolean reconnInSameInstallment, final String workFlowAction) throws ValidationException {
+            final Boolean reconnInSameInstallment, final String workFlowAction) {
         Date installemntStartDate;
         EgDemandDetails existingDemandDtlObject = null;
         int numberOfMonths;
@@ -674,42 +671,43 @@ public class ConnectionDemandService {
         final EgDemand currentDemand = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
         final WaterDemandConnection demandConnection = waterDemandConnectionService
                 .findByWaterConnectionDetailsAndDemand(waterConnectionDetails, currentDemand);
-        for (final Installment instlment : installmentList) {
-            for (final EgDemandDetails demandDtls : currentDemand.getEgDemandDetails())
-                if (WATERTAXREASONCODE.equalsIgnoreCase(demandDtls.getEgDemandReason().getEgDemandReasonMaster().getCode()) &&
-                        instlment.getDescription()
-                                .equalsIgnoreCase(demandDtls.getEgDemandReason().getEgInstallmentMaster().getDescription()))
-                    existingDemandDtlObject = demandDtls;
+        for (final Installment instlment : installmentList)
+            if (instlment.getToDate().compareTo(finYear.getEndingDate()) <= 1) {
+                for (final EgDemandDetails demandDtls : currentDemand.getEgDemandDetails())
+                    if (WATERTAXREASONCODE.equalsIgnoreCase(demandDtls.getEgDemandReason().getEgDemandReasonMaster().getCode()) &&
+                            instlment.getDescription()
+                                    .equalsIgnoreCase(demandDtls.getEgDemandReason().getEgInstallmentMaster().getDescription()))
+                        existingDemandDtlObject = demandDtls;
 
-            final Integer noofmonths = DateUtils.noOfMonthsBetween(installemntStartDate, instlment.getToDate());
-            if (existingDemandDtlObject == null) {
-                if (null != waterRatesDetails) {
-                    if (noofmonths > 0)
-                        totalWaterRate = waterRatesDetails.getMonthlyRate() * (noofmonths + 1);
-                    else
-                        totalWaterRate = waterRatesDetails.getMonthlyRate();
+                final Integer noofmonths = DateUtils.noOfMonthsBetween(installemntStartDate, instlment.getToDate());
+                if (existingDemandDtlObject == null) {
+                    if (waterRatesDetails == null)
+                        throw new ValidationException("err.water.rate.not.found");
+                    else {
+                        if (noofmonths > 0)
+                            totalWaterRate = waterRatesDetails.getMonthlyRate() * (noofmonths + 1);
+                        else
+                            totalWaterRate = waterRatesDetails.getMonthlyRate();
 
-                    demandDetails = createDemandDetails(totalWaterRate,
-                            WATERTAXREASONCODE, instlment);
+                        demandDetails = createDemandDetails(totalWaterRate,
+                                WATERTAXREASONCODE, instlment);
 
-                    currentDemand.setBaseDemand(currentDemand.getBaseDemand().add(BigDecimal.valueOf(totalWaterRate)));
-                    currentDemand.setEgInstallmentMaster(instlment);
-                    currentDemand.getEgDemandDetails().add(demandDetails);
-                    currentDemand.setModifiedDate(new Date());
-                    if (currentDemand.getId() != null && demandConnection == null) {
-                        final WaterDemandConnection waterdemandConnection = new WaterDemandConnection();
-                        waterdemandConnection.setDemand(currentDemand);
-                        waterdemandConnection.setWaterConnectionDetails(waterConnectionDetails);
-                        waterConnectionDetails.addWaterDemandConnection(waterdemandConnection);
-                        waterDemandConnectionService.createWaterDemandConnection(waterdemandConnection);
+                        currentDemand.setBaseDemand(currentDemand.getBaseDemand().add(BigDecimal.valueOf(totalWaterRate)));
+                        currentDemand.setEgInstallmentMaster(instlment);
+                        currentDemand.getEgDemandDetails().add(demandDetails);
+                        currentDemand.setModifiedDate(new Date());
+                        if (currentDemand.getId() != null && demandConnection == null) {
+                            final WaterDemandConnection waterdemandConnection = new WaterDemandConnection();
+                            waterdemandConnection.setDemand(currentDemand);
+                            waterdemandConnection.setWaterConnectionDetails(waterConnectionDetails);
+                            waterConnectionDetails.addWaterDemandConnection(waterdemandConnection);
+                            waterDemandConnectionService.createWaterDemandConnection(waterdemandConnection);
+                        }
                     }
-                } else
-                    throw new ValidationException("err.water.rate.not.found");
+                    installemntStartDate = new DateTime(instlment.getToDate()).plusDays(1).toDate();
+                }
 
-                installemntStartDate = new DateTime(instlment.getToDate()).plusDays(1).toDate();
             }
-
-        }
         return waterConnectionDetails;
     }
 
@@ -738,18 +736,19 @@ public class ConnectionDemandService {
                     moduleService.getModuleByName(moduleName), date, installmentType);
     }
 
+    @SuppressWarnings("unchecked")
     public List<Object> getDmdCollAmtInstallmentWiseWithIsDmdTrue(final EgDemand egDemand) {
-        final StringBuffer strBuf = new StringBuffer(2000);
-        strBuf.append(
-                "SELECT wcdid,dmdResId,installment,amount,amt_collected,amt_rebate,amount-amt_collected AS balance,"
-                        + "instStartDate FROM (SELECT wcd.id AS wcdid,dmdRes.id AS dmdResId,dmdRes.id_installment AS installment,"
-                        + "SUM(dmdDet.amount) AS amount,SUM(dmdDet.amt_collected) AS amt_collected,SUM(dmdDet.amt_rebate) AS amt_rebate,"
-                        + "inst.start_date AS inststartdate FROM eg_demand_details dmdDet,eg_demand_reason dmdRes,eg_installment_master inst,"
-                        + "eg_demand_reason_master dmdresmas,egwtr_connectiondetails wcd WHERE dmdDet.id_demand_reason=dmdRes.id "
-                        + "AND dmdDet.id_demand =:dmdId AND dmdRes.id_installment = inst.id AND dmdresmas.id = dmdres.id_demand_reason_master "
-                        + "AND dmdresmas.isdemand=TRUE AND wcd.demand = dmdDet.id_demand GROUP BY dmdRes.id, dmdRes.id_installment,"
-                        + "inst.start_date,wcd.id ORDER BY inst.start_date) AS dcb");
-        return getCurrentSession().createSQLQuery(strBuf.toString()).setLong("dmdId", egDemand.getId()).list();
+        final StringBuilder stringBuilder = new StringBuilder(2000);
+        stringBuilder.append(
+                "SELECT wcdid,dmdResId,installment,amount,amt_collected,amt_rebate,amount-amt_collected AS balance,")
+                .append(" instStartDate FROM (SELECT wcd.id AS wcdid,dmdRes.id AS dmdResId,dmdRes.id_installment AS installment, ")
+                .append(" SUM(dmdDet.amount) AS amount,SUM(dmdDet.amt_collected) AS amt_collected,SUM(dmdDet.amt_rebate) AS amt_rebate, ")
+                .append(" inst.start_date AS inststartdate FROM eg_demand_details dmdDet,eg_demand_reason dmdRes,eg_installment_master inst, ")
+                .append(" eg_demand_reason_master dmdresmas,egwtr_connectiondetails wcd WHERE dmdDet.id_demand_reason=dmdRes.id ")
+                .append(" AND dmdDet.id_demand =:dmdId AND dmdRes.id_installment = inst.id AND dmdresmas.id = dmdres.id_demand_reason_master ")
+                .append(" AND dmdresmas.isdemand=TRUE AND wcd.demand = dmdDet.id_demand GROUP BY dmdRes.id, dmdRes.id_installment, ")
+                .append(" inst.start_date,wcd.id ORDER BY inst.start_date) AS dcb");
+        return getCurrentSession().createSQLQuery(stringBuilder.toString()).setLong("dmdId", egDemand.getId()).list();
     }
 
     /**
@@ -763,38 +762,38 @@ public class ConnectionDemandService {
 
         final Installment installment = getCurrentInstallment(WaterTaxConstants.EGMODULE_NAME,
                 WaterTaxConstants.MONTHLY, givenDate);
-        if (waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand() != null
-                && waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand() != null)
-            if (installment != null
-                    && installment.getInstallmentNumber().equals(waterTaxUtils.getCurrentDemand(waterConnectionDetails)
-                            .getDemand().getEgInstallmentMaster().getInstallmentNumber()))
-                currrentInstallMentExist = true;
+        if (waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand() != null && installment != null
+                && installment.getInstallmentNumber().equals(waterTaxUtils.getCurrentDemand(waterConnectionDetails)
+                        .getDemand().getEgInstallmentMaster().getInstallmentNumber()))
+            currrentInstallMentExist = true;
         return currrentInstallMentExist;
     }
 
-    public List<Object> getDmdCollAmtInstallmentWiseUptoPreviousFinYear(final EgDemand egDemand,
-            final WaterConnectionDetails waterConnectionDetails) {
+    @SuppressWarnings("unchecked")
+    public List<Object> getDmdCollAmtInstallmentWiseUptoPreviousFinYear(final EgDemand egDemand) {
         final CFinancialYear financialyear = financialYearDAO.getFinancialYearByDate(new Date());
 
-        final StringBuffer strBuf = new StringBuffer(2000);
-        strBuf.append(
-                "select dmdRes.id,dmdRes.id_installment, sum(dmdDet.amount) as amount, sum(dmdDet.amt_collected) as amt_collected, "
-                        + "sum(dmdDet.amt_rebate) as amt_rebate, inst.start_date from eg_demand_details dmdDet,eg_demand_reason dmdRes, "
-                        + "eg_installment_master inst,eg_demand_reason_master dmdresmas where dmdDet.id_demand_reason=dmdRes.id "
-                        + "and dmdDet.id_demand =:dmdId and inst.start_date<:currFinStartDate and dmdRes.id_installment = inst.id and dmdresmas.id = dmdres.id_demand_reason_master "
-                        + "group by dmdRes.id,dmdRes.id_installment, inst.start_date order by inst.start_date ");
-        final Query query = getCurrentSession().createSQLQuery(strBuf.toString())
+        final StringBuilder stringBuilder = new StringBuilder(600);
+        stringBuilder.append(
+                "select dmdRes.id,dmdRes.id_installment, sum(dmdDet.amount) as amount, sum(dmdDet.amt_collected) as amt_collected, ")
+                .append(" sum(dmdDet.amt_rebate) as amt_rebate, inst.start_date from eg_demand_details dmdDet,eg_demand_reason dmdRes, ")
+                .append(" eg_installment_master inst,eg_demand_reason_master dmdresmas where dmdDet.id_demand_reason=dmdRes.id ")
+                .append(" and dmdDet.id_demand =:dmdId and inst.start_date<:currFinStartDate and dmdRes.id_installment = inst.id and dmdresmas.id = dmdres.id_demand_reason_master ")
+                .append(" group by dmdRes.id,dmdRes.id_installment, inst.start_date order by inst.start_date ");
+        final Query query = getCurrentSession().createSQLQuery(stringBuilder.toString())
                 .setParameter("dmdId", egDemand.getId())
                 .setParameter("currFinStartDate", financialyear.getStartingDate());
         return query.list();
     }
 
+    @SuppressWarnings("unchecked")
     public Map<String, Installment> getInstallmentsForPreviousYear(final Date currDate) {
         final Map<String, Installment> currYearInstMap = new HashMap<>();
-        final String query = "select installment from Installment installment,CFinancialYear finYear where installment.module.name = '"
-                + PTMODULENAME
-                + "'  and cast(installment.toDate as date) <= cast(finYear.startingDate as date) order by installment.id desc";
-        final Query qry = getCurrentSession().createQuery(query);
+        final StringBuilder queryString = new StringBuilder(500);
+        queryString.append(
+                "select installment from Installment installment,CFinancialYear finYear where installment.module.name =:moduleName")
+                .append("  and cast(installment.toDate as date) <= cast(finYear.startingDate as date) order by installment.id desc ");
+        final Query qry = getCurrentSession().createQuery(queryString.toString()).setString("moduleName", PTMODULENAME);
         final List<Installment> installments = qry.list();
         currYearInstMap.put(WaterTaxConstants.PREVIOUS_SECOND_HALF, installments.get(0));
         return currYearInstMap;

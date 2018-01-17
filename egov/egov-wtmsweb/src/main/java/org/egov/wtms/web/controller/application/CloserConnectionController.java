@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,6 +43,7 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.wtms.web.controller.application;
 
@@ -48,7 +56,6 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.SOURCECHANNEL_ONLI
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -272,7 +279,6 @@ public class CloserConnectionController extends GenericConnectionController {
             waterConnectionDetails.setCloseConnectionType(ClosureType.Permanent.getName());
         else
             waterConnectionDetails.setCloseConnectionType(ClosureType.Temporary.getName());
-        final String addrule = request.getParameter("additionalRule");
         waterConnectionDetails.setConnectionStatus(ConnectionStatus.CLOSED);
         waterConnectionDetails
                 .setApplicationType(applicationTypeService.findByCode(WaterTaxConstants.CLOSINGCONNECTION));
@@ -284,20 +290,13 @@ public class CloserConnectionController extends GenericConnectionController {
         if (citizenPortalUser && (waterConnectionDetails.getSource() == null
                 || StringUtils.isBlank(waterConnectionDetails.getSource().toString())))
             waterConnectionDetails.setSource(waterTaxUtils.setSourceOfConnection(securityUtils.getCurrentUser()));
-        WaterConnectionDetails savedWaterConnectionDetails = null;
         if (loggedUserIsMeesevaUser) {
-            final HashMap<String, String> meesevaParams = new HashMap<>();
-            meesevaParams.put("APPLICATIONNUMBER", waterConnectionDetails.getMeesevaApplicationNumber());
             waterConnectionDetails.setApplicationNumber(waterConnectionDetails.getMeesevaApplicationNumber());
             waterConnectionDetails.setSource(MEESEVA);
-            savedWaterConnectionDetails = closerConnectionService.updatecloserConnection(
-                    waterConnectionDetails, approvalPosition, approvalComent, addrule, workFlowAction, meesevaParams,
-                    sourceChannel);
-            model.addAttribute(WATERCONNECTIONDETAILS, savedWaterConnectionDetails);
-        } else
-            savedWaterConnectionDetails = closerConnectionService.updatecloserConnection(
-                    waterConnectionDetails, approvalPosition, approvalComent, addrule, workFlowAction, sourceChannel);
-        model.addAttribute(WATERCONNECTIONDETAILS, savedWaterConnectionDetails);
+        }
+        closerConnectionService.updatecloserConnection(
+                waterConnectionDetails, approvalPosition, approvalComent, workFlowAction, sourceChannel);
+        model.addAttribute(WATERCONNECTIONDETAILS, waterConnectionDetails);
         model.addAttribute(MODE, "ack");
         if (loggedUserIsMeesevaUser)
             return "redirect:/application/generate-meesevareceipt?transactionServiceNumber="

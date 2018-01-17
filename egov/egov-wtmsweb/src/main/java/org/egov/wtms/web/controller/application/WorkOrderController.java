@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,45 +43,20 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.wtms.web.controller.application;
 
-import static org.egov.wtms.utils.constants.WaterTaxConstants.FILESTORE_MODULECODE;
-
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.WordUtils;
-import org.egov.eis.entity.Assignment;
-import org.egov.eis.service.AssignmentService;
-import org.egov.eis.service.DesignationService;
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
-import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
-import org.egov.infra.reporting.engine.ReportRequest;
-import org.egov.infra.reporting.engine.ReportService;
-import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.pims.commons.Designation;
-import org.egov.ptis.domain.model.AssessmentDetails;
-import org.egov.ptis.domain.model.OwnerName;
-import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
-import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
+import org.egov.wtms.application.service.ReportGenerationService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
-import org.egov.wtms.utils.PropertyExtnUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -93,33 +75,19 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping(value = "/application")
 public class WorkOrderController {
 
-    public static final String CONNECTIONWORKORDER = "connectionWorkOrder";
-
-    @Autowired
-    private ReportService reportService;
-
     @Autowired
     @Qualifier("messageSource")
     private MessageSource messageSource;
 
     @Autowired
-    private PropertyExtnUtils propertyExtnUtils;
-
-    @Autowired
-    private WaterConnectionDetailsService wcdService;
+    private WaterConnectionDetailsService waterConnectionDetailsService;
 
     @Autowired
     @Qualifier("fileStoreService")
     protected FileStoreService fileStoreService;
 
     @Autowired
-    private DesignationService designationService;
-
-    @Autowired
-    private AssignmentService assignmentService;
-
-    @Autowired
-    private SecurityUtils securityUtils;
+    private ReportGenerationService reportGenerationService;
 
     @RequestMapping(value = "/workorder", method = RequestMethod.GET)
     @ResponseBody
@@ -127,133 +95,21 @@ public class WorkOrderController {
             final HttpSession session) {
         String workFlowAction;
         String errorMessage = "";
-        final WaterConnectionDetails connectionDetails = wcdService
+        final WaterConnectionDetails connectionDetails = waterConnectionDetailsService
                 .findByApplicationNumber(request.getParameter("pathVar"));
         workFlowAction = (String) session.getAttribute(WaterTaxConstants.WORKFLOW_ACTION);
         final Boolean isDigSignPending = Boolean.parseBoolean(request.getParameter("isDigSignPending"));
         if (isDigSignPending)
             workFlowAction = request.getParameter("workFlowAction");
-        if (null != workFlowAction && !workFlowAction.isEmpty()
+        if (isNotBlank(workFlowAction)
                 && workFlowAction.equalsIgnoreCase(WaterTaxConstants.WF_WORKORDER_BUTTON))
             errorMessage = validateWorkOrder(connectionDetails, true);
         if (!errorMessage.isEmpty())
             return redirect(errorMessage);
-        return generateReport(connectionDetails, session, workFlowAction);
-    }
-
-    private ResponseEntity<byte[]> generateReport(final WaterConnectionDetails connectionDetails,
-            final HttpSession session, final String workFlowAction) {
-        ReportRequest reportInput = null;
-        ReportOutput reportOutput = null;
-        if (connectionDetails != null)
-            if (connectionDetails.getFileStore() != null) {
-                final FileStoreMapper fmp = connectionDetails.getFileStore();
-                final File file = fileStoreService.fetch(fmp, FILESTORE_MODULECODE);
-                reportOutput = new ReportOutput();
-                try {
-                    reportOutput.setReportOutputData(FileUtils.readFileToByteArray(file));
-                    reportOutput.setReportFormat(ReportFormat.PDF);
-                } catch (final IOException e) {
-                    throw new ApplicationRuntimeException("Exception in generating work order notice" + e);
-                }
-
-            } else {
-                final Map<String, Object> reportParams = new HashMap<>();
-                final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
-                        connectionDetails.getConnection().getPropertyIdentifier(),
-                        PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ACTIVE);
-                final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-                final String doorno[] = assessmentDetails.getPropertyAddress().split(",");
-                String ownerName = "";
-                double total;
-                String commissionerName = "";
-                final Designation desgn = designationService.getDesignationByName(WaterTaxConstants.DESG_COMM_NAME);
-                if (desgn != null) {
-                    final List<Assignment> assignList = assignmentService.getAllActiveAssignments(desgn.getId());
-                    commissionerName = !assignList.isEmpty() ? assignList.get(0).getEmployee().getName() : "";
-                }
-                for (final OwnerName names : assessmentDetails.getOwnerNames()) {
-                    ownerName = names.getOwnerName();
-                    break;
-                }
-
-                if (WaterTaxConstants.NEWCONNECTION.equalsIgnoreCase(connectionDetails.getApplicationType().getCode())) {
-                    reportParams.put("conntitle",
-                            WordUtils.capitalize(connectionDetails.getApplicationType().getName()).toString());
-                    reportParams.put("applicationType", messageSource.getMessage("msg.new.watertap.conn", null, null));
-                } else if (WaterTaxConstants.ADDNLCONNECTION
-                        .equalsIgnoreCase(connectionDetails.getApplicationType().getCode())) {
-                    reportParams.put("conntitle",
-                            WordUtils.capitalize(connectionDetails.getApplicationType().getName()).toString());
-                    reportParams.put("applicationType", messageSource.getMessage("msg.add.watertap.conn", null, null));
-                } else {
-                    reportParams.put("conntitle",
-                            WordUtils.capitalize(connectionDetails.getApplicationType().getName()).toString());
-                    reportParams.put("applicationType",
-                            messageSource.getMessage("msg.changeofuse.watertap.conn", null, null));
-                }
-                reportParams.put("municipality", session.getAttribute("citymunicipalityname"));
-                reportParams.put("district", session.getAttribute("districtName"));
-                reportParams.put("purpose", connectionDetails.getUsageType().getName());
-                final User user = securityUtils.getCurrentUser();
-                Assignment assignment = assignmentService.getPrimaryAssignmentForUser(user.getId());
-                if (assignment == null) {
-                    final List<Assignment> assignmentList = assignmentService.findByEmployeeAndGivenDate(user.getId(),
-                            new Date());
-                    if (!assignmentList.isEmpty())
-                        assignment = assignmentList.get(0);
-                }
-                String userDesignation = null;
-                if (assignment!=null && assignment.getDesignation().getName().equals(WaterTaxConstants.DESG_COMM_NAME))
-                    userDesignation = assignment.getDesignation().getName();
-                else
-                    userDesignation = null;
-                if (null != workFlowAction) {
-                    if (workFlowAction.equalsIgnoreCase(WaterTaxConstants.WF_WORKORDER_BUTTON)) {
-                        reportParams.put("workOrderDate", formatter.format(connectionDetails.getWorkOrderDate()));
-                        reportParams.put("workOrderNo", connectionDetails.getWorkOrderNumber());
-                    }
-                    if (workFlowAction.equalsIgnoreCase(WaterTaxConstants.WF_PREVIEW_BUTTON)) {
-                        reportParams.put("workOrderDate", "");
-                        reportParams.put("workOrderNo", "");
-                    }
-                    if (workFlowAction.equalsIgnoreCase(WaterTaxConstants.WF_SIGN_BUTTON)) {
-                        reportParams.put("workOrderDate", formatter.format(connectionDetails.getWorkOrderDate()));
-                        reportParams.put("workOrderNo", connectionDetails.getWorkOrderNumber());
-                        reportParams.put("userId", user.getId());
-                    }
-                }
-                reportParams.put("designation", userDesignation);
-                reportParams.put("workFlowAction", workFlowAction);
-                reportParams.put("consumerNumber", connectionDetails.getConnection().getConsumerCode());
-                reportParams.put("applicantName", WordUtils.capitalize(ownerName));
-                reportParams.put("applicantionDate", formatter.format(connectionDetails.getApplicationDate()));
-                reportParams.put("address", assessmentDetails.getPropertyAddress());
-                reportParams.put("doorno", doorno[0]);
-                reportParams.put("userSignature", securityUtils.getCurrentUser().getSignature() != null
-                        ? new ByteArrayInputStream(securityUtils.getCurrentUser().getSignature()) : null);
-                reportParams.put("applicationDate", formatter.format(connectionDetails.getApplicationDate()));
-                reportParams.put("donationCharges", connectionDetails.getDonationCharges());
-                reportParams.put("securityDeposit", connectionDetails.getFieldInspectionDetails().getSecurityDeposit());
-                reportParams.put("roadCuttingCharges",
-                        connectionDetails.getFieldInspectionDetails().getRoadCuttingCharges());
-                reportParams.put("superVisionCharges",
-                        connectionDetails.getFieldInspectionDetails().getSupervisionCharges());
-                reportParams.put("locality", assessmentDetails.getBoundaryDetails().getLocalityName());
-                reportParams.put("commissionerName", commissionerName);
-                total = connectionDetails.getDonationCharges()
-                        + connectionDetails.getFieldInspectionDetails().getSecurityDeposit()
-                        + connectionDetails.getFieldInspectionDetails().getRoadCuttingCharges()
-                        + connectionDetails.getFieldInspectionDetails().getSupervisionCharges();
-                reportParams.put("total", total);
-                reportInput = new ReportRequest(CONNECTIONWORKORDER, connectionDetails, reportParams);
-                reportOutput = reportService.createReport(reportInput);
-            }
-
+        final ReportOutput reportOutput = reportGenerationService.generateWorkOrderNotice(connectionDetails, workFlowAction);
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType("application/pdf"));
         headers.add("content-disposition", "inline;filename=Work Order.pdf");
-
         return new ResponseEntity<>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
     }
 
@@ -276,11 +132,15 @@ public class WorkOrderController {
     @ResponseBody
     public ResponseEntity<byte[]> viewReport(@PathVariable final String applicationNumber,
             final HttpSession session) {
-        final WaterConnectionDetails connectionDetails = wcdService.findByApplicationNumber(applicationNumber);
+        final WaterConnectionDetails connectionDetails = waterConnectionDetailsService.findByApplicationNumber(applicationNumber);
         final String errorMessage = validateWorkOrder(connectionDetails, true);
         if (!errorMessage.isEmpty())
             return redirect(errorMessage);
-        return generateReport(connectionDetails, session, null);
+        final ReportOutput reportOutput = reportGenerationService.generateWorkOrderNotice(connectionDetails, null);
+        final HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.parseMediaType("application/pdf"));
+        headers.add("content-disposition", "inline;filename=Work Order.pdf");
+        return new ResponseEntity<>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
     }
 
     private ResponseEntity<byte[]> redirect(final String errorMessage) {

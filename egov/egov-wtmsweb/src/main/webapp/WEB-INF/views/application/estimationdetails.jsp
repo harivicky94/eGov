@@ -1,8 +1,8 @@
 <%--
-  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~     Copyright (C) 2017  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
   ~
   ~         1) All versions of this program, verbatim or modified must carry this
   ~            Legal Notice.
+  ~            Further, all user interfaces, including but not limited to citizen facing interfaces,
+  ~            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+  ~            derived works should carry eGovernments Foundation logo on the top right corner.
+  ~
+  ~            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+  ~            For any further queries on attribution, including queries on brand guidelines,
+  ~            please contact contact@egovernments.org
   ~
   ~         2) Any misrepresentation of the origin of the material is prohibited. It
   ~            is required that all modified versions of this material be marked in
@@ -36,6 +43,7 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~
   --%>
 
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
@@ -70,7 +78,7 @@
 							<td class="text-center"><textarea class="form-control table-input" name="estimationDetails[0].itemDescription" id="estimationDetails0itemDescription" required="required" maxlength="256" ></textarea></td>
 							<td class="text-right"><input type="text" class="form-control table-input text-right patternvalidation quantity" data-pattern="decimalvalue" name="estimationDetails[0].quantity" id="estimationDetails0quantity" maxlength="8" onblur="calculateTotalAmount();" value="0" ></td>
 							<td class="text-right"><input type="text" class="form-control table-input patternvalidation" data-pattern="alphanumerichyphenbackslash" name="estimationDetails[0].unitOfMeasurement" id="estimationDetails0unitOfMeasurement" maxlength="50"></td>
-							<td class="text-right"><input type="text" class="form-control table-input text-right patternvalidation unitrate" data-pattern="decimalvalue" name="estimationDetails[0].unitRate" id="estimationDetails0unitRate" maxlength="8" onblur="calculateTotalAmount();" value="0.00"></td>
+							<td class="text-right"><input type="text" class="form-control table-input text-right patternvalidation unitrate" data-pattern="decimalvalue" name="estimationDetails[0].unitRate" id="estimationDetails0unitRate" maxlength="8" onblur="calculateTotalAmount();" value="0"></td>
 							<td class="text-right"><input type="text" class="form-control table-input text-right" id="estimationDetails0amount" disabled></td>
 							<td class="text-center"><span style="cursor:pointer;" id="addRowId"><i class="fa fa-plus"></i></span></td>
 					      </tr>
@@ -116,7 +124,7 @@
 						</div>
 						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.supervisioncharges" /></label>
 						<div class="col-sm-3 add-margin">
-							<form:input class="form-control patternvalidation text-right" data-pattern="decimalvalue" maxlength="8" id="supervisionCharges" path="fieldInspectionDetails.supervisionCharges" readonly="true"/>
+							<form:input class="form-control patternvalidation text-right" data-pattern="number" maxlength="8" id="supervisionCharges" path="fieldInspectionDetails.supervisionCharges" readonly="true"/>
 							<form:errors path="fieldInspectionDetails.supervisionCharges" cssClass="add-margin error-msg" />		
 						</div>
 
@@ -127,12 +135,12 @@
 					<div class="row">
 						<label class="col-sm-3 control-label text-right "><spring:message code="lbl.securitydeposit" /></label>
 						<div class="col-sm-3 add-margin "> 
-							<form:input class="form-control text-right patternvalidation" data-pattern="decimalvalue" maxlength="8" id="securityDeposit" path="fieldInspectionDetails.securityDeposit" value="0.00" />
+							<form:input class="form-control text-right patternvalidation" data-pattern="number" maxlength="8" id="securityDeposit" path="fieldInspectionDetails.securityDeposit" value="0" />
 							<form:errors path="fieldInspectionDetails.securityDeposit" cssClass="add-margin error-msg" />
 						</div>
 						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.roadcuttingcharges" /></label>
 						<div class="col-sm-3 add-margin">
-							<form:input class="form-control patternvalidation text-right" data-pattern="decimalvalue" maxlength="8" id="roadCuttingCharges" path="fieldInspectionDetails.roadCuttingCharges" value="0.00" />
+							<form:input class="form-control patternvalidation text-right" data-pattern="number" maxlength="8" id="roadCuttingCharges" path="fieldInspectionDetails.roadCuttingCharges" value="0" />
 							<form:errors path="fieldInspectionDetails.roadCuttingCharges" cssClass="add-margin error-msg" />		
 						</div>
 						
@@ -144,7 +152,7 @@
 					<div class="row">
 						<label class="col-sm-3 control-label text-right"><spring:message code="lbl.applicationfee" /></label>
 						<div class="col-sm-3 add-margin"> 
-							<form:input class="form-control text-right patternvalidation" data-pattern="decimalvalue" maxlength="8" id="applicationFee" path="fieldInspectionDetails.applicationFee" value="0.00"  />
+							<form:input class="form-control text-right patternvalidation" data-pattern="number" maxlength="8" id="applicationFee" path="fieldInspectionDetails.applicationFee" value="0"  />
 							<form:errors path="fieldInspectionDetails.applicationFee" cssClass="add-margin error-msg" />
 						</div>
 					<label class="col-sm-2 control-label text-right"><spring:message code="lbl.attachdocument"/></label>
@@ -161,7 +169,7 @@
 					<div class="row">
 				<label class="col-sm-2 control-label text-right hide"><spring:message code="lbl.estimationcharges" /></label>
 						<div class="col-sm-3 add-margin hide"> 
-							<form:input class="form-control text-right patternvalidation" data-pattern="decimalvalue" maxlength="8" id="estimationCharges" path="fieldInspectionDetails.estimationCharges" />
+							<form:input class="form-control text-right patternvalidation" data-pattern="number" maxlength="8" id="estimationCharges" path="fieldInspectionDetails.estimationCharges" />
 							<form:errors path="fieldInspectionDetails.estimationCharges" cssClass="add-margin error-msg" />
 						</div>
 					</div>

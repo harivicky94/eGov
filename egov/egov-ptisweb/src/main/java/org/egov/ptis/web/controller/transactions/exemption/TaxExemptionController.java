@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,33 +43,9 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.ptis.web.controller.transactions.exemption;
-
-import static org.egov.ptis.constants.PropertyTaxConstants.ANONYMOUS_USER;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TAX_EXEMTION;
-import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_COLL_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_COLL_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.EXEMPTION;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_VALIDATION;
-import static org.egov.ptis.constants.PropertyTaxConstants.SOURCE_ONLINE;
-import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
-import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_TAX_DUES;
-import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_WORKFLOW_ERROR;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_EXEMPTION;
-
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
-import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.Installment;
@@ -108,6 +91,16 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.support.RequestContextUtils;
 import org.springframework.web.servlet.view.RedirectView;
 
+import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import static org.egov.ptis.constants.PropertyTaxConstants.*;
+
 /**
  * @author subhash
  */
@@ -115,6 +108,7 @@ import org.springframework.web.servlet.view.RedirectView;
 @RequestMapping(value = { "/exemption" })
 public class TaxExemptionController extends GenericWorkFlowController {
 
+    private static final String APPROVAL_POSITION = "approvalPosition";
     private static final String APPLICATION_SOURCE = "applicationSource";
     private static final String TAX_EXEMPTION = "TAX_EXEMPTION";
     protected static final String TAX_EXEMPTION_FORM = "taxExemption-form";
@@ -320,8 +314,8 @@ public class TaxExemptionController extends GenericWorkFlowController {
                 approvalComent = request.getParameter("approvalComent");
             if (request.getParameter("workFlowAction") != null)
                 workFlowAction = request.getParameter("workFlowAction");
-            if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
-                approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
+            if (request.getParameter(APPROVAL_POSITION) != null && !request.getParameter(APPROVAL_POSITION).isEmpty())
+                approvalPosition = Long.valueOf(request.getParameter(APPROVAL_POSITION));
             if (property.getTaxExemptedReason() != null && checkCommercialProperty((PropertyImpl)property)) {
                 model.addAttribute(ERROR_MSG, "error.commercial.prop.notallowed");
                 return PROPERTY_VALIDATION;
@@ -330,12 +324,14 @@ public class TaxExemptionController extends GenericWorkFlowController {
                 model.addAttribute(ERROR_MSG, "error.tenant.exists");
                 return PROPERTY_VALIDATION;
             }
+            if (StringUtils.isNotBlank(taxExemptedReason))
+                taxExemptionService.processAndStoreApplicationDocuments((PropertyImpl) property, taxExemptedReason, null);
             if (loggedUserIsMeesevaUser) {
                 final HashMap<String, String> meesevaParams = new HashMap<>();
-                meesevaParams.put("APPLICATIONNUMBER", ((PropertyImpl) property).getMeesevaApplicationNumber());
+                meesevaParams.put("APPLICATIONNUMBER", (property.getMeesevaApplicationNumber()));
 
                 if (StringUtils.isBlank(property.getApplicationNo())) {
-                    property.setApplicationNo(((PropertyImpl) property).getMeesevaApplicationNumber());
+                    property.setApplicationNo(property.getMeesevaApplicationNumber());
                     property.setSource(PropertyTaxConstants.SOURCE_MEESEVA);
                 }
                 taxExemptionService.saveProperty(property, oldProperty, status, approvalComent, workFlowAction,
@@ -349,14 +345,14 @@ public class TaxExemptionController extends GenericWorkFlowController {
             model.addAttribute(
                     "successMessage",
                     "Property exemption data saved successfully in the system and forwarded to "
-                            + propertyTaxUtil.getApproverUserName(((PropertyImpl) property).getState()
+                            + propertyTaxUtil.getApproverUserName(property.getState()
                                     .getOwnerPosition().getId())
                             + " with application number "
                             + property.getApplicationNo());
             if (loggedUserIsMeesevaUser)
                 target = "redirect:/exemption/generate-meesevareceipt/"
-                        + ((PropertyImpl) property).getBasicProperty().getUpicNo() + "?transactionServiceNumber="
-                        + ((PropertyImpl) property).getApplicationNo();
+                        + property.getBasicProperty().getUpicNo() + "?transactionServiceNumber="
+                        + property.getApplicationNo();
             else
 
                 target = TAX_EXEMPTION_SUCCESS;
@@ -380,7 +376,7 @@ public class TaxExemptionController extends GenericWorkFlowController {
     public ResponseEntity<byte[]> printAck(final HttpServletRequest request, final Model model,
             @PathVariable("assessmentNo") final String assessmentNo) {
         final ReportOutput reportOutput = propertyTaxUtil.generateCitizenCharterAcknowledgement(assessmentNo, TAX_EXEMPTION,
-                WFLOW_ACTION_NAME_EXEMPTION);
+                WFLOW_ACTION_NAME_EXEMPTION, null);
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType("application/pdf"));
         headers.add("content-disposition", "inline;filename=CitizenCharterAcknowledgement.pdf");

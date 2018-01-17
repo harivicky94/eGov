@@ -1,41 +1,49 @@
 <%--
-  ~ eGov suite of products aim to improve the internal efficiency,transparency,
-  ~      accountability and the service delivery of the government  organizations.
+  ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
   ~
-  ~       Copyright (C) 2016  eGovernments Foundation
+  ~     Copyright (C) 2017  eGovernments Foundation
   ~
-  ~       The updated version of eGov suite of products as by eGovernments Foundation
-  ~       is available at http://www.egovernments.org
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
   ~
-  ~       This program is free software: you can redistribute it and/or modify
-  ~       it under the terms of the GNU General Public License as published by
-  ~       the Free Software Foundation, either version 3 of the License, or
-  ~       any later version.
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
   ~
-  ~       This program is distributed in the hope that it will be useful,
-  ~       but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~       GNU General Public License for more details.
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
   ~
-  ~       You should have received a copy of the GNU General Public License
-  ~       along with this program. If not, see http://www.gnu.org/licenses/ or
-  ~       http://www.gnu.org/licenses/gpl.html .
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
   ~
-  ~       In addition to the terms of the GPL license to be adhered to in using this
-  ~       program, the following additional terms are to be complied with:
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
   ~
-  ~           1) All versions of this program, verbatim or modified must carry this
-  ~              Legal Notice.
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~            Further, all user interfaces, including but not limited to citizen facing interfaces,
+  ~            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+  ~            derived works should carry eGovernments Foundation logo on the top right corner.
   ~
-  ~           2) Any misrepresentation of the origin of the material is prohibited. It
-  ~              is required that all modified versions of this material be marked in
-  ~              reasonable ways as different from the original version.
+  ~            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+  ~            For any further queries on attribution, including queries on brand guidelines,
+  ~            please contact contact@egovernments.org
   ~
-  ~           3) This license does not grant any rights to any user of the program
-  ~              with regards to rights under trademark law for use of the trade names
-  ~              or trademarks of eGovernments Foundation.
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
   ~
-  ~     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~
   --%>
 
 <%@ page language="java" pageEncoding="UTF-8"%>
@@ -199,7 +207,7 @@
 					<tr>
 						<td colspan="5">
 							<div class="headingsmallbg">
-								<span class="bold"><s:text name="ownerdetails.title"></s:text></span>
+								<span class="bold"><s:text name="transferorDetails"></s:text></span>
 							</div>
 						</td>
 					</tr>
@@ -217,6 +225,8 @@
 										<th class="bluebgheadtd"><s:text name="GuardianRelation" /></th>
 										<th class="bluebgheadtd"><s:text name="Guardian" /></th>
 									</tr>
+									<s:if
+						test="%{!@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVED.equalsIgnoreCase(state.value)}">
 									<s:iterator value="basicproperty.propertyOwnerInfo"
 										status="status">
 										<tr>
@@ -248,96 +258,8 @@
 														default="N/A" /></span></td>
 										</tr>
 									</s:iterator>
-								</tbody>
-							</table>
-						</td>
-					</tr>
-					<s:if
-						test="%{!@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVED.equalsIgnoreCase(state.value)}">
-						<tr>
-							<td colspan="5">
-								<div class="headingsmallbg">
-									<span class="bold"><s:text name="transferDtls" /></span>
-								</div>
-							</td>
-						</tr>
-						<tr>
-							<td colspan="5">
-								<table width="100%" border="0" cellspacing="0" cellpadding="0"
-									class="tablebottom" id="nameTable">
-									<tr>
-										<th class="bluebgheadtd"><s:text name="adharno" /></th>
-										<th class="bluebgheadtd"><s:text name="MobileNumber" />(without
-											+91)</th>
-										<th class="bluebgheadtd"><s:text name="OwnerName" /></th>
-										<th class="bluebgheadtd"><s:text name="gender" /></th>
-										<th class="bluebgheadtd"><s:text name="EmailAddress" /></th>
-										<th class="bluebgheadtd"><s:text name="GuardianRelation" /></th>
-										<th class="bluebgheadtd"><s:text name="Guardian" /></th>
-									</tr>
-									<s:iterator value="transfereeInfosProxy" status="ownerStatus">
-										<tr>
-											<td class="blueborderfortd" align="center"><span
-												class="bold"> <s:if
-														test='%{transfereeInfosProxy[#ownerStatus.index].transferee.aadhaarNumber == ""}'>N/A</s:if>
-													<s:else>
-														<s:property
-															value="%{transfereeInfosProxy[#ownerStatus.index].transferee.aadhaarNumber}" />
-													</s:else>
-											</span></td>
-											<td class="blueborderfortd" align="center"><span
-												class="bold"><s:property
-														value="%{transfereeInfosProxy[#ownerStatus.index].transferee.mobileNumber}" /></span>
-											</td>
-											<td class="blueborderfortd" align="center"><span
-												class="bold"><s:property
-														value="%{transfereeInfosProxy[#ownerStatus.index].transferee.name}" /></span></td>
-											<td class="blueborderfortd" align="center"><span
-												class="bold"><s:property
-														value="%{transfereeInfosProxy[#ownerStatus.index].transferee.gender}" /></span></td>
-											<td class="blueborderfortd" align="center"><span
-												class="bold"> <s:if
-														test='%{transfereeInfosProxy[#ownerStatus.index].transferee.emailId == ""}'>N/A</s:if>
-													<s:else>
-														<s:property
-															value="%{transfereeInfosProxy[#ownerStatus.index].transferee.emailId}" />
-													</s:else>
-											</span></td>
-											<td class="blueborderfortd" align="center"><span
-												class="bold"><s:property
-														value="%{transfereeInfosProxy[#ownerStatus.index].transferee.guardianRelation}" /></span>
-											</td>
-											<td class="blueborderfortd" align="center"><span
-												class="bold"><s:property
-														value="%{transfereeInfosProxy[#ownerStatus.index].transferee.guardian}" /></span></td>
-										</tr>
-									</s:iterator>
-								</table>
-							</td>
-						</tr>
-					</s:if>
-					<s:else>
-						<tr>
-							<td colspan="5">
-								<div class="headingsmallbg">
-									<span class="bold"><s:text name="transferorDetails" /></span>
-								</div>
-							</td>
-						</tr>
-						<tr>
-							<td colspan="5">
-								<table width="100%" border="0" cellspacing="0" cellpadding="0"
-									class="tablebottom" id="nameTable">
-									<tr>
-										<th class="bluebgheadtd"><s:text name="adharno" /></th>
-										<th class="bluebgheadtd"><s:text name="MobileNumber" />(without
-											+91)</th>
-										<th class="bluebgheadtd"><s:text name="OwnerName" /></th>
-										<th class="bluebgheadtd"><s:text name="gender" /></th>
-										<th class="bluebgheadtd"><s:text name="EmailAddress" /></th>
-										<th class="bluebgheadtd"><s:text name="GuardianRelation" /></th>
-										<th class="bluebgheadtd"><s:text name="Guardian" /></th>
-									</tr>
+									</s:if>
+									<s:else>
 									<s:iterator value="transfereeInfos" status="ownerStatus">
 										<tr>
 											<td class="blueborderfortd" align="center"><span
@@ -375,10 +297,108 @@
 														value="%{transferorInfos[#ownerStatus.index].guardian}" /></span></td>
 										</tr>
 									</s:iterator>
+									</s:else>
+								</tbody>
+							</table>
+						</td>
+					</tr>
+						<tr>
+							<td colspan="5">
+								<div class="headingsmallbg">
+									<span class="bold"><s:text name="transfereeDtls" /></span>
+								</div>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="5">
+								<table width="100%" border="0" cellspacing="0" cellpadding="0"
+									class="tablebottom" id="nameTable">
+									<tr>
+										<th class="bluebgheadtd"><s:text name="adharno" /></th>
+										<th class="bluebgheadtd"><s:text name="MobileNumber" />(without
+											+91)</th>
+										<th class="bluebgheadtd"><s:text name="OwnerName" /></th>
+										<th class="bluebgheadtd"><s:text name="gender" /></th>
+										<th class="bluebgheadtd"><s:text name="EmailAddress" /></th>
+										<th class="bluebgheadtd"><s:text name="GuardianRelation" /></th>
+										<th class="bluebgheadtd"><s:text name="Guardian" /></th>
+									</tr>
+									<s:if
+						test="%{!@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVED.equalsIgnoreCase(state.value)}">
+									<s:iterator value="transfereeInfosProxy" status="ownerStatus">
+										<tr>
+											<td class="blueborderfortd" align="center"><span
+												class="bold"> <s:if
+														test='%{transfereeInfosProxy[#ownerStatus.index].transferee.aadhaarNumber == ""}'>N/A</s:if>
+													<s:else>
+														<s:property
+															value="%{transfereeInfosProxy[#ownerStatus.index].transferee.aadhaarNumber}" />
+													</s:else>
+											</span></td>
+											<td class="blueborderfortd" align="center"><span
+												class="bold"><s:property
+														value="%{transfereeInfosProxy[#ownerStatus.index].transferee.mobileNumber}" /></span>
+											</td>
+											<td class="blueborderfortd" align="center"><span
+												class="bold"><s:property
+														value="%{transfereeInfosProxy[#ownerStatus.index].transferee.name}" /></span></td>
+											<td class="blueborderfortd" align="center"><span
+												class="bold"><s:property
+														value="%{transfereeInfosProxy[#ownerStatus.index].transferee.gender}" /></span></td>
+											<td class="blueborderfortd" align="center"><span
+												class="bold"> <s:if
+														test='%{transfereeInfosProxy[#ownerStatus.index].transferee.emailId == ""}'>N/A</s:if>
+													<s:else>
+														<s:property
+															value="%{transfereeInfosProxy[#ownerStatus.index].transferee.emailId}" />
+													</s:else>
+											</span></td>
+											<td class="blueborderfortd" align="center"><span
+												class="bold"><s:property
+														value="%{transfereeInfosProxy[#ownerStatus.index].transferee.guardianRelation}" /></span>
+											</td>
+											<td class="blueborderfortd" align="center"><span
+												class="bold"><s:property
+														value="%{transfereeInfosProxy[#ownerStatus.index].transferee.guardian}" /></span></td>
+										</tr>
+									</s:iterator>
+									</s:if>
+									<s:else>
+									<s:iterator value="basicproperty.propertyOwnerInfo"
+										status="status">
+										<tr>
+											<td class="blueborderfortd" align="center"><span
+												class="bold"> <s:if
+														test='%{owner.aadhaarNumber == ""}'>
+								        				N/A
+								        			</s:if> <s:else>
+														<s:property value="%{owner.aadhaarNumber}" default="N/A" />
+													</s:else>
+											</span></td>
+											<td class="blueborderfortd" align="center"><span
+												class="bold"><s:property value="owner.mobileNumber" /></span></td>
+											<td class="blueborderfortd" align="center"><span
+												class="bold"><s:property value="owner.name" /></span></td>
+											<td class="blueborderfortd" align="center"><span
+												class="bold"><s:property value="owner.gender" /></span></td>
+											<td class="blueborderfortd" align="center"><span
+												class="bold"> <s:if test='%{owner.emailId == ""}'>N/A</s:if>
+													<s:else>
+														<s:property value="%{owner.emailId}" />
+													</s:else>
+											</span></td>
+											<td class="blueborderfortd" align="center"><span
+												class="bold"><s:property
+														value="owner.guardianRelation" default="N/A" /></span></td>
+											<td class="blueborderfortd" align="center"><span
+												class="bold"><s:property value="owner.guardian"
+														default="N/A" /></span></td>
+										</tr>
+									</s:iterator>
+									</s:else>		
 								</table>
 							</td>
 						</tr>
-					</s:else>
 					<tr>
 						<td>&nbsp;</td>
 					</tr>
@@ -506,6 +526,9 @@
 					</div>
 				</s:if>
 					<s:elseif test="%{currentDesignation != null && currentDesignation.toUpperCase().equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@COMMISSIONER_DESGN)}">
+					<s:if test="%{!endorsementNotices.isEmpty()}">
+						<jsp:include page="../workflow/endorsement_history.jsp"/>
+					</s:if>
 					<div id="workflowCommentsDiv" align="center">
 						<table width="100%" border="0" cellspacing="0" cellpadding="0">
 							<tr>

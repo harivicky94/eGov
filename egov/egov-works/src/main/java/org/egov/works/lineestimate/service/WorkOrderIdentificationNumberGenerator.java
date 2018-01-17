@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,25 +43,22 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.works.lineestimate.service;
 
-import java.io.Serializable;
-import java.sql.SQLException;
-import java.util.Calendar;
-import java.util.Date;
-
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
-import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.persistence.utils.DBSequenceGenerator;
-import org.egov.infra.persistence.utils.SequenceNumberGenerator;
+import org.egov.infra.persistence.utils.GenericSequenceNumberGenerator;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.entity.enums.WorkCategory;
-import org.hibernate.exception.SQLGrammarException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.io.Serializable;
+import java.util.Calendar;
+import java.util.Date;
 
 @Service
 public class WorkOrderIdentificationNumberGenerator {
@@ -62,39 +66,28 @@ public class WorkOrderIdentificationNumberGenerator {
     private static final String PROJECTCODE_SEQ_PREFIX = "SEQ_PROJECTCODE";
 
     @Autowired
-    private SequenceNumberGenerator sequenceNumberGenerator;
-
-    @Autowired
-    private DBSequenceGenerator dbSequenceGenerator;
+    private GenericSequenceNumberGenerator genericSequenceNumberGenerator;
 
     @Autowired
     private FinancialYearHibernateDAO financialYearHibernateDAO;
 
     @Transactional
     public String generateWorkOrderIdentificationNumber(final LineEstimateDetails lineEstimateDetails) {
-        try {
-            final CFinancialYear financialYear = financialYearHibernateDAO
-                    .getFinYearByDate(lineEstimateDetails.getLineEstimate().getLineEstimateDate());
-            final String finYearRange[] = financialYear.getFinYearRange().split("-");
-            final String sequenceName = PROJECTCODE_SEQ_PREFIX + "_" + finYearRange[0] + "_" + finYearRange[1];
-            final String workCategory;
-            if (!lineEstimateDetails.getLineEstimate().getWorkCategory().toString().equals(WorkCategory.NON_SLUM.toString()))
-                workCategory = "SL";
-            else
-                workCategory = "NS";
-            Serializable sequenceNumber;
-            try {
-                sequenceNumber = sequenceNumberGenerator.getNextSequence(sequenceName);
-            } catch (final SQLGrammarException e) {
-                sequenceNumber = dbSequenceGenerator.createAndGetNextSequence(sequenceName);
-            }
-            return String.format("%s/%s/%05d/%02d/%s", lineEstimateDetails.getLineEstimate().getExecutingDepartment().getCode(),
-                    workCategory, sequenceNumber,
-                    getMonthOfTransaction(lineEstimateDetails.getLineEstimate().getLineEstimateDate()),
-                    financialYear.getFinYearRange());
-        } catch (final SQLException e) {
-            throw new ApplicationRuntimeException("Error occurred while generating WIN", e);
-        }
+        final CFinancialYear financialYear = financialYearHibernateDAO
+                .getFinYearByDate(lineEstimateDetails.getLineEstimate().getLineEstimateDate());
+        final String finYearRange[] = financialYear.getFinYearRange().split("-");
+        final String sequenceName = new StringBuilder().append(PROJECTCODE_SEQ_PREFIX).append("_")
+                .append(finYearRange[0]).append("_").append(finYearRange[1]).toString();
+        final String workCategory;
+        if (!lineEstimateDetails.getLineEstimate().getWorkCategory().toString().equals(WorkCategory.NON_SLUM.toString()))
+            workCategory = "SL";
+        else
+            workCategory = "NS";
+        Serializable sequenceNumber = genericSequenceNumberGenerator.getNextSequence(sequenceName);
+        return String.format("%s/%s/%05d/%02d/%s", lineEstimateDetails.getLineEstimate().getExecutingDepartment().getCode(),
+                workCategory, sequenceNumber,
+                getMonthOfTransaction(lineEstimateDetails.getLineEstimate().getLineEstimateDate()),
+                financialYear.getFinYearRange());
     }
 
     private int getMonthOfTransaction(final Date lineEstimateDate) {

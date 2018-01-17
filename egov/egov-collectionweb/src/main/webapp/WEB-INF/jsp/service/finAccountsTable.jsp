@@ -1,8 +1,8 @@
 <%--
-  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~     Copyright (C) 2017  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
   ~
   ~         1) All versions of this program, verbatim or modified must carry this
   ~            Legal Notice.
+  ~            Further, all user interfaces, including but not limited to citizen facing interfaces,
+  ~            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+  ~            derived works should carry eGovernments Foundation logo on the top right corner.
+  ~
+  ~            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+  ~            For any further queries on attribution, including queries on brand guidelines,
+  ~            please contact contact@egovernments.org
   ~
   ~         2) Any misrepresentation of the origin of the material is prohibited. It
   ~            is required that all modified versions of this material be marked in
@@ -36,6 +43,7 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~
   --%>
 
 <%@ taglib prefix="s" uri="/WEB-INF/taglib/struts-tags.tld"%>
@@ -114,13 +122,13 @@
 		var subledgerColumns = [ 
 	
 			{key:"glcode",hidden:true, formatter:createSLTextFieldFormatter(SUBLEDGERLIST,".serviceAccountDetail.glCodeId.glcode","hidden")},
-			{key:"serviceAccountDetail.glCodeId.id",label:'Account Code <span class="mandatory1">*</span>', formatter:createDropdownFormatter(SUBLEDGERLIST,"loaddropdown(this)"),  dropdownOptions:glcodeOptions},
+			{key:"serviceAccountDetail.glCodeId.id",label:'Account Code', formatter:createDropdownFormatter(SUBLEDGERLIST,"loaddropdown(this)"),  dropdownOptions:glcodeOptions},
 			{key:"detailType.name",hidden:true, formatter:createSLTextFieldFormatter(SUBLEDGERLIST,".detailType.name","hidden")},
-			{key:"detailType.id",label:'Type <span class="mandatory1">*</span>', formatter:createDropdownFormatter1(SUBLEDGERLIST),dropdownOptions:detailtypeOptions},
+			{key:"detailType.id",label:'Type', formatter:createDropdownFormatter1(SUBLEDGERLIST),dropdownOptions:detailtypeOptions},
 			{key:"detailCode",label:'Code', formatter:createSLDetailCodeTextFieldFormatter(SUBLEDGERLIST,".detailCode","splitEntitiesDetailCode(this)")},
 			{key:"detailKeyId",hidden:true, formatter:createSLHiddenFieldFormatter(SUBLEDGERLIST,".detailKeyId")},
 			{key:"detailKey",label:'Name', formatter:createSLLongTextFieldFormatter(SUBLEDGERLIST,".detailKey","")},
-			{key:"amount",label:'Amount <span class="mandatory1">*</span>', formatter:createSLAmountFieldFormatter(SUBLEDGERLIST,".amount")},
+			{key:"amount",label:'Amount', formatter:createSLAmountFieldFormatter(SUBLEDGERLIST,".amount")},
 			{key:'Add',label:'Add',formatter:createAddImageFormatter("${pageContext.request.contextPath}")},
 			{key:'Delete',label:'Delete',formatter:createDeleteImageFormatter("${pageContext.request.contextPath}")}
 		];

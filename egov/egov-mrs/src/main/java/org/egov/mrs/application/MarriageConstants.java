@@ -1,45 +1,55 @@
-/* eGov suite of products aim to improve the internal efficiency,transparency,
-   accountability and the service delivery of the government  organizations.
-
-    Copyright (C) <2015>  eGovernments Foundation
-
-    The updated version of eGov suite of products as by eGovernments Foundation
-    is available at http://www.egovernments.org
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or
-    http://www.gnu.org/licenses/gpl.html .
-
-    In addition to the terms of the GPL license to be adhered to in using this
-    program, the following additional terms are to be complied with:
-
-        1) All versions of this program, verbatim or modified must carry this
-           Legal Notice.
-
-        2) Any misrepresentation of the origin of the material is prohibited. It
-           is required that all modified versions of this material be marked in
-           reasonable ways as different from the original version.
-
-        3) This license does not grant any rights to any user of the program
-           with regards to rights under trademark law for use of the trade names
-           or trademarks of eGovernments Foundation.
-
-  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+/*
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) 2017  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 
 package org.egov.mrs.application;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class MarriageConstants {
@@ -53,7 +63,6 @@ public class MarriageConstants {
 
     public static final String REISSUE_FEECRITERIA = "Re-Issue Fee";
     public static final String ADDITIONAL_RULE_REGISTRATION = "MARRIAGE REGISTRATION";
-    public static final String IMAGE_CONTEXT_PATH = "/egi";
 
     // validactions
     public static final String WFLOW_ACTION_STEP_REJECT = "Reject";
@@ -69,6 +78,15 @@ public class MarriageConstants {
     public static final String WFLOW_PENDINGACTION_DIGISIGNPENDING = "Digital Signature Pending";
     public static final String WFLOW_PENDINGACTION_APPRVLPENDING_DIGISIGN = "Commisioner Approval Pending_DigiSign";
     public static final String WFLOW_PENDINGACTION_APPRVLPENDING_PRINTCERT = "Commisioner Approval Pending_PrintCert";
+    public static final String WFLOW_PENDINGACTION_CMO_APPRVLPENDING = "Chief Medical Officer of Health Approval Pending";
+    public static final String WFLOW_PENDINGACTION_MHO_APPRVLPENDING = "Municipal Health Officer Approval Pending";
+    public static final String WFLOW_PENDINGACTION_REV_CLERK_APPRVLPENDING = "Revenue Clerk Approval Pending";
+    public static final String WFLOW_PENDINGACTION_APPROVAL_APPROVEPENDING ="Approver Approval Pending";
+    public static final String WFSTATE_REV_CLRK_APPROVED="Revenue Clerk Approved";
+    public static final String WFSTATE_APPROVER_REJECTED ="Approver Rejected Application";
+    public static final String WFSTATE_MHO_APPROVED="Municipal Health Officer Approved";
+    public static final String WFSTATE_CMOH_APPROVED="Chief Medical Officer of Health Approved";
+    
 
     public static final String APPROVED = "APPROVED";
     public static final String MARRIAGEFEECOLLECTION_FUCNTION_CODE = "MARRIAGE_FUNCTION_CODE";
@@ -110,26 +128,9 @@ public class MarriageConstants {
     //CITIZEN
     public static final String ROLE_CITIZEN = "CITIZEN";
     
-
-
-    public static final List<String> venuelist = new ArrayList<String>() {
-        private static final long serialVersionUID = -6112513531476444226L;
-        {
-            add("Residence");
-            add("Function Hall");
-            add("Worship Place");
-            add("Others");
-        }
-    };
-
-    public static final List<String> witnessRelation = new ArrayList<String>() {
-        private static final long serialVersionUID = -8054560659655351886L;
-        {
-            add("S/o");
-            add("D/o");
-            add("W/o");
-        }
-    };
+    //Designations
+    public static final String CMO_DESIG = "Chief Medical Officer of Health";
+    public static final String MHO_DESIG = "Municipal Health Officer";
 
     public static final String MARRIAGE_DEPARTMENT_CODE = "MARRIAGE_DEPARTMENT_CODE";
     public static final String MARRIAGE_DEFAULT_FUNCTIONARY_CODE = "MARRIAGE_DEFAULT_FUNCTIONARY_CODE";
@@ -169,12 +170,31 @@ public class MarriageConstants {
     
     public static final String STATETYPE_REGISTRATION = "MarriageRegistration";
     public static final String STATETYPE_REISSUE = "ReIssue";
-
-
-
-
+    public static final String N_A = "N/A";
     
+    private static final List<String> VENUELIST = new ArrayList<>();
+    static {
+        VENUELIST.add("Residence");
+        VENUELIST.add("Function Hall");
+        VENUELIST.add("Worship Place");
+        VENUELIST.add("Others");
+    }
+    private static final List<String> WITENSSRELATION = new ArrayList<>();
+    static {
+        WITENSSRELATION.add("S/o");
+        WITENSSRELATION.add("D/o");
+        WITENSSRELATION.add("W/o");
+    }
+
     private MarriageConstants() {
         // To hide implicit public
+    }
+    
+    public static List<String> getMarriageVenues() {
+        return Collections.unmodifiableList(VENUELIST);
+    }
+
+    public static List<String> getWitnessRelations() {
+        return Collections.unmodifiableList(WITENSSRELATION);
     }
 }

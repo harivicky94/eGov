@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,23 +43,22 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 
 package org.egov.wtms.web.controller.reports;
 
 import static org.egov.demand.model.EgdmCollectedReceipt.RCPT_CANCEL_STATUS;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.METERED_CHARGES_REASON_CODE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERCHARGES_CONSUMERCODE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAXREASONCODE;
 
 import java.math.BigDecimal;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-
-import javax.servlet.http.HttpServletRequest;
 
 import org.egov.commons.Installment;
 import org.egov.dcb.bean.DCBDisplayInfo;
@@ -79,7 +85,6 @@ import org.egov.wtms.utils.DemandComparatorByInstallmentOrder;
 import org.egov.wtms.utils.PropertyExtnUtils;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
-import org.hibernate.SQLQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Controller;
@@ -93,23 +98,17 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @RequestMapping(value = "/viewDcb")
 public class CurrentViewDcbController {
     @Autowired
+    protected WaterConnectionDetailsService waterConnectionDetailsService;
+    @Autowired
     private DCBService dcbService;
-
     @Autowired
     private CurrentDcbService currentDcbService;
-
     @Autowired
     private ApplicationContext context;
-
     @Autowired
     private UserService userService;
-
     @Autowired
     private WaterTaxUtils waterTaxUtils;
-
-    @Autowired
-    protected WaterConnectionDetailsService waterConnectionDetailsService;
-
     @Autowired
     private PropertyExtnUtils propertyExtnUtils;
 
@@ -141,18 +140,15 @@ public class CurrentViewDcbController {
 
     @RequestMapping(value = "/showMigData/{consumerNumber}/{applicationCode}", method = RequestMethod.GET)
     public String showMigData(final Model model, @PathVariable final String consumerNumber,
-            @PathVariable final String applicationCode, final HttpServletRequest request) throws ParseException {
-        List<WaterChargesReceiptInfo> waterChargesReceiptInfo;
-        List<WaterChargesReceiptInfo> waterChargesReceiptInfoList;
-        waterChargesReceiptInfo = currentDcbService.getMigratedReceipttDetails(consumerNumber);
-        WaterConnectionDetails waterConnectionDetails;
-        waterConnectionDetails = waterConnectionDetailsService.findByOldConsumerNumberAndConnectionStatus(consumerNumber,
-                ConnectionStatus.ACTIVE);
+            @PathVariable final String applicationCode) {
+        final List<WaterChargesReceiptInfo> waterChargesReceiptInfo = currentDcbService.getMigratedReceiptDetails(consumerNumber);
+        WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
+                .findByOldConsumerNumberAndConnectionStatus(consumerNumber, ConnectionStatus.ACTIVE);
         if (waterConnectionDetails == null)
             waterConnectionDetails = waterConnectionDetailsService.findByConsumerCodeAndConnectionStatus(consumerNumber,
                     ConnectionStatus.ACTIVE);
-        final SQLQuery sqlQuery = currentDcbService.getMigratedReceiptDetails(waterConnectionDetails.getId());
-        waterChargesReceiptInfoList = sqlQuery.list();
+        final List<WaterChargesReceiptInfo> waterChargesReceiptInfoList = currentDcbService
+                .getMigratedReceiptDetails(waterConnectionDetails.getId());
         waterChargesReceiptInfoList.addAll(waterChargesReceiptInfo);
         model.addAttribute("waterChargesReceiptInfo", waterChargesReceiptInfoList);
         model.addAttribute(WATERCHARGES_CONSUMERCODE, consumerNumber);
@@ -160,8 +156,7 @@ public class CurrentViewDcbController {
     }
 
     @RequestMapping(value = "/consumerCodeWis/{applicationCode}", method = RequestMethod.GET)
-    public String search(final Model model, @PathVariable final String applicationCode,
-            final HttpServletRequest request) {
+    public String search(final Model model, @PathVariable final String applicationCode) {
         final WaterConnectionDetails waterConnectionDetails = getWaterConnectionDetails(applicationCode);
 
         List<Receipt> cancelRcpt;
@@ -194,7 +189,8 @@ public class CurrentViewDcbController {
             egDemandDetailsList.addAll(demand.getEgDemandDetails());
             Collections.sort(egDemandDetailsList, new DemandComparatorByInstallmentOrder());
             for (final EgDemandDetails demandDetails : egDemandDetailsList)
-                if (WATERTAXREASONCODE.equals(demandDetails.getEgDemandReason().getEgDemandReasonMaster().getCode()))
+                if (WATERTAXREASONCODE.equals(demandDetails.getEgDemandReason().getEgDemandReasonMaster().getCode()) ||
+                        METERED_CHARGES_REASON_CODE.equals(demandDetails.getEgDemandReason().getEgDemandReasonMaster().getCode()))
                     installmentList.add(demandDetails.getEgDemandReason().getEgInstallmentMaster().getDescription());
             for (final String installment : installmentList)
                 for (final Map.Entry<Installment, DCBRecord> dcbMap : dCBReport.getRecords().entrySet())

@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,6 +43,7 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 /*
  * Created on Jan 7, 2005
@@ -50,8 +58,8 @@ import com.exilant.exility.updateservice.PrimaryKeyGenerator;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.commons.CFiscalPeriod;
-import org.egov.infra.persistence.utils.DBSequenceGenerator;
-import org.egov.infra.persistence.utils.SequenceNumberGenerator;
+import org.egov.infra.persistence.utils.DatabaseSequenceCreator;
+import org.egov.infra.persistence.utils.DatabaseSequenceProvider;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.PersistenceService;
@@ -94,9 +102,9 @@ public class EGovernCommon extends AbstractTask {
 	private PersistenceService persistenceService;
 	
 	@Autowired
-	private DBSequenceGenerator dbSequenceGenerator;
+	private DatabaseSequenceCreator databaseSequenceCreator;
 	@Autowired
-	private SequenceNumberGenerator sequenceNumberGenerator;
+	private DatabaseSequenceProvider databaseSequenceProvider;
 	
 
 	@Override
@@ -210,13 +218,14 @@ public class EGovernCommon extends AbstractTask {
 		// Sequence name will be SQ_U_DBP_CGVN_FP7 for vouType U/DBP/CGVN and fiscalPeriodIdStr 7
 		try {
 			sequenceName   = VoucherHelper.sequenceNameFor(vouType, fiscalPeriod.getName());
-			cgvn = (BigInteger)sequenceNumberGenerator.getNextSequence(sequenceName);
+			cgvn = (BigInteger) databaseSequenceProvider.getNextSequence(sequenceName);
 			if (LOGGER.isDebugEnabled())
 				LOGGER.debug("----- CGVN : " + cgvn);
 
 		} catch (final SQLGrammarException e)
 		{
-			cgvn = (BigInteger)dbSequenceGenerator.createAndGetNextSequence(sequenceName);
+			databaseSequenceCreator.createSequence(sequenceName);
+			cgvn = (BigInteger) databaseSequenceProvider.getNextSequence(sequenceName);
 			LOGGER.error("Error in generating CGVN" + e);
 			throw new ValidationException(Arrays.asList(new ValidationError(e.getMessage(), e.getMessage())));
 		} catch (final Exception e)

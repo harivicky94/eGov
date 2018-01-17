@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,6 +43,7 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.wtms.utils.constants;
 
@@ -45,6 +53,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public class WaterTaxConstants {
     public static final String FILESTORE_MODULECODE = "WTMS";
@@ -57,6 +66,7 @@ public class WaterTaxConstants {
     public static final String CREATEWORKFLOWSTATE = "CREATED";
     public static final String APPLICATION_NUMBER = "applicationNumber";
     public static final String NEWCONNECTION = "NEWCONNECTION";
+    public static final String REGULARIZE_CONNECTION = "REGLZNCONNECTION";
     public static final String METERED = "Metered";
     public static final String CONNECTIONTYPE_METERED = "METERED";
     public static final String NON_METERED = "Non-metered";
@@ -86,6 +96,7 @@ public class WaterTaxConstants {
     public static final String SYSTEM = "SYSTEM";
     public static final String REVENUE_HIERARCHY_TYPE = "REVENUE";
     public static final String EDITCOLLECTION = "EDITCOLLECTION";
+    public static final String EDITDEMAND = "EDITDEMAND";
 
     public static final String SMSEMAILTYPENEWCONNFEEPAID = "newconnfeepaid";
     public static final String SMSEMAILTYPEADDCONNFEEPAID = "addconnfeepaid";
@@ -237,6 +248,7 @@ public class WaterTaxConstants {
     public static final String MONTHLY = "Monthly";
 
     public static final String WATERTAXREASONCODE = "WTAXCHARGES";
+    public static final String METERED_CHARGES_REASON_CODE = "METERCHARGES";
     public static final String WF_ESTIMATION_NOTICE_BUTTON = "Generate Estimation Notice";
     public static final String WF_CLOSERACKNOWLDGEENT_BUTTON = "Generate Acknowledgement";
     public static final Character DMD_STATUS_CHEQUE_BOUNCED = 'B';
@@ -252,6 +264,7 @@ public class WaterTaxConstants {
     public static final String RESIDENTIAL = "RESIDENTIAL";
     public static final String WFLOW_ACTION_STEP_THIRDPARTY_CREATED = "Created";
     public static final String NONMETEREDDEMANDREASON = "Water Charges";
+    public static final String METERCHARGESDEMANDREASON = "Water Tap Meter charges";
     public static final String MASTERSTATUSACTIVE = "ACTIVE";
     public static final String MASTERSTATUSINACTIVE = "IN ACTIVE";
     public static final String COLLECTION_STRING_SERVICE_CODE = "WT";
@@ -265,15 +278,22 @@ public class WaterTaxConstants {
     public static final String PAYMENT_TYPE_ADVANCE = "Advance";
     public static final String CONTENT_DISPOSITION = "Content-disposition";
     // HashMap map b/n Demand reason string and code
-    public static final LinkedHashMap<String, String> NON_METERED_DMDRSN_CODE_MAP = new LinkedHashMap<String, String>() {
+    public static final Map<String, String> NON_METERED_DMDRSN_CODE_MAP = new LinkedHashMap<String, String>() {
         private static final long serialVersionUID = -9153822216362973956L;
 
         {
             put(WATERTAXREASONCODE, NONMETEREDDEMANDREASON);
         }
     };
+
+    public static final Map<String, String> METERED_DMDRSN_CODE_MAP = new LinkedHashMap<String, String>() {
+        private static final long serialVersionUID = -9153822216362973956L;
+        {
+            put(METERED_CHARGES_REASON_CODE, METERCHARGESDEMANDREASON);
+        }
+    };
     public static final String TOTAL_AMOUNT = "amount";
-    public final static String PAID_BY = "paidBy";
+    public static final String PAID_BY = "paidBy";
     public static final String DEMANDRSN_CODE_ADVANCE = "WTADVANCE";
     public static final String DEMANDRSN_REASON_ADVANCE = "Advance";
     public static final String CURRENTYEAR_FIRST_HALF = "Current 1st Half";
@@ -357,7 +377,6 @@ public class WaterTaxConstants {
     public static final String REVENUEWARDAGGREGATIONFIELD = "revenueWard";
     public static final String CITYCODEAGGREGATIONFIELD = "cityCode";
     public static final String DASHBOARD_GROUPING_ALLWARDS = "allwards";
-    
 
     public static final String RESIDENTIALCONNECTIONTYPEFORDASHBOARD = "RESIDENTIAL";
 
@@ -399,4 +418,7 @@ public class WaterTaxConstants {
     public static final String REASSIGNMENT = "REASSIGNMENT";
     public static final String SOURCECHANNEL_ONLINE = "ONLINE";
     public static final String CITIZENPORTAL = "CITIZENPORTAL";
+    public static final String SURVEY = "Survey";
+    public static final String APPLICATION_GIS_SYSTEM = "Application has been created through GIS survey system";
+    public static final String MIGRATED_CONNECTION = "Migrated Connection";
 }

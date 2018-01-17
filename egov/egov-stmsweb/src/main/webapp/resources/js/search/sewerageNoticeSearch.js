@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2016>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,6 +43,7 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 
 var tableContainer;
@@ -138,34 +146,37 @@ function validateNoticeForm()
 	var noticetype=$('#noticetype').val();
 	var noticeGeneratedFrom=$('#noticeGeneratedFrom').val();
 	var noticeGeneratedTo=$('#noticeGeneratedTo').val();
-	
-	if(!noticetype){
-		bootbox.alert("Please select Notice Type");
+	if($('form').valid())	{
+		if(!noticetype){
+			bootbox.alert("Please select Notice Type");
+			return false;
+		}
+		else if(!shscNumber && !applicantName  && !mobileNumber
+				&& !wardName && !doorNo && !noticeGeneratedFrom && !noticeGeneratedTo)
+		{
+					bootbox.alert("Please Enter Atleast One Input Value For Searching Along With Notice Type");
+					return false;
+		}
+		else if(noticeGeneratedFrom || noticeGeneratedTo){
+			
+			if(!noticeGeneratedFrom){
+				bootbox.alert("Please enter From date");
+				return false;
+			}
+			else if(!noticeGeneratedTo){
+				bootbox.alert("Please enter To date");
+				return false;
+			}
+			console.log(compareDate(noticeGeneratedFrom, noticeGeneratedTo));
+			if(compareDate(noticeGeneratedFrom, noticeGeneratedTo)<0){
+				bootbox.alert("Please select From Date should be less than To Date");
+				return false;
+			}
+		} 
+		return true;
+	} else {
 		return false;
 	}
-	else if(!shscNumber && !applicantName  && !mobileNumber
-			&& !wardName && !doorNo && !noticeGeneratedFrom && !noticeGeneratedTo)
-	{
-				bootbox.alert("Please Enter Atleast One Input Value For Searching Along With Notice Type");
-				return false;
-	}
-	else if(noticeGeneratedFrom || noticeGeneratedTo){
-		
-		if(!noticeGeneratedFrom){
-			bootbox.alert("Please enter From date");
-			return false;
-		}
-		else if(!noticeGeneratedTo){
-			bootbox.alert("Please enter To date");
-			return false;
-		}
-		console.log(compareDate(noticeGeneratedFrom, noticeGeneratedTo));
-		if(compareDate(noticeGeneratedFrom, noticeGeneratedTo)<0){
-			bootbox.alert("Please select From Date should be less than To Date");
-			return false;
-		}
-	} 
-	return true;
 }
 
 
@@ -173,9 +184,6 @@ function validateNoticeForm()
 		tableContainer = $("#sewerageNoticeSearchResults");
 		var noticetype=$('#noticetype').val();
 		$('#searchResultDiv').show();
-		/*$.post("/stms/reports/searchResult",$('#sewerageNoticeSearch').serialize())
-		.done(function(searchResult) {
-		console.log(JSON.stringify(searchResult));*/
 		tableContainer.dataTable({ 
 		processing: true,
         serverSide: true,
@@ -189,21 +197,19 @@ function validateNoticeForm()
 		ajax: {
             url: "/stms/reports/searchResult",
             type: "POST",
+            beforeSend : function() {
+    			$('.loader-class').modal('show', {
+    				backdrop : 'static'
+    			});
+    		},
             data: function (args) {
-                return {"args": JSON.stringify(args), 
-                	"shscNumber": $("#shscNumber").val(),
-                	"applicantName": $("#applicantName").val(),
-                	"mobileNumber": $("#mobileNumber").val(),
-                	"revenueWard": $("#app-mobno").val(),
-                	"doorNumber": $("#app-appcodo").val(),
-                	"noticeType": $("#noticetype").val(),
-                	"noticeGeneratedFrom": $("#noticeGeneratedFrom").val(),
-                	"noticeGeneratedTo": $("#noticeGeneratedTo").val(),
-                	
-                
-                
-                };
-            }
+            	var formData = getFormData(jQuery('form'));
+            	formData['args']=JSON.stringify(args);
+				return formData;
+            },
+            complete : function() {
+    			$('.loader-class').modal('hide');
+    		}
         },
 		
         dom: "<'row'<'col-xs-4 pull-right'f>r>t<'row add-margin'<'col-md-3 col-xs-6'i><'col-md-2 col-xs-6'l><'col-md-2 col-xs-6 text-right'B><'col-md-5 col-xs-6 text-right'p>>",
@@ -228,3 +234,13 @@ function validateNoticeForm()
 		}
 		
 	}
+	
+	function getFormData($form) {
+	    var unindexed_array = $form.serializeArray();
+	    var indexed_array = {};
+	    $.map(unindexed_array, function(n, i){
+	        indexed_array[n['name']] = n['value'];
+	    });
+	    return indexed_array;
+	}
+	

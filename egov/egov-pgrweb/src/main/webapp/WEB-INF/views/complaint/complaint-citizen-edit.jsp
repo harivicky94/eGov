@@ -1,8 +1,8 @@
 <%--
-  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~     Copyright (C) 2017  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
   ~
   ~         1) All versions of this program, verbatim or modified must carry this
   ~            Legal Notice.
+  ~            Further, all user interfaces, including but not limited to citizen facing interfaces,
+  ~            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+  ~            derived works should carry eGovernments Foundation logo on the top right corner.
+  ~
+  ~            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+  ~            For any further queries on attribution, including queries on brand guidelines,
+  ~            please contact contact@egovernments.org
   ~
   ~         2) Any misrepresentation of the origin of the material is prohibited. It
   ~            is required that all modified versions of this material be marked in
@@ -36,6 +43,7 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~
   --%>
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
@@ -65,6 +73,7 @@
 					    <textarea class="form-control" id="inc_messge" placeholder="" required="required"
                               maxlength="400" name="approvalComent"></textarea>
                         <input type="hidden" id="currentstatus" value="${complaint.status.id}">
+                        <form:hidden path="statusUpdate" id="statusUpdate" value="true"/>
                         <form:errors path="" cssClass="error-msg"/>
                     </div>
                 </div>
@@ -83,7 +92,7 @@
                     <div class="text-center">
                         <c:forEach items="${status}" var="validStatus">
                             <spring:message code="btn.status.${validStatus.name}" var="btnname"/>
-                            <button type="submit" class="btn btn-primary" title="<spring:message code='btn.status.title' arguments="${btnname}"/>">
+                            <button type="submit" class="btn btn-primary" title="<spring:message code='btn.status.title'  arguments="${btnname}"/>">
                                 ${btnname}
                                 <form:hidden path="status" id="status" value="${validStatus.id}"/>
                             </button>
@@ -122,6 +131,7 @@
         $("#citizenRating").val(feedback);
 
         $("#submitbtn").click(function () {
+            $("#statusUpdate").val(false);
             $("#status").val($("#currentstatus").val());
             $("#complaintUpdate").submit();
         });

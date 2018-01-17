@@ -1,50 +1,58 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
- * accountability and the service delivery of the government  organizations.
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ *    accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
- *  The updated version of eGov suite of products as by eGovernments Foundation
- *  is available at http://www.egovernments.org
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
  *
- *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  any later version.
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
  *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program. If not, see http://www.gnu.org/licenses/ or
- *  http://www.gnu.org/licenses/gpl.html .
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
  *
- *  In addition to the terms of the GPL license to be adhered to in using this
- *  program, the following additional terms are to be complied with:
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
  *
- *      1) All versions of this program, verbatim or modified must carry this
- *         Legal Notice.
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
  *
- *      2) Any misrepresentation of the origin of the material is prohibited. It
- *         is required that all modified versions of this material be marked in
- *         reasonable ways as different from the original version.
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
- *      3) This license does not grant any rights to any user of the program
- *         with regards to rights under trademark law for use of the trade names
- *         or trademarks of eGovernments Foundation.
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
  *
- *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 
 package org.egov.pgr.report.repository;
 
+import org.egov.infra.persistence.utils.Page;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.utils.StringUtils;
-import org.egov.infstr.services.Page;
-import org.egov.pgr.report.entity.contract.DrillDownReportRequest;
-import org.egov.pgr.report.entity.view.DrillDownReportView;
+import org.egov.pgr.report.entity.contract.DrilldownReportRequest;
+import org.egov.pgr.report.entity.view.DrilldownReportView;
 import org.springframework.data.domain.Sort.Direction;
 
 import javax.persistence.EntityManager;
@@ -75,20 +83,20 @@ public class FunctionarywiseReportRepositoryImpl implements FunctionarywiseRepor
     private EntityManager entityManager;
 
     @Override
-    public Page<DrillDownReportView> findByFunctionarywiseRequest(DrillDownReportRequest reportRequest) {
+    public Page<DrilldownReportView> findByFunctionarywiseRequest(DrilldownReportRequest reportRequest) {
 
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<DrillDownReportView> criteriaQuery = criteriaBuilder.createQuery(DrillDownReportView.class);
-        Root<DrillDownReportView> root = criteriaQuery.from(DrillDownReportView.class);
-        CriteriaQuery<DrillDownReportView> recordCountQuery = criteriaBuilder.createQuery(DrillDownReportView.class);
-        Root<DrillDownReportView> countRoot = recordCountQuery.from(DrillDownReportView.class);
+        CriteriaQuery<DrilldownReportView> criteriaQuery = criteriaBuilder.createQuery(DrilldownReportView.class);
+        Root<DrilldownReportView> root = criteriaQuery.from(DrilldownReportView.class);
+        CriteriaQuery<DrilldownReportView> recordCountQuery = criteriaBuilder.createQuery(DrilldownReportView.class);
+        Root<DrilldownReportView> countRoot = recordCountQuery.from(DrilldownReportView.class);
 
         recordCountQuery.multiselect(criteriaBuilder.count(countRoot))
                 .where(criteria(reportRequest, criteriaBuilder, countRoot)
                         .toArray(new Predicate[]{}))
                 .groupBy(countRoot.get(EMPLOYEE_ID), countRoot.get(EMPLOYEE_NAME));
 
-        CriteriaQuery<DrillDownReportView> reportQuery = generateReportByRequest(criteriaQuery,
+        CriteriaQuery<DrilldownReportView> reportQuery = generateReportByRequest(criteriaQuery,
                 reportRequest, criteriaBuilder, root);
 
         if (reportRequest.orderBy().equals(EMPLOYEE_NAME))
@@ -105,13 +113,13 @@ public class FunctionarywiseReportRepositoryImpl implements FunctionarywiseRepor
     }
 
     @Override
-    public Page<DrillDownReportView> findComplaintsByEmployeeId(DrillDownReportRequest reportRequest) {
+    public Page<DrilldownReportView> findComplaintsByEmployeeId(DrilldownReportRequest reportRequest) {
 
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<DrillDownReportView> criteriaQuery = criteriaBuilder.createQuery(DrillDownReportView.class);
-        Root<DrillDownReportView> root = criteriaQuery.from(DrillDownReportView.class);
-        CriteriaQuery<DrillDownReportView> countCriteriaQuery = criteriaBuilder.createQuery(DrillDownReportView.class);
-        Root<DrillDownReportView> countRoot = countCriteriaQuery.from(DrillDownReportView.class);
+        CriteriaQuery<DrilldownReportView> criteriaQuery = criteriaBuilder.createQuery(DrilldownReportView.class);
+        Root<DrilldownReportView> root = criteriaQuery.from(DrilldownReportView.class);
+        CriteriaQuery<DrilldownReportView> countCriteriaQuery = criteriaBuilder.createQuery(DrilldownReportView.class);
+        Root<DrilldownReportView> countRoot = countCriteriaQuery.from(DrilldownReportView.class);
 
         countCriteriaQuery.multiselect(criteriaBuilder.count(countRoot.get("crn")))
                 .where(criteria(reportRequest, criteriaBuilder, countRoot)
@@ -119,23 +127,23 @@ public class FunctionarywiseReportRepositoryImpl implements FunctionarywiseRepor
                 .groupBy(countRoot.get("crn"));
 
 
-        TypedQuery<DrillDownReportView> query = entityManager.createQuery(generateReportByEmployeeId(criteriaQuery,
+        TypedQuery<DrilldownReportView> query = entityManager.createQuery(generateReportByEmployeeId(criteriaQuery,
                 reportRequest, criteriaBuilder, root)
                 .orderBy(reportRequest.orderDir().equals(Direction.ASC)
                         ? criteriaBuilder.asc(root.get(reportRequest.orderBy()))
                         : criteriaBuilder.desc(root.get(reportRequest.orderBy()))));
 
-        TypedQuery<DrillDownReportView> countquery = entityManager.createQuery(countCriteriaQuery);
+        TypedQuery<DrilldownReportView> countquery = entityManager.createQuery(countCriteriaQuery);
 
         return new Page<>(query, reportRequest.pageNumber() + 1,
                 reportRequest.pageSize(), countquery.getResultList().size());
     }
 
     @Override
-    public Object[] findGrandTotalByRequest(DrillDownReportRequest reportRequest) {
+    public Object[] findGrandTotalByRequest(DrilldownReportRequest reportRequest) {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Object[]> criteriaQuery = criteriaBuilder.createQuery(Object[].class);
-        Root<DrillDownReportView> root = criteriaQuery.from(DrillDownReportView.class);
+        Root<DrilldownReportView> root = criteriaQuery.from(DrilldownReportView.class);
 
         criteriaQuery
                 .multiselect(criteriaBuilder.sum(root.get(REGISTERED)), criteriaBuilder.sum(root.get(INPROCESS)),
@@ -147,31 +155,31 @@ public class FunctionarywiseReportRepositoryImpl implements FunctionarywiseRepor
     }
 
     @Override
-    public List<DrillDownReportView> findFunctionarywiseReportByEmployeeId(DrillDownReportRequest reportRequest) {
+    public List<DrilldownReportView> findFunctionarywiseReportByEmployeeId(DrilldownReportRequest reportRequest) {
 
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<DrillDownReportView> criteriaQuery = criteriaBuilder.createQuery(DrillDownReportView.class);
-        Root<DrillDownReportView> root = criteriaQuery.from(DrillDownReportView.class);
+        CriteriaQuery<DrilldownReportView> criteriaQuery = criteriaBuilder.createQuery(DrilldownReportView.class);
+        Root<DrilldownReportView> root = criteriaQuery.from(DrilldownReportView.class);
 
         return entityManager.createQuery(generateReportByEmployeeId(criteriaQuery,
                 reportRequest, criteriaBuilder, root)).getResultList();
     }
 
     @Override
-    public List<DrillDownReportView> findFunctionarywiseReportByRequest(DrillDownReportRequest reportRequest) {
+    public List<DrilldownReportView> findFunctionarywiseReportByRequest(DrilldownReportRequest reportRequest) {
 
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<DrillDownReportView> criteriaQuery = criteriaBuilder.createQuery(DrillDownReportView.class);
-        Root<DrillDownReportView> root = criteriaQuery.from(DrillDownReportView.class);
+        CriteriaQuery<DrilldownReportView> criteriaQuery = criteriaBuilder.createQuery(DrilldownReportView.class);
+        Root<DrilldownReportView> root = criteriaQuery.from(DrilldownReportView.class);
 
         return entityManager.createQuery(generateReportByRequest(criteriaQuery,
                 reportRequest, criteriaBuilder, root)).getResultList();
     }
 
-    private CriteriaQuery<DrillDownReportView> generateReportByEmployeeId(CriteriaQuery<DrillDownReportView> criteriaQuery,
-                                                                          DrillDownReportRequest reportRequest,
+    private CriteriaQuery<DrilldownReportView> generateReportByEmployeeId(CriteriaQuery<DrilldownReportView> criteriaQuery,
+                                                                          DrilldownReportRequest reportRequest,
                                                                           CriteriaBuilder criteriaBuilder,
-                                                                          Root<DrillDownReportView> root) {
+                                                                          Root<DrilldownReportView> root) {
 
         criteriaQuery.multiselect(root.get("complainantId"), root.get("crn"), root.get(CREATED_DATE),
                 root.get("complainantName"), root.get("complaintDetail"), root.get(STATUS),
@@ -180,10 +188,10 @@ public class FunctionarywiseReportRepositoryImpl implements FunctionarywiseRepor
         return criteriaQuery;
     }
 
-    private CriteriaQuery<DrillDownReportView> generateReportByRequest(CriteriaQuery<DrillDownReportView> criteriaQuery,
-                                                                       DrillDownReportRequest reportRequest,
+    private CriteriaQuery<DrilldownReportView> generateReportByRequest(CriteriaQuery<DrilldownReportView> criteriaQuery,
+                                                                       DrilldownReportRequest reportRequest,
                                                                        CriteriaBuilder criteriaBuilder,
-                                                                       Root<DrillDownReportView> root) {
+                                                                       Root<DrilldownReportView> root) {
         criteriaQuery
                 .multiselect(root.get(EMPLOYEE_ID), root.get(EMPLOYEE_NAME),
                         criteriaBuilder.sum(root.get(REGISTERED)), criteriaBuilder.sum(root.get(INPROCESS)),
@@ -196,9 +204,9 @@ public class FunctionarywiseReportRepositoryImpl implements FunctionarywiseRepor
         return criteriaQuery;
     }
 
-    private List<Predicate> criteria(DrillDownReportRequest reportRequest,
+    private List<Predicate> criteria(DrilldownReportRequest reportRequest,
                                      CriteriaBuilder criteriaBuilder,
-                                     Root<DrillDownReportView> root) {
+                                     Root<DrilldownReportView> root) {
 
         final List<Predicate> predicates = new ArrayList<>();
         if (reportRequest.getFromDate() != null && reportRequest.getToDate() != null)
@@ -229,9 +237,9 @@ public class FunctionarywiseReportRepositoryImpl implements FunctionarywiseRepor
         return predicates;
     }
 
-    private List<Predicate> predicatesForComplaints(DrillDownReportRequest reportRequest,
+    private List<Predicate> predicatesForComplaints(DrilldownReportRequest reportRequest,
                                                     CriteriaBuilder criteriaBuilder,
-                                                    Root<DrillDownReportView> root) {
+                                                    Root<DrilldownReportView> root) {
         final List<Predicate> predicates = new ArrayList<>();
         if (REGISTERED.equalsIgnoreCase(reportRequest.getStatus()))
             predicates.add(criteriaBuilder.equal(root.get(STATUS), "REGISTERED"));

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~     Copyright (C) 2017  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -27,6 +27,13 @@
   ~
   ~         1) All versions of this program, verbatim or modified must carry this
   ~            Legal Notice.
+  ~            Further, all user interfaces, including but not limited to citizen facing interfaces,
+  ~            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+  ~            derived works should carry eGovernments Foundation logo on the top right corner.
+  ~
+  ~            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+  ~            For any further queries on attribution, including queries on brand guidelines,
+  ~            please contact contact@egovernments.org
   ~
   ~         2) Any misrepresentation of the origin of the material is prohibited. It
   ~            is required that all modified versions of this material be marked in
@@ -37,14 +44,14 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~
   -->
-
-<!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
-<!-- 2016-03-10T13:16:11 -->
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2017-12-18T15:20:12 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="collection_receipt" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="NoDataSection" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" resourceBundle="custom" uuid="95dcd61e-c5f2-460d-92a5-6377a010a11d">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
-	<import value="org.egov.infra.reporting.util.*"/>
 	<import value="org.egov.collection.constants.*"/>
+	<import value="org.egov.infra.reporting.util.*"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["/work/collections/reports/templates/"]]></defaultValueExpression>
 	</parameter>
@@ -52,6 +59,7 @@
 		<parameterDescription><![CDATA[SQL connection object]]></parameterDescription>
 		<defaultValueExpression><![CDATA[null]]></defaultValueExpression>
 	</parameter>
+	<parameter name="CITY_LOGO_PATH" class="java.io.InputStream"/>
 	<field name="payeeName" class="java.lang.String">
 		<fieldDescription><![CDATA[Payee Name]]></fieldDescription>
 	</field>
@@ -157,7 +165,7 @@
 			</textField>
 			<image>
 				<reportElement x="10" y="10" width="60" height="60" uuid="5351327a-d2d5-4818-ba5a-563939322030"/>
-				<imageExpression><![CDATA[ReportUtil.logoBasePath()]]></imageExpression>
+				<imageExpression><![CDATA[$P{CITY_LOGO_PATH}]]></imageExpression>
 			</image>
 			<textField>
 				<reportElement x="124" y="11" width="319" height="43" uuid="32c4c372-475b-4bb7-a1f3-dd210dd27826"/>
@@ -494,7 +502,7 @@
 					<subreportParameterExpression><![CDATA[$F{totalAmount}]]></subreportParameterExpression>
 				</subreportParameter>
 				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{instrumentDetails}, false)]]></dataSourceExpression>
-				<subreportExpression><![CDATA[org.egov.infra.reporting.util.ReportUtil.getTemplateAsStream("collection_receipt_instruments.jasper")]]></subreportExpression>
+				<subreportExpression><![CDATA[org.egov.infra.reporting.util.ReportUtil.getTemplateAsStream("CL_collection_receipt_instruments.jasper")]]></subreportExpression>
 			</subreport>
 		</band>
 		<band height="20">

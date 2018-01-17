@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2017>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,8 +43,11 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.stms.report.service;
+
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -102,26 +112,35 @@ public class SewerageBaseRegisterReportService {
             searchResult.setResidentialClosets(sewerageIndex.getNoOfClosets_residential());
             searchResult.setNonResidentialClosets(sewerageIndex.getNoOfClosets_nonResidential());
             searchResult.setPeriod(
-                    sewerageIndex.getPeriod() != null ? sewerageIndex.getPeriod()
-                            : org.apache.commons.lang.StringUtils.EMPTY);
-            searchResult.setArrears(sewerageIndex.getArrearAmount().setScale(0, BigDecimal.ROUND_HALF_EVEN));
-            searchResult.setCurrentDemand(
-                    sewerageIndex.getDemandAmount().setScale(0, BigDecimal.ROUND_HALF_EVEN));
-            searchResult.setAdvanceAmount(
-                    sewerageIndex.getExtraAdvanceAmount() != null
-                            ? sewerageIndex.getExtraAdvanceAmount().setScale(0, BigDecimal.ROUND_HALF_EVEN)
-                            : BigDecimal.ZERO);
-            searchResult.setArrearsCollected(sewerageIndex.getCollectedArrearAmount().setScale(0, BigDecimal.ROUND_HALF_EVEN));
-            searchResult.setCurrentTaxCollected(sewerageIndex.getCollectedDemandAmount().setScale(0, BigDecimal.ROUND_HALF_EVEN));
-            searchResult
-                    .setTotalTaxCollected(
-                            sewerageIndex.getCollectedArrearAmount().add(sewerageIndex.getCollectedDemandAmount()).setScale(0,
-                                    BigDecimal.ROUND_HALF_EVEN));
-            searchResult.setTotalDemand(sewerageIndex.getTotalAmount().setScale(0, BigDecimal.ROUND_HALF_EVEN));
+                    sewerageIndex.getPeriod() == null ? EMPTY : sewerageIndex.getPeriod());
+            setDemandDetails(sewerageIndex, searchResult);
             baseRegisterResultList.add(searchResult);
         }
         return baseRegisterResultList;
+    }
 
+    private void setDemandDetails(final SewerageIndex sewerageIndex, final SewerageBaseRegisterResult searchResult) {
+        searchResult.setArrears(sewerageIndex.getArrearAmount() == null ? BigDecimal.ZERO
+                : sewerageIndex.getArrearAmount().setScale(0, BigDecimal.ROUND_HALF_EVEN));
+        searchResult.setCurrentDemand(
+                sewerageIndex.getDemandAmount() == null ? BigDecimal.ZERO
+                        : sewerageIndex.getDemandAmount().setScale(0, BigDecimal.ROUND_HALF_EVEN));
+        searchResult.setAdvanceAmount(
+                sewerageIndex.getExtraAdvanceAmount() == null ? BigDecimal.ZERO
+                        : sewerageIndex.getExtraAdvanceAmount().setScale(0, BigDecimal.ROUND_HALF_EVEN));
+        searchResult.setArrearsCollected(sewerageIndex.getCollectedArrearAmount() == null ? BigDecimal.ZERO
+                : sewerageIndex.getCollectedArrearAmount().setScale(0, BigDecimal.ROUND_HALF_EVEN));
+        searchResult.setCurrentTaxCollected(getCollectedDemandAmount(sewerageIndex).setScale(0, BigDecimal.ROUND_HALF_EVEN));
+        searchResult.setTotalTaxCollected(sewerageIndex.getCollectedArrearAmount() == null ? BigDecimal.ZERO
+                : sewerageIndex.getCollectedArrearAmount().add(getCollectedDemandAmount(sewerageIndex))
+                        .setScale(0, BigDecimal.ROUND_HALF_EVEN));
+        searchResult.setTotalDemand(sewerageIndex.getTotalAmount() == null ? BigDecimal.ZERO
+                : sewerageIndex.getTotalAmount().setScale(0, BigDecimal.ROUND_HALF_EVEN));
+    }
+
+    private BigDecimal getCollectedDemandAmount(final SewerageIndex sewerageIndex) {
+        return sewerageIndex.getCollectedDemandAmount() == null
+                ? BigDecimal.ZERO : sewerageIndex.getCollectedDemandAmount();
     }
 
     public List<String> getWardNames(final SewerageBaseRegisterResult sewerageBaseRegisterResult, final Model model) {
@@ -153,9 +172,7 @@ public class SewerageBaseRegisterReportService {
     public List<BigDecimal> baseRegisterGrandTotal(final SewerageBaseRegisterResult sewerageBaseRegisterResult,
             final Model model) {
         final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
-
         return sewerageIndexService.getGrandTotal(cityWebsite.getName(), getWardNames(sewerageBaseRegisterResult, model));
-
     }
 
 }

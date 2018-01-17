@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,6 +43,7 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 
 package org.egov.pgr.service;
@@ -50,6 +58,8 @@ import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.pgr.elasticsearch.service.ComplaintIndexService;
 import org.egov.pgr.entity.Complaint;
+import org.egov.pgr.event.ComplaintEventPublisher;
+import org.egov.pgr.event.ComplaintRegisterEventPublisher;
 import org.egov.pgr.repository.ComplaintRepository;
 import org.egov.pims.commons.Position;
 import org.hibernate.Criteria;
@@ -59,12 +69,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -73,18 +85,7 @@ import java.util.Map;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.egov.infra.config.core.ApplicationThreadLocals.getUserId;
-import static org.egov.pgr.utils.constants.PGRConstants.COMPLAINTS_FILED;
-import static org.egov.pgr.utils.constants.PGRConstants.COMPLAINTS_RESOLVED;
-import static org.egov.pgr.utils.constants.PGRConstants.COMPLAINTS_UNRESOLVED;
-import static org.egov.pgr.utils.constants.PGRConstants.COMPLAINT_ALL;
-import static org.egov.pgr.utils.constants.PGRConstants.COMPLAINT_COMPLETED;
-import static org.egov.pgr.utils.constants.PGRConstants.COMPLAINT_PENDING;
-import static org.egov.pgr.utils.constants.PGRConstants.COMPLAINT_REGISTERED;
-import static org.egov.pgr.utils.constants.PGRConstants.COMPLAINT_REJECTED;
-import static org.egov.pgr.utils.constants.PGRConstants.COMPLETED_STATUS;
-import static org.egov.pgr.utils.constants.PGRConstants.PENDING_STATUS;
-import static org.egov.pgr.utils.constants.PGRConstants.REJECTED_STATUS;
-import static org.egov.pgr.utils.constants.PGRConstants.RESOLVED_STATUS;
+import static org.egov.pgr.utils.constants.PGRConstants.*;
 
 @Service
 @Transactional(readOnly = true)
@@ -126,7 +127,13 @@ public class ComplaintService {
     @Autowired
     private CitizenComplaintDataPublisher citizenComplaintDataPublisher;
 
-    @Transactional
+    @Autowired
+    private ComplaintEventPublisher complaintEventPublisher;
+
+    @Autowired
+    private ComplaintRegisterEventPublisher complaintRegisterEventPublisher;
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public Complaint createComplaint(Complaint complaint) {
 
         if (isBlank(complaint.getCrn()))
@@ -154,10 +161,11 @@ public class ComplaintService {
             complaint.setPriority(configurationService.getDefaultComplaintPriority());
 
         complaintRepository.saveAndFlush(complaint);
-        complaintIndexService.createComplaintIndex(complaint);
+        complaintRegisterEventPublisher.publishEvent(complaint);
         if (securityUtils.currentUserIsCitizen())
             citizenComplaintDataPublisher.onRegistration(complaint);
         complaintNotificationService.sendRegistrationMessage(complaint);
+        complaintIndexService.createComplaintIndex(complaint);
         return complaint;
     }
 
@@ -169,9 +177,10 @@ public class ComplaintService {
         else
             complaint.setDepartment(complaint.getAssignee().getDeptDesig().getDepartment());
         complaintRepository.saveAndFlush(complaint);
-        complaintIndexService.updateComplaintIndex(complaint);
+        complaintEventPublisher.publishEvent(complaint);
         citizenComplaintDataPublisher.onUpdation(complaint);
         complaintNotificationService.sendUpdateMessage(complaint);
+        complaintIndexService.updateComplaintIndex(complaint);
         return complaint;
     }
 
@@ -201,12 +210,18 @@ public class ComplaintService {
 
     @ReadOnly
     public List<Complaint> getPendingGrievances() {
-        Criteria criteria = entityManager.unwrap(Session.class).createCriteria(Complaint.class, "complaint")
-                .createAlias("complaint.status", "status");
-        criteria.add(Restrictions.in("status.name", PENDING_STATUS));
-        criteria.add(
-                Restrictions.in("complaint.assignee", positionMasterService.getPositionsForEmployee(getUserId(), new Date())));
-        return criteria.list();
+        List<Position> assignee = positionMasterService.getPositionsForEmployee(getUserId(), new Date());
+        if (assignee.isEmpty()) {
+            return Collections.emptyList();
+        } else {
+            Criteria criteria = entityManager.unwrap(Session.class).createCriteria(Complaint.class, "complaint")
+                    .createAlias("complaint.status", "status");
+            criteria.add(Restrictions.in("status.name", PENDING_STATUS));
+            criteria.add(
+                    Restrictions.in("complaint.assignee", assignee));
+            return criteria.list();
+        }
+
     }
 
     @ReadOnly
@@ -282,4 +297,5 @@ public class ComplaintService {
         });
         return complaintList;
     }
+
 }

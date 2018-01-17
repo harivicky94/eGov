@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,8 +43,22 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.ptis.constants;
+
+import com.google.common.collect.ImmutableList;
+
+import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import static java.util.Calendar.APRIL;
 import static java.util.Calendar.AUGUST;
@@ -55,24 +76,14 @@ import static org.egov.collection.constants.CollectionConstants.COLLECTION_TYPE_
 import static org.egov.collection.constants.CollectionConstants.COLLECTION_TYPE_FIELDCOLLECTION;
 import static org.egov.collection.constants.CollectionConstants.COLLECTION_TYPE_ONLINECOLLECTION;
 
-import java.math.BigDecimal;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
-import com.google.common.collect.ImmutableList;
-
 public interface PropertyTaxConstants {
 
+    //take a list of needed things
     public static final String APPCONFIG_ISCORPORATION = "IS_CORPORATION";
     public static final String APPCONFIG_ISSEASHORE_ULB = "IS_SEASHORE_ULB";
     public static final String APPCONFIG_IS_PRIMARY_SERVICECHARGES_APPLICABLE = "IS_PRIMARYSERVICECHARGES_APPLICABLE";
+    public static final String APPCONFIG_CLOSED_MUTATION_RECEIPT = "CANCEL_RECEIPT_FOR_CLOSED_MUTATION";
+    public static final String EDIT_COLL_FOR_CURRYEAR = "EDIT_COLLECTION_FOR_CURRENTYEAR";
     public static final Float SQUARE_YARD_TO_SQUARE_METER_VALUE = 0.836127f;
     
     // General constants used across Clients
@@ -277,7 +288,7 @@ public interface PropertyTaxConstants {
     public static final String OWNERSHIP_TYPE_VAC_LAND = "VAC_LAND";
     public static final String OWNERSHIP_TYPE_PRIVATE = "PRIVATE";
     public static final String OWNERSHIP_TYPE_STATE_GOVT = "STATE_GOVT";
-    public static final String OWNERSHIP_TYPE_CENTRAL_GOVT_335 = "CENTRAL_GOVT_33.5";
+    public static final String OWNERSHIP_TYPE_CENTRAL_GOVT_333 = "CENTRAL_GOVT_33.33";
     public static final String OWNERSHIP_TYPE_CENTRAL_GOVT_50 = "CENTRAL_GOVT_50";
     public static final String OWNERSHIP_TYPE_CENTRAL_GOVT_75 = "CENTRAL_GOVT_75";
     public static final String OWNERSHIP_TYPE_EWSHS = "EWSHS";
@@ -286,7 +297,7 @@ public interface PropertyTaxConstants {
     public static final String OWNERSHIP_TYPE_VAC_LAND_STR = "Vacant Land";
     public static final String OWNERSHIP_TYPE_PRIVATE_STR = "Private";
     public static final String OWNERSHIP_TYPE_STATE_GOVT_STR = "State Government";
-    public static final String OWNERSHIP_TYPE_CENTRAL_GOVT_335_STR = "Central Government 33.5%";
+    public static final String OWNERSHIP_TYPE_CENTRAL_GOVT_333_STR = "Central Government 33.33%";
     public static final String OWNERSHIP_TYPE_CENTRAL_GOVT_50_STR = "Central Government 50%";
     public static final String OWNERSHIP_TYPE_CENTRAL_GOVT_75_STR = "Central Government 75%";
 
@@ -343,6 +354,7 @@ public interface PropertyTaxConstants {
 
     // Usage Types
     public static final String USAGE_RESIDENTIAL = "RESD";
+    
 
     // TreeMap for Non Vacant Land types
     public static final TreeMap<String, String> NON_VAC_LAND_PROPERTY_TYPE_CATEGORY = new TreeMap<String, String>() {
@@ -352,7 +364,7 @@ public interface PropertyTaxConstants {
         private static final long serialVersionUID = -8758751964576480520L;
 
         {
-            put("RESIDENTIAl", "Residential");
+            put("RESIDENTIAL", "Residential");
             put("NON_RESIDENTIAL", "Non Residential");
             put("MIXED", "Mixed");
         }
@@ -538,6 +550,7 @@ public interface PropertyTaxConstants {
 
         {
             put(-9,"Cellar");
+            put(-8,"Mezzanine");
             put(-3, "Basement-2");
             put(-2, "Basement-1");
             put(-1, "Stilt Floor");
@@ -951,7 +964,7 @@ public interface PropertyTaxConstants {
     public static final String GLCODE_FOR_LIGHTINGTAX_CURRENT = "4311042";
     public static final String GLCODE_FOR_BIG_RESIDENTIAL_BLDG_TAX_ARREARS = "4311003";
     public static final String GLCODE_FOR_BIG_RESIDENTIAL_BLDG_TAX_CURRENT = "4311004";
-    public static final String GLCODE_FOR_MUTATION_FEE = "4311002";
+    public static final String GLCODE_FOR_MUTATION_FEE = "1404009";
 
     @SuppressWarnings("serial")
     public static final List<String> EDU_EGS_CESS_GLCODE_LIST = new ArrayList<String>() {
@@ -1291,6 +1304,9 @@ public interface PropertyTaxConstants {
 
     public static final String THIRD_PARTY_DEMAND_AMOUNT_GREATER_CODE = "PTIS-REST-46";
     public static final String THIRD_PARTY_DEMAND_AMOUNT_GREATER_MSG= "Paid Amount is greater than Total Amount to be paid";
+    
+    public static final String THIRD_PARTY_AMOUNT_HAVING_DECIMALS_CODE = "PTIS-REST-47";
+    public static final String THIRD_PARTY_AMOUNT_HAVING_DECIMALS_MSG= "Paid amount in decimal is not accepted.";
 
     public static final String TOTAL_AMOUNT = "amount";
     public final static String PAID_BY = "paidBy";
@@ -1398,7 +1414,7 @@ public interface PropertyTaxConstants {
     public static final String CATEGORY_VACANT_LAND = "VACANTLAND";
     public static final String CATEGORY_STATE_GOVT = "STATE_GOVT";
     public static final String CATEGORY_CENTRAL_GOVT = "CENTRAL_GOVT";
-    public static final String CATEGORY_RESIDENTIAL = "RESIDENTIAl";
+    public static final String CATEGORY_RESIDENTIAL = "RESIDENTIAL";
     public static final String CATEGORY_NON_RESIDENTIAL = "NON_RESIDENTIAL";
     public static final String CATEGORY_MIXED = "MIXED";
 
@@ -1545,6 +1561,7 @@ public interface PropertyTaxConstants {
     public static final String REVISIONPETITION_STATUS_CODE = "RP";
 
     public static final String APPCONFIG_DIGITAL_SIGNATURE = "PTIS_DIGITAL_SIGNATURE_REQUIRED";
+    public static final String APPCONFIG_MAUD_INTEGRATION_REQUIRED = "PTIS_MAUD_INTEGRATION_REQUIRED";
     
     public static final String APPCONFIG_CLIENT_SPECIFIC_DMD_BILL = "IS_CLIENT_SPECIFIC_DEMANDBILL";
  
@@ -1580,6 +1597,7 @@ public interface PropertyTaxConstants {
     public String WTMS_TOTALDEMAND_RESTURL = "%s/wtms/rest/watertax/totaldemandamount/";
     public String WTMS_CONNECT_DTLS_RESTURL = "%s/wtms/rest/watertax/connectiondetails/byptno/%s";
     public String WTMS_AMALGAMATE_WATER_CONNECTIONS_URL = "%s/wtms/rest/watertax/updateConnectionForAmulgamation";
+    public String STMS_TAXDUE_RESTURL = "%s/stms/rest/seweragetax/dues/%s";
 
     public static final String TRANSACTION_TYPE_CREATE = "Create";
     public static final String TRANSACTION_TYPE_DEMOLITION = "Demolition";
@@ -1631,7 +1649,7 @@ public interface PropertyTaxConstants {
     @SuppressWarnings("serial")
     public static final List<String> DASHBOARD_PROPERTY_TYPE_CENTRAL_GOVT_LIST = new ArrayList<String>() {
         {
-            add(OWNERSHIP_TYPE_CENTRAL_GOVT_335_STR);
+            add(OWNERSHIP_TYPE_CENTRAL_GOVT_333_STR);
             add(OWNERSHIP_TYPE_CENTRAL_GOVT_50_STR);
             add(OWNERSHIP_TYPE_CENTRAL_GOVT_75_STR);
         }
@@ -1643,7 +1661,7 @@ public interface PropertyTaxConstants {
             
             add(OWNERSHIP_TYPE_PRIVATE_STR);
             add(OWNERSHIP_TYPE_STATE_GOVT_STR);
-            add(OWNERSHIP_TYPE_CENTRAL_GOVT_335_STR);
+            add(OWNERSHIP_TYPE_CENTRAL_GOVT_333_STR);
             add(OWNERSHIP_TYPE_CENTRAL_GOVT_50_STR);
             add(OWNERSHIP_TYPE_CENTRAL_GOVT_75_STR);
             add(OWNERSHIP_TYPE_EWSHS);
@@ -1731,7 +1749,17 @@ public interface PropertyTaxConstants {
     
     public static final String SUPER_STRUCTURE = "Super Structure";
 
-    public static final ImmutableList DEMAND_REASONS_FOR_REBATE_CALCULATION = ImmutableList.of(DEMANDRSN_CODE_GENERAL_TAX,
+    public static final List<String> DEMAND_REASONS_FOR_REBATE_CALCULATION = ImmutableList.of(DEMANDRSN_CODE_GENERAL_TAX,
             DEMANDRSN_CODE_VACANT_TAX, DEMANDRSN_CODE_LIBRARY_CESS, DEMANDRSN_CODE_EDUCATIONAL_CESS);
+    
+    public static final List<String> PROPERTY_TYPE_SERVICE_CODES = ImmutableList.of("PT","VLT");
+    public static final List<String> SERVICE_TYPES=ImmutableList.of("New_Assessment","Alter_Assessment","General_Revision_Petition","Revision_Petition");
+
+    public static final String NOTARY_DOCUMENT_OWNER = "The Holder Of The Premises";
+    public static final String REVISION_PETETION = "REVISION_PETETION";
+    public static final String VACANCY_REMISSION = "VACANCY_REMISSION";  
+    public static final String GENERAL_REVISION_PETETION_APPTYPE = "GENERAL_REVISION_PETETION";
+	public static final List<String> PROPERTY_TYPE_GOVT_LIST = ImmutableList.of(OWNERSHIP_TYPE_STATE_GOVT,
+			OWNERSHIP_TYPE_CENTRAL_GOVT_333, OWNERSHIP_TYPE_CENTRAL_GOVT_50, OWNERSHIP_TYPE_CENTRAL_GOVT_75);
 
 }

@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,22 +43,15 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 /**
  *
  */
 package org.egov.utils;
 
-import java.io.Serializable;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.script.ScriptContext;
-
+import com.exilant.eGov.src.common.EGovernCommon;
+import com.exilant.exility.common.TaskFailedException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.commons.CFiscalPeriod;
@@ -64,9 +64,8 @@ import org.egov.eis.entity.EmployeeView;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
-import org.egov.infra.persistence.utils.DBSequenceGenerator;
-import org.egov.infra.persistence.utils.SequenceNumberGenerator;
+import org.egov.infra.persistence.utils.GenericSequenceNumberGenerator;
+import org.egov.infra.persistence.utils.DatabaseSequenceCreator;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.bills.EgBillregister;
@@ -75,8 +74,16 @@ import org.egov.pims.service.EisUtilService;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.exilant.eGov.src.common.EGovernCommon;
-import com.exilant.exility.common.TaskFailedException;
+import javax.script.ScriptContext;
+import java.io.Serializable;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.egov.infra.utils.ApplicationConstant.UNDERSCORE;
 
 /**
  * @author msahoo
@@ -87,7 +94,7 @@ public class VoucherHelper {
     public static final String DEFAULT_SEQUENCE_PREFIX = "SQ_";
     @SuppressWarnings("unchecked")
     private PersistenceService persistenceService;
-    @Autowired 
+    @Autowired
     private EisCommonService eisCommonService;
     @Autowired
     private FundHibernateDAO fundDAO;
@@ -97,18 +104,15 @@ public class VoucherHelper {
     private EGovernCommon eGovernCommon;
     @Autowired
     private FiscalPeriodHibernateDAO fiscalPeriodHibernateDAO;
-    
+
     @Autowired
     private FinancialYearHibernateDAO financialYearDAO;
-    
-    @Autowired
-    private DBSequenceGenerator dbSequenceGenerator;
 
     @Autowired
-    private SequenceNumberGenerator sequenceNumberGenerator;
+    private DatabaseSequenceCreator databaseSequenceCreator;
 
-   @Autowired
-   ApplicationSequenceNumberGenerator applicationSequenceNumberGenerator;
+    @Autowired
+    private GenericSequenceNumberGenerator genericSequenceNumberGenerator;
 
     @SuppressWarnings("unchecked")
     public PersistenceService getPersistenceService() {
@@ -235,7 +239,7 @@ public class VoucherHelper {
         return new StringBuilder()
         .append(DEFAULT_SEQUENCE_PREFIX)
         .append(voucherType)
-        .append(ApplicationSequenceNumberGenerator.WORD_SEPARATOR_FOR_NAME)
+        .append(UNDERSCORE)
         .append(fiscalPeriodName)
         .toString();
     }
@@ -271,7 +275,7 @@ public class VoucherHelper {
         Serializable sequenceNumber;
         String sequenceName;
         sequenceName = sequenceNameFor(vouType, fc.get(0).toString());
-        sequenceNumber=   applicationSequenceNumberGenerator.getNextSequence(sequenceName);
+        sequenceNumber=   genericSequenceNumberGenerator.getNextSequence(sequenceName);
         return sequenceNumber.toString();
 
     }
@@ -318,8 +322,8 @@ public class VoucherHelper {
                     voucherType,
                      "transNumber",
                      transNumber, "vNumGenMode", vNumGenMode, "date", voucherDate, "month", month, "commonsService",
-                     financialYearDAO, "dbSequenceGenerator", dbSequenceGenerator, "sequenceNumberGenerator",
-                     applicationSequenceNumberGenerator, "voucherNumber", voucherNumber, "sequenceName", sequenceName);
+                     financialYearDAO, "dbSequenceGenerator", databaseSequenceCreator, "sequenceNumberGenerator",
+                     genericSequenceNumberGenerator, "voucherNumber", voucherNumber, "sequenceName", sequenceName);
              fVoucherNumber = (String) scriptService.executeScript(scriptName, scriptContext);
 
         } else

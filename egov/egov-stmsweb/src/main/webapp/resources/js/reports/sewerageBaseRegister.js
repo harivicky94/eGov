@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces, 
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any 
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines, 
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,6 +43,7 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 
 
@@ -72,7 +80,6 @@ function getSumOfRecords() {
         type: 'GET',
         data : 
         	$("#sewerageBaseRegisterForm").serialize(),
-       
         success: function (data) {
             recordTotal = [];
             for (var i = 0; i < data.length; i++) {
@@ -82,28 +89,22 @@ function getSumOfRecords() {
     })
 }
 
-$(".btn-primary").click(function(event){
-	
-	
-	$('#aplicationSearchResults').show();
-	var wardName=$('#ward').val();
-	
-	
-	if(wardName == '') {
-				bootbox.alert("Please select ward name");
-				return false;
-			}
-			else {
-				submitButton();
-				return true;
-			}
-		event.preventDefault();
-	});
+$(".btnSearch").click(function(event) {
+	var wardName = $('#ward').val();
+	if (wardName == '') {
+		bootbox.alert("Please select ward name");
+		return false;
+	} else {
+		submitButton();
+		return true;
+	}
+});
 
 
 var prevdatatable;
 function submitButton() {
-	oTable = $("#aplicationSearchResults");
+	var oTable = $("#aplicationSearchResults");
+	oTable.show();
 	$("#report-footer").show();
 	$('#baseregisterheader').show();
 	
@@ -155,11 +156,14 @@ function submitButton() {
 		                    window.open("seweragebaseregister/download?" + $("#sewerageBaseRegisterForm").serialize() + "&printFormat=XLS", '_self');
 		                }
 		            }],
-		    
 		            ajax : {
-
 					url : "/stms/reports/baseregisterresult/",
 					type : 'POST',
+					beforeSend : function() {
+						$('.loader-class').modal('show', {
+							backdrop : 'static'
+						});
+					},
 					data : function(args) {
 						return {
 							"args" : JSON.stringify(args),
@@ -167,6 +171,9 @@ function submitButton() {
 							"mode" : temp
 						};
 					},
+					complete : function() {
+						$('.loader-class').modal('hide');
+					}
 				},	
 		columns : [ {
 					"sTitle" : "S.H.S.C Number",
@@ -194,11 +201,27 @@ function submitButton() {
 					"name" : "propertyType"
 				}, {
 					"sTitle" : "Residential closets",
+					"className": "text-center",
 					"data" : "residentialClosets",
+					"render" : function(data, type, row, meta) {
+						if (row.residentialClosets) {
+							return row.residentialClosets;
+						} else {
+							return 'N/A'
+						}
+					},
 					"name" : "residentialClosets"
 				}, {
 					"sTitle" : "Non-Residential closets",
+					"className" : "text-center",
 					"data" : "nonResidentialClosets",
+					"render" : function(data, type, row, meta) {
+						if (row.nonResidentialClosets) {
+							return row.nonResidentialClosets;
+						} else {
+							return 'N/A'
+						}
+					},
 					"name" : "nonResidentialClosets"
 				}, {
 					"title" : "Period",
@@ -206,30 +229,37 @@ function submitButton() {
 					"name" : "period"
 				}, {
 					"sTitle" : "Arrears Demand",
+					"className": "text-right",
 					"data" : "arrears",
 					"name" : "arrears"
 				}, {
 					"sTitle" : "Current Tax Demand",
+					"className": "text-right",
 					"data" : "currentDemand",
 					"name" : "currentDemand"
 				}, {
 					"sTitle" : "Total Demand",
+					"className": "text-right",
 					"data" : "totalDemand",
 					"name" : "totalDemand"
 				}, {
 					"sTitle" : "Arrears Collected",
+					"className": "text-right",
 					"data" : "arrearsCollected",
 					"name" : "arrearsCollected"
 				}, {
 					"sTitle": "Current Tax Collected",
+					"className": "text-right",
 					"data" : "currentTaxCollected",
 					"name" : "currentTaxCollected"
 				}, {
 					"sTitle" : "Total Tax Collected",
+					"className": "text-right",
 					"data" : "totalTaxCollected",
 					"name" : "totalTaxCollected"
 				}, {
 					"sTitle" : "Advance amount Collected",
+					"className": "text-right",
 					"data" : "advanceAmount",
 					"name" : "advanceAmount"
 				}, ],
@@ -275,9 +305,9 @@ function updateTotalFooter(colidx, api) {
 	};
 
 	// Total over all pages
-    total = recordTotal[colidx - 9];
-
-	
+	total = api.column(colidx).data().reduce(function(a, b) {
+		return intVal(a) + intVal(b);
+	});
 
 	// Total over this page
 	pageTotal = api.column(colidx, {
@@ -288,7 +318,8 @@ function updateTotalFooter(colidx, api) {
 
 	// Update footer
 	$(api.column(colidx).footer()).html(
-			formatNumberInr(pageTotal) + ' (' + formatNumberInr(total) + ')');
+			formatNumberInr(pageTotal) + ' (' + formatNumberInr(total)
+					+ ')');
 }
 
 
@@ -311,8 +342,3 @@ function formatNumberInr(x) {
 	}
 	return x;
 }
-
-//To Select all wards
-$('#selectall').click( function() {
-    $('select#ward > option').prop('selected', 'selected');
-});

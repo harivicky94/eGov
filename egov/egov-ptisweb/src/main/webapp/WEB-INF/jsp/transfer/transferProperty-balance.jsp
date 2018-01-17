@@ -1,8 +1,8 @@
 <%--
-  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~     Copyright (C) 2017  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
   ~
   ~         1) All versions of this program, verbatim or modified must carry this
   ~            Legal Notice.
+  ~            Further, all user interfaces, including but not limited to citizen facing interfaces,
+  ~            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+  ~            derived works should carry eGovernments Foundation logo on the top right corner.
+  ~
+  ~            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+  ~            For any further queries on attribution, including queries on brand guidelines,
+  ~            please contact contact@egovernments.org
   ~
   ~         2) Any misrepresentation of the origin of the material is prohibited. It
   ~            is required that all modified versions of this material be marked in
@@ -36,6 +43,7 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~
   --%>
 
 <%@ include file="/includes/taglibs.jsp"%>
@@ -76,31 +84,24 @@
 				</div>	
 				<div class="row add-border">	
 					<div class="col-md-3 col-xs-3 add-margin">
-						<s:text name="CurrentTax" />
+						<s:text name="property.tax.due" />
 					</div>
 					<div class="col-md-3 col-xs-3 add-margin view-content">
-						<span class="bold">
-						<s:text name="rs"/> <s:property default="N/A" value="%{currentPropertyTax}" /></span>
+						<span class="bold"><s:text name="rs"/> <s:property default="N/A" value="%{currentPropertyTaxDue+arrearPropertyTaxDue}" /></span>
 					</div>
-					<div class="col-md-3 col-xs-3 add-margin">
-						<s:text name="CurrentTaxDue" />
-					</div>
-					<div class="col-md-3 col-xs-3 add-margin view-content">
-						<span class="bold"><s:text name="rs"/> <s:property default="N/A" value="%{currentPropertyTaxDue}" /></span>
-					</div>
+					<div colspan="3" align="center">
+				        <input type="button" name="button2" id="button2" value="Pay" class="buttonsubmit" onclick="propertyTaxPayment()" />
+				    </div>
 				</div>	
 				<div class="row add-border">	
 					<div class="col-md-3 col-xs-3 add-margin">
-						<s:text name="waterTaxDue"/>
+						<s:text name="water.charges.due"/>
 					</div>
 					<div class="col-md-3 col-xs-3 add-margin view-content">
 						<span class="bold"><s:text name="rs"/> <s:property default="N/A" value="%{currentWaterTaxDue}" /></span>
 					</div>
-					<div class="col-md-3 col-xs-3 add-margin">
-						<s:text name="ArrearsDue" />
-					</div>
-					<div class="col-md-3 col-xs-3 add-margin view-content">
-						<span class="bold"><s:text name="rs"/> <s:property default="N/A" value="%{arrearPropertyTaxDue}" /></span>
+					<div colspan="3" align="center">
+					    <input type="button" name="button2" id="button2" value="Pay" class="buttonsubmit" onclick="propertyWaterCharges()" />
 					</div>
 				</div>
 				<div class="mandatory">
@@ -111,8 +112,20 @@
 	</div>
 </div>
 <div colspan="3" align="center">
-				<input type="button" id="print" class="button printbtn" value="Print" class="print" />
+				<input type="button" name="btnPrint" id="btnPrint" value="Print Dues"
+							class="buttonsubmit" onclick="window.print();" />
 				&nbsp;&nbsp;
 				<input type="button" id="close" value="Close" class="button" onclick="javascript:window.close();" />
 </div>
 <script src="<cdn:url  value='/resources/global/js/jquery/plugins/jQuery.print.js' context='/egi'/>"></script>
+<script type="text/javascript">
+	function propertyTaxPayment() {
+		var assessmentNo = '<s:property value="%{assessmentNo}" />';
+		window.location = "/../ptis/citizen/collection/collection-generateBill.action?assessmentNumber="
+				+ assessmentNo;
+	}
+	function propertyWaterCharges() {
+		var assessmentNo = '<s:property default="N/A" value="%{assessmentNo}" />';
+		window.location = "/wtms/search/waterSearch/";
+	}
+</script>

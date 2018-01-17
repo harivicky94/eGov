@@ -1,10 +1,52 @@
+/*
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) 2017  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
+ */
+
 package org.egov.mrs.web.controller.application.registration;
-
-import static org.egov.mrs.application.MarriageConstants.CF_STAMP;
-import static org.egov.mrs.application.MarriageConstants.MOM;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.egov.mrs.application.MarriageConstants;
 import org.egov.mrs.domain.entity.MarriageDocument;
@@ -16,6 +58,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static org.egov.mrs.application.MarriageConstants.CF_STAMP;
+import static org.egov.mrs.application.MarriageConstants.MOM;
 
 /**
  * @author vinoth
@@ -56,10 +104,17 @@ public class MarriageFormValidator implements Validator {
                 NOTEMPTY_MRG_RESIDENCE_ADDRESS);
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "applicant.contactInfo.officeAddress", NOTEMPTY_MRG_OFFICE_ADDRESS);
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "applicant.contactInfo.mobileNo", "Notempty.mrg.mobile.no");
-
+        
+        if (reIssue.getStatus() != null && "CREATED".equals(reIssue.getStatus().getCode())
+                && !reIssue.isFeeCollected() && !MarriageConstants.JUNIOR_SENIOR_ASSISTANCE_APPROVAL_PENDING
+                        .equalsIgnoreCase(reIssue.getState().getNextAction())
+                && !MarriageConstants.WFLOW_PENDINGACTION_REV_CLERK_APPRVLPENDING
+                        .equalsIgnoreCase(reIssue.getState().getNextAction()))
+            errors.reject("validate.collect.reissueFee", null);
+        
         if (reIssue.getFeePaid() == null)
             errors.reject("Notempty.reissue.fee", null);
-        // ValidationUtils.rejectIfEmptyOrWhitespace(errors, "feePaid", "Notempty.reissue.fee");
+       
         if (reIssue.getApplicant() != null && reIssue.getApplicant().getContactInfo() != null
                 && reIssue.getApplicant().getContactInfo().getMobileNo() != null) {
             pattern = Pattern.compile(MOBILE_PATTERN);
@@ -157,6 +212,8 @@ public class MarriageFormValidator implements Validator {
 
             if (registration.getStatus() != null && "CREATED".equals(registration.getStatus().getCode())
                     && !registration.isFeeCollected() && !MarriageConstants.JUNIOR_SENIOR_ASSISTANCE_APPROVAL_PENDING
+                            .equalsIgnoreCase(registration.getState().getNextAction())
+                    && !MarriageConstants.WFLOW_PENDINGACTION_REV_CLERK_APPRVLPENDING
                             .equalsIgnoreCase(registration.getState().getNextAction()))
                 errors.reject("validate.collect.marriageFee", null);
 

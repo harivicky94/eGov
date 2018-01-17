@@ -1,41 +1,49 @@
 <%--
-  ~ eGov suite of products aim to improve the internal efficiency,transparency,
-  ~      accountability and the service delivery of the government  organizations.
+  ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
   ~
-  ~       Copyright (C) 2016  eGovernments Foundation
+  ~     Copyright (C) 2017  eGovernments Foundation
   ~
-  ~       The updated version of eGov suite of products as by eGovernments Foundation
-  ~       is available at http://www.egovernments.org
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
   ~
-  ~       This program is free software: you can redistribute it and/or modify
-  ~       it under the terms of the GNU General Public License as published by
-  ~       the Free Software Foundation, either version 3 of the License, or
-  ~       any later version.
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
   ~
-  ~       This program is distributed in the hope that it will be useful,
-  ~       but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~       GNU General Public License for more details.
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
   ~
-  ~       You should have received a copy of the GNU General Public License
-  ~       along with this program. If not, see http://www.gnu.org/licenses/ or
-  ~       http://www.gnu.org/licenses/gpl.html .
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
   ~
-  ~       In addition to the terms of the GPL license to be adhered to in using this
-  ~       program, the following additional terms are to be complied with:
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
   ~
-  ~           1) All versions of this program, verbatim or modified must carry this
-  ~              Legal Notice.
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~            Further, all user interfaces, including but not limited to citizen facing interfaces,
+  ~            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+  ~            derived works should carry eGovernments Foundation logo on the top right corner.
   ~
-  ~           2) Any misrepresentation of the origin of the material is prohibited. It
-  ~              is required that all modified versions of this material be marked in
-  ~              reasonable ways as different from the original version.
+  ~            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+  ~            For any further queries on attribution, including queries on brand guidelines,
+  ~            please contact contact@egovernments.org
   ~
-  ~           3) This license does not grant any rights to any user of the program
-  ~              with regards to rights under trademark law for use of the trade names
-  ~              or trademarks of eGovernments Foundation.
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
   ~
-  ~     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~
   --%>
 
 <%@ page language="java" pageEncoding="UTF-8"%>
@@ -161,7 +169,7 @@
 					<tr>
 						<td colspan="5">
 							<div class="headingsmallbg">
-								<span class="bold"><s:text name="ownerdetails.title"></s:text></span>
+								<span class="bold"><s:text name="transferorDetails"></s:text></span>
 							</div>
 						</td>
 					</tr>
@@ -310,20 +318,35 @@
 					<s:if test="%{!documentTypes.isEmpty()}">
 						<%@ include file="../common/DocumentUploadForm.jsp"%>
 					</s:if>
-				<s:if test="%{propertyByEmployee == true && applicationSource != 'online' && !citizenPortalUser}">
-					<table width="100%" border="0" cellspacing="0" cellpadding="0">
-						<tr>
-							<%@ include file="../workflow/commonWorkflowMatrix.jsp"%>
-						</tr>
-						<tr>
-							<%@ include file="../workflow/commonWorkflowMatrix-button.jsp"%>
-						</tr>
-					</table>
-				</s:if>
-				<s:else>
-					<tr align="center">
-						<%@ include file="../workflow/commonWorkflowMatrix-button.jsp"%>
-					</tr>
+					<s:if test="%{!(@org.egov.ptis.constants.PropertyTaxConstants@ADDTIONAL_RULE_FULL_TRANSFER.equalsIgnoreCase(type) 
+						&& applicationSource.equalsIgnoreCase('online'))}">
+
+						<s:if
+							test="%{propertyByEmployee == true && applicationSource != 'online' && !citizenPortalUser}">
+						<table width="100%" border="0" cellspacing="0" cellpadding="0">
+								<tr>
+									<%@ include file="../workflow/commonWorkflowMatrix.jsp"%>
+								</tr>
+								<tr>
+									<%@ include file="../workflow/commonWorkflowMatrix-button.jsp"%>
+								</tr>
+							</table>
+						</s:if>
+						<s:else>
+							<tr align="center">
+								<%@ include file="../workflow/commonWorkflowMatrix-button.jsp"%>
+							</tr>
+						</s:else>
+					</s:if>
+					<s:else>
+						<s:hidden id="workFlowAction" name="workFlowAction" value="Forward" />
+						<div class="buttonbottom" align="center">
+							<s:submit type="submit" value="Proceed for Payment"
+								cssClass="buttonsubmit" id="fullTransferButton"
+								name="fullTransferButton" />
+						<input type="button" name="button2" id="button2" value="Close"
+							class="button" onclick="window.close();" />
+					</div>
 				</s:else>
 			</s:push>
 		</s:form>
@@ -389,14 +412,17 @@
 				bootbox.alert("Please enter valid values in Parties consideration value and Department guidelines value for Mutation Fee calculations");
 				return false;
 			}
-		var tosubmit = true;
-			jQuery(".validateDocs").each(function() {
-				if (jQuery(this).val() == '') {
-					bootbox.alert("attach the document");
-					tosubmit = false;
-					return false;
-				}
-			});
+			var tosubmit = true;
+			var mutationType = '<s:property value="%{model.type}"/>'; 
+			if(mutationType == 'REGISTERED TRANSFER'){
+				jQuery(".validateDocs").each(function() {
+					if (jQuery(this).val() == '') {
+						bootbox.alert("attach the document");
+						tosubmit = false;
+						return false;
+					}
+				});
+			}
 
 			if (tosubmit)
 				return true;

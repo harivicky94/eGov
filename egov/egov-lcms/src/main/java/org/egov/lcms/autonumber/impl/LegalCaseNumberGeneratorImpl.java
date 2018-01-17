@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,34 +43,34 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.lcms.autonumber.impl;
-
-import java.io.Serializable;
-import java.util.Date;
 
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
+import org.egov.infra.persistence.utils.GenericSequenceNumberGenerator;
 import org.egov.lcms.autonumber.LegalCaseNumberGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.io.Serializable;
+import java.util.Date;
 
 @Service
 public class LegalCaseNumberGeneratorImpl implements LegalCaseNumberGenerator {
     private static final String LEGALCASE_NUMBER_SEQ_PREFIX = "SEQ_LEGALCASE_NUMBER";
     @Autowired
-    private ApplicationSequenceNumberGenerator applicationSequenceNumberGenerator;
+    private GenericSequenceNumberGenerator genericSequenceNumberGenerator;
 
     @Autowired
     private FinancialYearDAO financialYearDAO;
 
     @Override
     public String generateLegalCaseNumber() {
-        final String sequenceName = LEGALCASE_NUMBER_SEQ_PREFIX;
         final CFinancialYear finYear = financialYearDAO.getFinancialYearByDate(new Date());
-        final Serializable nextSequence = applicationSequenceNumberGenerator.getNextSequence(sequenceName);
+        final Serializable nextSequence = genericSequenceNumberGenerator.getNextSequence(LEGALCASE_NUMBER_SEQ_PREFIX);
         return String.format("%s%s%s%06d", "LC/", ApplicationThreadLocals.getCityCode() + "/", finYear != null ? (finYear
                 .getFinYearRange().split("-")[0] + "/") : "/", nextSequence);
     }

@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,18 +43,16 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.ptis.client.util;
-
-import java.util.Date;
 
 import org.egov.commons.dao.InstallmentDao;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.persistence.utils.SequenceNumberGenerator;
-import org.egov.infra.utils.ApplicationNumberGenerator;
+import org.egov.infra.persistence.utils.DatabaseSequenceProvider;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.ptis.autonumber.AssessmentNumberGenerator;
 import org.egov.ptis.autonumber.NoticeNumberGenerator;
@@ -57,12 +62,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
+
 @Service
 @Transactional(readOnly = true)
 public class PropertyTaxNumberGenerator {
     private static final String SEQ_EG_BILL = "SEQ_EG_BILL";
     @Autowired
-    private SequenceNumberGenerator sequenceNumberGenerator;
+    private DatabaseSequenceProvider databaseSequenceProvider;
     @Autowired
     private ModuleService moduleDao;
     @Autowired
@@ -105,7 +112,7 @@ public class PropertyTaxNumberGenerator {
             billNo.append("B").append("/");
             final String cityCode = cityService.findAll().get(0).getCode();
             billNo.append(cityCode);
-            final String bill = sequenceNumberGenerator.getNextSequence(SEQ_EG_BILL).toString();
+            final String bill = databaseSequenceProvider.getNextSequence(SEQ_EG_BILL).toString();
             billNo.append(org.apache.commons.lang.StringUtils.leftPad(bill, 6, "0"));
         } catch (final Exception e) {
             throw new ApplicationRuntimeException("Exception : " + e.getMessage(), e);
@@ -139,8 +146,8 @@ public class PropertyTaxNumberGenerator {
         return null;
     }
 
-    public void setSequenceNumberGenerator(final SequenceNumberGenerator sequenceNumberGenerator) {
-        this.sequenceNumberGenerator = sequenceNumberGenerator;
+    public void setDatabaseSequenceProvider(final DatabaseSequenceProvider databaseSequenceProvider) {
+        this.databaseSequenceProvider = databaseSequenceProvider;
     }
 
 }

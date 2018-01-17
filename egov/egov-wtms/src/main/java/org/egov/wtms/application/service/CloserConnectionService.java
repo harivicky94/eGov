@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,11 +43,13 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.wtms.application.service;
 
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WORKFLOW_CLOSUREADDITIONALRULE;
+
 import java.math.BigDecimal;
-import java.util.HashMap;
 
 import org.egov.commons.entity.Source;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -53,7 +62,6 @@ import org.egov.wtms.application.workflow.ApplicationWorkflowCustomDefaultImpl;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.utils.PropertyExtnUtils;
 import org.egov.wtms.utils.WaterTaxUtils;
-import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
@@ -116,7 +124,7 @@ public class CloserConnectionService {
                     .getCurrentDue(parentWaterConnectionDetail);
             if (waterTaxDueforParent.doubleValue() > 0)
                 validationMessage = wcmsMessageSource.getMessage("err.closure.connection.watertaxdue", null, null);
-        } else if (null != inWorkflow)
+        } else if (inWorkflow != null)
             validationMessage = wcmsMessageSource.getMessage("err.validate.closeconnection.application.inprocess",
                     new String[] { parentWaterConnectionDetail.getConnection().getConsumerCode(),
                             inWorkflow.getApplicationNumber() },
@@ -135,19 +143,17 @@ public class CloserConnectionService {
      */
     @Transactional
     public WaterConnectionDetails updatecloserConnection(final WaterConnectionDetails waterConnectionDetails,
-            final Long approvalPosition, final String approvalComent, String additionalRule,
+            final Long approvalPosition, final String approvalComent,
             final String workFlowAction, final String sourceChannel) {
 
-        waterConnectionDetailsService.applicationStatusChange(waterConnectionDetails, workFlowAction, "",
-                sourceChannel);
+        waterConnectionDetailsService.applicationStatusChange(waterConnectionDetails, workFlowAction, "");
         final WaterConnectionDetails savedwaterConnectionDetails = waterConnectionDetailsRepository
                 .saveAndFlush(waterConnectionDetails);
 
         final ApplicationWorkflowCustomDefaultImpl applicationWorkflowCustomDefaultImpl = waterConnectionDetailsService
                 .getInitialisedWorkFlowBean();
-        additionalRule = WaterTaxConstants.WORKFLOW_CLOSUREADDITIONALRULE;
         applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(savedwaterConnectionDetails,
-                approvalPosition, approvalComent, additionalRule, workFlowAction);
+                approvalPosition, approvalComent, WORKFLOW_CLOSUREADDITIONALRULE, workFlowAction);
 
         if (waterConnectionDetails.getSource() != null
                 && Source.CITIZENPORTAL.toString().equalsIgnoreCase(waterConnectionDetails.getSource().toString())
@@ -157,12 +163,5 @@ public class CloserConnectionService {
             waterConnectionDetailsService.pushPortalMessage(savedwaterConnectionDetails);
         waterConnectionDetailsService.updateIndexes(savedwaterConnectionDetails, sourceChannel);
         return savedwaterConnectionDetails;
-    }
-
-    public WaterConnectionDetails updatecloserConnection(final WaterConnectionDetails closeConnection,
-            final Long approvalPosition, final String approvalComent, final String additionalRule,
-            final String workFlowAction, final HashMap<String, String> meesevaParams, final String sourceChannel) {
-        return updatecloserConnection(closeConnection, approvalPosition, approvalComent, additionalRule, workFlowAction,
-                sourceChannel);
     }
 }

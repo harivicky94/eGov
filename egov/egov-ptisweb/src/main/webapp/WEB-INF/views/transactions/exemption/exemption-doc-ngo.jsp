@@ -1,8 +1,8 @@
 <%--
-  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2017>  eGovernments Foundation
+  ~     Copyright (C) 2017  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
   ~
   ~         1) All versions of this program, verbatim or modified must carry this
   ~            Legal Notice.
+  ~            Further, all user interfaces, including but not limited to citizen facing interfaces,
+  ~            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+  ~            derived works should carry eGovernments Foundation logo on the top right corner.
+  ~
+  ~            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+  ~            For any further queries on attribution, including queries on brand guidelines,
+  ~            please contact contact@egovernments.org
   ~
   ~         2) Any misrepresentation of the origin of the material is prohibited. It
   ~            is required that all modified versions of this material be marked in
@@ -36,6 +43,7 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~
   --%>
 
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
@@ -125,29 +133,25 @@
 											</c:choose>
 										</c:when>
 										<c:otherwise>
-											<c:forEach items="${ngoDocs[index].files}" var="file">
-												<%-- <c:choose> --%>
+											<c:choose>
+												<c:when test="${!ngoDocs[index].files.isEmpty()}">
+													<c:forEach items="${ngoDocs[index].files}" var="file">
 
-												<%-- <c:when test="${docs.mandatory}">
-														<input type="file" id="file${index}" data-idx="${index}"
+														<input type="file" id="file${index}"
 															name="taxExemptionDocumentsProxy[${index}].file"
-															class="file-ellipsis upload-file" required="true">
+															class="file-ellipsis upload-file">
 														<a
 															href="javascript:viewDocument('<c:out value="${file.fileStoreId}"/>')">
 															<c:out value="${file.fileName}" />
 														</a>
-													</c:when>
-													<c:otherwise>
-														<input type="file" id="file${index}"
-															name="taxExemptionDocumentsProxy[${index}].file"
-															class="file-ellipsis upload-file"> --%>
-												<a
-													href="javascript:viewDocument('<c:out value="${file.fileStoreId}"/>')">
-													<c:out value="${file.fileName}" />
-												</a>
-												<%-- </c:otherwise> --%>
-												<%-- </c:choose> --%>
-											</c:forEach>
+													</c:forEach>
+												</c:when>
+												<c:otherwise>
+													<input type="file" id="file${index}"
+														name="taxExemptionDocumentsProxy[${index}].file"
+														class="file-ellipsis upload-file">
+												</c:otherwise>
+											</c:choose>
 										</c:otherwise>
 									</c:choose>
 									<form:errors path="taxExemptionDocumentsProxy[${index}].file"

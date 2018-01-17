@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,6 +43,7 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 
 package org.egov.api.controller;
@@ -57,14 +65,13 @@ import org.egov.infra.workflow.entity.State.StateStatus;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.entity.WorkflowTypes;
 import org.egov.infra.workflow.service.WorkflowTypeService;
-import org.egov.infstr.services.EISServeable;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.Priority;
 import org.egov.pgr.service.PriorityService;
+import org.egov.pims.commons.Position;
+import org.egov.pims.service.EisUtilService;
 import org.hibernate.FetchMode;
 import org.hibernate.FlushMode;
-import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.Order;
@@ -115,7 +122,8 @@ public class EmployeeController extends ApiController {
     @Autowired
     private SecurityUtils securityUtils;
     @Autowired
-    private EISServeable eisService;
+    private EisUtilService eisService;
+
     @Autowired
     private PriorityService priorityService;
 
@@ -126,7 +134,7 @@ public class EmployeeController extends ApiController {
             return res.setDataAdapter(new UserAdapter())
                     .success(getWorkflowTypesWithCount(securityUtils.getCurrentUser().getId(), posMasterService
                             .getPositionsForEmployee(securityUtils.getCurrentUser().getId(), new Date()).parallelStream()
-                            .map(position -> position.getId()).collect(Collectors.toList())));
+                            .map(Position::getId).collect(Collectors.toList())));
         } catch (final Exception ex) {
             LOGGER.error(EGOV_API_ERROR, ex);
             return res.error(getMessage("server.error"));
@@ -143,7 +151,7 @@ public class EmployeeController extends ApiController {
                     .success(createInboxData(getWorkflowItemsByUserAndWFType(securityUtils.getCurrentUser().getId(),
                             posMasterService.getPositionsForEmployee(securityUtils.getCurrentUser().getId(), new Date())
                                     .parallelStream()
-                                    .map(position -> position.getId()).collect(Collectors.toList()),
+                                    .map(Position::getId).collect(Collectors.toList()),
                             workFlowType, resultsFrom, resultsTo, priority)));
         } catch (final Exception ex) {
             LOGGER.error(EGOV_API_ERROR, ex);
@@ -183,16 +191,16 @@ public class EmployeeController extends ApiController {
             // identify requesting for users or designations with this if condition
             if (departmentId != null && designationId != null) {
                 final Set<EmployeeView> users = new HashSet<>();
-                final HashMap<String, String> paramMap = new HashMap<String, String>();
+                final HashMap<String, String> paramMap = new HashMap<>();
                 paramMap.put("departmentId", String.valueOf(departmentId));
                 paramMap.put("designationId", String.valueOf(designationId));
-                final List<EmployeeView> empViewList = (List<EmployeeView>) eisService.getEmployeeInfoList(paramMap);
-                empViewList.stream().forEach(user -> {
-                    user.getEmployee().getRoles().stream().forEach(role -> {
-                        if (role.getName().matches("Redressal Officer|Grievance Officer|Grievance Routing Officer"))
-                            users.add(user);
-                    });
-                });
+                final List<EmployeeView> empViewList = eisService.getEmployeeInfoList(paramMap);
+                empViewList.stream().forEach(user ->
+                        user.getEmployee().getRoles().stream().forEach(role -> {
+                            if (role.getName().matches("Redressal Officer|Grievance Officer|Grievance Routing Officer"))
+                                users.add(user);
+                        })
+                );
                 forwardDetails.setUsers(users);
             } else if (departmentId != null)
                 forwardDetails.setDesignations(eisService.getAllDesignationByDept(departmentId, new Date()));
@@ -209,95 +217,110 @@ public class EmployeeController extends ApiController {
 
     private JsonArray createInboxData(final List<StateAware> inboxStates) {
         final JsonArray inboxItems = new JsonArray();
-        inboxStates.stream().sorted(Comparator.comparing(stateAware -> stateAware.getState().getCreatedDate()));
-        Collections.reverse(inboxStates);
-        for (final StateAware stateAware : inboxStates)
+        List<StateAware> inboxSorted = inboxStates
+                .stream()
+                .sorted(Comparator.comparing(stateAware -> stateAware.getState().getCreatedDate()))
+                .collect(Collectors.toList());
+        Collections.reverse(inboxSorted);
+        for (final StateAware stateAware : inboxSorted)
             inboxItems.add(new JsonParser().parse(stateAware.getStateInfoJson()).getAsJsonObject());
         return inboxItems;
     }
 
     @SuppressWarnings("unchecked")
     public List<StateAware> getWorkflowItemsByUserAndWFType(final Long userId, final List<Long> owners, final String workFlowType,
-                                                            final int resultsFrom, final int resultsTo, String priority) throws HibernateException, ClassNotFoundException {
+                                                            final int resultsFrom, final int resultsTo, String priority) throws ClassNotFoundException {
 
-        Criterion criterion = Restrictions
-                .not(Restrictions.conjunction().add(Restrictions.eq("state.status", StateStatus.STARTED))
-                        .add(Restrictions.eq("createdBy.id", userId)));
+        if (!owners.isEmpty()) {
+            Criterion criterion = Restrictions
+                    .not(Restrictions.conjunction().add(Restrictions.eq("state.status", StateStatus.STARTED))
+                            .add(Restrictions.eq("createdBy.id", userId)));
 
-        criterion = addPriorityCondition(criterion, priority);
+            criterion = addPriorityCondition(criterion, priority);
 
-        return entityQueryService.getSession()
-                .createCriteria(Class.forName(workflowTypeService.getEnabledWorkflowTypeByType(workFlowType).getTypeFQN()))
-                .setFirstResult(resultsFrom)
-                .setMaxResults(resultsTo)
-                .setFetchMode("state", FetchMode.JOIN).createAlias("state", "state")
-                .setFlushMode(FlushMode.MANUAL).setReadOnly(true).setCacheable(true)
-                .add(Restrictions.eq("state.type", workFlowType))
-                .add(Restrictions.in("state.ownerPosition.id", owners))
-                .add(Restrictions.ne("state.status", StateStatus.ENDED))
-                .add(criterion)
-                .addOrder(Order.desc("state.createdDate"))
-                .list();
+            return entityQueryService.getSession()
+                    .createCriteria(Class.forName(workflowTypeService.getEnabledWorkflowTypeByType(workFlowType).getTypeFQN()))
+                    .setFirstResult(resultsFrom)
+                    .setMaxResults(resultsTo)
+                    .setFetchMode("state", FetchMode.JOIN).createAlias("state", "state")
+                    .setFlushMode(FlushMode.MANUAL).setReadOnly(true).setCacheable(true)
+                    .add(Restrictions.eq("state.type", workFlowType))
+                    .add(Restrictions.in("state.ownerPosition.id", owners))
+                    .add(Restrictions.ne("state.status", StateStatus.ENDED))
+                    .add(criterion)
+                    .addOrder(Order.desc("state.createdDate"))
+                    .list();
+        }
+
+        return Collections.emptyList();
 
     }
 
     @SuppressWarnings("unchecked")
     public Number getWorkflowItemsCountByWFType(final Long userId, final List<Long> owners, final String workFlowType,
                                                 final String priority)
-            throws HibernateException, ClassNotFoundException {
+            throws ClassNotFoundException {
 
-        Criterion criterion = Restrictions
-                .not(Restrictions.conjunction().add(Restrictions.eq("state.status", StateStatus.STARTED))
-                        .add(Restrictions.eq("createdBy.id", userId)));
-        criterion = addPriorityCondition(criterion, priority);
+        if (!owners.isEmpty()) {
+            Criterion criterion = Restrictions
+                    .not(Restrictions.conjunction().add(Restrictions.eq("state.status", StateStatus.STARTED))
+                            .add(Restrictions.eq("createdBy.id", userId)));
+            criterion = addPriorityCondition(criterion, priority);
 
-        return (Number) entityQueryService.getSession()
-                .createCriteria(Class.forName(workflowTypeService.getEnabledWorkflowTypeByType(workFlowType).getTypeFQN()))
-                .setFetchMode("state", FetchMode.JOIN).createAlias("state", "state")
-                .setFlushMode(FlushMode.MANUAL).setReadOnly(true).setCacheable(true)
-                .setProjection(Projections.rowCount())
-                .add(Restrictions.eq("state.type", workFlowType))
-                .add(Restrictions.in("state.ownerPosition.id", owners))
-                .add(Restrictions.ne("state.status", StateStatus.ENDED))
-                .add(criterion)
-                .uniqueResult();
+            return (Number) entityQueryService.getSession()
+                    .createCriteria(Class.forName(workflowTypeService.getEnabledWorkflowTypeByType(workFlowType).getTypeFQN()))
+                    .setFetchMode("state", FetchMode.JOIN).createAlias("state", "state")
+                    .setFlushMode(FlushMode.MANUAL).setReadOnly(true).setCacheable(true)
+                    .setProjection(Projections.rowCount())
+                    .add(Restrictions.eq("state.type", workFlowType))
+                    .add(Restrictions.in("state.ownerPosition.id", owners))
+                    .add(Restrictions.ne("state.status", StateStatus.ENDED))
+                    .add(criterion)
+                    .uniqueResult();
+        }
+        return 0;
     }
 
     public List<HashMap<String, Object>> getWorkflowTypesWithCount(final Long userId, final List<Long> ownerPostitions)
-            throws HibernateException, ClassNotFoundException {
+            throws ClassNotFoundException {
 
-        final List<HashMap<String, Object>> workFlowTypesWithItemsCount = new ArrayList<>();
-        final Query query = entityQueryService.getSession().createQuery(
-                "select type, count(type) from State  where ownerPosition.id in (:ownerPositions) and status != :statusEnded and createdBy.id != :userId group by type");
-        query.setParameterList("ownerPositions", ownerPostitions);
-        query.setParameter("statusEnded", StateStatus.ENDED);
-        query.setParameter("userId", userId);
+        if (ownerPostitions.isEmpty()) {
+            return Collections.emptyList();
+        } else {
+            final List<HashMap<String, Object>> workFlowTypesWithItemsCount = new ArrayList<>();
+            final Query query = entityQueryService.getSession().createQuery(
+                    "select type, count(type) from State  where ownerPosition.id in (:ownerPositions) " +
+                            "and status != :statusEnded and createdBy.id != :userId group by type");
+            query.setParameterList("ownerPositions", ownerPostitions);
+            query.setParameter("statusEnded", StateStatus.ENDED);
+            query.setParameter("userId", userId);
 
-        final List<Object[]> result = query.list();
-        Map<String, Long> prioritiesListCount = new LinkedHashMap<>();
-        for (final Object[] rowObj : result) {
-            String workFlowTypeStr = String.valueOf(rowObj[0]);
-            final Long wftitemscount = (Long) getWorkflowItemsCountByWFType(userId, ownerPostitions, workFlowTypeStr, "");
-            if (wftitemscount > 0) {
-                final HashMap<String, Object> workFlowType = new HashMap<>();
-                final WorkflowTypes workFlowTypeObj = workflowTypeService.getEnabledWorkflowTypeByType(workFlowTypeStr);
-                workFlowType.put("workflowtype", workFlowTypeStr);
-                workFlowType.put("inboxlistcount", wftitemscount);
-                workFlowType.put("workflowtypename", workFlowTypeObj.getDisplayName());
-                workFlowType.put("workflowgroupYN", workFlowTypeObj.isGrouped() ? Y : N);
+            final List<Object[]> result = query.list();
+            Map<String, Long> prioritiesListCount = new LinkedHashMap<>();
+            for (final Object[] rowObj : result) {
+                String workFlowTypeStr = String.valueOf(rowObj[0]);
+                final Long wftitemscount = (Long) getWorkflowItemsCountByWFType(userId, ownerPostitions, workFlowTypeStr, "");
+                if (wftitemscount > 0) {
+                    final HashMap<String, Object> workFlowType = new HashMap<>();
+                    final WorkflowTypes workFlowTypeObj = workflowTypeService.getEnabledWorkflowTypeByType(workFlowTypeStr);
+                    workFlowType.put("workflowtype", workFlowTypeStr);
+                    workFlowType.put("inboxlistcount", wftitemscount);
+                    workFlowType.put("workflowtypename", workFlowTypeObj.getDisplayName());
+                    workFlowType.put("workflowgroupYN", workFlowTypeObj.isGrouped() ? Y : N);
 
-                if (workFlowTypeStr.equals(Complaint.class.getSimpleName())) {
-                    for (Priority priority : priorityService.getAllPriorities()) {
-                        prioritiesListCount.put(priority.getCode(), (Long) getWorkflowItemsCountByWFType(userId, ownerPostitions,
-                                workFlowTypeStr, priority.getCode()));
+                    if ("Complaint".equals(workFlowTypeStr)) {
+                        for (Priority priority : priorityService.getAllPriorities()) {
+                            prioritiesListCount.put(priority.getCode(), (Long) getWorkflowItemsCountByWFType(userId, ownerPostitions,
+                                    workFlowTypeStr, priority.getCode()));
+                        }
+                        workFlowType.put("prioritylistcount", prioritiesListCount);
                     }
-                    workFlowType.put("prioritylistcount", prioritiesListCount);
-                }
 
-                workFlowTypesWithItemsCount.add(workFlowType);
+                    workFlowTypesWithItemsCount.add(workFlowType);
+                }
             }
+            return workFlowTypesWithItemsCount;
         }
-        return workFlowTypesWithItemsCount;
     }
 
     private Criterion addPriorityCondition(Criterion existingCondition, String priority) {

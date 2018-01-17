@@ -1,8 +1,8 @@
 <%--
-  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2016>  eGovernments Foundation
+  ~     Copyright (C) 2017  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
   ~
   ~         1) All versions of this program, verbatim or modified must carry this
   ~            Legal Notice.
+  ~            Further, all user interfaces, including but not limited to citizen facing interfaces,
+  ~            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+  ~            derived works should carry eGovernments Foundation logo on the top right corner.
+  ~
+  ~            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+  ~            For any further queries on attribution, including queries on brand guidelines,
+  ~            please contact contact@egovernments.org
   ~
   ~         2) Any misrepresentation of the origin of the material is prohibited. It
   ~            is required that all modified versions of this material be marked in
@@ -36,6 +43,7 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~
   --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
@@ -50,7 +58,6 @@
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
 					<div class="panel-title">
-						<strong><spring:message code="lbl.dcbDrillDownReportWardwise"></spring:message></strong>
 					</div>
 				</div>
 				<div class="panel-body">
@@ -65,20 +72,26 @@
 						<form:errors path="propertyType" cssClass="add-margin error-msg" />
 					</div>
 						<label class="col-sm-2 control-label text-right" ><spring:message code="lbl.ward"></spring:message></label>
-						<div class="col-sm-3 add-margin">
-							<form:select path="wards" multiple="true" id="ward" size="10" cssClass="form-control" cssErrorClass="form-control error">
-								<form:option value="0">ALL</form:option>
-								<form:options items="${wards}" itemValue="id" itemLabel="name"></form:options>
-							</form:select>
-							<form:errors path="wards" cssClass="error-msg" /> 
-						</div>
-						<spring:message code="lbl.pressCntrlToSelectMultipleWards"></spring:message>
-				</div>
-				<div class="row">
-					<div class="text-center">
-						<button type="button" class="btn btn-primary" id="search"><spring:message code="lbl.search"/></button>
-						<a href="javascript:void(0)" onclick="self.close()" class="btn btn-default"><spring:message code="lbl.close"/></a>
+					<div class="col-sm-3 add-margin">
+						<select name="wards" multiple id="ward" size="10"
+							class="form-control wards tick-indicator">
+							<option value="0">All</option>
+							<c:forEach items="${wards}" var="ward">
+								<option value="${ward.id}" title="${ward.name}">${ward.name}</option>
+							</c:forEach>
+						</select>
+						<form:errors path="wards" cssClass="error-msg" />
 					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="text-center">
+					<button type="button" class="btn btn-primary btnSearch" id="search">
+						<spring:message code="lbl.search" />
+					</button>
+					<button type="reset" class="btn btn-danger"><spring:message code="lbl.reset"/></button>
+					<a href="javascript:void(0)" onclick="self.close()"
+						class="btn btn-default"><spring:message code="lbl.close" /></a>
 				</div>
 			</div>
 		</form:form>
@@ -125,6 +138,8 @@
 		</table>
 	</div>
 </div>
+<link rel="stylesheet"
+	href="<cdn:url value='/resources/css/sewerage-style.css?rnd=${app_release_no}'/>" />
 <link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
 <link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
 <script type="text/javascript" src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
@@ -135,3 +150,5 @@
 <script src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/moment.min.js' context='/egi'/>"></script>
 <script src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/datetime-moment.js' context='/egi'/>"></script>
 <script  src="<cdn:url  value='/resources/js/reports/sewerageDCBWardwise.js?rnd=${app_release_no}' /> " ></script>
+<script type="text/javascript"
+	src="<cdn:url value='/resources/js/search/common-util-helper.js?rnd=${app_release_no}'/>"></script>

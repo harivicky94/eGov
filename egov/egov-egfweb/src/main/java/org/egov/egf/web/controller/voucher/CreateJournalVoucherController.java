@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,13 +43,9 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.egf.web.controller.voucher;
-
-import java.io.IOException;
-import java.util.Date;
-
-import javax.servlet.http.HttpServletRequest;
 
 import org.egov.commons.CVoucherHeader;
 import org.egov.egf.utils.FinancialUtils;
@@ -61,6 +64,9 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
 
 /**
  * @author venki
@@ -107,14 +113,13 @@ public class CreateJournalVoucherController extends BaseVoucherController {
         prepareWorkflow(model, voucherHeader, new WorkflowContainer());
         prepareValidActionListByCutOffDate(model);
         voucherHeader.setVoucherDate(new Date());
-        model.addAttribute(VOUCHER_NUMBER_GENERATION_AUTO, isVoucherNumberGenerationAuto(voucherHeader));
+        model.addAttribute(VOUCHER_NUMBER_GENERATION_AUTO, isVoucherNumberGenerationAuto(voucherHeader, model));
         return JOURNALVOUCHER_FORM;
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public String create(@ModelAttribute("voucherHeader") final CVoucherHeader voucherHeader, final Model model,
-            final BindingResult resultBinder, final HttpServletRequest request, @RequestParam final String workFlowAction)
-            throws IOException {
+            final BindingResult resultBinder, final HttpServletRequest request, @RequestParam final String workFlowAction) {
 
         voucherHeader.setType(FinancialConstants.STANDARD_VOUCHER_TYPE_JOURNAL);
         voucherHeader.setEffectiveDate(voucherHeader.getVoucherDate());
@@ -128,7 +133,7 @@ public class CreateJournalVoucherController extends BaseVoucherController {
             prepareWorkflow(model, voucherHeader, new WorkflowContainer());
             prepareValidActionListByCutOffDate(model);
             voucherHeader.setVoucherDate(new Date());
-            model.addAttribute(VOUCHER_NUMBER_GENERATION_AUTO, isVoucherNumberGenerationAuto(voucherHeader));
+            model.addAttribute(VOUCHER_NUMBER_GENERATION_AUTO, isVoucherNumberGenerationAuto(voucherHeader, model));
 
             return JOURNALVOUCHER_FORM;
         } else {
@@ -148,7 +153,7 @@ public class CreateJournalVoucherController extends BaseVoucherController {
                 prepareWorkflow(model, voucherHeader, new WorkflowContainer());
                 prepareValidActionListByCutOffDate(model);
                 voucherHeader.setVoucherDate(new Date());
-                model.addAttribute(VOUCHER_NUMBER_GENERATION_AUTO, isVoucherNumberGenerationAuto(voucherHeader));
+                model.addAttribute(VOUCHER_NUMBER_GENERATION_AUTO, isVoucherNumberGenerationAuto(voucherHeader, model));
                 resultBinder.reject("", e.getErrors().get(0).getMessage());
                 return JOURNALVOUCHER_FORM;
             }

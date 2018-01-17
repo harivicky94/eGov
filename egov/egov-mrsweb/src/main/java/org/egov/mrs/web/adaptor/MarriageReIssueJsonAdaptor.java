@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,19 +43,24 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 
 package org.egov.mrs.web.adaptor;
-
-import java.lang.reflect.Type;
-
-import org.egov.infra.utils.StringUtils;
-import org.egov.mrs.domain.entity.ReIssue;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+
+import org.egov.infra.utils.DateUtils;
+import org.egov.infra.utils.StringUtils;
+import org.egov.mrs.domain.entity.ReIssue;
+
+import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
+import static org.egov.mrs.application.MarriageConstants.N_A;
+
+import java.lang.reflect.Type;
 
 public class MarriageReIssueJsonAdaptor implements JsonSerializer<ReIssue> {
     @Override
@@ -56,32 +68,18 @@ public class MarriageReIssueJsonAdaptor implements JsonSerializer<ReIssue> {
             final JsonSerializationContext jsc) {
         JsonObject jsonObject = new JsonObject();
         if (reIssue != null) {
-            if (reIssue.getApplicationNo() != null)
-                jsonObject.addProperty("applicationNo", reIssue.getApplicationNo());
-            else
-                jsonObject.addProperty("applicationNo", org.apache.commons.lang.StringUtils.EMPTY);
-            if (reIssue.getRegistration().getRegistrationNo() != null)
-                jsonObject.addProperty("registrationNo", reIssue.getRegistration().getRegistrationNo());
-            else
-                jsonObject.addProperty("registrationNo", StringUtils.EMPTY);
-            if (reIssue.getApplicationDate() != null)
-                jsonObject.addProperty("registrationDate", reIssue.getApplicationDate().toString());
-            else
-                jsonObject.addProperty("registrationDate", StringUtils.EMPTY);
-
-            if (reIssue.getRegistration().getDateOfMarriage() != null)
-                jsonObject.addProperty("dateOfMarriage", reIssue.getRegistration().getDateOfMarriage().toString());
-            else
-                jsonObject.addProperty("dateOfMarriage", StringUtils.EMPTY);
-
-            if (reIssue.getRegistration().getHusband().getFullName() != null)
-                jsonObject.addProperty("husbandName", reIssue.getRegistration().getHusband().getFullName());
-            else
-                jsonObject.addProperty("husbandName", StringUtils.EMPTY);
-            if (reIssue.getRegistration().getWife().getFullName() != null)
-                jsonObject.addProperty("wifeName", reIssue.getRegistration().getWife().getFullName());
-            else
-                jsonObject.addProperty("wifeName", StringUtils.EMPTY);
+            jsonObject.addProperty("registrationNo", defaultIfBlank(reIssue.getRegistration().getRegistrationNo(), N_A));
+            jsonObject.addProperty("applicationNo", defaultIfBlank(reIssue.getApplicationNo(), N_A));
+            jsonObject.addProperty("registrationDate",
+                    defaultIfBlank(DateUtils.toDefaultDateFormat(reIssue.getApplicationDate()), N_A));
+            jsonObject.addProperty("dateOfMarriage",
+                    defaultIfBlank(DateUtils.toDefaultDateFormat(reIssue.getRegistration().getDateOfMarriage()), N_A));
+            jsonObject.addProperty("husbandName", defaultIfBlank(reIssue.getRegistration().getHusband().getFullName(), N_A));
+            jsonObject.addProperty("wifeName", defaultIfBlank(reIssue.getRegistration().getWife().getFullName(), N_A));
+            jsonObject.addProperty("remarks", defaultIfBlank(reIssue.getRejectionReason(), N_A));
+            jsonObject.addProperty("zone", defaultIfBlank(reIssue.getRegistration().getZone().getName(), N_A));
+            jsonObject.addProperty("marriageRegistrationUnit",
+                    defaultIfBlank(reIssue.getRegistration().getMarriageRegistrationUnit().getName(), N_A));
 
             if (reIssue.getMarriageCertificate().isEmpty())
                 jsonObject.addProperty("certificateIssued", "No");
@@ -101,18 +99,7 @@ public class MarriageReIssueJsonAdaptor implements JsonSerializer<ReIssue> {
                 jsonObject.addProperty("feeCollected", "No");
             } else
                 jsonObject.addProperty("feeCollected", "Yes");
-            if (reIssue.getZone() != null)
-                jsonObject.addProperty("zone", reIssue.getZone().getName());
-            else
-                jsonObject.addProperty("zone", org.apache.commons.lang.StringUtils.EMPTY);
-            if (reIssue.getStateType() != null)
-                jsonObject.addProperty("remarks", reIssue.getRejectionReason());
-            else
-                jsonObject.addProperty("remarks", org.apache.commons.lang.StringUtils.EMPTY);
-            if (reIssue.getMarriageRegistrationUnit() != null)
-                jsonObject.addProperty("marriageRegistrationUnit", reIssue.getMarriageRegistrationUnit().getName());
-            else
-                jsonObject.addProperty("marriageRegistrationUnit", org.apache.commons.lang.StringUtils.EMPTY);
+
             jsonObject.addProperty("id", reIssue.getId());
         }
         return jsonObject;

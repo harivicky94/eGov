@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,9 +43,11 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.restapi.web.rest;
 
+import static java.math.RoundingMode.HALF_UP;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
@@ -118,6 +127,7 @@ public class RestWaterConnectionCollection {
             else {
                 payWaterTaxDetails.setSource(request.getSession().getAttribute("source") != null
                         ? request.getSession().getAttribute("source").toString() : "");
+                payWaterTaxDetails.setPaymentAmount(payWaterTaxDetails.getPaymentAmount().setScale(0, HALF_UP));
                 waterReceiptDetails = waterTaxExternalService.payWaterTax(payWaterTaxDetails);
             }
         } catch (final ValidationException e) {
@@ -183,7 +193,7 @@ public class RestWaterConnectionCollection {
             if (!waterConnectionRequestDetails.getAssessmentNo().isEmpty()
                     && !waterConnectionRequestDetails.getConsumerNo().isEmpty()) {
                 ownerdetailsnotexists = true;
-                List<WaterConnection> waterconnectionList = waterConnectionService
+                final List<WaterConnection> waterconnectionList = waterConnectionService
                         .findByPropertyIdentifier(waterConnectionRequestDetails.getAssessmentNo());
                 for (final WaterConnection waterconnection : waterconnectionList)
                     if (waterconnection.getConsumerCode()
@@ -212,7 +222,7 @@ public class RestWaterConnectionCollection {
                 consumerCodesList.add(waterConnectionRequestDetails.getConsumerNo());
             else
                 for (final PropertyTaxDetails propertyTaxDetails : propertyTaxDetailsList) {
-                    List<WaterConnection> waterConnectionList = waterConnectionService
+                    final List<WaterConnection> waterConnectionList = waterConnectionService
                             .findByPropertyIdentifier(propertyTaxDetails.getAssessmentNo());
                     for (final WaterConnection waterconnection : waterConnectionList)
                         consumerCodesList.add(waterconnection.getConsumerCode());
@@ -221,7 +231,8 @@ public class RestWaterConnectionCollection {
                 return JsonConvertor.convert(isEmptyWaterTaxDetails());
             else {
                 for (final String consumerCode : consumerCodesList) {
-                    WaterTaxDetails watertaxdetails = waterTaxExternalService.getWaterTaxDemandDetByConsumerCode(consumerCode);
+                    final WaterTaxDetails watertaxdetails = waterTaxExternalService
+                            .getWaterTaxDemandDetByConsumerCode(consumerCode);
                     waterTaxDetailsList.add(getWaterTaxDetails(watertaxdetails));
                     if (watertaxdetails.getErrorDetails() == null) {
                         final ErrorDetails errordetails = new ErrorDetails();
@@ -372,7 +383,7 @@ public class RestWaterConnectionCollection {
             errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_CONSUMER_NO_LEN);
         }
         if (!consumerCode.isEmpty()) {
-            WaterConnection waterConnection = waterConnectionService.findByConsumerCode(consumerCode);
+            final WaterConnection waterConnection = waterConnectionService.findByConsumerCode(consumerCode);
             if (waterConnection == null) {
                 errorDetails = new ErrorDetails();
                 errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_CONSUMERCODE_NOT_EXIST);
@@ -380,8 +391,9 @@ public class RestWaterConnectionCollection {
             }
         }
         if (!consumerCode.isEmpty()) {
-            WaterConnectionDetails waterConnDetailsObj = waterConnectionDetailsService.findByConsumerCodeAndConnectionStatus(consumerCode,
-                    ConnectionStatus.INACTIVE);
+            final WaterConnectionDetails waterConnDetailsObj = waterConnectionDetailsService
+                    .findByConsumerCodeAndConnectionStatus(consumerCode,
+                            ConnectionStatus.INACTIVE);
             if (waterConnDetailsObj != null) {
                 errorDetails = new ErrorDetails();
                 errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_INACTIVE_CONSUMERNO);
@@ -428,7 +440,7 @@ public class RestWaterConnectionCollection {
             waterTaxDetails.setPropertyAddress("");
         if (waterTaxDetails.getTaxDetails() == null) {
             final RestPropertyTaxDetails ar = new RestPropertyTaxDetails();
-            final List<RestPropertyTaxDetails> taxDetails = new ArrayList<RestPropertyTaxDetails>(0);
+            final List<RestPropertyTaxDetails> taxDetails = new ArrayList<>(0);
             taxDetails.add(ar);
             waterTaxDetails.setTaxDetails(taxDetails);
         }

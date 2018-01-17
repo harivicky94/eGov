@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,17 +43,11 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.egf.voucher.service;
 
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Date;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
+import com.exilant.eGov.src.transactions.VoucherTypeForULB;
 import org.apache.commons.lang.StringUtils;
 import org.egov.commons.CFiscalPeriod;
 import org.egov.commons.CGeneralLedger;
@@ -67,7 +68,7 @@ import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
+import org.egov.infra.persistence.utils.GenericSequenceNumberGenerator;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.infra.validation.exception.ValidationError;
@@ -93,7 +94,12 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.exilant.eGov.src.transactions.VoucherTypeForULB;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Date;
 
 /**
  * @author venki
@@ -162,7 +168,7 @@ public class JournalVoucherService {
     private FundService fundService;
 
     @Autowired
-    private ApplicationSequenceNumberGenerator applicationSequenceNumberGenerator;
+    private GenericSequenceNumberGenerator genericSequenceNumberGenerator;
 
     @Autowired
     private EgBillSubTypeService egBillSubTypeService;
@@ -573,7 +579,7 @@ public class JournalVoucherService {
         sequenceName = "sq_" + voucherHeader.getFundId().getIdentifier() + "_" + getCgnType(voucherHeader.getType()).toLowerCase()
                 + "_cgvn_"
                 + fiscalPeriod.getName();
-        final Serializable nextSequence = applicationSequenceNumberGenerator.getNextSequence(sequenceName);
+        final Serializable nextSequence = genericSequenceNumberGenerator.getNextSequence(sequenceName);
 
         cgvnNumber = String.format("%s/%s/%s%010d", voucherHeader.getFundId().getIdentifier(),
                 getCgnType(voucherHeader.getType()), "CGVN",

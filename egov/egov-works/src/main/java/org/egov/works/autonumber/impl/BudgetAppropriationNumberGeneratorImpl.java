@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,14 +43,13 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.works.autonumber.impl;
 
-import java.io.Serializable;
-
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
-import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
+import org.egov.infra.persistence.utils.GenericSequenceNumberGenerator;
 import org.egov.works.autonumber.BudgetAppropriationNumberGenerator;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,21 +58,19 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class BudgetAppropriationNumberGeneratorImpl implements BudgetAppropriationNumberGenerator {
+    private static final String SEQ_LINEESTIMATEAPPROPRIATION_NUMBER = "SEQ_LINEESTIMATEAPPROPRIATION_NUMBER";
 
     @Autowired
-    private ApplicationSequenceNumberGenerator applicationSequenceNumberGenerator;
+    private GenericSequenceNumberGenerator genericSequenceNumberGenerator;
 
     @Autowired
     private FinancialYearHibernateDAO financialYearHibernateDAO;
 
     @Transactional
     public String getNextNumber(final LineEstimateDetails lineEstimateDetails) {
-        final CFinancialYear cFinancialYear = financialYearHibernateDAO
+        CFinancialYear cFinancialYear = financialYearHibernateDAO
                 .getFinYearByDate(lineEstimateDetails.getLineEstimate().getLineEstimateDate());
-        final String sequenceName = "SEQ_LINEESTIMATEAPPROPRIATION_NUMBER";
-        Serializable sequenceNumber;
-        sequenceNumber = applicationSequenceNumberGenerator.getNextSequence(sequenceName);
-        return String.format("BAS/%05d/%s", sequenceNumber,
+        return String.format("BAS/%05d/%s", genericSequenceNumberGenerator.getNextSequence(SEQ_LINEESTIMATEAPPROPRIATION_NUMBER),
                 cFinancialYear.getFinYearRange());
     }
 

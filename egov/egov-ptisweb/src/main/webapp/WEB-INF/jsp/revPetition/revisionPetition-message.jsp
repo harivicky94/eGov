@@ -1,8 +1,8 @@
 <%--
-  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~     Copyright (C) 2017  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
   ~
   ~         1) All versions of this program, verbatim or modified must carry this
   ~            Legal Notice.
+  ~            Further, all user interfaces, including but not limited to citizen facing interfaces,
+  ~            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+  ~            derived works should carry eGovernments Foundation logo on the top right corner.
+  ~
+  ~            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+  ~            For any further queries on attribution, including queries on brand guidelines,
+  ~            please contact contact@egovernments.org
   ~
   ~         2) Any misrepresentation of the origin of the material is prohibited. It
   ~            is required that all modified versions of this material be marked in
@@ -36,6 +43,7 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~
   --%>
 
 <%@ page language="java" pageEncoding="UTF-8"%>
@@ -92,7 +100,7 @@
 					</s:if>
 					<td>
 						<s:if test="%{showAckBtn}">
-							<a href="/ptis/revPetition/revPetition-printAck.action?wfType=<s:property value='%{wfType}'/>&propertyId=<s:property value='%{propertyId}'/>" class="btn btn-default">Generate Acknowledgment</a>
+							<a href="/ptis/revPetition/revPetition-printAck.action?wfType=<s:property value='%{wfType}'/>&propertyId=<s:property value='%{propertyId}'/>&applicationNumber=<s:property value='%{applicationNumber}'/>" class="btn btn-default">Generate Acknowledgment</a>
 						</s:if>
 						<input type="button" name="button2" id="button2"
 						value="Close" class="button" onclick="window.close();" />

@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,20 +43,9 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.collection.web.actions.receipts;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -81,6 +77,18 @@ import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.SortedMap;
+import java.util.TreeMap;
+
 @Results({
         @Result(name = BankRemittanceAction.NEW, location = "bankRemittance-new.jsp"),
         @Result(name = BankRemittanceAction.PRINT_BANK_CHALLAN, type = "redirectAction", location = "remittanceStatementReport-printBankChallan.action", params = {
@@ -90,10 +98,15 @@ import org.springframework.beans.factory.annotation.Autowired;
         @Result(name = BankRemittanceAction.INDEX, location = "bankRemittance-index.jsp") })
 @ParentPackage("egov")
 public class BankRemittanceAction extends BaseFormAction {
-
+    protected static final String PRINT_BANK_CHALLAN = "printBankChallan";
     private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = Logger.getLogger(BankRemittanceAction.class);
-    private List<HashMap<String, Object>> paramList = null;
+    private static final String BANK_ACCOUNT_NUMBER_QUERY = "select distinct ba.accountnumber from BANKACCOUNT ba where ba.id =:accountNumberId";
+    private static final String SERVICE_FUND_QUERY = new StringBuilder()
+            .append("select distinct sd.code as servicecode,fd.code as fundcode from BANKACCOUNT ba,")
+            .append("EGCL_BANKACCOUNTSERVICEMAPPING asm,EGCL_SERVICEDETAILS sd,FUND fd where asm.BANKACCOUNT=ba.ID ")
+            .append("and asm.servicedetails=sd.ID and fd.ID=ba.FUNDID and ba.id= :accountNumberId").toString();
+    private transient List<HashMap<String, Object>> paramList = null;
     private final ReceiptHeader receiptHeaderIntsance = new ReceiptHeader();
     private List<ReceiptHeader> voucherHeaderValues = new ArrayList<>(0);
     private String[] serviceNameArray;
@@ -105,7 +118,7 @@ public class BankRemittanceAction extends BaseFormAction {
     private String[] fundCodeArray;
     private String[] departmentCodeArray;
     private Integer accountNumberId;
-    private CollectionsUtil collectionsUtil;
+    private transient CollectionsUtil collectionsUtil;
     private Integer branchId;
     private static final String ACCOUNT_NUMBER_LIST = "accountNumberList";
     private Boolean isListData = false;
@@ -114,12 +127,12 @@ public class BankRemittanceAction extends BaseFormAction {
     private Integer designationId;
     private Date remittanceDate;
     @Autowired
-    private FinancialYearDAO financialYearDAO;
+    private transient FinancialYearDAO financialYearDAO;
     @Autowired
-    private EmployeeService employeeService;
+    private transient EmployeeService employeeService;
     @Autowired
-    private BankaccountHibernateDAO bankaccountHibernateDAO;
-    protected static final String PRINT_BANK_CHALLAN = "printBankChallan";
+    private transient BankaccountHibernateDAO bankaccountHibernateDAO;
+
     private Double totalCashAmount;
     private Double totalChequeAmount;
     private List<CollectionBankRemittanceReport> bankRemittanceList;
@@ -206,23 +219,21 @@ public class BankRemittanceAction extends BaseFormAction {
     @SkipValidation
     public String listData() {
         isListData = true;
-        final String bankAccountStr = "select distinct ba.accountnumber from BANKACCOUNT ba where ba.id ='" + accountNumberId
-                + "'";
+        remitAccountNumber = "";
+        if (accountNumberId != null) {
 
-        final Query bankAccountQry = persistenceService.getSession().createSQLQuery(bankAccountStr);
-
-        final Object bankAccountResult = bankAccountQry.uniqueResult();
-        remitAccountNumber = (String) bankAccountResult;
+            final Query bankAccountQry = persistenceService.getSession().createSQLQuery(BANK_ACCOUNT_NUMBER_QUERY);
+            bankAccountQry.setLong("accountNumberId", accountNumberId);
+            final Object bankAccountResult = bankAccountQry.uniqueResult();
+            remitAccountNumber = (String) bankAccountResult;
+        }
 
         populateRemittanceList();
         if (fromDate != null && toDate != null && toDate.before(fromDate))
             addActionError(getText("bankremittance.before.fromdate"));
-        if (!hasErrors()) {
-            final String serviceFundQueryStr = "select distinct sd.code as servicecode,fd.code as fundcode from BANKACCOUNT ba,"
-                    + "EGCL_BANKACCOUNTSERVICEMAPPING asm,EGCL_SERVICEDETAILS sd,FUND fd where asm.BANKACCOUNT=ba.ID and asm.servicedetails=sd.ID and fd.ID=ba.FUNDID and "
-                    + "ba.id=" + accountNumberId;
-
-            final Query serviceFundQuery = persistenceService.getSession().createSQLQuery(serviceFundQueryStr);
+        if (!hasErrors() && accountNumberId != null) {
+            final Query serviceFundQuery = persistenceService.getSession().createSQLQuery(SERVICE_FUND_QUERY);
+            serviceFundQuery.setLong("accountNumberId", accountNumberId);
             final List<Object[]> queryResults = serviceFundQuery.list();
 
             final List<String> serviceCodeList = new ArrayList<>(0);
@@ -275,12 +286,12 @@ public class BankRemittanceAction extends BaseFormAction {
 
         isBankCollectionRemitter = collectionsUtil.isBankCollectionOperator(collectionsUtil.getLoggedInUser());
         addDropdownData("bankBranchList", Collections.emptyList());
-        addDropdownData("accountNumberList", Collections.emptyList());
+        addDropdownData(ACCOUNT_NUMBER_LIST, Collections.emptyList());
     }
 
     @Action(value = "/receipts/bankRemittance-create")
     @ValidationErrorPage(value = NEW)
-    public String create() throws InstantiationException, IllegalAccessException {
+    public String create() {
         final long startTimeMillis = System.currentTimeMillis();
         if (accountNumberId == null || accountNumberId == -1)
             throw new ValidationException(Arrays.asList(new ValidationError("Please select Account number",

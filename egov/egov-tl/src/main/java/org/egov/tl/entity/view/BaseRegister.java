@@ -1,57 +1,65 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
- *     accountability and the service delivery of the government  organizations.
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ *    accountability and the service delivery of the government  organizations.
  *
- *      Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
- *      The updated version of eGov suite of products as by eGovernments Foundation
- *      is available at http://www.egovernments.org
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
  *
- *      This program is free software: you can redistribute it and/or modify
- *      it under the terms of the GNU General Public License as published by
- *      the Free Software Foundation, either version 3 of the License, or
- *      any later version.
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
  *
- *      This program is distributed in the hope that it will be useful,
- *      but WITHOUT ANY WARRANTY; without even the implied warranty of
- *      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *      GNU General Public License for more details.
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
  *
- *      You should have received a copy of the GNU General Public License
- *      along with this program. If not, see http://www.gnu.org/licenses/ or
- *      http://www.gnu.org/licenses/gpl.html .
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
  *
- *      In addition to the terms of the GPL license to be adhered to in using this
- *      program, the following additional terms are to be complied with:
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
  *
- *          1) All versions of this program, verbatim or modified must carry this
- *             Legal Notice.
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
  *
- *          2) Any misrepresentation of the origin of the material is prohibited. It
- *             is required that all modified versions of this material be marked in
- *             reasonable ways as different from the original version.
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
- *          3) This license does not grant any rights to any user of the program
- *             with regards to rights under trademark law for use of the trade names
- *             or trademarks of eGovernments Foundation.
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
  *
- *    In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 
 package org.egov.tl.entity.view;
 
-import java.io.Serializable;
-import java.math.BigInteger;
-import java.util.Date;
+import org.egov.infra.utils.DateUtils;
+import org.hibernate.annotations.Immutable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-
-import org.egov.infra.utils.DateUtils;
-import org.hibernate.annotations.Immutable;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.util.Date;
 
 @Entity
 @Immutable
@@ -91,13 +99,13 @@ public class BaseRegister implements Serializable {
     private String tradeaddress;
     private String commencementdate;
     private String statusname;
-    private BigInteger arrearlicensefee;
-    private BigInteger arrearpenaltyfee;
-    private BigInteger curlicensefee;
-    private BigInteger curpenaltyfee;
+    private BigDecimal arrearlicensefee;
+    private BigDecimal arrearpenaltyfee;
+    private BigDecimal curlicensefee;
+    private BigDecimal curpenaltyfee;
     private String unitofmeasure;
     private BigInteger tradewt;
-    private BigInteger rateval;
+    private BigDecimal rateval;
     private Long locality;
     private Long uom;
     private Long apptype;
@@ -107,7 +115,7 @@ public class BaseRegister implements Serializable {
         return categoryId;
     }
 
-    public void setCategoryId(final Long categoryId) {
+    public void setCategoryId(Long categoryId) {
         this.categoryId = categoryId;
     }
 
@@ -115,7 +123,7 @@ public class BaseRegister implements Serializable {
         return subCategoryId;
     }
 
-    public void setSubCategoryId(final Long subCategoryId) {
+    public void setSubCategoryId(Long subCategoryId) {
         this.subCategoryId = subCategoryId;
     }
 
@@ -123,7 +131,7 @@ public class BaseRegister implements Serializable {
         return statusId;
     }
 
-    public void setStatusId(final Long statusId) {
+    public void setStatusId(Long statusId) {
         this.statusId = statusId;
     }
 
@@ -131,7 +139,7 @@ public class BaseRegister implements Serializable {
         return wardId;
     }
 
-    public void setWardId(final Long wardId) {
+    public void setWardId(Long wardId) {
         this.wardId = wardId;
     }
 
@@ -139,7 +147,7 @@ public class BaseRegister implements Serializable {
         return licensenumber;
     }
 
-    public void setLicensenumber(final String licensenumber) {
+    public void setLicensenumber(String licensenumber) {
         this.licensenumber = licensenumber;
     }
 
@@ -147,7 +155,7 @@ public class BaseRegister implements Serializable {
         return tradetitle;
     }
 
-    public void setTradetitle(final String tradetitle) {
+    public void setTradetitle(String tradetitle) {
         this.tradetitle = tradetitle;
     }
 
@@ -155,7 +163,7 @@ public class BaseRegister implements Serializable {
         return owner;
     }
 
-    public void setOwner(final String owner) {
+    public void setOwner(String owner) {
         this.owner = owner;
     }
 
@@ -163,7 +171,7 @@ public class BaseRegister implements Serializable {
         return mobile;
     }
 
-    public void setMobile(final String mobile) {
+    public void setMobile(String mobile) {
         this.mobile = mobile;
     }
 
@@ -171,7 +179,7 @@ public class BaseRegister implements Serializable {
         return categoryname;
     }
 
-    public void setCategoryname(final String categoryname) {
+    public void setCategoryname(String categoryname) {
         this.categoryname = categoryname;
     }
 
@@ -179,7 +187,7 @@ public class BaseRegister implements Serializable {
         return subcategoryname;
     }
 
-    public void setSubcategoryname(final String subcategoryname) {
+    public void setSubcategoryname(String subcategoryname) {
         this.subcategoryname = subcategoryname;
     }
 
@@ -187,7 +195,7 @@ public class BaseRegister implements Serializable {
         return assessmentno;
     }
 
-    public void setAssessmentno(final String assessmentno) {
+    public void setAssessmentno(String assessmentno) {
         this.assessmentno = assessmentno;
     }
 
@@ -195,7 +203,7 @@ public class BaseRegister implements Serializable {
         return wardname;
     }
 
-    public void setWardname(final String wardname) {
+    public void setWardname(String wardname) {
         this.wardname = wardname;
     }
 
@@ -203,7 +211,7 @@ public class BaseRegister implements Serializable {
         return localityname;
     }
 
-    public void setLocalityname(final String localityname) {
+    public void setLocalityname(String localityname) {
         this.localityname = localityname;
     }
 
@@ -211,7 +219,7 @@ public class BaseRegister implements Serializable {
         return tradeaddress;
     }
 
-    public void setTradeaddress(final String tradeaddress) {
+    public void setTradeaddress(String tradeaddress) {
         this.tradeaddress = tradeaddress;
     }
 
@@ -219,7 +227,7 @@ public class BaseRegister implements Serializable {
         return commencementdate;
     }
 
-    public void setCommencementdate(final Date commencementdate) {
+    public void setCommencementdate(Date commencementdate) {
         this.commencementdate = DateUtils.getDefaultFormattedDate(commencementdate);
     }
 
@@ -227,39 +235,39 @@ public class BaseRegister implements Serializable {
         return statusname;
     }
 
-    public void setStatusname(final String statusname) {
+    public void setStatusname(String statusname) {
         this.statusname = statusname;
     }
 
-    public BigInteger getArrearlicensefee() {
+    public BigDecimal getArrearlicensefee() {
         return arrearlicensefee;
     }
 
-    public void setArrearlicensefee(final BigInteger arrearlicensefee) {
+    public void setArrearlicensefee(BigDecimal arrearlicensefee) {
         this.arrearlicensefee = arrearlicensefee;
     }
 
-    public BigInteger getArrearpenaltyfee() {
+    public BigDecimal getArrearpenaltyfee() {
         return arrearpenaltyfee;
     }
 
-    public void setArrearpenaltyfee(final BigInteger arrearpenaltyfee) {
+    public void setArrearpenaltyfee(BigDecimal arrearpenaltyfee) {
         this.arrearpenaltyfee = arrearpenaltyfee;
     }
 
-    public BigInteger getCurlicensefee() {
+    public BigDecimal getCurlicensefee() {
         return curlicensefee;
     }
 
-    public void setCurlicensefee(final BigInteger curlicensefee) {
+    public void setCurlicensefee(BigDecimal curlicensefee) {
         this.curlicensefee = curlicensefee;
     }
 
-    public BigInteger getCurpenaltyfee() {
+    public BigDecimal getCurpenaltyfee() {
         return curpenaltyfee;
     }
 
-    public void setCurpenaltyfee(final BigInteger curpenaltyfee) {
+    public void setCurpenaltyfee(BigDecimal curpenaltyfee) {
         this.curpenaltyfee = curpenaltyfee;
     }
 
@@ -267,7 +275,7 @@ public class BaseRegister implements Serializable {
         return licenseid;
     }
 
-    public void setLicenseid(final BigInteger licenseid) {
+    public void setLicenseid(BigInteger licenseid) {
         this.licenseid = licenseid;
     }
 
@@ -275,7 +283,7 @@ public class BaseRegister implements Serializable {
         return unitofmeasure;
     }
 
-    public void setUnitofmeasure(final String unitofmeasure) {
+    public void setUnitofmeasure(String unitofmeasure) {
         this.unitofmeasure = unitofmeasure;
     }
 
@@ -283,15 +291,15 @@ public class BaseRegister implements Serializable {
         return tradewt;
     }
 
-    public void setTradewt(final BigInteger tradewt) {
+    public void setTradewt(BigInteger tradewt) {
         this.tradewt = tradewt;
     }
 
-    public BigInteger getRateval() {
+    public BigDecimal getRateval() {
         return rateval;
     }
 
-    public void setRateval(final BigInteger rateval) {
+    public void setRateval(BigDecimal rateval) {
         this.rateval = rateval;
     }
 
@@ -299,7 +307,7 @@ public class BaseRegister implements Serializable {
         return locality;
     }
 
-    public void setLocality(final Long locality) {
+    public void setLocality(Long locality) {
         this.locality = locality;
     }
 
@@ -307,7 +315,7 @@ public class BaseRegister implements Serializable {
         return uom;
     }
 
-    public void setUom(final Long uom) {
+    public void setUom(Long uom) {
         this.uom = uom;
     }
 
@@ -315,7 +323,7 @@ public class BaseRegister implements Serializable {
         return apptype;
     }
 
-    public void setApptype(final Long apptype) {
+    public void setApptype(Long apptype) {
         this.apptype = apptype;
     }
 
@@ -323,7 +331,7 @@ public class BaseRegister implements Serializable {
         return appdate;
     }
 
-    public void setAppdate(final Date appdate) {
+    public void setAppdate(Date appdate) {
         this.appdate = appdate;
     }
 

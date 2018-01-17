@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,98 +43,12 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.ptis.client.util;
 
-import static java.math.BigDecimal.ROUND_HALF_UP;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.egov.ptis.constants.PropertyTaxConstants.ADVANCE_COLLECTION_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.AMP_ACTUAL_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.AMP_ENCODED_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPCONFIG_ISCORPORATION;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPCONFIG_ISSEASHORE_ULB;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPCONFIG_IS_PRIMARY_SERVICECHARGES_APPLICABLE;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPURTENANT_PROPERTY;
-import static org.egov.ptis.constants.PropertyTaxConstants.ARREARS;
-import static org.egov.ptis.constants.PropertyTaxConstants.ARREARS_DMD;
-import static org.egov.ptis.constants.PropertyTaxConstants.ARREAR_REBATE_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_FIRST_HALF;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_SECOND_HALF;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURRENT_DMD;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURRENT_REBATE_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_COLL_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_COLL_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_ADVANCE;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_CESS;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_LIBRARY_CESS;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_PENALTY_FINES;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_REBATE;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_UNAUTHORIZED_PENALTY;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMAND_REASON_ORDER_MAP;
-import static org.egov.ptis.constants.PropertyTaxConstants.MAX_ADVANCES_ALLOWED;
-import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_CENTRAL_GOVT;
-import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_COURT_CASE;
-import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_PRIVATE;
-import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_STATE_GOVT;
-import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
-import static org.egov.ptis.constants.PropertyTaxConstants.PENALTY_WATERTAX_EFFECTIVE_DATE;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_ADD_OR_ALTER;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_DATA_ENTRY;
-import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
-import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_DEMANDREASONBY_CODE_AND_INSTALLMENTID;
-import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_DEMANDREASONDETAILBY_DEMANDREASONID;
-import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_DEMANDREASONDETAILS_BY_DEMANDREASON_AND_INSTALLMENT;
-import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_DEPARTMENTS_BY_DEPTCODE;
-import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_INSTALLMENTLISTBY_MODULE_AND_FINANCIALYYEAR;
-import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_INSTALLMENTLISTBY_MODULE_AND_FINANCIALYYEAR_DESC;
-import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_INSTALLMENTLISTBY_MODULE_AND_STARTYEAR;
-import static org.egov.ptis.constants.PropertyTaxConstants.SESSION_VAR_LOGIN_USER_NAME;
-import static org.egov.ptis.constants.PropertyTaxConstants.STR_MIGRATED;
-import static org.egov.ptis.constants.PropertyTaxConstants.USAGES_FOR_NON_RESD;
-import static org.egov.ptis.constants.PropertyTaxConstants.USAGES_FOR_OPENPLOT;
-import static org.egov.ptis.constants.PropertyTaxConstants.USAGES_FOR_RESD;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_AMALGAMATE;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_BIFURCATE;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_CHANGEADDRESS;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_CREATE;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_DEACTIVATE;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_MODIFY;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMAND_REASONS_FOR_REBATE_CALCULATION;
-
-import java.io.IOException;
-import java.io.StringReader;
-import java.math.BigDecimal;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Properties;
-import java.util.Set;
-import java.util.TreeMap;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
-import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.RandomStringGenerator;
 import org.apache.log4j.Logger;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.Installment;
@@ -165,7 +86,6 @@ import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
-import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.utils.MoneyUtils;
 import org.egov.infstr.services.PersistenceService;
@@ -214,7 +134,6 @@ import org.egov.ptis.domain.model.calculator.MiscellaneousTax;
 import org.egov.ptis.domain.model.calculator.MiscellaneousTaxDetail;
 import org.egov.ptis.domain.model.calculator.TaxCalculationInfo;
 import org.egov.ptis.domain.model.calculator.UnitTaxCalculationInfo;
-import org.egov.ptis.domain.service.property.RebatePeriodService;
 import org.egov.ptis.domain.service.property.RebateService;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.egov.ptis.wtms.ConsumerConsumption;
@@ -222,13 +141,38 @@ import org.egov.ptis.wtms.PropertyWiseConsumptions;
 import org.egov.ptis.wtms.WaterChargesIntegrationService;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.criterion.CriteriaSpecification;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
-import org.python.google.common.collect.ImmutableList;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.io.IOException;
+import java.io.StringReader;
+import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Properties;
+import java.util.Set;
+import java.util.TreeMap;
+
+import static java.math.BigDecimal.ROUND_HALF_UP;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.egov.ptis.constants.PropertyTaxConstants.*;
 
 /**
  * @author malathi
@@ -286,16 +230,12 @@ public class PropertyTaxUtil {
     @Autowired
     private ModuleService moduleDao;
     @Autowired
-    private RebatePeriodService rebatePeriodService;
-    @Autowired
     private PropertyTaxCommonUtils propertyTaxCommonUtils;
     @Autowired
     @Qualifier("ptaxApplicationTypeService")
     private PersistenceService<PtApplicationType, Long> ptaxApplicationTypeService;
     @Autowired
     private ReportService reportService;
-    @Autowired
-    private ApplicationNumberGenerator applicationNumberGenerator;
     @PersistenceContext
     private EntityManager entityManager;
     @Autowired
@@ -1889,14 +1829,15 @@ public class PropertyTaxUtil {
         return roleNameList.toString().toUpperCase();
     }
 
-    public String generateUserName(final String name) {
+    public String generateUserName(final String mobileNumber) {
         final StringBuilder userNameBuilder = new StringBuilder();
-        String userName = "";
-        if (name.length() < 6)
-            userName = String.format("%-6s", name).replace(' ', '0');
+        String userName;
+        if (mobileNumber.length() < 10)
+            userName = String.format("%-10s", mobileNumber).replace(' ', '0');
         else
-            userName = name.substring(0, 6).replace(' ', '0');
-        userNameBuilder.append(userName).append(RandomStringUtils.randomNumeric(4));
+            userName = mobileNumber.substring(0, 10).replace(' ', '0');
+        RandomStringGenerator generator = new RandomStringGenerator.Builder().withinRange('0', '9').build();
+        userNameBuilder.append(userName).append(generator.generate(5));
         return userNameBuilder.toString();
     }
 
@@ -2025,50 +1966,7 @@ public class PropertyTaxUtil {
         return qry;
     }
 
-    /**
-     * @param zoneId
-     * @param wardId
-     * @param areaId
-     * @param localityId
-     * @return
-     */
-    public List<PropertyMaterlizeView> prepareQueryforArrearRegisterReport(final Long zoneId, final Long wardId,
-            final Long areaId, final Long localityId) {
-        // Get current installment
-        final Installment currentInst = propertyTaxCommonUtils.getCurrentInstallment();
-        final StringBuffer query = new StringBuffer(300);
-
-        // Query that retrieves all the properties that has arrears.
-        query.append("select distinct pmv from PropertyMaterlizeView pmv,InstDmdCollMaterializeView idc where "
-                + "pmv.basicPropertyID = idc.propMatView.basicPropertyID and pmv.isActive = true and idc.installment.fromDate not between  ('"
-                + currentInst.getFromDate() + "') and ('" + currentInst.getToDate() + "') ");
-
-        if (isWard(localityId))
-            query.append(" and pmv.locality.id= :localityId ");
-        if (isWard(zoneId))
-            query.append(" and pmv.zone.id= :zoneId ");
-        if (isWard(wardId))
-            query.append("  and pmv.ward.id= :wardId ");
-        if (isWard(areaId))
-            query.append("  and pmv.block.id= :areaId ");
-
-        query.append(" order by pmv.basicPropertyID ");
-        final Query qry = persistenceService.getSession().createQuery(query.toString());
-
-        if (isWard(localityId))
-            qry.setParameter("localityId", localityId);
-        if (isWard(zoneId))
-            qry.setParameter("zoneId", zoneId);
-        if (isWard(wardId))
-            qry.setParameter("wardId", wardId);
-        if (isWard(areaId))
-            qry.setParameter("areaId", areaId);
-        final List<PropertyMaterlizeView> propertyViewList = qry.setResultTransformer(
-                CriteriaSpecification.DISTINCT_ROOT_ENTITY).list();
-        return propertyViewList;
-    }
-
-    /**
+     /**
      * @param zoneId
      * @param wardId
      * @param areaId
@@ -2218,14 +2116,17 @@ public class PropertyTaxUtil {
                 .find("select vr from VacancyRemission vr where vr.basicProperty.upicNo=? and vr.status = 'APPROVED'",
                         upicNo);
         if (vacancyRemission != null)
-            if (vacancyRemission.getVacancyRemissionDetails().isEmpty())
+            if (vacancyRemission.getVacancyRemissionDetails().isEmpty() && DateUtils.noOfMonthsBetween(vacancyRemission.getVacancyFromDate(), new Date())==1)
                 monthlyUpdateFlag = true;
-            else {
+            else if (!vacancyRemission.getVacancyRemissionDetails().isEmpty()) {
                 final VacancyRemissionDetails vrd = vacancyRemission.getVacancyRemissionDetails().get(
                         vacancyRemission.getVacancyRemissionDetails().size() - 1);
                 final int noOfMonths = DateUtils.noOfMonthsBetween(vrd.getCheckinDate(), new Date());
+                final int detailsSize = vacancyRemission.getVacancyRemissionDetails().size();
                 if (noOfMonths != 0)
                     monthlyUpdateFlag = true;
+                if (detailsSize % 5 == 0 && vacancyRemission.getVacancyToDate().compareTo(new Date())>0)
+                    monthlyUpdateFlag = false;
             }
         return monthlyUpdateFlag;
     }
@@ -2238,7 +2139,7 @@ public class PropertyTaxUtil {
         if (vacancyRemission != null)
             if (!vacancyRemission.getVacancyRemissionDetails().isEmpty()) {
                 final int detailsSize = vacancyRemission.getVacancyRemissionDetails().size();
-                if (detailsSize % 5 == 0)
+                if (detailsSize % 6 == 0 )
                     vrApprovalFlag = true;
             }
         return vrApprovalFlag;
@@ -2383,7 +2284,7 @@ public class PropertyTaxUtil {
         return StringUtils.isNotBlank(ownerShipType);
     }
 
-    private boolean isWard(final Long wardId) {
+    public boolean isWard(final Long wardId) {
         return wardId != null && wardId != -1;
     }
 
@@ -2419,14 +2320,15 @@ public class PropertyTaxUtil {
         return currYearInstMap;
     }
 
-	public Date getEffectiveDateForProperty() {
-		final Module module = moduleDao.getModuleByName(PTMODULENAME);
-		final Date currInstToDate = installmentDao.getInsatllmentByModuleForGivenDate(module, new Date()).getToDate();
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(currInstToDate);
-		calendar.set(calendar.get(calendar.YEAR) - 3, calendar.get(Calendar.MONTH) + 1, 1, 0, 0, 0);
-		return calendar.getTime();
-	}
+    public Date getEffectiveDateForProperty(Property property) {
+        final Module module = moduleDao.getModuleByName(PTMODULENAME);
+        final Date currInstToDate = installmentDao.getInsatllmentByModuleForGivenDate(module, property.getCreatedDate() == null ? new Date() : property.getCreatedDate())
+                .getToDate();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(currInstToDate);
+        calendar.set(calendar.get(Calendar.YEAR) - 3, calendar.get(Calendar.MONTH) + 1, 1, 0, 0, 0);
+        return calendar.getTime();
+    }
 
     /**
      * Returns map containing tax amount for demand reasons other than Penalty and Advance
@@ -2515,7 +2417,7 @@ public class PropertyTaxUtil {
     }
 
     public ReportOutput generateCitizenCharterAcknowledgement(final String propertyId, final String applicationType,
-            final String serviceType) {
+            final String serviceType, final String applicationNo) {
         ReportRequest reportInput;
         Long resolutionTime;
         final Map<String, Object> reportParams = new HashMap<>();
@@ -2531,7 +2433,10 @@ public class PropertyTaxUtil {
         reportParams.put(AS_ON_DATE, sdf.format(new Date()));
         reportParams.put(ULB_NAME, city.getPreferences().getMunicipalityName());
         reportParams.put(CITY_NAME, city.getName());
-        reportParams.put(ACK_NO, applicationNumberGenerator.generate());
+        if (!(Arrays.asList(REVISION_PETETION, VACANCY_REMISSION, GENERAL_REVISION_PETETION_APPTYPE)).contains(applicationType))
+            reportParams.put(ACK_NO, basicProperty.getWFProperty().getApplicationNo());
+        else
+            reportParams.put(ACK_NO, applicationNo);
         reportParams.put(SERVICE_TYPE, serviceType);
         reportInput = new ReportRequest("MainCitizenCharterAcknowledgement", reportParams, reportParams);
         reportInput.setReportFormat(ReportFormat.PDF);

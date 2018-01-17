@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,6 +43,7 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.ptis.domain.model;
 
@@ -44,7 +52,8 @@ import java.math.BigDecimal;
 import java.util.Set;
 
 /**
- * The AssessmentDetails class is used to contain assessment details such as property id, owner details, total tax and plinth area details
+ * The AssessmentDetails class is used to contain assessment details such as property id, owner details, total tax and plinth area
+ * details
  */
 @SuppressWarnings("serial")
 public class RestAssessmentDetails implements Serializable {
@@ -61,6 +70,14 @@ public class RestAssessmentDetails implements Serializable {
     private String feeReceiptDate;
     private BigDecimal mutationFee = BigDecimal.ZERO;
     private String applicationNo;
+    private BigDecimal registrationValue = BigDecimal.ZERO;
+    private BigDecimal marketValue = BigDecimal.ZERO;
+    private BigDecimal totalPropTaxDue = BigDecimal.ZERO;
+    private BigDecimal waterChargesDue = BigDecimal.ZERO;
+    private BigDecimal swerageDue = BigDecimal.ZERO;
+    private String revenueWard;
+    private String doorNo;
+    private BigDecimal feeReceiptAmount = BigDecimal.ZERO;
 
     @Override
     public String toString() {
@@ -68,107 +85,162 @@ public class RestAssessmentDetails implements Serializable {
                 + ", propertyAddress=" + propertyAddress + ", localityName=" + localityName
                 + ", plinthArea=" + plinthArea + ", totalTaxDue=" + totalTaxDue + ", isMutationFeePaid=" + isMutationFeePaid
                 + ", feeReceipt=" + feeReceipt + ", feeReceiptDate=" + feeReceiptDate
-                + ", mutationFee=" + mutationFee + ", applicationNo=" + applicationNo;
-              
+                + ", mutationFee=" + mutationFee + ", applicationNo=" + applicationNo + ",registrationValue=" + registrationValue
+                + ", marketValue=" + marketValue + ",totalPropTaxDue=" + totalPropTaxDue + ",waterChargesDue=" + waterChargesDue
+                + ", swerageDue=" + swerageDue
+                + ", revenueWard=" + revenueWard + ",doorNo=" + doorNo + "]";
     }
 
-	public String getAssessmentNo() {
-		return assessmentNo;
-	}
+    public String getAssessmentNo() {
+        return assessmentNo;
+    }
 
+    public void setAssessmentNo(String assessmentNo) {
+        this.assessmentNo = assessmentNo;
+    }
 
-	public void setAssessmentNo(String assessmentNo) {
-		this.assessmentNo = assessmentNo;
-	}
+    public Set<OwnerName> getOwnerDetails() {
+        return ownerDetails;
+    }
 
+    public void setOwnerDetails(Set<OwnerName> ownerDetails) {
+        this.ownerDetails = ownerDetails;
+    }
 
-	public Set<OwnerName> getOwnerDetails() {
-		return ownerDetails;
-	}
+    public String getPropertyAddress() {
+        return propertyAddress;
+    }
 
+    public void setPropertyAddress(String propertyAddress) {
+        this.propertyAddress = propertyAddress;
+    }
 
-	public void setOwnerDetails(Set<OwnerName> ownerDetails) {
-		this.ownerDetails = ownerDetails;
-	}
+    public String getLocalityName() {
+        return localityName;
+    }
 
+    public void setLocalityName(String localityName) {
+        this.localityName = localityName;
+    }
 
-	public String getPropertyAddress() {
-		return propertyAddress;
-	}
+    public BigDecimal getTotalTaxDue() {
+        return totalTaxDue;
+    }
 
+    public void setTotalTaxDue(BigDecimal totalTaxDue) {
+        this.totalTaxDue = totalTaxDue;
+    }
 
-	public void setPropertyAddress(String propertyAddress) {
-		this.propertyAddress = propertyAddress;
-	}
+    public String getIsMutationFeePaid() {
+        return isMutationFeePaid;
+    }
 
+    public void setIsMutationFeePaid(String isMutationFeePaid) {
+        this.isMutationFeePaid = isMutationFeePaid;
+    }
 
-	public String getLocalityName() {
-		return localityName;
-	}
+    public Float getPlinthArea() {
+        return plinthArea;
+    }
 
+    public void setPlinthArea(Float plinthArea) {
+        this.plinthArea = plinthArea;
+    }
 
-	public void setLocalityName(String localityName) {
-		this.localityName = localityName;
-	}
+    public String getFeeReceipt() {
+        return feeReceipt;
+    }
 
+    public void setFeeReceipt(String feeReceipt) {
+        this.feeReceipt = feeReceipt;
+    }
 
-	public BigDecimal getTotalTaxDue() {
-		return totalTaxDue;
-	}
+    public String getFeeReceiptDate() {
+        return feeReceiptDate;
+    }
 
+    public void setFeeReceiptDate(String feeReceiptDate) {
+        this.feeReceiptDate = feeReceiptDate;
+    }
 
-	public void setTotalTaxDue(BigDecimal totalTaxDue) {
-		this.totalTaxDue = totalTaxDue;
-	}
+    public BigDecimal getMutationFee() {
+        return mutationFee;
+    }
 
+    public void setMutationFee(BigDecimal mutationFee) {
+        this.mutationFee = mutationFee;
+    }
 
-	public String getIsMutationFeePaid() {
-		return isMutationFeePaid;
-	}
+    public String getApplicationNo() {
+        return applicationNo;
+    }
 
+    public void setApplicationNo(String applicationNo) {
+        this.applicationNo = applicationNo;
+    }
 
-	public void setIsMutationFeePaid(String isMutationFeePaid) {
-		this.isMutationFeePaid = isMutationFeePaid;
-	}
+    public BigDecimal getRegistrationValue() {
+        return registrationValue;
+    }
 
-	public Float getPlinthArea() {
-		return plinthArea;
-	}
+    public void setRegistrationValue(BigDecimal registrationValue) {
+        this.registrationValue = registrationValue;
+    }
 
-	public void setPlinthArea(Float plinthArea) {
-		this.plinthArea = plinthArea;
-	}
+    public BigDecimal getMarketValue() {
+        return marketValue;
+    }
 
-	public String getFeeReceipt() {
-		return feeReceipt;
-	}
+    public void setMarketValue(BigDecimal marketValue) {
+        this.marketValue = marketValue;
+    }
 
-	public void setFeeReceipt(String feeReceipt) {
-		this.feeReceipt = feeReceipt;
-	}
+    public BigDecimal getTotalPropTaxDue() {
+        return totalPropTaxDue;
+    }
 
-	public String getFeeReceiptDate() {
-		return feeReceiptDate;
-	}
+    public void setTotalPropTaxDue(BigDecimal totalPropTaxDue) {
+        this.totalPropTaxDue = totalPropTaxDue;
+    }
 
-	public void setFeeReceiptDate(String feeReceiptDate) {
-		this.feeReceiptDate = feeReceiptDate;
-	}
+    public BigDecimal getWaterChargesDue() {
+        return waterChargesDue;
+    }
 
-	public BigDecimal getMutationFee() {
-		return mutationFee;
-	}
+    public void setWaterChargesDue(BigDecimal waterChargesDue) {
+        this.waterChargesDue = waterChargesDue;
+    }
 
-	public void setMutationFee(BigDecimal mutationFee) {
-		this.mutationFee = mutationFee;
-	}
+    public BigDecimal getSwerageDue() {
+        return swerageDue;
+    }
 
-	public String getApplicationNo() {
-		return applicationNo;
-	}
+    public void setSwerageDue(BigDecimal swerageDue) {
+        this.swerageDue = swerageDue;
+    }
 
-	public void setApplicationNo(String applicationNo) {
-		this.applicationNo = applicationNo;
-	}
+    public String getRevenueWard() {
+        return revenueWard;
+    }
+
+    public void setRevenueWard(String revenueWard) {
+        this.revenueWard = revenueWard;
+    }
+
+    public String getDoorNo() {
+        return doorNo;
+    }
+
+    public void setDoorNo(String doorNo) {
+        this.doorNo = doorNo;
+    }
+
+    public BigDecimal getFeeReceiptAmount() {
+        return feeReceiptAmount;
+    }
+
+    public void setFeeReceiptAmount(BigDecimal feeReceiptAmount) {
+        this.feeReceiptAmount = feeReceiptAmount;
+    }
 
 }

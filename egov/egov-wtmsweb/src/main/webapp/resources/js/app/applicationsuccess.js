@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces, 
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any 
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines, 
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,6 +43,7 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 
 $(document).ready(function(){
@@ -59,8 +67,17 @@ $(document).ready(function(){
 						}
 						$("#applicantname").html(applicantName);
 						$("#nooffloors").html(response.propertyDetails.noOfFloors);
-						if(response.ownerNames[0].mobileNumber != '')
+						if(response.ownerNames[0].mobileNumber != ''){
 							$("#mobileNumber").html(response.ownerNames[0].mobileNumber);
+							var mobileNumber= response.ownerNames[0].mobileNumber;
+						    mobNumberwithmask = mobileNumber.slice(-4),
+						    countNum = '';
+
+						for(var i = (mobileNumber.length)-4; i>0; i--){
+						    countNum += '*';
+						}
+						$("#mobileNumber").html(countNum+mobNumberwithmask);
+				}
 						$("#email").html(response.ownerNames[0].emailId);
 						$("#propertyaddress").html(response.propertyAddress);
 						boundaryData = '';
@@ -78,7 +95,17 @@ $(document).ready(function(){
 							else
 								boundaryData = boundaryData + " / " +response.boundaryDetails.blockName; 
 						}
+						if(response.ownerNames[0].aadhaarNumber != '' && response.ownerNames[0].aadhaarNumber != null){
 						$("#aadhaar").html(response.ownerNames[0].aadhaarNumber);
+						var aadhaarNum= response.ownerNames[0].aadhaarNumber;
+					    aadhaarwithmask = aadhaarNum.slice(-4),
+					    countNum = '';
+
+					    for(var i = (aadhaarNum.length)-4; i>0; i--){
+					    countNum += '*';
+					    	}
+					    $("#aadhaar").html(countNum+aadhaarwithmask);
+						}
 						$("#locality").html(response.boundaryDetails.localityName);
 						$("#zonewardblock").html(boundaryData);
 						$("#propertytaxdue").html(response.propertyDetails.taxDue);
@@ -90,6 +117,9 @@ $(document).ready(function(){
 			});
 		}		
 	}
+	
+	
+
 	
 	var mode = $("#mode").val();
 	if(mode=='inbox') {

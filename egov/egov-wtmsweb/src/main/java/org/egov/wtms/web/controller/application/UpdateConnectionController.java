@@ -1,41 +1,49 @@
-/**
- * eGov suite of products aim to improve the internal efficiency,transparency,
-   accountability and the service delivery of the government  organizations.
-
-    Copyright (C) <2015>  eGovernments Foundation
-
-    The updated version of eGov suite of products as by eGovernments Foundation
-    is available at http://www.egovernments.org
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or
-    http://www.gnu.org/licenses/gpl.html .
-
-    In addition to the terms of the GPL license to be adhered to in using this
-    program, the following additional terms are to be complied with:
-
-        1) All versions of this program, verbatim or modified must carry this
-           Legal Notice.
-
-        2) Any misrepresentation of the origin of the material is prohibited. It
-           is required that all modified versions of this material be marked in
-           reasonable ways as different from the original version.
-
-        3) This license does not grant any rights to any user of the program
-           with regards to rights under trademark law for use of the trade names
-           or trademarks of eGovernments Foundation.
-
-  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+/*
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) 2017  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.wtms.web.controller.application;
 
@@ -78,12 +86,10 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.SIGNWORKFLOWACTION
 import static org.egov.wtms.utils.constants.WaterTaxConstants.SUBMITWORKFLOWACTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.SUPERIENTEND_ENGINEER_DESIGN;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WFLOW_ACTION_STEP_REJECT;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_CLOSERACKNOWLDGEENT_BUTTON;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_ESTIMATION_NOTICE_BUTTON;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_RECONNECTIONACKNOWLDGEENT_BUTTON;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_CLERK_APPROVED;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_REJECTED;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_WORKORDER_BUTTON;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WORKFLOW_ACTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WORKFLOW_CLOSUREADDITIONALRULE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WORKFLOW_RECONNCTIONINITIATED;
@@ -111,12 +117,14 @@ import org.egov.eis.entity.Assignment;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.entity.AppConfig;
 import org.egov.infra.admin.master.service.AppConfigService;
+import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.utils.DateUtils;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.wtms.application.entity.ApplicationDocuments;
 import org.egov.wtms.application.entity.ConnectionEstimationDetails;
@@ -125,14 +133,18 @@ import org.egov.wtms.application.entity.WaterDemandConnection;
 import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.application.service.ReportGenerationService;
 import org.egov.wtms.application.service.WaterDemandConnectionService;
+import org.egov.wtms.autonumber.EstimationNumberGenerator;
 import org.egov.wtms.autonumber.WorkOrderNumberGenerator;
 import org.egov.wtms.masters.entity.ConnectionCategory;
 import org.egov.wtms.masters.entity.enums.ClosureType;
 import org.egov.wtms.masters.service.MeterCostService;
 import org.egov.wtms.masters.service.RoadCategoryService;
+import org.egov.wtms.utils.WaterTaxNumberGenerator;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -160,7 +172,7 @@ public class UpdateConnectionController extends GenericConnectionController {
     private static final String FIELDINSPECTION = "fieldInspection";
     private static final String MODE = "mode";
     private static final String APP_DOCUMENT_LIST = "appforDocumentList";
-
+    private static final String DONATION_AMOUNT = "donationCharges";
     @Autowired
     private WaterTaxUtils waterTaxUtils;
 
@@ -192,6 +204,12 @@ public class UpdateConnectionController extends GenericConnectionController {
     private AppConfigService appConfigService;
 
     @Autowired
+    private CityService cityService;
+
+    @Autowired
+    private WaterTaxNumberGenerator waterTaxNumberGenerator;
+
+    @Autowired
     public UpdateConnectionController(final DepartmentService departmentService,
             final ConnectionDemandService connectionDemandService, final SmartValidator validator) {
         this.departmentService = departmentService;
@@ -217,6 +235,7 @@ public class UpdateConnectionController extends GenericConnectionController {
         Boolean isCommissionerLoggedIn = Boolean.FALSE;
         Boolean isSanctionedDetailEnable = isCommissionerLoggedIn;
         final String loggedInUserDesignation = waterTaxUtils.loggedInUserDesignation(waterConnectionDetails);
+
         if (waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_FEEPAID)
                 || waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_DIGITALSIGNPENDING)
                 || waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_CLOSERDIGSIGNPENDING)
@@ -299,6 +318,9 @@ public class UpdateConnectionController extends GenericConnectionController {
                 && waterConnectionDetails.getStatus().getCode().equalsIgnoreCase(APPLICATION_STATUS_FEEPAID)) {
             final ChairPerson chairPerson = chairPersonService.getActiveChairPersonAsOnCurrentDate();
             model.addAttribute("chairPerson", chairPerson);
+            model.addAttribute("sanctionDateLowerLimit",
+                    DateUtils.daysBetween(waterConnectionDetails.getApplicationDate(), new Date()));
+
         }
 
         appendModeBasedOnApplicationCreator(model, request, waterConnectionDetails);
@@ -373,7 +395,9 @@ public class UpdateConnectionController extends GenericConnectionController {
             model.addAttribute(MODE, "edit");
             model.addAttribute(APPROVALPOSITIONEXIST,
                     waterConnectionDetailsService.getApprovalPositionByMatrixDesignation(waterConnectionDetails, 0l,
-                            waterConnectionDetails.getApplicationType().getCode(), "edit", ""));
+                            CLOSINGCONNECTION.equals(waterConnectionDetails.getApplicationType().getCode())
+                                    ? WORKFLOW_CLOSUREADDITIONALRULE : waterConnectionDetails.getApplicationType().getCode(),
+                            "edit", ""));
         }
         // "edit" mode for AE inbox record FROM CSC and Record from Clerk
         else if ((recordCreatedBYNonEmployee || recordCreatedBYCitizenPortal)
@@ -403,7 +427,7 @@ public class UpdateConnectionController extends GenericConnectionController {
         } else if (waterConnectionDetails.getCloseConnectionType() != null
                 && waterConnectionDetails.getReConnectionReason() == null)
             model.addAttribute(APPROVALPOSITIONEXIST, waterConnectionDetailsService
-                    .getApprovalPositionByMatrixDesignation(waterConnectionDetails, 0l, "CLOSECONNECTION", "", ""));
+                    .getApprovalPositionByMatrixDesignation(waterConnectionDetails, 0l, WORKFLOW_CLOSUREADDITIONALRULE, "", ""));
 
         else if (waterConnectionDetails.getCloseConnectionType() != null
                 && waterConnectionDetails.getReConnectionReason() != null)
@@ -449,8 +473,8 @@ public class UpdateConnectionController extends GenericConnectionController {
         Double donationCharges = 0d;
         final String sourceChannel = request.getParameter("Source");
 
-        if (request.getParameter("donationCharges") != null)
-            donationCharges = Double.valueOf(request.getParameter("donationCharges"));
+        if (request.getParameter(DONATION_AMOUNT) != null)
+            donationCharges = Double.valueOf(request.getParameter(DONATION_AMOUNT));
         if (request.getParameter(MODE) != null)
             mode = request.getParameter(MODE);
 
@@ -549,23 +573,13 @@ public class UpdateConnectionController extends GenericConnectionController {
                     else
                         waterConnectionDetails.setCloseConnectionType(ClosureType.Temporary.getName());
 
-                if (null != workFlowAction)
-                    if (workFlowAction.equalsIgnoreCase(PREVIEWWORKFLOWACTION)
-                            && (waterConnectionDetails.getApplicationType().getCode().equals(NEWCONNECTION)
-                                    || waterConnectionDetails.getApplicationType().getCode().equals(ADDNLCONNECTION)
-                                    || waterConnectionDetails.getApplicationType().getCode().equals(CHANGEOFUSE)))
-                        return "redirect:/application/workorder?pathVar="
-                                + waterConnectionDetails.getApplicationNumber();
-                    else if (workFlowAction.equalsIgnoreCase(PREVIEWWORKFLOWACTION)
-                            && waterConnectionDetails.getApplicationType().getCode().equals(CLOSINGCONNECTION))
-                        return "redirect:/application/acknowlgementNotice?pathVar="
-                                + waterConnectionDetails.getApplicationNumber();
-                    else if (workFlowAction.equalsIgnoreCase(PREVIEWWORKFLOWACTION)
-                            && waterConnectionDetails.getApplicationType().getCode().equals(RECONNECTIONCONNECTION))
-                        return "redirect:/application/ReconnacknowlgementNotice?pathVar="
-                                + waterConnectionDetails.getApplicationNumber();
-                    else if (workFlowAction.equals(SIGNWORKFLOWACTION)) { // Sign
-                        WaterConnectionDetails upadtedWaterConnectionDetails = null;
+                if (workFlowAction != null)
+                    if (APPROVEWORKFLOWACTION.equalsIgnoreCase(workFlowAction)) {
+
+                        if (waterConnectionDetails.getConnection().getConsumerCode() == null)
+                            waterConnectionDetails.getConnection()
+                                    .setConsumerCode(waterTaxNumberGenerator.getNextConsumerNumber());
+
                         final WorkOrderNumberGenerator workOrderGen = beanResolver
                                 .getAutoNumberServiceFor(WorkOrderNumberGenerator.class);
                         if (waterConnectionDetails.getApplicationType().getCode().equals(NEWCONNECTION)
@@ -605,9 +619,27 @@ public class UpdateConnectionController extends GenericConnectionController {
                                 waterConnectionDetails.setReconnectionFileStore(fileStore);
                             else
                                 waterConnectionDetails.setFileStore(fileStore);
-                            upadtedWaterConnectionDetails = waterConnectionDetailsService
+                            waterConnectionDetailsService
                                     .updateWaterConnectionDetailsWithFileStore(waterConnectionDetails);
                         }
+                    } else if (workFlowAction.equalsIgnoreCase(PREVIEWWORKFLOWACTION)
+                            && (waterConnectionDetails.getApplicationType().getCode().equals(NEWCONNECTION)
+                                    || waterConnectionDetails.getApplicationType().getCode().equals(ADDNLCONNECTION)
+                                    || waterConnectionDetails.getApplicationType().getCode().equals(CHANGEOFUSE)))
+                        return "redirect:/application/workorder?pathVar="
+                                + waterConnectionDetails.getApplicationNumber();
+                    else if (workFlowAction.equalsIgnoreCase(PREVIEWWORKFLOWACTION)
+                            && waterConnectionDetails.getApplicationType().getCode().equals(CLOSINGCONNECTION))
+                        return "redirect:/application/acknowlgementNotice?pathVar="
+                                + waterConnectionDetails.getApplicationNumber();
+                    else if (workFlowAction.equalsIgnoreCase(PREVIEWWORKFLOWACTION)
+                            && waterConnectionDetails.getApplicationType().getCode().equals(RECONNECTIONCONNECTION))
+                        return "redirect:/application/ReconnacknowlgementNotice?pathVar="
+                                + waterConnectionDetails.getApplicationNumber();
+                    else if (workFlowAction.equals(SIGNWORKFLOWACTION)) { // Sign
+                        final WaterConnectionDetails upadtedWaterConnectionDetails = waterConnectionDetailsService
+                                .findByApplicationNumber(waterConnectionDetails.getApplicationNumber());
+
                         final HttpSession session = request.getSession();
                         final Map<String, String> fileStoreIdsApplicationNoMap = new HashMap<>();
                         if (upadtedWaterConnectionDetails != null) {
@@ -646,37 +678,35 @@ public class UpdateConnectionController extends GenericConnectionController {
                 throw new ValidationException(e.getMessage());
             }
             if (workFlowAction != null && !workFlowAction.isEmpty()
-                    && workFlowAction.equalsIgnoreCase(WF_ESTIMATION_NOTICE_BUTTON))// Generate
-                // Esitmation
-                // Notice
-                // Button
+                    && workFlowAction.equalsIgnoreCase(WF_ESTIMATION_NOTICE_BUTTON)) {
+
+                final EstimationNumberGenerator estimationNoGen = beanResolver
+                        .getAutoNumberServiceFor(EstimationNumberGenerator.class);
+
+                waterConnectionDetails.setEstimationNumber(estimationNoGen.generateEstimationNumber());
+                waterConnectionDetails.setEstimationNoticeDate(new Date());
+
+                final String cityMunicipalityName = cityService.getMunicipalityName();
+                final String districtName = cityService.getDistrictName();
+                ReportOutput reportOutput = null;
+                reportOutput = reportGenerationService.generateEstimationNoticeReport(waterConnectionDetails,
+                        cityMunicipalityName, districtName);
+                if (reportOutput != null) {
+                    final HttpHeaders headers = new HttpHeaders();
+                    headers.setContentType(MediaType.parseMediaType("application/pdf"));
+                    headers.add("content-disposition", "inline;filename=EstimationNotice.pdf");
+                    String fileName;
+                    fileName = SIGNED_DOCUMENT_PREFIX + waterConnectionDetails.getEstimationNumber() + ".pdf";
+                    final InputStream fileStream = new ByteArrayInputStream(reportOutput.getReportOutputData());
+                    final FileStoreMapper fileStore = fileStoreService.store(fileStream, fileName, "application/pdf",
+                            FILESTORE_MODULECODE);
+                    waterConnectionDetails.setEstimationNoticeFileStoreId(fileStore);
+                    waterConnectionDetailsService.updateWaterConnectionDetailsWithFileStore(waterConnectionDetails);
+                }
                 return "redirect:/application/estimationNotice?pathVar="
                         + waterConnectionDetails.getApplicationNumber();
 
-            if (null != workFlowAction && !workFlowAction.isEmpty()
-                    && workFlowAction.equalsIgnoreCase(WF_WORKORDER_BUTTON))// For
-                // Generate
-                // WorkOrder
-                return "redirect:/application/workorder?pathVar=" + waterConnectionDetails.getApplicationNumber();
-            if (workFlowAction != null && !workFlowAction.isEmpty()
-                    && workFlowAction.equalsIgnoreCase(WF_CLOSERACKNOWLDGEENT_BUTTON))// For
-                // Closure
-                // Connection
-                // Generate
-                // Acknowlegement
-                return "redirect:/application/acknowlgementNotice?pathVar="
-
-                        + waterConnectionDetails.getApplicationNumber();
-
-            if (workFlowAction != null && !workFlowAction.isEmpty()
-                    && workFlowAction.equalsIgnoreCase(WF_RECONNECTIONACKNOWLDGEENT_BUTTON))// For
-                // ReConnection
-                // Generate
-                // ReConnection
-                // Ack
-                return "redirect:/application/ReconnacknowlgementNotice?pathVar="
-
-                        + waterConnectionDetails.getApplicationNumber();
+            }
 
             final Assignment currentUserAssignment = assignmentService
                     .getPrimaryAssignmentForGivenRange(securityUtils.getCurrentUser().getId(), new Date(), new Date());
@@ -744,9 +774,7 @@ public class UpdateConnectionController extends GenericConnectionController {
     }
 
     private boolean validEstimationDetail(final ConnectionEstimationDetails connectionEstimationDetails) {
-        if (connectionEstimationDetails != null && connectionEstimationDetails.getItemDescription() != null)
-            return true;
-        return false;
+        return connectionEstimationDetails != null && connectionEstimationDetails.getItemDescription() != null ? true : false;
     }
 
 }

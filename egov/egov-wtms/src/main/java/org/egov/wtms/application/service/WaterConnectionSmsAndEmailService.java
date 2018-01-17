@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,9 +43,12 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.wtms.application.service;
 
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.egov.infra.utils.DateUtils.toDefaultDateFormat;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.APPCONFIGVALUEOFENABLED;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_APPROVED;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_DIGITALSIGNPENDING;
@@ -50,7 +60,6 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.SMSEMAILTYPENEWCON
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 import java.util.Iterator;
 
 import org.egov.infra.admin.master.entity.AppConfig;
@@ -131,7 +140,7 @@ public class WaterConnectionSmsAndEmailService {
                 PropertyExternalService.FLAG_MOBILE_EMAIL, BasicPropertyStatus.ALL);
         final String email = assessmentDetails.getPrimaryEmail();
         final String mobileNumber = assessmentDetails.getPrimaryMobileNo();
-        if (waterConnectionDetails != null && waterConnectionDetails.getApplicationType() != null
+        if (waterConnectionDetails.getApplicationType() != null
                 && waterConnectionDetails.getApplicationType().getCode() != null
                 && waterConnectionDetails.getStatus() != null && waterConnectionDetails.getStatus().getCode() != null) {
 
@@ -247,9 +256,9 @@ public class WaterConnectionSmsAndEmailService {
             subject = waterTaxUtils.emailSubjectforEmailByCodeAndArgs("msg.newconncetionOnExecutionDate.email.subject",
                     waterConnectionDetails.getConnection().getConsumerCode());
         }
-        if (mobileNumber != null && smsMsg != null)
+        if (mobileNumber != null && isNotBlank(smsMsg))
             waterTaxUtils.sendSMSOnWaterConnection(mobileNumber, smsMsg);
-        if (email != null && body != null)
+        if (email != null && isNotBlank(body))
             waterTaxUtils.sendEmailOnWaterConnection(email, body, subject);
 
     }
@@ -342,9 +351,9 @@ public class WaterConnectionSmsAndEmailService {
             subject = waterTaxUtils.emailSubjectforEmailByCodeAndArgs("msg.newconncetionOnExecutionDate.email.subject",
                     waterConnectionDetails.getConnection().getConsumerCode());
         }
-        if (mobileNumber != null && smsMsg != null)
+        if (mobileNumber != null && isNotBlank(smsMsg))
             waterTaxUtils.sendSMSOnWaterConnection(mobileNumber, smsMsg);
-        if (email != null && body != null)
+        if (email != null && isNotBlank(body))
             waterTaxUtils.sendEmailOnWaterConnection(email, body, subject);
     }
 
@@ -402,7 +411,8 @@ public class WaterConnectionSmsAndEmailService {
             }
 
         } else if (isDigitalSignatureEnabled
-                && APPLICATION_STATUS_APPROVED.equalsIgnoreCase(waterConnectionDetails.getStatus().getCode())) {
+                && WaterTaxConstants.APPLICATION_STATUS_APPROVED
+                        .equalsIgnoreCase(waterConnectionDetails.getStatus().getCode())) {
             smsMsg = smsBodyByCodeAndArgsWithType("msg.newconnectiondigitalsigned.sms", waterConnectionDetails,
                     applicantName, SMSEMAILTYPENEWCONNDIGISIGN);
             body = emailBodyByCodeAndArgsWithType("msg.newconnectiondigitalsigned.email.body", waterConnectionDetails,
@@ -419,27 +429,19 @@ public class WaterConnectionSmsAndEmailService {
                     " Demand and donation amount received for water tax application ");
             emailSubject.append(waterConnectionDetails.getApplicationNumber());
             subject = emailSubject.toString();
-
         } else if (WaterTaxConstants.APPLICATION_STATUS_SANCTIONED
                 .equalsIgnoreCase(waterConnectionDetails.getStatus().getCode())) {
-            if (!WaterTaxConstants.METERED.toUpperCase()
-                    .equalsIgnoreCase(waterConnectionDetails.getConnectionType().toString())) {
-                smsMsg = smsBodyByCodeAndArgsWithType("msg.newconncetionOnExecutionDate.sms", waterConnectionDetails,
-                        applicantName, WaterTaxConstants.SMSEMAILTYPENEWCONNEXECUTION);
-                body = emailBodyByCodeAndArgsWithType("msg.newconncetionOnExecutionDate.email.body",
-                        waterConnectionDetails, applicantName, WaterTaxConstants.SMSEMAILTYPENEWCONNEXECUTION);
-            } else {
-                smsMsg = smsBodyByCodeAndArgsWithType("msg.conncetionexeuction.metered.sms", waterConnectionDetails,
-                        applicantName, WaterTaxConstants.SMSEMAILTYPENEWCONNEXECUTION);
-                body = emailBodyByCodeAndArgsWithType("msg.conncetionexeuction.metered.email.body",
-                        waterConnectionDetails, applicantName, WaterTaxConstants.SMSEMAILTYPENEWCONNEXECUTION);
-            }
+            smsMsg = smsBodyByCodeAndArgsWithType("msg.newconncetionOnExecutionDate.sms", waterConnectionDetails,
+                    applicantName, WaterTaxConstants.SMSEMAILTYPENEWCONNEXECUTION);
+            body = emailBodyByCodeAndArgsWithType("msg.newconncetionOnExecutionDate.email.body", waterConnectionDetails,
+                    applicantName, WaterTaxConstants.SMSEMAILTYPENEWCONNEXECUTION);
             subject = waterTaxUtils.emailSubjectforEmailByCodeAndArgs("msg.newconncetionOnExecutionDate.email.subject",
                     waterConnectionDetails.getConnection().getConsumerCode());
         }
-        if (mobileNumber != null && smsMsg != null)
+
+        if (mobileNumber != null && isNotBlank(smsMsg))
             waterTaxUtils.sendSMSOnWaterConnection(mobileNumber, smsMsg);
-        if (email != null && body != null)
+        if (email != null && isNotBlank(body))
             waterTaxUtils.sendEmailOnWaterConnection(email, body, subject);
     }
 
@@ -613,13 +615,12 @@ public class WaterConnectionSmsAndEmailService {
                     waterTaxUtils.getMunicipalityName(), waterTaxUtils.getMunicipalityName() }, null);
         else if (type.equalsIgnoreCase(WaterTaxConstants.SMSEMAILTYPENEWCONNEXECUTION)
                 || type.equalsIgnoreCase(WaterTaxConstants.SMSEMAILTYPECHANGEOFUSEEXECUTION)) {
-            final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
             if (!WaterTaxConstants.METERED.toUpperCase()
                     .equalsIgnoreCase(waterConnectionDetails.getConnectionType().toString()))
                 emailBody = wcmsMessageSource
                         .getMessage(code,
                                 new String[] { applicantName, waterConnectionDetails.getConnection().getConsumerCode(),
-                                        formatter.format(waterConnectionDetails.getExecutionDate()),
+                                        toDefaultDateFormat(waterConnectionDetails.getExecutionDate()),
                                         amountFormat.format(waterTaxUtils.getCurrentDemand(waterConnectionDetails)
                                                 .getDemand() != null ? waterTaxUtils.getCurrentDemand(waterConnectionDetails)
                                                         .getDemand().getBaseDemand() : BigDecimal.ZERO),
@@ -628,7 +629,7 @@ public class WaterConnectionSmsAndEmailService {
             else
                 emailBody = wcmsMessageSource.getMessage(code,
                         new String[] { applicantName, waterConnectionDetails.getConnection().getConsumerCode(),
-                                formatter.format(waterConnectionDetails.getExecutionDate()).toString(),
+                                toDefaultDateFormat(waterConnectionDetails.getExecutionDate()),
                                 waterTaxUtils.getMunicipalityName() },
                         null);
         } else if ((type.equalsIgnoreCase(WaterTaxConstants.SMSEMAILTYPENEWCONNFEEPAID)
@@ -658,16 +659,32 @@ public class WaterConnectionSmsAndEmailService {
                     null);
         else if (WaterTaxConstants.SMSEMAILTYPECLOSINGCONNAPPROVE.equalsIgnoreCase(type))
             emailBody = wcmsMessageSource.getMessage(code, new String[] { applicantName,
-                    waterConnectionDetails.getApplicationNumber(), waterTaxUtils.getMunicipalityName() }, null);
+                    waterConnectionDetails.getConnection().getConsumerCode(),
+                    ApplicationThreadLocals.getDomainURL(),
+                    waterConnectionDetails.getApplicationNumber(),
+                    waterTaxUtils.getMunicipalityName(),
+                    waterTaxUtils.getMunicipalityName() }, null);
         else if (WaterTaxConstants.SMSEMAILTYPECLOSINGCONNSANCTIONED.equalsIgnoreCase(type))
             emailBody = wcmsMessageSource.getMessage(code, new String[] { applicantName,
-                    waterConnectionDetails.getApplicationNumber(), waterTaxUtils.getMunicipalityName() }, null);
+                    waterConnectionDetails.getConnection().getConsumerCode(),
+                    ApplicationThreadLocals.getDomainURL(),
+                    waterConnectionDetails.getApplicationNumber(),
+                    waterTaxUtils.getMunicipalityName(),
+                    waterTaxUtils.getMunicipalityName() }, null);
         else if (WaterTaxConstants.SMSEMAILTYPERECONNECTIONAPPROVE.equalsIgnoreCase(type))
             emailBody = wcmsMessageSource.getMessage(code, new String[] { applicantName,
-                    waterConnectionDetails.getApplicationNumber(), waterTaxUtils.getMunicipalityName() }, null);
+                    waterConnectionDetails.getConnection().getConsumerCode(),
+                    ApplicationThreadLocals.getDomainURL(),
+                    waterConnectionDetails.getApplicationNumber(),
+                    waterTaxUtils.getMunicipalityName(),
+                    waterTaxUtils.getMunicipalityName() }, null);
         else if (WaterTaxConstants.SMSEMAILTYPERECONNECTIONSANCTIONED.equalsIgnoreCase(type))
             emailBody = wcmsMessageSource.getMessage(code, new String[] { applicantName,
-                    waterConnectionDetails.getApplicationNumber(), waterTaxUtils.getMunicipalityName() }, null);
+                    waterConnectionDetails.getConnection().getConsumerCode(),
+                    ApplicationThreadLocals.getDomainURL(),
+                    waterConnectionDetails.getApplicationNumber(),
+                    waterTaxUtils.getMunicipalityName(),
+                    waterTaxUtils.getMunicipalityName() }, null);
         return emailBody;
     }
 
@@ -716,7 +733,8 @@ public class WaterConnectionSmsAndEmailService {
                                 String.valueOf(amountFormat.format(
                                         waterConnectionDetails.getFieldInspectionDetails().getEstimationCharges())),
                                 String.valueOf(amountFormat.format(waterConnectionDetails.getDonationCharges()
-                                        + waterConnectionDetails.getFieldInspectionDetails().getEstimationCharges())) },
+                                        + waterConnectionDetails.getFieldInspectionDetails().getEstimationCharges()))
+                        },
                         null);
             else
                 smsMsg = wcmsMessageSource
@@ -731,13 +749,12 @@ public class WaterConnectionSmsAndEmailService {
                                 null);
         } else if (type.equalsIgnoreCase(WaterTaxConstants.SMSEMAILTYPENEWCONNEXECUTION)
                 || type.equalsIgnoreCase(WaterTaxConstants.SMSEMAILTYPECHANGEOFUSEEXECUTION)) {
-            final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
             if (!WaterTaxConstants.METERED.toUpperCase()
                     .equalsIgnoreCase(waterConnectionDetails.getConnectionType().toString()))
                 smsMsg = wcmsMessageSource
                         .getMessage(code,
                                 new String[] { applicantName, waterConnectionDetails.getConnection().getConsumerCode(),
-                                        formatter.format(waterConnectionDetails.getExecutionDate()),
+                                        toDefaultDateFormat(waterConnectionDetails.getExecutionDate()),
                                         amountFormat
                                                 .format(waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand() != null
                                                         ? waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand()
@@ -748,7 +765,7 @@ public class WaterConnectionSmsAndEmailService {
             else
                 smsMsg = wcmsMessageSource.getMessage(code,
                         new String[] { applicantName, waterConnectionDetails.getConnection().getConsumerCode(),
-                                formatter.format(waterConnectionDetails.getExecutionDate()),
+                                toDefaultDateFormat(waterConnectionDetails.getExecutionDate()),
                                 waterTaxUtils.getMunicipalityName() },
                         null);
         } else if ((type.equalsIgnoreCase(WaterTaxConstants.SMSEMAILTYPENEWCONNFEEPAID)
@@ -778,16 +795,36 @@ public class WaterConnectionSmsAndEmailService {
                     null);
         else if (WaterTaxConstants.SMSEMAILTYPECLOSINGCONNAPPROVE.equalsIgnoreCase(type))
             smsMsg = wcmsMessageSource.getMessage(code, new String[] { applicantName,
-                    waterConnectionDetails.getApplicationNumber(), waterTaxUtils.getMunicipalityName() }, null);
+                    waterConnectionDetails.getConnection().getConsumerCode(),
+                    ApplicationThreadLocals.getDomainURL(),
+                    waterConnectionDetails.getApplicationNumber(),
+                    waterTaxUtils.getMunicipalityName(),
+                    waterTaxUtils.getMunicipalityName() },
+                    null);
         else if (WaterTaxConstants.SMSEMAILTYPECLOSINGCONNSANCTIONED.equalsIgnoreCase(type))
             smsMsg = wcmsMessageSource.getMessage(code, new String[] { applicantName,
-                    waterConnectionDetails.getApplicationNumber(), waterTaxUtils.getMunicipalityName() }, null);
+                    waterConnectionDetails.getConnection().getConsumerCode(),
+                    ApplicationThreadLocals.getDomainURL(),
+                    waterConnectionDetails.getApplicationNumber(),
+                    waterTaxUtils.getMunicipalityName(),
+                    waterTaxUtils.getMunicipalityName() },
+                    null);
         else if (WaterTaxConstants.SMSEMAILTYPERECONNECTIONAPPROVE.equalsIgnoreCase(type))
             smsMsg = wcmsMessageSource.getMessage(code, new String[] { applicantName,
-                    waterConnectionDetails.getApplicationNumber(), waterTaxUtils.getMunicipalityName() }, null);
+                    waterConnectionDetails.getConnection().getConsumerCode(),
+                    ApplicationThreadLocals.getDomainURL(),
+                    waterConnectionDetails.getApplicationNumber(),
+                    waterTaxUtils.getMunicipalityName(),
+                    waterTaxUtils.getMunicipalityName() },
+                    null);
         else if (WaterTaxConstants.SMSEMAILTYPERECONNECTIONSANCTIONED.equalsIgnoreCase(type))
             smsMsg = wcmsMessageSource.getMessage(code, new String[] { applicantName,
-                    waterConnectionDetails.getApplicationNumber(), waterTaxUtils.getMunicipalityName() }, null);
+                    waterConnectionDetails.getConnection().getConsumerCode(),
+                    ApplicationThreadLocals.getDomainURL(),
+                    waterConnectionDetails.getApplicationNumber(),
+                    waterTaxUtils.getMunicipalityName(),
+                    waterTaxUtils.getMunicipalityName() },
+                    null);
         return smsMsg;
     }
 
@@ -796,7 +833,11 @@ public class WaterConnectionSmsAndEmailService {
         String smsMsg = null;
         String body = "";
         String subject = "";
-        if (WaterTaxConstants.APPLICATION_STATUS_CLOSERAPRROVED
+        Boolean isDigitalSignatureEnabled = false;
+        final AppConfig appConfig = appConfigService.getAppConfigByModuleNameAndKeyName(MODULE_NAME, ENABLEDIGITALSIGNATURE);
+        if (APPCONFIGVALUEOFENABLED.equalsIgnoreCase(appConfig.getConfValues().get(0).getValue()))
+            isDigitalSignatureEnabled = true;
+        if (!isDigitalSignatureEnabled && WaterTaxConstants.APPLICATION_STATUS_CLOSERDIGSIGNPENDING
                 .equalsIgnoreCase(waterConnectionDetails.getStatus().getCode())) {
             smsMsg = smsBodyByCodeAndArgsWithType("msg.closeconnection.approve.sms", waterConnectionDetails,
                     applicantName, WaterTaxConstants.SMSEMAILTYPECLOSINGCONNAPPROVE);
@@ -804,9 +845,8 @@ public class WaterConnectionSmsAndEmailService {
                     applicantName, WaterTaxConstants.SMSEMAILTYPECLOSINGCONNAPPROVE);
             subject = waterTaxUtils.emailSubjectforEmailByCodeAndArgs("msg.closeofconnectionapprove.email.subject",
                     waterConnectionDetails.getApplicationNumber());
-        } else if (WaterTaxConstants.APPLICATION_STATUS_CLOSERSANCTIONED
+        } else if (isDigitalSignatureEnabled && WaterTaxConstants.APPLICATION_STATUS_CLOSERSANCTIONED
                 .equalsIgnoreCase(waterConnectionDetails.getStatus().getCode())) {
-
             smsMsg = smsBodyByCodeAndArgsWithType("msg.closeconnection.sanctioned.sms", waterConnectionDetails,
                     applicantName, WaterTaxConstants.SMSEMAILTYPECLOSINGCONNSANCTIONED);
             body = emailBodyByCodeAndArgsWithType("msg.closeconnection.sanctioned.body", waterConnectionDetails,
@@ -814,9 +854,9 @@ public class WaterConnectionSmsAndEmailService {
             subject = waterTaxUtils.emailSubjectforEmailByCodeAndArgs("msg.closeofconnectionsanctioned.email.subject",
                     waterConnectionDetails.getApplicationNumber());
         }
-        if (mobileNumber != null && smsMsg != null)
+        if (mobileNumber != null && isNotBlank(smsMsg))
             waterTaxUtils.sendSMSOnWaterConnection(mobileNumber, smsMsg);
-        if (email != null && body != null)
+        if (email != null && isNotBlank(body))
             waterTaxUtils.sendEmailOnWaterConnection(email, body, subject);
     }
 
@@ -825,7 +865,12 @@ public class WaterConnectionSmsAndEmailService {
         String smsMsg = null;
         String body = "";
         String subject = "";
-        if (WaterTaxConstants.APPLICATION_STATUS__RECONNCTIONAPPROVED
+        Boolean isDigitalSignatureEnabled = false;
+        final AppConfig appConfig = appConfigService.getAppConfigByModuleNameAndKeyName(MODULE_NAME, ENABLEDIGITALSIGNATURE);
+        if (APPCONFIGVALUEOFENABLED.equalsIgnoreCase(appConfig.getConfValues().get(0).getValue()))
+            isDigitalSignatureEnabled = true;
+
+        if (!isDigitalSignatureEnabled && WaterTaxConstants.APPLICATION_STATUS_RECONNDIGSIGNPENDING
                 .equalsIgnoreCase(waterConnectionDetails.getStatus().getCode())) {
             smsMsg = smsBodyByCodeAndArgsWithType("msg.reconnection.approve.sms", waterConnectionDetails, applicantName,
                     WaterTaxConstants.SMSEMAILTYPERECONNECTIONAPPROVE);
@@ -833,7 +878,7 @@ public class WaterConnectionSmsAndEmailService {
                     applicantName, WaterTaxConstants.SMSEMAILTYPERECONNECTIONAPPROVE);
             subject = waterTaxUtils.emailSubjectforEmailByCodeAndArgs("msg.reconnectionapprove.email.subject",
                     waterConnectionDetails.getApplicationNumber());
-        } else if (WaterTaxConstants.APPLICATION_STATUS__RECONNCTIONSANCTIONED
+        } else if (isDigitalSignatureEnabled && WaterTaxConstants.APPLICATION_STATUS__RECONNCTIONSANCTIONED
                 .equalsIgnoreCase(waterConnectionDetails.getStatus().getCode())) {
 
             smsMsg = smsBodyByCodeAndArgsWithType("msg.reconnection.sanctioned.sms", waterConnectionDetails,
@@ -843,9 +888,9 @@ public class WaterConnectionSmsAndEmailService {
             subject = waterTaxUtils.emailSubjectforEmailByCodeAndArgs("msg.reconnectionsanctioned.email.subject",
                     waterConnectionDetails.getApplicationNumber());
         }
-        if (mobileNumber != null && smsMsg != null)
+        if (mobileNumber != null && isNotBlank(smsMsg))
             waterTaxUtils.sendSMSOnWaterConnection(mobileNumber, smsMsg);
-        if (email != null && body != null)
+        if (email != null && isNotBlank(body))
             waterTaxUtils.sendEmailOnWaterConnection(email, body, subject);
     }
 

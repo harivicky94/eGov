@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,15 +43,15 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 
 package org.egov.ptis.web.controller.transactions.editowner;
 
-import java.util.List;
-
 import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.persistence.entity.enums.Gender;
+import org.egov.infra.persistence.entity.enums.GuardianRelation;
 import org.egov.ptis.bean.PropertyOwner;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
@@ -54,7 +61,6 @@ import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.domain.service.property.OwnerAuditService;
 import org.egov.ptis.domain.service.property.PropertyPersistenceService;
 import org.egov.ptis.domain.service.property.PropertyService;
-import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -67,6 +73,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+
+import java.util.Arrays;
+import java.util.List;
 
 @Controller
 @RequestMapping(value = "/editowner/{assessmentNo}")
@@ -88,9 +97,6 @@ public class EditOwnerDetailsController {
     @Autowired
     private PropertyService propertyService;
     
-    @Autowired
-    private PropertyTaxCommonUtils propertyTaxCommonUtils; 
-    
     @ModelAttribute
     public PropertyOwner getPropertyOwner(@PathVariable final String assessmentNo) {
         PropertyOwner propertyOwner = new PropertyOwner();
@@ -110,7 +116,7 @@ public class EditOwnerDetailsController {
             @PathVariable String assessmentNo) {
         BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
         List<OwnerAudit> ownerAuditList;
-		model.addAttribute("guardianRelations", propertyTaxCommonUtils.getGuardianRelations());
+		model.addAttribute("guardianRelations", Arrays.asList(GuardianRelation.values()));
         model.addAttribute("gender", Gender.values());
         for (PropertyOwnerInfo ownerInfo : basicProperty.getPropertyOwnerInfo()) {
             for (Address address : ownerInfo.getOwner().getAddress()) {
@@ -132,7 +138,7 @@ public class EditOwnerDetailsController {
             final HttpServletRequest request, @RequestParam String doorNumber) {
         String errMsg ;
         model.addAttribute("doorNumber", doorNumber);
-		model.addAttribute("guardianRelations", propertyTaxCommonUtils.getGuardianRelations());
+		model.addAttribute("guardianRelations", Arrays.asList(GuardianRelation.values()));
         for (PropertyOwnerInfo ownerInfo : propertyOwner.getPropertyOwnerInfo())
             for (Address address : ownerInfo.getOwner().getAddress())
                 model.addAttribute("existingDoorNumber", address.getHouseNoBldgApt());

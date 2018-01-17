@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,6 +43,7 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.wtms.web.controller.application;
 
@@ -46,7 +54,6 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.SOURCECHANNEL_ONLI
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -62,6 +69,7 @@ import org.egov.wtms.application.entity.ApplicationDocuments;
 import org.egov.wtms.application.entity.WaterConnection;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.AdditionalConnectionService;
+import org.egov.wtms.application.service.ConnectionDetailService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.application.service.WaterConnectionService;
 import org.egov.wtms.masters.entity.DocumentNames;
@@ -102,6 +110,9 @@ public class AdditionalConnectionController extends GenericConnectionController 
     private WaterTaxUtils waterTaxUtils;
     @Autowired
     private SecurityUtils securityUtils;
+
+    @Autowired
+    private ConnectionDetailService connectionDetailService;
 
     public @ModelAttribute("documentNamesList") List<DocumentNames> documentNamesList(
             @ModelAttribute final WaterConnectionDetails addConnection) {
@@ -195,7 +206,7 @@ public class AdditionalConnectionController extends GenericConnectionController 
                 if (applicationDocument.getDocumentNumber() != null && applicationDocument.getDocumentDate() == null) {
                     final String fieldError = "applicationDocs[" + i + "].documentDate";
                     resultBinder.rejectValue(fieldError, "documentDate.required");
-                } else if (validApplicationDocument(applicationDocument))
+                } else if (connectionDetailService.validApplicationDocument(applicationDocument))
                     applicationDocs.add(applicationDocument);
                 i++;
             }
@@ -270,18 +281,13 @@ public class AdditionalConnectionController extends GenericConnectionController 
             addConnection.setSource(waterTaxUtils.setSourceOfConnection(securityUtils.getCurrentUser()));
 
         if (loggedUserIsMeesevaUser) {
-            final HashMap<String, String> meesevaParams = new HashMap<>();
-            meesevaParams.put("APPLICATIONNUMBER", addConnection.getMeesevaApplicationNumber());
-            if (addConnection.getApplicationNumber() == null) {
+            addConnection.setSource(MEESEVA);
+            if (addConnection.getMeesevaApplicationNumber() != null)
                 addConnection.setApplicationNumber(addConnection.getMeesevaApplicationNumber());
-                addConnection.setSource(MEESEVA);
+        }
 
-                waterConnectionDetailsService.createNewWaterConnection(addConnection, approvalPosition, approvalComment,
-                        addConnection.getApplicationType().getCode(), workFlowActionValue, meesevaParams, sourceChannel);
-            }
-        } else
-            waterConnectionDetailsService.createNewWaterConnection(addConnection, approvalPosition, approvalComment,
-                    addConnection.getApplicationType().getCode(), workFlowActionValue, sourceChannel);
+        waterConnectionDetailsService.createNewWaterConnection(addConnection, approvalPosition, approvalComment,
+                addConnection.getApplicationType().getCode(), workFlowActionValue, sourceChannel);
 
         if (loggedUserIsMeesevaUser)
             return "redirect:/application/generate-meesevareceipt?transactionServiceNumber="

@@ -1,41 +1,49 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
- * accountability and the service delivery of the government  organizations.
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ *    accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
- *  The updated version of eGov suite of products as by eGovernments Foundation
- *  is available at http://www.egovernments.org
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
  *
- *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  any later version.
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
  *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program. If not, see http://www.gnu.org/licenses/ or
- *  http://www.gnu.org/licenses/gpl.html .
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
  *
- *  In addition to the terms of the GPL license to be adhered to in using this
- *  program, the following additional terms are to be complied with:
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
  *
- *      1) All versions of this program, verbatim or modified must carry this
- *         Legal Notice.
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
  *
- *      2) Any misrepresentation of the origin of the material is prohibited. It
- *         is required that all modified versions of this material be marked in
- *         reasonable ways as different from the original version.
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
- *      3) This license does not grant any rights to any user of the program
- *         with regards to rights under trademark law for use of the trade names
- *         or trademarks of eGovernments Foundation.
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
  *
- *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 
 package org.egov.pgr.elasticsearch.service;
@@ -50,16 +58,16 @@ import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.es.CityIndexService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.config.mapper.BeanMapperConfiguration;
+import org.egov.pgr.elasticsearch.entity.ComplaintIndex;
+import org.egov.pgr.elasticsearch.entity.contract.ComplaintDashBoardRequest;
+import org.egov.pgr.elasticsearch.entity.contract.ComplaintDashBoardResponse;
+import org.egov.pgr.elasticsearch.entity.contract.ComplaintSourceResponse;
+import org.egov.pgr.elasticsearch.repository.ComplaintIndexAggregationBuilder;
+import org.egov.pgr.elasticsearch.repository.ComplaintIndexRepository;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.Escalation;
 import org.egov.pgr.entity.ReceivingMode;
 import org.egov.pgr.entity.enums.ComplaintStatus;
-import org.egov.pgr.elasticsearch.entity.contract.ComplaintDashBoardRequest;
-import org.egov.pgr.elasticsearch.entity.contract.ComplaintDashBoardResponse;
-import org.egov.pgr.elasticsearch.entity.ComplaintIndex;
-import org.egov.pgr.elasticsearch.entity.contract.ComplaintSourceResponse;
-import org.egov.pgr.elasticsearch.repository.ComplaintIndexRepository;
-import org.egov.pgr.elasticsearch.repository.ComplaintIndexAggregationBuilder;
 import org.egov.pgr.service.ComplaintEscalationService;
 import org.egov.pgr.service.ComplaintService;
 import org.egov.pgr.service.ReceivingModeService;
@@ -82,6 +90,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -94,14 +103,7 @@ import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.infra.config.core.ApplicationThreadLocals.getCityCode;
 import static org.egov.infra.utils.ApplicationConstant.NA;
-import static org.egov.pgr.utils.constants.PGRConstants.CITY_CODE;
-import static org.egov.pgr.utils.constants.PGRConstants.COMPLAINT_REOPENED;
-import static org.egov.pgr.utils.constants.PGRConstants.DASHBOARD_GROUPING_ALL_FUNCTIONARY;
-import static org.egov.pgr.utils.constants.PGRConstants.DASHBOARD_GROUPING_ALL_LOCALITIES;
-import static org.egov.pgr.utils.constants.PGRConstants.DASHBOARD_GROUPING_ALL_ULB;
-import static org.egov.pgr.utils.constants.PGRConstants.DASHBOARD_GROUPING_ALL_WARDS;
-import static org.egov.pgr.utils.constants.PGRConstants.DASHBOARD_GROUPING_CITY;
-import static org.egov.pgr.utils.constants.PGRConstants.NOASSIGNMENT;
+import static org.egov.pgr.utils.constants.PGRConstants.*;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
 import static org.elasticsearch.index.query.QueryBuilders.termQuery;
@@ -1307,7 +1309,8 @@ public class ComplaintIndexService {
 
     private BoolQueryBuilder getFilterQuery(final ComplaintDashBoardRequest complaintDashBoardRequest) {
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery().filter(termQuery("registered", 1));
-
+        if (isNotBlank(complaintDashBoardRequest.getFromDate()) && isNotBlank(complaintDashBoardRequest.getToDate()))
+            boolQuery = boolQuery.must(rangeQuery("createdDate").from(complaintDashBoardRequest.getFromDate()).to(complaintDashBoardRequest.getToDate()));
         if (complaintDashBoardRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_ALL_ULB) ||
                 complaintDashBoardRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_ALL_WARDS) ||
                 complaintDashBoardRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_ALL_LOCALITIES) ||
@@ -1315,7 +1318,6 @@ public class ComplaintIndexService {
             boolQuery = filterBasedOnSource(complaintDashBoardRequest, boolQuery);
             return boolQuery;
         }
-
         if (isNotBlank(complaintDashBoardRequest.getRegionName()))
             boolQuery = boolQuery.filter(matchQuery(CITY_REGION_NAME, complaintDashBoardRequest.getRegionName()));
         if (isNotBlank(complaintDashBoardRequest.getUlbGrade()))
@@ -1332,11 +1334,6 @@ public class ComplaintIndexService {
         if (isNotBlank(complaintDashBoardRequest.getDepartmentCode()))
             boolQuery = boolQuery
                     .filter(matchQuery("departmentCode", complaintDashBoardRequest.getDepartmentCode()));
-        if (isNotBlank(complaintDashBoardRequest.getFromDate()) &&
-                isNotBlank(complaintDashBoardRequest.getToDate()))
-            boolQuery = boolQuery.must(rangeQuery("createdDate")
-                    .from(complaintDashBoardRequest.getFromDate())
-                    .to(complaintDashBoardRequest.getToDate()));
         if (isNotBlank(complaintDashBoardRequest.getComplaintTypeCode()))
             boolQuery = boolQuery.filter(matchQuery("complaintTypeCode",
                     complaintDashBoardRequest.getComplaintTypeCode()));
@@ -1599,4 +1596,18 @@ public class ComplaintIndexService {
 
         }
     }
+
+    public Map<String, Long> getCrossCityComplaintsCount(String mobileNumber) {
+        HashMap<String, Long> complaintsCount = new HashMap<>();
+        complaintsCount.put(COMPLAINT_PENDING,
+                complaintIndexRepository.countByComplainantMobileAndComplaintStatusNameIn(mobileNumber, Arrays.asList(PENDING_STATUS)));
+        complaintsCount.put(COMPLAINT_COMPLETED,
+                complaintIndexRepository.countByComplainantMobileAndComplaintStatusNameIn(mobileNumber, Arrays.asList(COMPLETED_STATUS)));
+        complaintsCount.put(COMPLAINT_REJECTED,
+                complaintIndexRepository.countByComplainantMobileAndComplaintStatusNameIn(mobileNumber, Arrays.asList(REJECTED_STATUS)));
+        complaintsCount.put(COMPLAINT_ALL, complaintsCount.get(COMPLAINT_PENDING) + complaintsCount.get(COMPLAINT_COMPLETED)
+                + complaintsCount.get(COMPLAINT_REJECTED));
+        return complaintsCount;
+    }
+
 }

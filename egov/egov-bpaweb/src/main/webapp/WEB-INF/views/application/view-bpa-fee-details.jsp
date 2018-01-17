@@ -1,8 +1,8 @@
 <%--
-  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2017>  eGovernments Foundation
+  ~     Copyright (C) 2017  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
   ~
   ~         1) All versions of this program, verbatim or modified must carry this
   ~            Legal Notice.
+  ~            Further, all user interfaces, including but not limited to citizen facing interfaces,
+  ~            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+  ~            derived works should carry eGovernments Foundation logo on the top right corner.
+  ~
+  ~            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+  ~            For any further queries on attribution, including queries on brand guidelines,
+  ~            please contact contact@egovernments.org
   ~
   ~         2) Any misrepresentation of the origin of the material is prohibited. It
   ~            is required that all modified versions of this material be marked in
@@ -36,55 +43,75 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~
   --%>
 
-<%@ page contentType="text/html;charset=UTF-8" language="java"%>
+
+<%@ page language="java" pageEncoding="UTF-8"%>
+<%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
-<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>eGov - Error Page</title>
+	<style>
+.hiddenError {
+	display: none;
+}
 
-<div class="panel-heading custom_form_panel_heading">
-	<div class="panel-title">
-		<spring:message code="lbl.applicationFee" />
-	</div>
-</div>
-
-<div class="panel-body">
-	<c:choose>
-		<c:when test="${!applicationFeeDetail.isEmpty()}">
-			<div class="form-group view-content header-color hidden-xs">
-				<div class="col-sm-5 text-right">
-					<spring:message code="lbl.applicationFee.feeType" />
+.oopstext {
+	font-family: Verdana, Geneva, sans-serif;
+	font-size: 14px;
+	font-weight: bold;
+	color: #F00;
+	margin-bottom: 15px;
+}
+.loadImg {
+		position:absolute;top:15%;left:20%;display:none;
+		background:white;  color:#444; font:bold 11px tohoma,arial,helvetica;
+}
+.loadspan {
+	position: absolute;width:200px;margin-left:5px;margin-top:8px
+}
+</style>
+</head>
+<body>
+	<!-- <div id="loadImg" class="loadImg"><img src="/egi/resources/erp2/images/loading.gif"  />&nbsp;<span class="loadspan">Please wait... Sending error report...</span></div> -->
+	<div class="formmainbox">
+		<div class="insidecontent">
+			<div class="errorroundbox2">
+				<div class="errortop2">
+					<div></div>
 				</div>
-				<div class="col-sm-2 text-right">
-					<spring:message code="lbl.applicationFee.amount" />
+				<div class="errorcontent2">
+					<table width="100%" border="0" cellspacing="0" cellpadding="0">
+						<tr>
+							<td width="59%">
+								<div class="logouttext">
+									<img src="/egi/resources/erp2/images/error.png" width="128" height="128"
+										alt="Error" />
+									<div class="oopstext">
+										Oops! Sorry your request cannot be processed!
+									</div>
+									<span class="bold">An error has occurred. Please try
+										again or contact system administrator if the problem persists.</span>
+								</div>
+								<s:actionerror />
+								<s:fielderror />
+							</td>
+						</tr>
+						<tr id="msgResp" class="hiddenError">
+							<td width="90%" align="center" height="200px">
+								<span id="resp" style="color:blue"></span>
+							</td>
+						</tr>
+					</table>
 				</div>
-			</div>
-			<c:forEach var="docs"
-				items="${bpaApplication.applicationFee[0].applicationFeeDetail}"
-				varStatus="status">
-				<div class="form-group">
-					<div class="col-sm-5 add-margin check-text text-right">
-						<c:out value="${docs.bpaFee.description}" />
-					</div>
-					<div class="col-sm-2 add-margin text-right">
-						<fmt:formatNumber type="number" maxFractionDigits="2" value="${docs.amount}" />
-					</div>
+				<div class="errorbot2">
+					<div></div>
 				</div>
-			</c:forEach>
-		</c:when>
-	</c:choose>
-	<c:if
-		test="${bpaApplication.applicationFee[0].modifyFeeReason ne null}">
-		<div class="row add-border">
-			<div class="col-sm-5 text-right add-margin">
-				<spring:message code="lbl.modify.fee.reason" />
-			</div>
-			<div class="col-sm-7 add-margin view-content">
-				<c:out value="${bpaApplication.applicationFee[0].modifyFeeReason}" />
 			</div>
 		</div>
-	</c:if>
-</div>
+	</div>
+
+</body>
+</html>

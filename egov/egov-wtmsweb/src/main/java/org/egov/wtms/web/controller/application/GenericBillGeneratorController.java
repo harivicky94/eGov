@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,12 +43,21 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.wtms.web.controller.application;
 
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
+import java.math.BigDecimal;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.ValidationException;
+
 import org.egov.infra.admin.master.service.UserService;
-import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
@@ -61,13 +77,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.ValidationException;
-import java.math.BigDecimal;
-
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Controller
 @RequestMapping(value = "/application")
@@ -118,12 +127,13 @@ public class GenericBillGeneratorController {
     @RequestMapping(value = "/generatebill/{applicationCode}", method = POST)
     public String payTax(@ModelAttribute final WaterConnectionDetails waterConnectionDetails,
             final RedirectAttributes redirectAttributes, @PathVariable final String applicationCode,
-            @RequestParam final String applicationTypeCode, final Model model) throws ValidationException {
-        WaterConnectionDetails waterconnectionDetails = waterConnectionDetailsService.findByApplicationNumberOrConsumerCodeAndStatus(applicationCode, ConnectionStatus.ACTIVE);
+            @RequestParam final String applicationTypeCode, final Model model) {
+        final WaterConnectionDetails waterconnectionDetails = waterConnectionDetailsService
+                .findByApplicationNumberOrConsumerCodeAndStatus(applicationCode, ConnectionStatus.ACTIVE);
         final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
                 waterconnectionDetails.getConnection().getPropertyIdentifier(),
                 PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ALL);
-        if (assessmentDetails != null )
+        if (assessmentDetails != null)
             return generateBillAndRedirectToCollection(applicationCode, applicationTypeCode,
                     model);
         else
@@ -133,24 +143,24 @@ public class GenericBillGeneratorController {
     @RequestMapping(value = "/generatebillOnline/{applicationCode}", method = GET)
     public String payTaxOnline(@ModelAttribute final WaterConnectionDetails waterConnectionDetails,
             final RedirectAttributes redirectAttributes, @PathVariable final String applicationCode,
-            @RequestParam final String applicationTypeCode, final Model model) throws ValidationException {
-        WaterConnectionDetails waterconnectionDetails = waterConnectionDetailsService.findByApplicationNumberOrConsumerCodeAndStatus(applicationCode, ConnectionStatus.ACTIVE);
+            @RequestParam final String applicationTypeCode, final Model model) {
+        final WaterConnectionDetails waterconnectionDetails = waterConnectionDetailsService
+                .findByApplicationNumberOrConsumerCodeAndStatus(applicationCode, ConnectionStatus.ACTIVE);
         final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
                 waterconnectionDetails.getConnection().getPropertyIdentifier(),
                 PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ALL);
-        if (assessmentDetails != null )
+        if (assessmentDetails != null)
             return generateBillAndRedirectToCollection(applicationCode, applicationTypeCode,
                     model);
         else
             throw new ValidationException("invalid.property");
-            
+
     }
 
     private String generateBillAndRedirectToCollection(
             final String applicationCode, final String applicationTypeCode, final Model model) {
-        if (ApplicationThreadLocals.getUserId() == null)
-            if (securityUtils.getCurrentUser().getUsername().equals("anonymous"))
-                ApplicationThreadLocals.setUserId(userService.getUserByUsername(WaterTaxConstants.USERNAME_ANONYMOUS).getId());
+        if (ApplicationThreadLocals.getUserId() == null && securityUtils.getCurrentUser().getUsername().equals("anonymous"))
+            ApplicationThreadLocals.setUserId(userService.getUserByUsername(WaterTaxConstants.USERNAME_ANONYMOUS).getId());
         model.addAttribute("collectxml", connectionDemandService.generateBill(applicationCode, applicationTypeCode));
         model.addAttribute("citizenrole", waterTaxUtils.getCitizenUserRole());
         return "collecttax-redirection";

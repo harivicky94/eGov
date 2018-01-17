@@ -46,35 +46,11 @@
  */
 package org.egov.bpa.transaction.entity;
 
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
-
 import org.egov.bpa.master.entity.CheckListDetail;
 import org.egov.bpa.master.entity.Occupancy;
 import org.egov.bpa.master.entity.ServiceType;
@@ -86,14 +62,21 @@ import org.egov.demand.model.EgDemand;
 import org.egov.infra.workflow.entity.StateAware;
 import org.hibernate.validator.constraints.Length;
 
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 @Entity
 @Table(name = "EGBPA_APPLICATION")
 @SequenceGenerator(name = BpaApplication.SEQ_APPLICATION, sequenceName = BpaApplication.SEQ_APPLICATION, allocationSize = 1)
-public class BpaApplication extends StateAware {
+public class BpaApplication extends StateAware<Position> {
 
-    private static final long serialVersionUID = -361205348191992865L;
     public static final String SEQ_APPLICATION = "SEQ_EGBPA_APPLICATION";
-
+    private static final long serialVersionUID = -361205348191992865L;
     @Id
     @GeneratedValue(generator = SEQ_APPLICATION, strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -330,6 +313,10 @@ public class BpaApplication extends StateAware {
         return tapalNumber;
     }
 
+    public void setTapalNumber(final String tapalNumber) {
+        this.tapalNumber = tapalNumber;
+    }
+
     public Long getApprovalDepartment() {
         return approvalDepartment;
     }
@@ -344,10 +331,6 @@ public class BpaApplication extends StateAware {
 
     public void setApprovalComent(final String approvalComent) {
         this.approvalComent = approvalComent;
-    }
-
-    public void setTapalNumber(final String tapalNumber) {
-        this.tapalNumber = tapalNumber;
     }
 
     public Occupancy getOccupancy() {

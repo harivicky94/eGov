@@ -1,49 +1,52 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
- * accountability and the service delivery of the government  organizations.
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ *    accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) 2016  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
- *  The updated version of eGov suite of products as by eGovernments Foundation
- *  is available at http://www.egovernments.org
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
  *
- *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  any later version.
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
  *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program. If not, see http://www.gnu.org/licenses/ or
- *  http://www.gnu.org/licenses/gpl.html .
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
  *
- *  In addition to the terms of the GPL license to be adhered to in using this
- *  program, the following additional terms are to be complied with:
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
  *
- *      1) All versions of this program, verbatim or modified must carry this
- *         Legal Notice.
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
  *
- *      2) Any misrepresentation of the origin of the material is prohibited. It
- *         is required that all modified versions of this material be marked in
- *         reasonable ways as different from the original version.
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
- *      3) This license does not grant any rights to any user of the program
- *         with regards to rights under trademark law for use of the trade names
- *         or trademarks of eGovernments Foundation.
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
  *
- *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 
 package org.egov.infra.workflow.service;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.script.entity.Script;
@@ -58,13 +61,17 @@ import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 /**
- *
  * This is a generic bean so do not use this to do transition of your own StateAware objects<br/>
  * For your own StateAware object transition declare a separate bean definition like<br/>
- * 
+ * <p>
  * <pre>
- *  
+ *
  *       &lt;bean id="myStateAwareWorkflowService" parent="workflowService"&gt;
  *               &lt;constructor-arg index="0" ref="myStateAwarePersistenceService"/&gt;
  *       &lt;/bean&gt;
@@ -150,17 +157,17 @@ public class SimpleWorkflowService<T extends StateAware> implements WorkflowServ
 
     @Override
     public WorkFlowMatrix getWfMatrix(final String type, final String department, final BigDecimal amountRule,
-            final String additionalRule, final String currentState, final String pendingActions) {
+                                      final String additionalRule, final String currentState, final String pendingActions) {
         final Criteria wfMatrixCriteria = createWfMatrixAdditionalCriteria(type, department, amountRule,
                 additionalRule, currentState, pendingActions);
 
-        return getWorkflowMatrixObj(type, additionalRule, currentState, pendingActions, wfMatrixCriteria, amountRule);
+        return getWorkflowMatrixObj(type, additionalRule, currentState, pendingActions, wfMatrixCriteria);
 
     }
 
     @Override
     public WorkFlowMatrix getWfMatrix(final String type, final String department, final BigDecimal amountRule,
-            final String additionalRule, final String currentState, final String pendingActions, final Date date) {
+                                      final String additionalRule, final String currentState, final String pendingActions, final Date date) {
         final Criteria wfMatrixCriteria = createWfMatrixAdditionalCriteria(type, department, amountRule,
                 additionalRule, currentState, pendingActions);
         final Criterion crit1 = Restrictions.le("fromDate", date == null ? new Date() : date);
@@ -168,14 +175,14 @@ public class SimpleWorkflowService<T extends StateAware> implements WorkflowServ
         final Criterion crit3 = Restrictions.conjunction().add(crit1).add(crit2);
         wfMatrixCriteria.add(Restrictions.or(crit3, crit1));
 
-        return getWorkflowMatrixObj(type, additionalRule, currentState, pendingActions, wfMatrixCriteria, amountRule);
+        return getWorkflowMatrixObj(type, additionalRule, currentState, pendingActions, wfMatrixCriteria);
 
     }
 
     @Override
     public WorkFlowMatrix getWfMatrix(final String type, final String department, final BigDecimal amountRule,
-            final String additionalRule, final String currentState, final String pendingActions, final Date date,
-            final String designation) {
+                                      final String additionalRule, final String currentState, final String pendingActions, final Date date,
+                                      final String designation) {
         final Criteria wfMatrixCriteria = createWfMatrixAdditionalCriteria(type, department, amountRule,
                 additionalRule, currentState, pendingActions, designation);
         final Criterion crit1 = Restrictions.le("fromDate", date == null ? new Date() : date);
@@ -191,23 +198,13 @@ public class SimpleWorkflowService<T extends StateAware> implements WorkflowServ
     }
 
     private WorkFlowMatrix getWorkflowMatrixObj(final String type, final String additionalRule,
-            final String currentState, final String pendingActions, final Criteria wfMatrixCriteria, final BigDecimal amountRule) {
+                                                final String currentState, final String pendingActions, final Criteria wfMatrixCriteria) {
         final List<WorkFlowMatrix> objectTypeList = wfMatrixCriteria.list();
 
         if (objectTypeList.isEmpty()) {
             final Criteria defaulfWfMatrixCriteria = commonWorkFlowMatrixCriteria(type, additionalRule, currentState,
                     pendingActions);
             defaulfWfMatrixCriteria.add(Restrictions.eq("department", "ANY"));
-         // Added restriction for amount rule
-            if (amountRule != null && BigDecimal.ZERO.compareTo(amountRule) != 0) {
-                final Criterion amount1st = Restrictions.conjunction().add(Restrictions.le("fromQty", amountRule))
-                        .add(Restrictions.ge("toQty", amountRule));
-
-                final Criterion amount2nd = Restrictions.conjunction().add(Restrictions.le("fromQty", amountRule))
-                        .add(Restrictions.isNull("toQty"));
-                defaulfWfMatrixCriteria.add(Restrictions.disjunction().add(amount1st).add(amount2nd));
-
-            }
             final List<WorkFlowMatrix> defaultObjectTypeList = defaulfWfMatrixCriteria.list();
             if (defaultObjectTypeList.isEmpty())
                 return null;
@@ -222,7 +219,7 @@ public class SimpleWorkflowService<T extends StateAware> implements WorkflowServ
     }
 
     private WorkFlowMatrix getWorkflowMatrixObj(final String type, final String additionalRule,
-            final String currentState, final String pendingActions, final String designation, final Criteria wfMatrixCriteria) {
+                                                final String currentState, final String pendingActions, final String designation, final Criteria wfMatrixCriteria) {
         final List<WorkFlowMatrix> objectTypeList = wfMatrixCriteria.list();
 
         if (objectTypeList.isEmpty()) {
@@ -245,8 +242,8 @@ public class SimpleWorkflowService<T extends StateAware> implements WorkflowServ
     }
 
     private Criteria createWfMatrixAdditionalCriteria(final String type, final String department,
-            final BigDecimal amountRule, final String additionalRule, final String currentState,
-            final String pendingActions) {
+                                                      final BigDecimal amountRule, final String additionalRule, final String currentState,
+                                                      final String pendingActions) {
         final Criteria wfMatrixCriteria = commonWorkFlowMatrixCriteria(type, additionalRule, currentState,
                 pendingActions);
         if (department != null && !"".equals(department.trim()))
@@ -266,8 +263,8 @@ public class SimpleWorkflowService<T extends StateAware> implements WorkflowServ
     }
 
     private Criteria createWfMatrixAdditionalCriteria(final String type, final String department,
-            final BigDecimal amountRule, final String additionalRule, final String currentState,
-            final String pendingActions, final String designation) {
+                                                      final BigDecimal amountRule, final String additionalRule, final String currentState,
+                                                      final String pendingActions, final String designation) {
         final Criteria wfMatrixCriteria = commonWorkFlowMatrixCriteria(type, additionalRule, currentState,
                 pendingActions);
         if (department != null && !"".equals(department.trim()))
@@ -291,7 +288,7 @@ public class SimpleWorkflowService<T extends StateAware> implements WorkflowServ
     }
 
     public WorkFlowMatrix getPreviousStateFromWfMatrix(final String type, final String department, final BigDecimal amountRule,
-            final String additionalRule, final String currentState, final String pendingActions) {
+                                                       final String additionalRule, final String currentState, final String pendingActions) {
 
         final Criteria wfMatrixCriteria = previousWorkFlowMatrixCriteria(type, additionalRule, currentState, pendingActions);
         if (department != null && !"".equals(department))
@@ -322,7 +319,7 @@ public class SimpleWorkflowService<T extends StateAware> implements WorkflowServ
     }
 
     private Criteria previousWorkFlowMatrixCriteria(final String type, final String additionalRule, final String currentState,
-            final String pendingActions) {
+                                                    final String pendingActions) {
         final Criteria commonWfMatrixCriteria = this.stateAwarePersistenceService.getSession()
                 .createCriteria(WorkFlowMatrix.class);
         commonWfMatrixCriteria.add(Restrictions.eq("objectType", type));
@@ -339,7 +336,7 @@ public class SimpleWorkflowService<T extends StateAware> implements WorkflowServ
     }
 
     private Criteria commonWorkFlowMatrixCriteria(final String type, final String additionalRule,
-            final String currentState, final String pendingActions) {
+                                                  final String currentState, final String pendingActions) {
 
         final Criteria commonWfMatrixCriteria = this.stateAwarePersistenceService.getSession().createCriteria(
                 WorkFlowMatrix.class);

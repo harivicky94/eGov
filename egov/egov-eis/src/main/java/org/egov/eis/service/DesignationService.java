@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,6 +43,7 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.eis.service;
 
@@ -50,9 +58,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-/**
- * @author Vaibhav.K
- */
+import static java.util.Collections.emptyList;
 
 @Service
 @Transactional(readOnly = true)
@@ -62,25 +68,25 @@ public class DesignationService {
     private DesignationRepository designationRepository;
 
     @Transactional
-    public void createDesignation(final Designation designation) {
+    public void createDesignation(Designation designation) {
         designationRepository.save(designation);
     }
 
     @Transactional
-    public void updateDesignation(final Designation designation) {
+    public void updateDesignation(Designation designation) {
         designationRepository.save(designation);
     }
 
     @Transactional
-    public void deleteDesignation(final Designation designation) {
+    public void deleteDesignation(Designation designation) {
         designationRepository.delete(designation);
     }
 
-    public Designation getDesignationByName(final String desName) {
+    public Designation getDesignationByName(String desName) {
         return designationRepository.findByNameUpperCase(desName.toUpperCase());
     }
 
-    public Designation getDesignationById(final Long desigId) {
+    public Designation getDesignationById(Long desigId) {
         return designationRepository.findOne(desigId);
     }
 
@@ -92,27 +98,27 @@ public class DesignationService {
         return designationRepository.findAllByOrderByNameAsc();
     }
 
-    public List<Designation> getAllDesignationsByNameLike(final String name) {
+    public List<Designation> getAllDesignationsByNameLike(String name) {
         return designationRepository.findByNameContainingIgnoreCaseOrderByNameAsc(name);
     }
 
-    public List<Designation> getAllDesignationByDepartment(final Long id, final Date givenDate) {
+    public List<Designation> getAllDesignationByDepartment(Long id, Date givenDate) {
         return designationRepository.getAllDesignationsByDepartment(id, givenDate);
     }
 
-    public List<Designation> getAllDesignationByDepartment(final Long departmentId) {
+    public List<Designation> getAllDesignationByDepartment(Long departmentId) {
         return designationRepository.getAllDesignationsByDepartment(departmentId, new Date());
     }
 
-    public Set<Role> getRolesByDesignation(final String designationName) {
+    public Set<Role> getRolesByDesignation(String designationName) {
         return designationRepository.getRolesByDesignation(designationName);
     }
 
-    public List<Designation> getDesignationsByNames(final List<String> names) {
-        return designationRepository.getDesignationsByNames(names);
+    public List<Designation> getDesignationsByNames(List<String> names) {
+        return names.isEmpty() ? emptyList() : designationRepository.getDesignationsByNames(names);
     }
 
-    public List<Designation> getDesignationsByName(final String name) {
+    public List<Designation> getDesignationsByName(String name) {
         return designationRepository.getDesignationsByName("%" + name + "%");
     }
 }

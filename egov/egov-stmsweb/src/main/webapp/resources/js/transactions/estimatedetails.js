@@ -1,42 +1,50 @@
-/*#-------------------------------------------------------------------------------
-# eGov suite of products aim to improve the internal efficiency,transparency, 
-#    accountability and the service delivery of the government  organizations.
-# 
-#     Copyright (C) <2015>  eGovernments Foundation
-# 
-#     The updated version of eGov suite of products as by eGovernments Foundation 
-#     is available at http://www.egovernments.org
-# 
-#     This program is free software: you can redistribute it and/or modify
-#     it under the terms of the GNU General Public License as published by
-#     the Free Software Foundation, either version 3 of the License, or
-#     any later version.
-# 
-#     This program is distributed in the hope that it will be useful,
-#     but WITHOUT ANY WARRANTY; without even the implied warranty of
-#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#     GNU General Public License for more details.
-# 
-#     You should have received a copy of the GNU General Public License
-#     along with this program. If not, see http://www.gnu.org/licenses/ or 
-#     http://www.gnu.org/licenses/gpl.html .
-# 
-#     In addition to the terms of the GPL license to be adhered to in using this
-#     program, the following additional terms are to be complied with:
-# 
-# 	1) All versions of this program, verbatim or modified must carry this 
-# 	   Legal Notice.
-# 
-# 	2) Any misrepresentation of the origin of the material is prohibited. It 
-# 	   is required that all modified versions of this material be marked in 
-# 	   reasonable ways as different from the original version.
-# 
-# 	3) This license does not grant any rights to any user of the program 
-# 	   with regards to rights under trademark law for use of the trade names 
-# 	   or trademarks of eGovernments Foundation.
-# 
-#   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-#-------------------------------------------------------------------------------*/
+/*
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) 2017  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces, 
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any 
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines, 
+ *            please contact contact@egovernments.org
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
+ */
 $(document).ready(function()
 {	if($('#inspectionDate').val()!=''){
 		$('#inspectionDate').val($('#inspectionDate').val());
@@ -420,7 +428,7 @@ function add_Inspection_Row() {
     var cell2 = row.insertCell(1);
     cell2.className = "text-right";
     var pipe = document.createElement("input");
-    pipe.setAttribute("class","form-control table-input text-right patternvalidation");
+    pipe.setAttribute("class","form-control table-input patternvalidation");
     pipe.setAttribute("data-pattern","decimalvalue"); 
     pipe.type = "text";
     pipe.setAttribute("maxlength", "8");
@@ -431,7 +439,6 @@ function add_Inspection_Row() {
     newCol = document.createElement("td");
 	newRow.appendChild(newCol);
     var cell3 = row.insertCell(2);
-   // cell3.className = "text-right";
     var pipeSize = document.createElement("select");
     pipeSize.setAttribute("class","form-control");
     pipeSize.setAttribute("name", "fieldInspections[0].fieldInspectionDetailsForUpdate[" + elementIndex + "].pipeSize");
@@ -445,7 +452,7 @@ function add_Inspection_Row() {
     var cell4 = row.insertCell(3);
     cell4.className = "text-right";
     var pipeLength = document.createElement("input");
-    pipeLength.setAttribute("class","form-control table-input text-right patternvalidation");
+    pipeLength.setAttribute("class","form-control table-input patternvalidation");
     pipeLength.setAttribute("data-pattern","decimalvalue"); 
     pipeLength.type = "text";
     pipeLength.setAttribute("maxlength", "8");
@@ -471,7 +478,7 @@ function add_Inspection_Row() {
     var cell6 = row.insertCell(5);
     cell6.className="text-right";
     var screw = document.createElement("input");
-    screw.setAttribute("class","form-control table-input text-right patternvalidation");
+    screw.setAttribute("class","form-control table-input patternvalidation");
     screw.setAttribute("data-pattern","decimalvalue");  
     screw.type = "text";
     screw.setAttribute("maxlength", "8");
@@ -485,7 +492,7 @@ function add_Inspection_Row() {
     var cell7 = row.insertCell(6);
     cell7.className="text-right";
     var distance = document.createElement("input");
-    distance.setAttribute("class","form-control table-input text-right patternvalidation");
+    distance.setAttribute("class","form-control table-input patternvalidation");
     distance.setAttribute("data-pattern","decimalvalue");  
     distance.type = "text";
     distance.setAttribute("maxlength", "8");
@@ -501,10 +508,6 @@ function add_Inspection_Row() {
     roadDigging.type= 'checkbox';
     roadDigging.checked='';
     roadDigging.value='false';
-   /* roadDigging.setAttribute("class","form-control table-input text-right patternvalidation");
-    roadDigging.setAttribute("data-pattern","decimalvalue");  
-    roadDigging.type = "text";
-    roadDigging.setAttribute("maxlength", "8");*/
     roadDigging.setAttribute("maxlength","8");
     roadDigging.setAttribute("onclick","enableDisableRoadInfo(this)");
     roadDigging.setAttribute("name", "fieldInspections[0].fieldInspectionDetailsForUpdate[" + elementIndex + "].roadDigging");
@@ -516,7 +519,7 @@ function add_Inspection_Row() {
     var cell9 = row.insertCell(8);
     cell9.className="text-right";
     var roadLength = document.createElement("input");
-    roadLength.setAttribute("class","form-control table-input text-right patternvalidation roadLength"); 
+    roadLength.setAttribute("class","form-control table-input patternvalidation roadLength"); 
     roadLength.setAttribute("data-pattern","decimalvalue");  
     roadLength.type = "text";
     roadLength.setAttribute("maxlength", "8");
@@ -557,19 +560,13 @@ function add_Inspection_Row() {
 $(document).on('click',"#delete_insp_row",function (){
 	
 	var table = document.getElementById('inspectionDetails');
-    var rowCount = table.rows.length-1;
-    console.log(" rowCount --> "+rowCount);
-	//var rowIndex = $(this).parent().index();
 	var rowIndex = $(this).closest('td').parent()[0].sectionRowIndex;	
 	$(this).closest('tr').remove();
-	
 	generateSno();
 	
 	  $("#inspectionDetails tbody tr").each(function() {
 			$(this).find("input, select, checkbox, hidden,textarea").each(function() {
 				var index = $(this).closest('td').parent()[0].sectionRowIndex;
-				console.log(" index --> "+ index);
-				console.log(" rowIndex --> "+ rowIndex);
 				if(index>=rowIndex){
 					var increment = index++;
 					$(this).attr({
@@ -584,19 +581,23 @@ $(document).on('click',"#delete_insp_row",function (){
 						}
 					});
 				}
-				
 			});
 	 });
-  
 });	
 
 
-function enableDisableRoadInfo(obj){
-	
-	if($(obj).is(':checked')){
-		$(obj).closest('tr').find('.roadLength, .roadOwner').removeAttr('disabled');
-	}else{
-		$(obj).closest('tr').find('.roadLength, .roadOwner').attr('disabled','disabled');
+
+
+function enableDisableRoadInfo(obj) {
+
+	if ($(obj).is(':checked')) {
+		$(obj).attr('value', true);
+		$(obj).closest('tr').find('.roadLength, .roadOwner').removeAttr(
+				'disabled');
+	} else {
+		$(obj).attr('value', false);
+		$(obj).closest('tr').find('.roadLength, .roadOwner').attr('disabled',
+				'disabled');
 	}
 }  
 

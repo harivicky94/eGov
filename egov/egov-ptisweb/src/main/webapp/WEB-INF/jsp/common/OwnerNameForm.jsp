@@ -1,8 +1,8 @@
 <%--
-  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~     Copyright (C) 2017  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
   ~
   ~         1) All versions of this program, verbatim or modified must carry this
   ~            Legal Notice.
+  ~            Further, all user interfaces, including but not limited to citizen facing interfaces,
+  ~            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+  ~            derived works should carry eGovernments Foundation logo on the top right corner.
+  ~
+  ~            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+  ~            For any further queries on attribution, including queries on brand guidelines,
+  ~            please contact contact@egovernments.org
   ~
   ~         2) Any misrepresentation of the origin of the material is prohibited. It
   ~            is required that all modified versions of this material be marked in
@@ -36,6 +43,7 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~
   --%>
 
 <%@ include file="/includes/taglibs.jsp" %>
@@ -60,7 +68,7 @@
 		 <td class="blueborderfortd" align="center">
         	+91 <s:textfield name="basicProperty.propertyOwnerInfoProxy[0].owner.mobileNumber" title="Mobile number of the owner" maxlength="10" size="20" id="mobileNumber"  value="%{basicProperty.propertyOwnerInfoProxy[0].owner.mobileNumber}" 
         		onblur="getUserDetailsForMobileNo(this);validNumber(this);checkZero(this,'Mobile Number');" data-idx="0" data-optional="0" data-errormsg="Mobile no is mandatory!"/>
-        		<s:checkbox name="editMobileno[0]" id="editMobileno[0]" onclick="enableMobileNumber(this);" data-idx="0" data-toggle="tooltip" data-placement="top" title="Citizen confirmed that his/her mobile no is changed" />
+        		<s:checkbox name="editMobileno[0]" class="mobilecheckbox" id="editMobileno[0]" onclick="enableMobileNumber(this);" data-idx="0" data-toggle="tooltip" data-placement="top" title="Citizen confirmed that his/her mobile no is changed" />
 		<td class="blueborderfortd" align="center">
         	<s:textfield name="basicProperty.propertyOwnerInfoProxy[0].owner.name" title="Owner of the Property" maxlength="74" size="20" id="ownerName"  value="%{basicProperty.propertyOwnerInfoProxy[0].owner.name}" 
         		onblur="trim(this,this.value);checkSpecialCharForName(this);" data-optional="0" data-errormsg="Owner name is mandatory!"/>
@@ -73,8 +81,8 @@
         		onblur="trim(this,this.value);validateEmail(this);"/>
         </td>
         <td class="blueborderfortd" align="center">
-            <s:select id="basicProperty.propertyOwnerInfoProxy[0].owner.guardianRelation" name="basicProperty.propertyOwnerInfoProxy[0].owner.guardianRelation" value="%{basicProperty.propertyOwnerInfoProxy[0].owner.guardianRelation}"
-				 headerValue="Choose" headerKey="" list="guardianRelations" data-optional="0" data-errormsg="Guardian relation is mandatory!"/>
+            <s:select id="guardianRelation" name="basicProperty.propertyOwnerInfoProxy[0].owner.guardianRelation" value="%{basicProperty.propertyOwnerInfoProxy[0].owner.guardianRelation}"
+				 headerValue="Choose" headerKey="" list="@org.egov.infra.persistence.entity.enums.GuardianRelation@values()" cssClass="selectwk" data-optional="0" data-errormsg="Guardian relation is mandatory!"/>
 		</td>
          <td class="blueborderfortd" align="center">
         	<s:textfield name="basicProperty.propertyOwnerInfoProxy[0].owner.guardian" maxlength="32" size="20" id="guardian"  value="%{basicProperty.propertyOwnerInfoProxy[0].owner.guardian}" 
@@ -121,7 +129,7 @@
         		</td>
         		<td class="blueborderfortd" align="center">
         		    <s:select id="guardianRelation" name="basicProperty.propertyOwnerInfoProxy[%{#ownerStatus.index}].owner.guardianRelation" value="%{basicProperty.propertyOwnerInfoProxy[#ownerStatus.index].owner.guardianRelation}"
-				headerValue="Choose" headerKey="" list="guardianRelations" data-optional="0" data-errormsg="Guardian relation is mandatory!"/>
+				headerValue="Choose" headerKey="" list="@org.egov.infra.persistence.entity.enums.GuardianRelation@values()" data-optional="0" data-errormsg="Guardian relation is mandatory!"/>
         	    </td>
         		<td class="blueborderfortd" align="center">
         	        <s:textfield name="basicProperty.propertyOwnerInfoProxy[%{#ownerStatus.index}].owner.guardian" maxlength="32" size="20" id="guardian"  value="%{basicProperty.propertyOwnerInfoProxy[#ownerStatus.index].owner.guardian}" 
@@ -174,7 +182,8 @@
     					jQuery("input[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.mobileNumber']").val(userInfoObj.phone);
     					jQuery("input[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.mobileNumber']").attr('readonly', true);
     					jQuery("input[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.emailId']").attr('readonly', true);
-    					jQuery("select[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.guardianRelation']").attr('disabled', 'disabled');
+    					jQuery("select[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.guardianRelation']").removeAttr('disabled');
+    					jQuery("input[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.guardian']").val(userInfoObj.careof);
     					jQuery("input[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.guardian']").attr('readonly', true);
     				} else {
     					jQuery("input[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.aadhaarNumber']").val("");
@@ -185,6 +194,7 @@
     					jQuery("input[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.mobileNumber']").val("").attr('readonly', false);
     					jQuery("input[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.emailId']").attr('readonly', false);
     					jQuery("select[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.guardianRelation']").removeAttr('disabled');
+    					jQuery("input[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.guardian']").val("");
     					jQuery("input[name='basicProperty.propertyOwnerInfoProxy["+ rowidx +"].owner.guardian']").attr('readonly', false);
     					if(aadharNo != "NaN") {
     						bootbox.alert("Aadhar number is not valid");

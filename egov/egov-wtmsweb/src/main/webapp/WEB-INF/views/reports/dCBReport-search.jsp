@@ -1,8 +1,8 @@
 <%--
-  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~     Copyright (C) 2017  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
   ~
   ~         1) All versions of this program, verbatim or modified must carry this
   ~            Legal Notice.
+  ~            Further, all user interfaces, including but not limited to citizen facing interfaces,
+  ~            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+  ~            derived works should carry eGovernments Foundation logo on the top right corner.
+  ~
+  ~            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+  ~            For any further queries on attribution, including queries on brand guidelines,
+  ~            please contact contact@egovernments.org
   ~
   ~         2) Any misrepresentation of the origin of the material is prohibited. It
   ~            is required that all modified versions of this material be marked in
@@ -36,6 +43,7 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~
   --%>
 
 <%@ page contentType="text/html" language="java"%>
@@ -52,10 +60,6 @@ div.dataTables_processing { z-index: 1; }
 
 <div class="row">
 	<div class="col-md-12">
-
-
-
-
 		<form:form class="form-horizontal form-groups-bordered" action=""
 			id="waterSearchRequestForm" modelAttribute="dCBReportResult"
 			method="get">
@@ -165,14 +169,14 @@ div.dataTables_processing { z-index: 1; }
 										code="lbl.locality" /> <span class="mandatory"></span>
 								</label>
 								<div class="col-sm-6 add-margin">
-									<form:select path="localitys" multiple="true" size="10"
+									<form:select path="localities" multiple="true" size="10"
 										id="localitys" cssClass="form-control"
 										cssErrorClass="form-control error" required="required">
 										<form:options items="${localitys}" itemValue="id"
 											itemLabel="name" />
 									</form:select>
 
-									<form:errors path="localitys" cssClass="error-msg" />
+									<form:errors path="localities" cssClass="error-msg" />
 								</div>
 								<spring:message
 									code="lbl.localitys.pressCntrlToSelectMultipleLocality" />
@@ -204,8 +208,7 @@ div.dataTables_processing { z-index: 1; }
 </div>
 
 <div class="row display-hide report-section">
-	<div class="col-md-12 table-header text-left"><spring:message code="lbl.drill.report" /> 
-		Report Details</div>
+	<div class="col-md-12 table-header text-left"><spring:message code="lbl.drill.report" /></div>
 	<div class="col-md-12 form-group report-table-container">
 		<table
 			class="table table-bordered datatable dt-responsive table-hover multiheadertbl"

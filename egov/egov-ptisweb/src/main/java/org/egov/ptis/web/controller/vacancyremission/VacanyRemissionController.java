@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,32 +43,9 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.ptis.web.controller.vacancyremission;
-
-import static org.egov.ptis.constants.PropertyTaxConstants.ANONYMOUS_USER;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_VACANCY_REMISSION;
-import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_COLL_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_COLL_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_VACANCY_REMISSION;
-import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_VALIDATION;
-import static org.egov.ptis.constants.PropertyTaxConstants.SOURCE_ONLINE;
-import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_TAX_DUES;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 
 import org.apache.commons.lang.StringUtils;
 import org.egov.commons.Installment;
@@ -86,6 +70,7 @@ import org.egov.ptis.domain.entity.property.VacancyRemission;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.domain.service.property.VacancyRemissionService;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -104,6 +89,29 @@ import org.springframework.web.servlet.FlashMap;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.support.RequestContextUtils;
 import org.springframework.web.servlet.view.RedirectView;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.egov.ptis.constants.PropertyTaxConstants.ANONYMOUS_USER;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_VACANCY_REMISSION;
+import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_COLL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_COLL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_VACANCY_REMISSION;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_VALIDATION;
+import static org.egov.ptis.constants.PropertyTaxConstants.SOURCE_ONLINE;
+import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_TAX_DUES;
 
 @Controller
 @RequestMapping(value = { "/vacancyremission" })
@@ -307,6 +315,8 @@ public class VacanyRemissionController extends GenericWorkFlowController {
                     model.addAttribute(STATE_TYPE, vacancyRemission.getClass().getSimpleName());
                     vacancyRemissionService.addModelAttributes(model, basicProperty);
                 }
+            model.addAttribute("detailsHistory", new ArrayList<>());
+            model.addAttribute("endorsementNotices", new ArrayList<>());
         }
         return VACANCYREMISSION_FORM;
     }
@@ -320,7 +330,7 @@ public class VacanyRemissionController extends GenericWorkFlowController {
         BasicProperty basicProperty=vacancyRemission.getBasicProperty();
         List<Document> documents = new ArrayList<>();
         loggedUserIsMeesevaUser = propertyService.isMeesevaUser(vacancyRemissionService.getLoggedInUser());
-        validateDates(vacancyRemission, resultBinder, request);
+        validateDates(vacancyRemission, resultBinder);
         vacancyRemissionSource(vacancyRemission, request);
         final Assignment assignment = propertyService.isCscOperator(vacancyRemissionService.getLoggedInUser())
                 ? propertyService.getAssignmentByDeptDesigElecWard(basicProperty)
@@ -410,11 +420,9 @@ public class VacanyRemissionController extends GenericWorkFlowController {
         return redirect;
     }
 
-    private void validateDates(final VacancyRemission vacancyRemission, final BindingResult errors,
-            final HttpServletRequest request) {
-
+    private void validateDates(final VacancyRemission vacancyRemission, final BindingResult errors) {
         final int noOfMonths = DateUtils.noOfMonthsBetween(vacancyRemission.getVacancyFromDate(),
-                vacancyRemission.getVacancyToDate());
+                new DateTime(vacancyRemission.getVacancyToDate()).plusDays(1).toDate());
         if (noOfMonths < 6)
             errors.rejectValue("vacancyToDate", "vacancyToDate.incorrect");
     }
@@ -433,7 +441,9 @@ public class VacanyRemissionController extends GenericWorkFlowController {
     @RequestMapping(value = "/printAck/{assessmentNo}", method = RequestMethod.GET)
     public ResponseEntity<byte[]> printAck(final HttpServletRequest request, final Model model,
             @PathVariable("assessmentNo") final String assessmentNo) {
-        ReportOutput reportOutput = propertyTaxUtil.generateCitizenCharterAcknowledgement(assessmentNo , VACANCY_REMISSION , NATURE_VACANCY_REMISSION);
+        final VacancyRemission remission = vacancyRemissionService
+                .getVRUnderWFByUpicNo(assessmentNo);
+        ReportOutput reportOutput = propertyTaxUtil.generateCitizenCharterAcknowledgement(assessmentNo , VACANCY_REMISSION , NATURE_VACANCY_REMISSION, remission.getApplicationNumber());
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType("application/pdf"));
         headers.add("content-disposition", "inline;filename=CitizenCharterAcknowledgement.pdf");

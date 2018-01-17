@@ -1,41 +1,49 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
- * accountability and the service delivery of the government  organizations.
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ *    accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
- *  The updated version of eGov suite of products as by eGovernments Foundation
- *  is available at http://www.egovernments.org
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
  *
- *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  any later version.
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
  *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program. If not, see http://www.gnu.org/licenses/ or
- *  http://www.gnu.org/licenses/gpl.html .
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
  *
- *  In addition to the terms of the GPL license to be adhered to in using this
- *  program, the following additional terms are to be complied with:
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
  *
- *      1) All versions of this program, verbatim or modified must carry this
- *         Legal Notice.
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
  *
- *      2) Any misrepresentation of the origin of the material is prohibited. It
- *         is required that all modified versions of this material be marked in
- *         reasonable ways as different from the original version.
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
- *      3) This license does not grant any rights to any user of the program
- *         with regards to rights under trademark law for use of the trade names
- *         or trademarks of eGovernments Foundation.
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
  *
- *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 
 package org.egov.pgr.web.controller.complaint;
@@ -47,10 +55,10 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.CrossHierarchyService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.JsonUtils;
-import org.egov.infstr.services.EISServeable;
 import org.egov.pgr.entity.contract.ProcessOwnerAdaptor;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
+import org.egov.pims.service.EisUtilService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -68,7 +76,7 @@ import java.util.stream.Collectors;
 public class ComplaintProcessOwnerSelectionController {
 
     @Autowired
-    private EISServeable eisService;
+    private EisUtilService eisService;
 
     @Autowired
     private DesignationService designationService;
@@ -111,7 +119,7 @@ public class ComplaintProcessOwnerSelectionController {
             HashMap<String, String> paramMap = new HashMap<>();
             paramMap.put("departmentId", String.valueOf(approvalDepartment));
             paramMap.put("designationId", String.valueOf(approvalDesignation));
-            List<EmployeeView> employeeViewData = (List<EmployeeView>) eisService.getEmployeeInfoList(paramMap);
+            List<EmployeeView> employeeViewData = eisService.getEmployeeInfoList(paramMap);
             Set<EmployeeView> processOwners = employeeViewData
                     .stream()
                     .filter(employeeView -> (employeeView.getEmployee().hasRole("Redressal Officer")

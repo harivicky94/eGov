@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,16 +43,11 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.adtax.web.controller.hoarding;
 
-import static org.egov.adtax.utils.constants.AdvertisementTaxConstants.ANONYMOUS_USER;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
-
 import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
@@ -56,14 +58,12 @@ import org.egov.adtax.entity.enums.AdvertisementStatus;
 import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
 import org.egov.adtax.web.controller.common.HoardingControllerSupport;
 import org.egov.adtax.workflow.AdvertisementWorkFlowService;
-import org.egov.commons.Installment;
 import org.egov.commons.entity.Source;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.infra.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
@@ -81,6 +81,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import static org.egov.adtax.utils.constants.AdvertisementTaxConstants.ANONYMOUS_USER;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Controller
 @RequestMapping("/hoarding")
@@ -152,7 +157,6 @@ public class CreateAdvertisementController extends HoardingControllerSupport {
                 && advertisementWorkFlowService.isEmployee(securityUtils.getCurrentUser());
         validateAssignmentForCscUser(advertisementPermitDetail, isEmployee, resultBinder);
         validateHoardingDocs(advertisementPermitDetail, resultBinder);
-        validateApplicationDate(advertisementPermitDetail, resultBinder);
         validateAdvertisementDetails(advertisementPermitDetail, resultBinder);
         if (advertisementPermitDetail != null) {
             if (advertisementPermitDetail.getState() == null) {
@@ -217,20 +221,7 @@ public class CreateAdvertisementController extends HoardingControllerSupport {
             return "redirect:/hoarding/success/" + advertisementPermitDetail.getId();
         }
     }
-
-    private void validateApplicationDate(final AdvertisementPermitDetail advertisementPermitDetail,
-            final BindingResult resultBinder) {
-        if (advertisementPermitDetail != null && advertisementPermitDetail.getApplicationDate() != null) {
-            final Installment installmentObj = advertisementDemandService.getCurrentInstallment();
-            if (installmentObj != null && installmentObj.getFromDate() != null)
-                if (advertisementPermitDetail.getApplicationDate().after(DateUtils.endOfDay(installmentObj.getToDate())) ||
-                        advertisementPermitDetail.getApplicationDate().before(DateUtils.startOfDay(installmentObj.getFromDate())))
-                    resultBinder.rejectValue("applicationDate", "invalid.applicationDate");
-
-        }
-
-    }
-
+    
     @RequestMapping(value = "/success/{id}", method = GET)
     public ModelAndView successView(@PathVariable("id") final String id,
             @ModelAttribute final AdvertisementPermitDetail advertisementPermitDetail) {

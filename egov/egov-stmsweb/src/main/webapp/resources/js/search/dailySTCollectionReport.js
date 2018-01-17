@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2016>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,6 +43,7 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 
 jQuery(document).ready(function() {
@@ -46,7 +54,8 @@ jQuery(document).ready(function() {
         var startDate = Date.parse(start);
         var endDate = Date.parse(end);
 		
-        // Check the date range, 86400000 is the number of milliseconds in one day
+        // Check the date range, 86400000 is the number of milliseconds in one
+		// day
         var difference = (endDate - startDate) / (86400000 * 7);
         if (difference < 0) {
         	bootbox.alert("From date  should not be greater than the To Date.");
@@ -55,25 +64,20 @@ jQuery(document).ready(function() {
 			} else {
 			return true;
 		}
-        return true;
 	}
 	
-//TODO: SHSC Number showing is pending in search results,
-//now instead SHSC No. Application No. is showing in results.
 $('#dailyCollectionReportSearch').click(function(e){
 	if($('form').valid()){
+		$('.report-section').removeClass('display-hide');
 			if($('#fromDate').val() != '' && $('#toDate').val() != ''){
 				var start = $('#fromDate').val();
 				var end = $('#toDate').val();
 				var stsplit = start.split("/");
 					var ensplit = end.split("/");
-					
 					start = stsplit[1] + "/" + stsplit[0] + "/" + stsplit[2];
 					end = ensplit[1] + "/" + ensplit[0] + "/" + ensplit[2];
-					if(!validRange(start,end))
-					{
-						
-					return false;
+					if(!validRange(start,end)) {
+						return false;
 					}
 			}
 			var fromDate = $("#fromDate").val();
@@ -86,7 +90,6 @@ $('#dailyCollectionReportSearch').click(function(e){
 	        $("#resultDateLabel").html(fromDate+" - "+toDate);	
 	        $.post("/stms/reports/dailySTCollectionReport/search/",$('#dailyCollectionform').serialize())
 	    	.done(function(searchResult) {
-	    	console.log(JSON.stringify(searchResult));
 			oTable.dataTable({
 				"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-md-3 col-xs-6 text-right'p>>",
 				"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],

@@ -1,52 +1,54 @@
 /*
- * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
- * accountability and the service delivery of the government  organizations.
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ *    accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) <2017>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
- *  The updated version of eGov suite of products as by eGovernments Foundation
- *  is available at http://www.egovernments.org
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
  *
- *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  any later version.
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
  *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program. If not, see http://www.gnu.org/licenses/ or
- *  http://www.gnu.org/licenses/gpl.html .
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
  *
- *  In addition to the terms of the GPL license to be adhered to in using this
- *  program, the following additional terms are to be complied with:
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
  *
- *      1) All versions of this program, verbatim or modified must carry this
- *         Legal Notice.
- * 	Further, all user interfaces, including but not limited to citizen facing interfaces,
- *         Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
- *         derived works should carry eGovernments Foundation logo on the top right corner.
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
  *
- * 	For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
- * 	For any further queries on attribution, including queries on brand guidelines,
- *         please contact contact@egovernments.org
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
- *      2) Any misrepresentation of the origin of the material is prohibited. It
- *         is required that all modified versions of this material be marked in
- *         reasonable ways as different from the original version.
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
  *
- *      3) This license does not grant any rights to any user of the program
- *         with regards to rights under trademark law for use of the trade names
- *         or trademarks of eGovernments Foundation.
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
  *
- *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 
 package org.egov.infra.utils;
 
+import com.google.common.collect.ImmutableMap;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
@@ -56,10 +58,10 @@ import org.joda.time.Years;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -68,6 +70,7 @@ import static org.egov.infra.config.core.LocalizationSettings.datePattern;
 import static org.egov.infra.config.core.LocalizationSettings.dateTimePattern;
 import static org.egov.infra.config.core.LocalizationSettings.jodaTimeZone;
 import static org.egov.infra.config.core.LocalizationSettings.locale;
+import static org.egov.infra.utils.NumberToWordConverter.numberToWords;
 
 public final class DateUtils extends org.apache.commons.lang3.time.DateUtils {
 
@@ -82,11 +85,29 @@ public final class DateUtils extends org.apache.commons.lang3.time.DateUtils {
             "Twenty seventh", "Twenty eighth", "Twenty ninth", "Thirtieth", "Thirty first"
     };
 
+    private static final Map<Integer, String> MONTH_SHORT_NAMES = new ImmutableMap.Builder<Integer, String>()
+            .put(1, "Jan").put(2, "Feb").put(3, "Mar")
+            .put(4, "Apr").put(5, "May").put(6, "Jun")
+            .put(7, "Jul").put(8, "Aug").put(9, "Sep")
+            .put(10, "Oct").put(11, "Nov").put(12, "Dec").build();
+
+    private static final Map<Integer, String> MONTH_FULL_NAMES = new ImmutableMap.Builder<Integer, String>()
+            .put(1, "January").put(2, "February").put(3, "March")
+            .put(4, "April").put(5, "May").put(6, "June")
+            .put(7, "July").put(8, "August").put(9, "September")
+            .put(10, "October").put(11, "November").put(12, "December").build();
+
+    private static final Map<Integer, String> FIN_MONTH_NAMES = new ImmutableMap.Builder<Integer, String>()
+            .put(1, "April").put(2, "May").put(3, "June")
+            .put(4, "July").put(5, "August").put(6, "September")
+            .put(7, "October").put(8, "November").put(9, "December")
+            .put(10, "January").put(11, "February").put(12, "March").build();
+
     private DateUtils() {
         //Should not be initialized
     }
 
-    public static String currentDateToYearFormat() {
+    public static String currentYear() {
         return toYearFormat(new LocalDate());
     }
 
@@ -100,6 +121,10 @@ public final class DateUtils extends org.apache.commons.lang3.time.DateUtils {
 
     public static String currentDateToDefaultDateFormat() {
         return toDefaultDateFormat(new LocalDate());
+    }
+
+    public static String currentDateToGivenFormat(String format) {
+        return getFormattedDate(now(), format);
     }
 
     public static String toDefaultDateFormat(LocalDate date) {
@@ -136,6 +161,10 @@ public final class DateUtils extends org.apache.commons.lang3.time.DateUtils {
 
     public static DateTime endOfGivenDate(DateTime dateTime) {
         return dateTime.millisOfDay().withMaximumValue();
+    }
+
+    public static DateTime startOfToday() {
+        return startOfGivenDate(new DateTime());
     }
 
     public static DateTime startOfGivenDate(DateTime dateTime) {
@@ -177,65 +206,12 @@ public final class DateUtils extends org.apache.commons.lang3.time.DateUtils {
         return firstDate == null || secondDate == null || !firstDate.before(secondDate);
     }
 
-    public static Date[] constructDateRange(Date fromDate, Date toDate) {
-        Date[] dates = new Date[2];
-        Calendar calfrom = Calendar.getInstance();
-        calfrom.setTime(fromDate);
-        calfrom.set(Calendar.HOUR, 0);
-        calfrom.set(Calendar.MINUTE, 0);
-        calfrom.set(Calendar.SECOND, 0);
-        calfrom.set(Calendar.AM_PM, Calendar.AM);
-        dates[0] = calfrom.getTime();
-        Calendar calto = Calendar.getInstance();
-        calto.setTime(toDate);
-        calto.set(Calendar.HOUR, 0);
-        calto.set(Calendar.MINUTE, 0);
-        calto.set(Calendar.SECOND, 0);
-        calto.add(Calendar.DAY_OF_MONTH, 1);
-        dates[1] = calto.getTime();
-        return dates;
-    }
-
-    public static Date createDate(int year) {
-        Calendar date = Calendar.getInstance();
-        date.set(Calendar.YEAR, year);
-        date.set(Calendar.MONTH, 0);
-        date.set(Calendar.DATE, 1);
-        return date.getTime();
-    }
-
     public static Map<Integer, String> getAllMonths() {
-        Map<Integer, String> monthMap = new HashMap<>();
-        monthMap.put(1, "Jan");
-        monthMap.put(2, "Feb");
-        monthMap.put(3, "Mar");
-        monthMap.put(4, "Apr");
-        monthMap.put(5, "May");
-        monthMap.put(6, "Jun");
-        monthMap.put(7, "July");
-        monthMap.put(8, "Aug");
-        monthMap.put(9, "Sep");
-        monthMap.put(10, "Oct");
-        monthMap.put(11, "Nov");
-        monthMap.put(12, "Dec");
-        return monthMap;
+        return MONTH_SHORT_NAMES;
     }
 
     public static Map<Integer, String> getAllMonthsWithFullNames() {
-        Map<Integer, String> monthMap = new HashMap<>();
-        monthMap.put(1, "January");
-        monthMap.put(2, "Feburary");
-        monthMap.put(3, "March");
-        monthMap.put(4, "April");
-        monthMap.put(5, "May");
-        monthMap.put(6, "June");
-        monthMap.put(7, "July");
-        monthMap.put(8, "August");
-        monthMap.put(9, "September");
-        monthMap.put(10, "October");
-        monthMap.put(11, "November");
-        monthMap.put(12, "December");
-        return monthMap;
+        return MONTH_FULL_NAMES;
     }
 
     public static Date getDate(String date, String pattern) {
@@ -279,7 +255,7 @@ public final class DateUtils extends org.apache.commons.lang3.time.DateUtils {
         StringBuilder dateInWord = new StringBuilder();
         dateInWord.append(DATE_IN_WORDS[cal.get(Calendar.DATE) - 1]).append(' ');
         dateInWord.append(formatter("dd-MMMMM-yyyy").print(new DateTime(dateToConvert)).split("-")[1]).append(' ');
-        dateInWord.append(NumberToWord.translateToWord(String.valueOf(cal.get(Calendar.YEAR))));
+        dateInWord.append(numberToWords(BigDecimal.valueOf(cal.get(Calendar.YEAR)), false, false));
         return dateInWord.toString();
     }
 
@@ -288,20 +264,7 @@ public final class DateUtils extends org.apache.commons.lang3.time.DateUtils {
     }
 
     public static Map<Integer, String> getAllFinancialYearMonthsWithFullNames() {
-        Map<Integer, String> monthMap = new HashMap<>();
-        monthMap.put(1, "April");
-        monthMap.put(2, "May");
-        monthMap.put(3, "June");
-        monthMap.put(4, "July");
-        monthMap.put(5, "August");
-        monthMap.put(6, "September");
-        monthMap.put(7, "October");
-        monthMap.put(8, "November");
-        monthMap.put(9, "December");
-        monthMap.put(10, "January");
-        monthMap.put(11, "Feburary");
-        monthMap.put(12, "March");
-        return monthMap;
+        return FIN_MONTH_NAMES;
     }
 
     public static SimpleDateFormat getDateFormatter(String pattern) {

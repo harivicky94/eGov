@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,11 +43,13 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.collection.constants;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.TreeMap;
 
 import org.egov.services.instrument.InstrumentService;
@@ -584,6 +593,7 @@ public final class CollectionConstants {
     public static final String REMITTANCE_STATUS_CODE_NEW = "NEW";
     public static final String REMITTANCE_STATUS_CODE_APPROVED = "APPROVED";
 
+    public static final String LOGO_PATH = "CITY_LOGO_PATH";
     public static final String REMITTANCE_BY_VOUCHER_NUMBER = "getRemitanceByVoucherNumber";
     public static final TreeMap<String, String> SERVICE_TYPE_CLASSIFICATION = new TreeMap<String, String>() {
         {
@@ -638,11 +648,20 @@ public final class CollectionConstants {
     public static final String ATOM_TEMPTXNID = "tempTxnId";
     public static final String ATOM_TOKEN = "token";
     public static final String ATOM_TXNSTAGE = "txnStage";
-    public static final String ATOM_F_CODE =  "f_code";
+    public static final String ATOM_F_CODE = "f_code";
     public static final String ATOM_MER_TXN = "mer_txn";
     public static final String ATOM_MMP_TXN = "mmp_txn";
     public static final String ATOM_MERCHANTID = "merchantid";
     public static final String ATOM_MERCHANT_TXNID = "merchanttxnid";
-    public static final String ATOM_TDATE  = "tdate";
+    public static final String ATOM_TDATE = "tdate";
+    public static final ArrayList<String> ATOM_AUTHORISATION_CODES_WAITINGFOR_PAY_GATEWAY_RESPONSE = new ArrayList<String>() {
+        {
+            add("Pending From Bank");
+            add("Failure");
+            add("INITIALIZED");
+            add("F");
+            add("C"); 
+        } 
+    };
 
 }

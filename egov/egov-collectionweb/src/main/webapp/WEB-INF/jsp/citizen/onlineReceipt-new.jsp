@@ -1,8 +1,8 @@
 <%--
-  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~     Copyright (C) 2017  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
   ~
   ~         1) All versions of this program, verbatim or modified must carry this
   ~            Legal Notice.
+  ~            Further, all user interfaces, including but not limited to citizen facing interfaces,
+  ~            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+  ~            derived works should carry eGovernments Foundation logo on the top right corner.
+  ~
+  ~            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+  ~            For any further queries on attribution, including queries on brand guidelines,
+  ~            please contact contact@egovernments.org
   ~
   ~         2) Any misrepresentation of the origin of the material is prohibited. It
   ~            is required that all modified versions of this material be marked in
@@ -36,6 +43,7 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~
   --%>
 
 
@@ -44,7 +52,9 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <title>Online Payment</title>
-<script src="${pageContext.request.contextPath}/resources/common/watermark.js" type="text/javascript"></script>
+<script
+	src="${pageContext.request.contextPath}/resources/common/watermark.js"
+	type="text/javascript"></script>
 <link rel="stylesheet" type="text/css"
 	href="${pageContext.request.contextPath}/resources/css/collectionspublic.css?rnd=${app_release_no}" />
 <script type="text/javascript">
@@ -394,7 +404,8 @@ function onLoad(){
 
 <body onload="onLoad();">
 	<div class="maincontainer">
-		<s:form theme="simple" name="collDetails" action="onlineReceipt-saveNew.action">
+		<s:form theme="simple" name="collDetails"
+			action="onlineReceipt-saveNew.action">
 			<div class="errorstyle" id="receipt_error_area"
 				style="display: none;"></div>
 			<div class="formmainbox">
@@ -562,7 +573,8 @@ function onLoad(){
 																value='<s:property value="ordernumber"/>' /> <input
 																type="hidden"
 																name="receiptDetailList[<%=rcptDtlCnt%>].dramount"
-																id="receiptDetailList[<%=rcptDtlCnt%>].dramount" /> <input
+																id="receiptDetailList[<%=rcptDtlCnt%>].dramount"
+																value='<s:property value="dramount"/>' /> <input
 																type="hidden"
 																name="receiptDetailList[<%=rcptDtlCnt%>].isActualDemand"
 																id="receiptDetailList[<%=rcptDtlCnt%>].isActualDemand"
@@ -601,10 +613,11 @@ function onLoad(){
 																class="mandatory1">*</span></span></td>
 														<td class="blueborderfortd text-right bg-gray"><s:textfield
 																label="paymentAmount" id="paymentAmount" maxlength="12"
-																name="paymentAmount" size="12" placeholder="0.0"
-																cssStyle="color:DarkGray; text-align:right"
+																name="paymentAmount" size="12"
+																cssClass="form-control patternvalidation text-right"
+																data-pattern="number" placeholder="0"
 																onkeyup="populateapportioningamountnew()"
-																onload="waterMarkInitialize('paymentAmount','0.0');" /></td>
+																onload="waterMarkInitialize('paymentAmount','0');" /></td>
 													</tr>
 
 													<td colspan="2"><span class="mandatory1 padding-5"><s:text
@@ -627,12 +640,11 @@ function onLoad(){
 									<s:text name="onlineReceipts.paythrough" />
 								</div>
 
-								<table class="table-payment">									
-		                             <tr>
-		                               	<td class="blueborderfortd" colspan="2">
-		                                   <s:text name ='onlineReceipts.payusing'/>
-		                                </td>
-		                             </tr>
+								<table class="table-payment">
+									<tr>
+										<td class="blueborderfortd" colspan="2"><s:text
+												name='onlineReceipts.payusing' /></td>
+									</tr>
 
 									<s:set var="listSize" value="%{serviceDetailsList.size()}" />
 									<s:iterator var="p" value="%{serviceDetailsList}" status="s">
@@ -756,8 +768,8 @@ function onLoad(){
 									style="color: red">Please wait....</span>
 							</div>
 							<div class="bottombuttonholder" align="middle">
-								<s:submit type="submit" cssClass="buttonsubmit"
-									id="button2" value="Pay Online" onclick="return validateOnlineReceipt();" />
+								<s:submit type="submit" cssClass="buttonsubmit" id="button2"
+									value="Pay Online" onclick="return validateOnlineReceipt();" />
 							</div>
 						</div>
 						<br />

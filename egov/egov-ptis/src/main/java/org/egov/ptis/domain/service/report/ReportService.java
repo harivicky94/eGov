@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,26 +43,9 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.ptis.domain.service.report;
-
-import static java.math.BigDecimal.ZERO;
-import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
-import static org.egov.ptis.constants.PropertyTaxConstants.ROLE_COLLECTION_OPERATOR;
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.egov.commons.CFinancialYear;
@@ -66,8 +56,8 @@ import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.commons.service.RegionalHeirarchyService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
-import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.config.core.EnvironmentSettings;
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.client.util.PropertyTaxUtil;
@@ -87,9 +77,28 @@ import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
+import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+
+import static java.math.BigDecimal.ZERO;
+import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.ROLE_COLLECTION_OPERATOR;
 
 @Transactional(readOnly = true)
 public class ReportService {
@@ -1071,7 +1080,7 @@ public class ReportService {
      * @return list
      */
     @ReadOnly
-    public List<DefaultersInfo> getDefaultersInformation(List<PropertyMaterlizeView> propertyViewList,final String noofyrs,final Integer limit) {
+    public List<DefaultersInfo> getDefaultersInformation(Query query,final String noofyrs,final Integer limit) {
         List<DefaultersInfo> defaultersList = new ArrayList<>();
         List<DefaultersInfo> defaultersListForYrs = new ArrayList<>();
         DefaultersInfo defaultersInfo;
@@ -1081,7 +1090,7 @@ public class ReportService {
         int count = 1;
 
         int reqyr = 0;
-       
+        List<PropertyMaterlizeView> propertyViewList = query.list();
         
         for (final PropertyMaterlizeView propView : propertyViewList) {
             
@@ -1177,6 +1186,48 @@ public class ReportService {
         }
         return defaultersInfo;
     }
+    
+    /**
+     * @param zoneId
+     * @param wardId
+     * @param areaId
+     * @param localityId
+     * @return
+     */
+    @ReadOnly
+    public List<PropertyMaterlizeView> prepareQueryforArrearRegisterReport(final Long zoneId, final Long wardId,
+            final Long areaId, final Long localityId) {
+        // Get current installment
+        final Installment currentInst = propertyTaxCommonUtils.getCurrentInstallment();
+        final StringBuffer query = new StringBuffer(300);
+        // Query that retrieves all the properties that has arrears.
+        query.append("select distinct pmv from PropertyMaterlizeView pmv,InstDmdCollMaterializeView idc where "
+                + "pmv.basicPropertyID = idc.propMatView.basicPropertyID and pmv.isActive = true and idc.installment.fromDate not between  ('"
+                + currentInst.getFromDate() + "') and ('" + currentInst.getToDate() + "') ");
+        if (propertyTaxUtil.isWard(localityId))
+            query.append(" and pmv.locality.id= :localityId ");
+        if (propertyTaxUtil.isWard(zoneId))
+            query.append(" and pmv.zone.id= :zoneId ");
+        if (propertyTaxUtil.isWard(wardId))
+            query.append("  and pmv.ward.id= :wardId ");
+        if (propertyTaxUtil.isWard(areaId))
+            query.append("  and pmv.block.id= :areaId ");
+        query.append(" order by pmv.basicPropertyID ");
+        final Query qry = propPerServ.getSession().createQuery(query.toString());
+        if (propertyTaxUtil.isWard(localityId))
+            qry.setParameter("localityId", localityId);
+        if (propertyTaxUtil.isWard(zoneId))
+            qry.setParameter("zoneId", zoneId);
+        if (propertyTaxUtil.isWard(wardId))
+            qry.setParameter("wardId", wardId);
+        if (propertyTaxUtil.isWard(areaId))
+            qry.setParameter("areaId", areaId);
+        @SuppressWarnings("unchecked")
+        final List<PropertyMaterlizeView> propertyViewList = qry.setResultTransformer(
+                CriteriaSpecification.DISTINCT_ROOT_ENTITY).list();
+        return propertyViewList;
+    }
+    
     private BigDecimal getAggCurrSecHalfPenColl(final PropertyMaterlizeView propView) {
         return propView.getAggrCurrSecondHalfPenalyColl() != null ? propView
                 .getAggrCurrSecondHalfPenalyColl() : ZERO;
