@@ -145,9 +145,10 @@ public class BpaAjaxController {
             @RequestParam final String currentState, @RequestParam final String type,
             @RequestParam final BigDecimal amountRule, @RequestParam final String additionalRule,
             @RequestParam final String pendingAction, @RequestParam final Long approvalDepartment) {
-        List<Designation> designationList = customizedWorkFlowService.getNextDesignations(type,
-                departmentRule, amountRule, additionalRule, currentState,
-                pendingAction, new Date());
+        List<Designation> designationList = designationService
+                .getDesignationsByNames(customizedWorkFlowService.getNextDesignations(type,
+                        departmentRule, amountRule, additionalRule, currentState,
+                        pendingAction, new Date()));
         if (designationList.isEmpty())
             designationList = designationService.getAllDesignationByDepartment(approvalDepartment, new Date());
         return designationList;

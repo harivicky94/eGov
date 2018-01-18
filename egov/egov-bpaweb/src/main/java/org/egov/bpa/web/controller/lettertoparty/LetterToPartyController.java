@@ -209,9 +209,9 @@ public class LetterToPartyController {
                 ? pos.getDeptDesig().getDesignation().getName() : "";
     }
 
-    private StateHistory getStateHistoryObjByDesc(final LettertoParty lettertoParty) {
+    private StateHistory<Position> getStateHistoryObjByDesc(final LettertoParty lettertoParty) {
         return lettertoParty.getApplication().getStateHistory().stream()
-                .sorted(Comparator.comparing(StateHistory::getId).reversed()).collect(Collectors.toList()).get(0);
+                .sorted(Comparator.comparing(StateHistory<Position>::getId).reversed()).collect(Collectors.toList()).get(0);
     }
 
     @RequestMapping(value = "/update/{applicationNumber}", method = RequestMethod.GET)

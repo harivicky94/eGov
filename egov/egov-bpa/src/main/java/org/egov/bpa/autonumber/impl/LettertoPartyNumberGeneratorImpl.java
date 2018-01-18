@@ -39,11 +39,9 @@
  */
 package org.egov.bpa.autonumber.impl;
 
-import java.io.Serializable;
-
 import org.egov.bpa.autonumber.LettertoPartyNumberGenerator;
 import org.egov.bpa.utils.BpaConstants;
-import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
+import org.egov.infra.persistence.utils.GenericSequenceNumberGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -51,12 +49,11 @@ import org.springframework.stereotype.Service;
 public class LettertoPartyNumberGeneratorImpl implements LettertoPartyNumberGenerator {
 
     @Autowired
-    private ApplicationSequenceNumberGenerator applicationSequenceNumberGenerator;
+    private GenericSequenceNumberGenerator genericSequenceNumberGenerator;
 
     @Override
     public String generateLettertoPartyNumber(final String financialYear) {
         final String sequenceName = BpaConstants.LETTERTOPARTY_NUMBER_SEQ + financialYear;
-        Serializable sequenceNumber = applicationSequenceNumberGenerator.getNextSequence(sequenceName);
-        return String.format("%s-%d", financialYear, sequenceNumber);
+        return String.format("%s-%d", financialYear, genericSequenceNumberGenerator.getNextSequence(sequenceName));
     }
 }

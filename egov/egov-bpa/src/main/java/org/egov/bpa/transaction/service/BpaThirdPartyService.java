@@ -81,20 +81,20 @@ public class BpaThirdPartyService {
     public List<HashMap<String, Object>> getHistory(final BpaApplication application) {
         User userObject;
         final List<HashMap<String, Object>> historyTable = new ArrayList<>();
-        final State workflowState = application.getState();
+        final State<Position> workflowState = application.getState();
         final HashMap<String, Object> workFlowHistory = new HashMap<>(0);
         if (null != workflowState) {
             if (null != application.getStateHistory() && !application.getStateHistory().isEmpty())
                 Collections.reverse(application.getStateHistory());
 
-            for (final StateHistory stateHistory : application.getStateHistory()) {
+            for (final StateHistory<Position> stateHistory : application.getStateHistory()) {
                 final HashMap<String, Object> historyMap = new HashMap<>(0);
                 historyMap.put(DATE, stateHistory.getDateInfo());
                 historyMap.put(COMMENTS, stateHistory.getComments() != null ? stateHistory.getComments() : "");
                 historyMap.put(UPDATED_BY, stateHistory.getLastModifiedBy().getUsername() + "::"
                         + stateHistory.getLastModifiedBy().getName());
                 historyMap.put(STATUS, stateHistory.getValue());
-                final Position owner = stateHistory.getOwnerPosition();
+                Position owner = stateHistory.getOwnerPosition();
                 userObject = stateHistory.getOwnerUser();
 
                 if (null != userObject) {

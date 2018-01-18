@@ -39,11 +39,9 @@
  */
 package org.egov.bpa.autonumber.impl;
 
-import java.io.Serializable;
-
 import org.egov.bpa.autonumber.InspectionNumberGenerator;
 import org.egov.bpa.utils.BpaConstants;
-import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
+import org.egov.infra.persistence.utils.GenericSequenceNumberGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -51,12 +49,11 @@ import org.springframework.stereotype.Service;
 public class InspectionNumberGeneratorImpl implements InspectionNumberGenerator {
 
     @Autowired
-    private ApplicationSequenceNumberGenerator applicationSequenceNumberGenerator;
+    private GenericSequenceNumberGenerator genericSequenceNumberGenerator;
 
     @Override
     public String generateInspectionNumber(final String prefixCode) {
-        final String sequenceName = BpaConstants.INSPECTION_NUMBER_SEQ ;
-        Serializable sequenceNumber = applicationSequenceNumberGenerator.getNextSequence(sequenceName);
-        return String.format("%s-%06d", prefixCode, sequenceNumber);
+        final String sequenceName = BpaConstants.INSPECTION_NUMBER_SEQ;
+        return String.format("%s-%06d", prefixCode, genericSequenceNumberGenerator.getNextSequence(sequenceName));
     }
 }

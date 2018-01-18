@@ -48,6 +48,11 @@
 
 package org.egov.infra.workflow.service;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.script.entity.Script;
 import org.egov.infra.script.service.ScriptService;
@@ -60,11 +65,6 @@ import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 /**
  * This is a generic bean so do not use this to do transition of your own StateAware objects<br/>
@@ -161,7 +161,7 @@ public class SimpleWorkflowService<T extends StateAware> implements WorkflowServ
         final Criteria wfMatrixCriteria = createWfMatrixAdditionalCriteria(type, department, amountRule,
                 additionalRule, currentState, pendingActions);
 
-        return getWorkflowMatrixObj(type, additionalRule, currentState, pendingActions, wfMatrixCriteria);
+        return getWorkflowMatrixObj(type, additionalRule, currentState, pendingActions, wfMatrixCriteria, amountRule);
 
     }
 
@@ -175,7 +175,7 @@ public class SimpleWorkflowService<T extends StateAware> implements WorkflowServ
         final Criterion crit3 = Restrictions.conjunction().add(crit1).add(crit2);
         wfMatrixCriteria.add(Restrictions.or(crit3, crit1));
 
-        return getWorkflowMatrixObj(type, additionalRule, currentState, pendingActions, wfMatrixCriteria);
+        return getWorkflowMatrixObj(type, additionalRule, currentState, pendingActions, wfMatrixCriteria, amountRule);
 
     }
 
@@ -198,13 +198,23 @@ public class SimpleWorkflowService<T extends StateAware> implements WorkflowServ
     }
 
     private WorkFlowMatrix getWorkflowMatrixObj(final String type, final String additionalRule,
-                                                final String currentState, final String pendingActions, final Criteria wfMatrixCriteria) {
+                                                final String currentState, final String pendingActions, final Criteria wfMatrixCriteria, final BigDecimal amountRule) {
         final List<WorkFlowMatrix> objectTypeList = wfMatrixCriteria.list();
 
         if (objectTypeList.isEmpty()) {
             final Criteria defaulfWfMatrixCriteria = commonWorkFlowMatrixCriteria(type, additionalRule, currentState,
                     pendingActions);
             defaulfWfMatrixCriteria.add(Restrictions.eq("department", "ANY"));
+            // Added restriction for amount rule
+            if (amountRule != null && BigDecimal.ZERO.compareTo(amountRule) != 0) {
+                final Criterion amount1st = Restrictions.conjunction().add(Restrictions.le("fromQty", amountRule))
+                        .add(Restrictions.ge("toQty", amountRule));
+
+                final Criterion amount2nd = Restrictions.conjunction().add(Restrictions.le("fromQty", amountRule))
+                        .add(Restrictions.isNull("toQty"));
+                defaulfWfMatrixCriteria.add(Restrictions.disjunction().add(amount1st).add(amount2nd));
+
+            }
             final List<WorkFlowMatrix> defaultObjectTypeList = defaulfWfMatrixCriteria.list();
             if (defaultObjectTypeList.isEmpty())
                 return null;

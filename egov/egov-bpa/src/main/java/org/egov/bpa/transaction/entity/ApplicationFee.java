@@ -37,10 +37,11 @@
  *
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.bpa.application.entity;
+package org.egov.bpa.transaction.entity;
 
-import org.egov.infra.workflow.entity.StateAware;
-import org.hibernate.validator.constraints.Length;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -48,18 +49,20 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+
+import org.egov.infra.workflow.entity.StateAware;
+import org.egov.pims.commons.Position;
+import org.hibernate.validator.constraints.Length;
 
 @Entity
 @Table(name = "EGBPA_APPLICATION_FEE")
-@SequenceGenerator(name = SEQ_APPLICATIONFEE, sequenceName = SEQ_APPLICATIONFEE, allocationSize = 1)
+@SequenceGenerator(name = ApplicationFee.SEQ_APPLICATIONFEE, sequenceName = ApplicationFee.SEQ_APPLICATIONFEE, allocationSize = 1)
 public class ApplicationFee extends StateAware<Position> {
 
     public static final String SEQ_APPLICATIONFEE = "SEQ_EGBPA_APPLICATION_FEE";
@@ -73,14 +76,18 @@ public class ApplicationFee extends StateAware<Position> {
     private String feeRemarks;
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "status")
     private BpaStatus status;
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "application")
     private BpaApplication application;
     @Length(min = 1, max = 128)
     private String challanNumber;
     @OneToMany(mappedBy = "applicationFee", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ApplicationFeeDetail> applicationFeeDetail = new ArrayList<>();
+    private Boolean isRevised = false;
+    private String modifyFeeReason;
 
     @Override
     public Long getId() {
@@ -145,4 +152,24 @@ public class ApplicationFee extends StateAware<Position> {
         this.applicationFeeDetail = applicationFeeDetail;
     }
 
+    public Boolean getIsRevised() {
+        return isRevised;
+    }
+
+    public void setIsRevised(Boolean isRevised) {
+        this.isRevised = isRevised;
+    }
+
+    public String getModifyFeeReason() {
+        return modifyFeeReason;
+    }
+
+    public void setModifyFeeReason(String modifyFeeReason) {
+        this.modifyFeeReason = modifyFeeReason;
+    }
+
+    public void addApplicationFeeDetail(ApplicationFeeDetail applicationFeeDtl) {
+        if (this.applicationFeeDetail != null)
+            this.applicationFeeDetail.add(applicationFeeDtl);
+    }
 }

@@ -39,13 +39,12 @@
 
 package org.egov.bpa.autonumber.impl;
 
-import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.egov.bpa.autonumber.StakeHolderCodeGenerator;
 import org.egov.bpa.master.entity.StakeHolder;
-import org.egov.infra.persistence.utils.SequenceNumberGenerator;
+import org.egov.infra.persistence.utils.GenericSequenceNumberGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -55,16 +54,11 @@ public class StakeHolderCodeGeneratorImpl implements StakeHolderCodeGenerator {
     private static final String SEQ_STAKEHOLDERCODE = "SEQ_EGBPA_STAKEHOLDER_CODE";
 
     @Autowired
-    private SequenceNumberGenerator sequenceNoGenerator;
+    private GenericSequenceNumberGenerator genericSequenceNumberGenerator;
 
     @Override
     public String generateStakeHolderCode(final StakeHolder stakeHolder) {
-
-        final Serializable referenceNumber = sequenceNoGenerator.getNextSequence(SEQ_STAKEHOLDERCODE);
         return new SimpleDateFormat("ddMMyyyy").format(new Date())
-                .concat(String.format(
-                        "%s%06d", "", referenceNumber));
-
+                .concat(String.format("%s%06d", "", genericSequenceNumberGenerator.getNextSequence(SEQ_STAKEHOLDERCODE)));
     }
-
 }

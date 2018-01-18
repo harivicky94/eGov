@@ -132,7 +132,7 @@ public class BpaWorkFlowService {
      * @param container
      * @return NextAction From Matrix With Parameters Type,CurrentState,CreatedDate
      */
-    public String getNextAction(final StateAware model, final WorkflowContainer container) {
+    public String getNextAction(final StateAware<Position> model, final WorkflowContainer container) {
 
         WorkFlowMatrix wfMatrix = null;
         if (null != model && null != model.getId())
@@ -152,7 +152,7 @@ public class BpaWorkFlowService {
      * @param container
      * @return List of WorkFlow Buttons From Matrix By Passing parametres Type,CurrentState,CreatedDate
      */
-    public List<String> getValidActions(final StateAware model, final WorkflowContainer container) {
+    public List<String> getValidActions(final StateAware<Position> model, final WorkflowContainer container) {
         List<String> validActions;
         if (null == model
                 || null == model.getId() || (model.getCurrentState() == null)
@@ -172,7 +172,7 @@ public class BpaWorkFlowService {
         return validActions;
     }
 
-    public StateHistory getStateHistoryToGetLPInitiator(BpaApplication bpaApplication, List<LettertoParty> lettertoParties) {
+    public StateHistory<Position> getStateHistoryToGetLPInitiator(BpaApplication bpaApplication, List<LettertoParty> lettertoParties) {
         return bpaApplication.getStateHistory().stream()
                 .filter(history -> history.getValue().equalsIgnoreCase(lettertoParties.get(0).getStateForOwnerPosition()))
                 .findAny().orElse(null);

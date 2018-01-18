@@ -39,13 +39,12 @@
 
 package org.egov.bpa.autonumber.impl;
 
-import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.egov.bpa.autonumber.ApplicationFeeNumberGenerator;
 import org.egov.bpa.transaction.entity.ApplicationFee;
-import org.egov.infra.persistence.utils.SequenceNumberGenerator;
+import org.egov.infra.persistence.utils.GenericSequenceNumberGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -55,15 +54,12 @@ public class ApplicationFeeNumberGeneratorImpl implements ApplicationFeeNumberGe
     private static final String SEQ_BPA_APPLICATIONFEE_CODE = "SEQ_BPA_APPLICATIONFEE_CODE";
 
     @Autowired
-    private SequenceNumberGenerator sequenceNoGenerator;
+    private GenericSequenceNumberGenerator genericSequenceNumberGenerator;
 
     @Override
     public String generateApplicationFeeNumber(ApplicationFee applicationFee) {
-        final Serializable referenceNumber = sequenceNoGenerator.getNextSequence(SEQ_BPA_APPLICATIONFEE_CODE);
         return new SimpleDateFormat("ddMMyyyy").format(new Date())
-                .concat(String.format(
-                        "%s%06d", "", referenceNumber));
-
+                + String.format("%s%06d", "", genericSequenceNumberGenerator.getNextSequence(SEQ_BPA_APPLICATIONFEE_CODE));
     }
 
 }

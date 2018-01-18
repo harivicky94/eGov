@@ -47,9 +47,9 @@
 
 package org.egov.bpa.web.controller.notice;
 
+import static org.egov.bpa.utils.BpaConstants.BPAREJECTIONFILENAME;
 import static org.egov.bpa.utils.BpaConstants.BUILDINGPERMITFILENAME;
 import static org.egov.bpa.utils.BpaConstants.DEMANDNOCFILENAME;
-import static org.egov.bpa.utils.BpaConstants.BPAREJECTIONFILENAME;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -61,7 +61,6 @@ import org.egov.bpa.transaction.service.ApplicationBpaService;
 import org.egov.bpa.transaction.service.notice.BpaNoticeService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.infra.reporting.engine.ReportOutput;
-import org.egov.infra.reporting.util.ReportUtil;
 import org.egov.infra.web.utils.WebUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -133,7 +132,6 @@ public class BpaNoticeController {
         ulbDetailsReportParams.put("cityName", request.getSession().getAttribute("cityname").toString());
         ulbDetailsReportParams.put("logoPath", cityLogo);
         ulbDetailsReportParams.put("ulbName", request.getSession().getAttribute("citymunicipalityname").toString());
-        ulbDetailsReportParams.put("duplicateWatermarkPath", ReportUtil.duplicateWatermarkAbsolutePath(request));
         return ulbDetailsReportParams;
     }
 }

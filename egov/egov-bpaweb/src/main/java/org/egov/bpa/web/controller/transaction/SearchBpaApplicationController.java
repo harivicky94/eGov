@@ -48,12 +48,9 @@ package org.egov.bpa.web.controller.transaction;
 import static org.egov.bpa.utils.BpaConstants.FILESTORE_MODULECODE;
 import static org.egov.infra.utils.JsonUtils.toJSON;
 
-import java.io.IOException;
-import java.text.ParseException;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.dto.SearchBpaApplicationForm;
@@ -77,7 +74,7 @@ public class SearchBpaApplicationController extends BpaGenericApplicationControl
 
     private static final String DATA = "{ \"data\":";
     private static final String APPLICATION_HISTORY = "applicationHistory";
-    
+
     @Autowired
     private SearchBpaApplicationService searchBpaApplicationService;
     @Autowired
@@ -94,8 +91,7 @@ public class SearchBpaApplicationController extends BpaGenericApplicationControl
     @RequestMapping(value = "/search", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
     public String searchRegisterStatusMarriageRecords(final Model model,
-            @ModelAttribute final SearchBpaApplicationForm searchBpaApplicationForm)
-            throws ParseException {
+            @ModelAttribute final SearchBpaApplicationForm searchBpaApplicationForm) {
         final List<SearchBpaApplicationForm> searchResultList = searchBpaApplicationService.search(searchBpaApplicationForm);
         return new StringBuilder(DATA)
                 .append(toJSON(searchResultList, SearchBpaApplicationForm.class, SearchBpaApplicationFormAdaptor.class))
@@ -116,25 +112,24 @@ public class SearchBpaApplicationController extends BpaGenericApplicationControl
         buildReceiptDetails(application);
         return "viewapplication-form";
     }
-    
+
     @RequestMapping(value = "/downloadfile/{fileStoreId}")
-    public void download(@PathVariable final String fileStoreId, final HttpServletResponse response) throws IOException {
-        fileStoreUtils.fetchFileAndWriteToStream(fileStoreId, FILESTORE_MODULECODE, false, response);
+    public void download(@PathVariable final String fileStoreId) {
+        fileStoreUtils.fileAsResponseEntity(fileStoreId, FILESTORE_MODULECODE, true);
     }
-    
-    
+
     @RequestMapping(value = "/bpacollectfee", method = RequestMethod.GET)
     public String showCollectionPendingRecords(final Model model) {
         model.addAttribute("searchBpaApplicationForm", new SearchBpaApplicationForm());
         return "search-collect-fee";
     }
-    
+
     @RequestMapping(value = "/bpacollectfee", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
     public String searchCollectionPendingRecords(final Model model,
-            @ModelAttribute final SearchBpaApplicationForm searchBpaApplicationForm)
-            throws ParseException {
-        final List<SearchBpaApplicationForm> searchResultList = searchBpaApplicationService.searchForCollectionPending(searchBpaApplicationForm);
+            @ModelAttribute final SearchBpaApplicationForm searchBpaApplicationForm) {
+        final List<SearchBpaApplicationForm> searchResultList = searchBpaApplicationService
+                .searchForCollectionPending(searchBpaApplicationForm);
         return new StringBuilder(DATA)
                 .append(toJSON(searchResultList, SearchBpaApplicationForm.class, SearchBpaApplicationFormAdaptor.class))
                 .append("}")

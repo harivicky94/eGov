@@ -47,30 +47,15 @@
   --%>
 
 
-<html>
-	<head>
-		<title>Error</title>
-		<link rel="stylesheet" type="text/css" href="../css/egov.css?rnd=${app_release_no}">
-	</head>
-<body bgcolor="#FFFFFF">
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 
+<div class="alert alert-success" role="alert">
+	<strong>${message}</strong>
+</div>
 
-<center>
-<%@ include file="/egovheader.jsp" %>
- <html:form>
-  <table border=1 class="eGovTblMain" width="754" summary>
-    <tbody>
-      <tr>
-        <td class="eGovTblContentSubHd" align="middle" height="27" width="772">
-          <p align="center">An error has occurred! Please try again or contact the administrator if the problem persists<bean:message key="error.generic"/>
-          <bean:message key="error.generic.ll"/></p>
-        </td>
-      </tr>
-	</tbody>
-  </table>
-</center>
-</html:form>
- <%@ include file = "/egovfooter.jsp" %>
-</body>
-
-</html>
+<jsp:include page="lettertoparty-view.jsp"></jsp:include>

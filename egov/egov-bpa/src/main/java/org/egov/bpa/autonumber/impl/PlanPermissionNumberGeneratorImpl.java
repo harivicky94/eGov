@@ -48,13 +48,12 @@ package org.egov.bpa.autonumber.impl;
 
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_MODULE_TYPE;
 
-import java.io.Serializable;
 import java.time.LocalDateTime;
 
 import org.egov.bpa.autonumber.PlanPermissionNumberGenerator;
 import org.egov.bpa.master.entity.ServiceType;
 import org.egov.bpa.utils.BpaConstants;
-import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
+import org.egov.infra.persistence.utils.GenericSequenceNumberGenerator;
 import org.egov.infra.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -63,15 +62,14 @@ import org.springframework.stereotype.Service;
 public class PlanPermissionNumberGeneratorImpl implements PlanPermissionNumberGenerator {
 
     @Autowired
-    private ApplicationSequenceNumberGenerator applicationSequenceNumberGenerator;
+    private GenericSequenceNumberGenerator genericSequenceNumberGenerator;
 
     @Override
     public String generatePlanPermissionNumber(final ServiceType serviceType) {
         final String sequenceName = BpaConstants.BPA_PLANPERMNO_SEQ;
-        final Serializable nextSequence = applicationSequenceNumberGenerator.getNextSequence(sequenceName);
-        return String.format("%s%06d",
-                APPLICATION_MODULE_TYPE.concat(String.valueOf(LocalDateTime.now().getMonthValue()))
-                        .concat(DateUtils.currentDateToYearFormat()),
-                nextSequence);
+        return String.format(
+                "%s%06d", new StringBuilder().append(APPLICATION_MODULE_TYPE)
+                        .append(String.valueOf(LocalDateTime.now().getMonthValue())).append(DateUtils.currentYear()),
+                genericSequenceNumberGenerator.getNextSequence(sequenceName));
     }
 }
