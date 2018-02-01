@@ -62,6 +62,7 @@ import org.egov.bpa.master.entity.ServiceType;
 import org.egov.bpa.master.service.BpaFeeService;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.repository.ApplicationBpaRepository;
+import org.egov.bpa.transaction.service.ApplicationBpaService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.collection.integration.models.BillAccountDetails.PURPOSE;
 import org.egov.commons.CFinancialYear;
@@ -116,6 +117,8 @@ public class ApplicationBpaBillService extends BillServiceInterface {
     protected BpaFeeService bpaFeeService;
     @Autowired
     private BpaDemandService bpaDemandService;
+    @Autowired
+    private ApplicationBpaService applicationBpaService;
 
     @Transactional
     public String generateBill(final BpaApplication application) {
@@ -205,7 +208,8 @@ public class ApplicationBpaBillService extends BillServiceInterface {
             egDemand.setEgInstallmentMaster(installment);
             egDemand.getEgDemandDetails().addAll(dmdDetailSet);
             egDemand.setIsHistory("N");
-            egDemand.setBaseDemand(application.getAdmissionfeeAmount());
+            egDemand.setBaseDemand(applicationBpaService.setAdmissionFeeAmountForRegistrationWithAmenities(
+                    application.getServiceType().getId(), application.getApplicationAmenity()));
             egDemand.setCreateDate(new Date());
             egDemand.setModifiedDate(new Date());
         }
