@@ -245,6 +245,8 @@ public class BpaTaxCollection extends TaxCollection {
     @Transactional
     public void updateDemandDetailForReceiptCreate(final Set<ReceiptAccountInfo> accountDetails, final EgDemand demand,
             final BillReceiptInfo billRcptInfo, final BigDecimal totalAmount) {
+        final BpaApplication application = applicationBpaService
+                .getApplicationByDemand(demand);
         final StringBuilder query = new StringBuilder(
                 "select dmdet FROM EgDemandDetails dmdet left join fetch dmdet.egDemandReason dmdRsn ")
                         .append("left join fetch dmdRsn.egDemandReasonMaster dmdRsnMstr left join fetch dmdRsn.egInstallmentMaster installment ")
@@ -285,7 +287,9 @@ public class BpaTaxCollection extends TaxCollection {
                     persistCollectedReceipts(demandDetail, billRcptInfo.getReceiptNum(), totalAmount,
                             billRcptInfo.getReceiptDate(), demandDetail.getAmtCollected());
                 }
-
+        if(BpaConstants.APPLICATION_STATUS_APPROVED.equalsIgnoreCase(application.getStatus().getCode()))
+            bpaUtils.redirectToBpaWorkFlow(application.getCurrentState().getOwnerPosition().getId(), application,
+                    BpaConstants.WF_PERMIT_FEE_COLL_PENDING, BpaConstants.BPA_PERMIT_FEE_COLLECTED, null, null);
     }
 
     public EgDemandDetails createDemandDetails(final EgDemandReason egDemandReason, final BigDecimal amtCollected,

@@ -46,38 +46,10 @@
  */
 package org.egov.bpa.transaction.entity;
 
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
-
 import org.egov.bpa.master.entity.CheckListDetail;
 import org.egov.bpa.master.entity.Occupancy;
 import org.egov.bpa.master.entity.ServiceType;
+import org.egov.bpa.transaction.entity.dto.BpaStateInfo;
 import org.egov.bpa.transaction.entity.enums.ApplicantMode;
 import org.egov.bpa.transaction.entity.enums.GovernmentType;
 import org.egov.commons.entity.Source;
@@ -86,6 +58,13 @@ import org.egov.demand.model.EgDemand;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.pims.commons.Position;
 import org.hibernate.validator.constraints.Length;
+
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "EGBPA_APPLICATION")
@@ -167,6 +146,9 @@ public class BpaApplication extends StateAware<Position> {
     private boolean architectAccepted;
     private Boolean isEconomicallyWeakerSection;
     private String additionalRejectionReasons;
+    private Boolean isSentToPreviousOwner = false;
+    @Length(min = 1, max = 5000)
+    private String townSurveyorRemarks;
 
     @OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<SiteDetail> siteDetail = new ArrayList<>(0);
@@ -213,7 +195,7 @@ public class BpaApplication extends StateAware<Position> {
     private List<ApplicationPermitConditions> rejectionReasons = new ArrayList<>(0);
     @OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<BpaNotice> bpaNotice = new ArrayList<>(0);
-    
+
     private transient Long approvalDepartment;
     private transient Long zoneId;
     private transient Long wardId;
@@ -221,10 +203,10 @@ public class BpaApplication extends StateAware<Position> {
     private transient Set<Receipt> receipts = new HashSet<>();
     private transient boolean mailPwdRequired;
     private transient List<CheckListDetail> checkListDocumentsForNOC = new ArrayList<>(0);
-    private transient List<ApplicationPermitConditions> dynamicPermitConditionsTemp  = new ArrayList<>(0);
-    private transient List<ApplicationPermitConditions> staticPermitConditionsTemp  = new ArrayList<>(0);
-    private transient List<ApplicationPermitConditions> rejectionReasonsTemp  = new ArrayList<>(0);
-    private transient List<ApplicationPermitConditions> additionalPermitConditionsTemp  = new ArrayList<>(0);
+    private transient List<ApplicationPermitConditions> dynamicPermitConditionsTemp = new ArrayList<>(0);
+    private transient List<ApplicationPermitConditions> staticPermitConditionsTemp = new ArrayList<>(0);
+    private transient List<ApplicationPermitConditions> rejectionReasonsTemp = new ArrayList<>(0);
+    private transient List<ApplicationPermitConditions> additionalPermitConditionsTemp = new ArrayList<>(0);
 
     @Override
     public Long getId() {
@@ -498,13 +480,13 @@ public class BpaApplication extends StateAware<Position> {
         return applicationDocument;
     }
 
+    public void setApplicationDocument(final List<ApplicationDocument> applicationDocument) {
+        this.applicationDocument = applicationDocument;
+    }
+
     public void addApplicationDocument(final ApplicationDocument nocDocument) {
         nocDocument.setApplication(this);
         getApplicationDocument().add(nocDocument);
-    }
-
-    public void setApplicationDocument(final List<ApplicationDocument> applicationDocument) {
-        this.applicationDocument = applicationDocument;
     }
 
     public List<ApplicationNocDocument> getApplicationNOCDocument() {
@@ -697,6 +679,7 @@ public class BpaApplication extends StateAware<Position> {
         this.isEconomicallyWeakerSection = isEconomicallyWeakerSection;
     }
 
+
     public void deleteBuildingDetails(final BuildingDetail buildingDetail) {
         if (buildingDetail != null)
             this.buildingDetail.remove(buildingDetail);
@@ -733,10 +716,11 @@ public class BpaApplication extends StateAware<Position> {
     public void setBpaNotice(List<BpaNotice> bpaNotice) {
         this.bpaNotice = bpaNotice;
     }
+
     public void addNotice(final BpaNotice bpaNotice) {
         getBpaNotice().add(bpaNotice);
     }
-    
+
     public List<ApplicationPermitConditions> getRejectionReasons() {
         return rejectionReasons;
     }
@@ -751,6 +735,22 @@ public class BpaApplication extends StateAware<Position> {
 
     public void setAdditionalRejectionReasons(String additionalRejectionReasons) {
         this.additionalRejectionReasons = additionalRejectionReasons;
+    }
+
+    public Boolean getSentToPreviousOwner() {
+        return isSentToPreviousOwner;
+    }
+
+    public void setSentToPreviousOwner(Boolean sentToPreviousOwner) {
+        isSentToPreviousOwner = sentToPreviousOwner;
+    }
+
+    public String getTownSurveyorRemarks() {
+        return townSurveyorRemarks;
+    }
+
+    public void setTownSurveyorRemarks(String townSurveyorRemarks) {
+        this.townSurveyorRemarks = townSurveyorRemarks;
     }
 
     public List<ApplicationPermitConditions> getAdditionalPermitConditions() {
@@ -792,6 +792,9 @@ public class BpaApplication extends StateAware<Position> {
     public void setAdditionalPermitConditionsTemp(List<ApplicationPermitConditions> additionalPermitConditionsTemp) {
         this.additionalPermitConditionsTemp = additionalPermitConditionsTemp;
     }
-    
+
+    public BpaStateInfo extraInfo() {
+        return super.extraInfoAs(BpaStateInfo.class);
+    }
 
 }

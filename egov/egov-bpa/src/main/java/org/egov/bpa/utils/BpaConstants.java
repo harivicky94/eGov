@@ -113,7 +113,6 @@ public class BpaConstants {
     public static final String ADDITIONALRULE = "additionalRule";
     public static final String APPLICATION_MODULE_TYPE = "BPA";
     public static final String BPASTATUS_MODULETYPE = "REGISTRATION";
-    public static final String CSC_SOURCE = "CSC";
     public static final String COLON_CONCATE = "::";
     public static final String NATURE_OF_WORK = "Building Plan Approval";
     public static final String WF_NEW_STATE = "NEW";
@@ -122,8 +121,15 @@ public class BpaConstants {
     public static final String WF_END_STATE = "END";
     public static final String CREATE_ADDITIONAL_RULE_CREATE = "CREATEBPAAPPLICATION";
     public static final String FIELD_INSPECTION_COMPLETED = "Field Inspection completed";
+    public static final String WF_TS_INSPECTION_INITIATED = "Town Surveyor Inspection Initiated";
+    public static final String WF_AE_APPROVAL_PENDING = "AE Approval Pending";
+    public static final String WF_TS_APPROVAL_PENDING = "Town Surveyor Approval Pending";
+    public static final String FWD_TO_OVRSR_FOR_FIELD_INS = "Forwarded to Overseer for field inspection";
+    public static final String FORWARDED_TO_NOC_UPDATE = "Forwarded to Superintendent for Noc Updation";
+    public static final String FWD_TO_AE_FOR_FIELD_ISPECTION = "Forwarded to Assistant Engineer for field ispection";
+    public static final String WF_PERMIT_FEE_COLL_PENDING = "Permit Fee Collection Pending";
     // application status constants
-    private static final String APPROVED = "Approved";
+    public static final String APPROVED = "Approved";
     public static final String APPLICATION_STATUS_APPROVED = APPROVED;
     public static final String APPLICATION_STATUS_FIELD_INS = "Field Inspected";
     public static final String APPLICATION_STATUS_ORDER_ISSUED = "Order Issued to Applicant";
@@ -131,9 +137,10 @@ public class BpaConstants {
     public static final String APPLICATION_STATUS_RECORD_APPROVED = "Record Approved";
     public static final String APPLICATION_STATUS_NOCUPDATED = "NOC Updated";
     public static final String APPLICATION_STATUS_CANCELLED = "Cancelled";
-    public static final String BPA_STATUS_SUPERINDENT_APPROVED = "Superintendent Approved";
+    public static final String APPLICATION_STATUS_REGISTERED = "Registered";
     public static final String APPLICATION_STATUS_REJECTED = "Rejected";
-    public static final String APPLN_STATUS_FIELD_INSPECTION_INITIATED = "Field Inspection initiated";
+    public static final String APPLICATION_STATUS_DOC_VERIFIED = "Document Verified";
+    public static final String APPLICATION_STATUS_TS_INS = "Town Surveyor Inspected";
     // document realted constants
     public static final String STAKE_HOLDER_CHECK_LIST_TYPE = "STAKEHOLDERDOCUMENT";
     public static final String CHECKLIST_TYPE_NOC = "NOC";
@@ -145,9 +152,7 @@ public class BpaConstants {
     public static final String SENDEMAILFORBPA = "SENDEMAILFROOMBPAMODULE";
     // Sms And Email Code For New Connection
     public static final String SMSEMAILTYPENEWBPAREGISTERED = "newbparegistered";
-    public static final String APPLICATION_STATUS_REGISTERED = "Registered";
     public static final String APPLICATION_STATUS_CREATED = "Created";
-    public static final String DOCUMENTVERIFIED = "Document Verified";
     public static final String SMSEMAILTYPELETTERTOPARTY = "Letter To Party";
     // Letter to party related constants
     public static final String LETTERTOPARTY_NUMBER_SEQ = "SEQ_BPA_LP_";
@@ -202,6 +207,7 @@ public class BpaConstants {
     public static final String BPA_DEFAULT_FUND_CODE = "BPA_DEFAULT_FUND_CODE";
     public static final String BPA_DEFAULT_FUNCTIONARY_CODE = "BPA_DEFAULT_FUNCTIONARY_CODE";
     public static final String BPA_DEFAULT_FUND_SRC_CODE = "BPA_DEFAULT_FUND_SRC_CODE";
+    public static final String BPA_PERMIT_FEE_COLLECTED = "BPA Permit fees collected";
     // designation constants
     public static final String DESIGNATION_AEE = "Assistant executive engineer";
     public static final String DESIGNATION_AE = "Assistant engineer";
@@ -209,6 +215,7 @@ public class BpaConstants {
     public static final String DESIGNATION_COMMISSIONER = "Commissioner";
     public static final String DESIGNATION_SECRETARY = "Secretary";
     public static final String DESIGNATION_SUPERIAPPROVAL = "Superintendent of Approval";
+    public static final String DESIGNATION_TOWN_SURVEYOR = "Town Surveyor";
     // occupancy constants
     public static final String THATCHED_TILED_HOUSE = "Thatched / Tiled House";
     public static final String MERCANTILE_COMMERCIAL = "Mercantile / Commercial";
@@ -227,8 +234,10 @@ public class BpaConstants {
     public static final String WF_REJECT_BUTTON = "REJECT";
     public static final String WF_CANCELAPPLICATION_BUTTON = "CANCEL APPLICATION";
     public static final String GENERATEPERMITORDER = "Generate Permit Order";
-    public static final String WF_SURVEYOR_FORWARD_BUTTON = "Submit";
+    public static final String GENERATEREJECTNOTICE = "Generate Rejection Notice";
+    public static final String WF_LBE_SUBMIT_BUTTON = "Submit";
     public static final String WF_PAY_ONLINE_BUTTON = "Pay Online";
+    public static final String WF_REVERT_BUTTON = "Revert";
     // building details related constants
     public static final String TOTAL_PLINT_AREA = "totalPlintArea";
     public static final String BUILDINGHEIGHT_GROUND = "buildingheightGround";

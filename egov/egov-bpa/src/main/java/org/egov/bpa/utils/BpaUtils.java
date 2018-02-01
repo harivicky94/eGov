@@ -1,22 +1,5 @@
 package org.egov.bpa.utils;
 
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_MODULE_TYPE;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CANCELLED;
-import static org.egov.bpa.utils.BpaConstants.BOUNDARY_TYPE_CITY;
-import static org.egov.bpa.utils.BpaConstants.BOUNDARY_TYPE_ZONE;
-import static org.egov.bpa.utils.BpaConstants.CREATE_ADDITIONAL_RULE_CREATE;
-import static org.egov.bpa.utils.BpaConstants.EGMODULE_NAME;
-import static org.egov.bpa.utils.BpaConstants.LETTERTOPARTYINITIATE;
-import static org.egov.bpa.utils.BpaConstants.LPCREATED;
-import static org.egov.bpa.utils.BpaConstants.LPREPLIED;
-import static org.egov.bpa.utils.BpaConstants.LPREPLYRECEIVED;
-import static org.egov.bpa.utils.BpaConstants.WF_SURVEYOR_FORWARD_BUTTON;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.egov.bpa.transaction.entity.BpaApplication;
@@ -47,6 +30,13 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import static org.egov.bpa.utils.BpaConstants.*;
 
 @Service
 @Transactional(readOnly = true)
@@ -172,7 +162,7 @@ public class BpaUtils {
         if ("Save".equalsIgnoreCase(workFlowAction)) {
             status = "To be submitted";
         } else if (null != application.getStatus().getDescription()
-                && WF_SURVEYOR_FORWARD_BUTTON.equalsIgnoreCase(workFlowAction)) {
+                   && WF_LBE_SUBMIT_BUTTON.equalsIgnoreCase(workFlowAction)) {
             status = application.getStatus().getDescription();
         }
         Module module = moduleService.getModuleByName(EGMODULE_NAME);
@@ -298,6 +288,9 @@ public class BpaUtils {
         else if (LPREPLIED.equals(currentState))
             applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(application, approvalPositionId, remarks,
                     CREATE_ADDITIONAL_RULE_CREATE, LPREPLYRECEIVED, amountRule);
+        else if (WF_PERMIT_FEE_COLL_PENDING.equals(currentState))
+            applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(application, approvalPositionId, remarks,
+                    CREATE_ADDITIONAL_RULE_CREATE, WF_PERMIT_FEE_COLL_PENDING, amountRule);
         else
             applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(application, approvalPositionId, remarks,
                     CREATE_ADDITIONAL_RULE_CREATE, workFlowAction, amountRule);

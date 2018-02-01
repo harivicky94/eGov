@@ -207,13 +207,7 @@ jQuery(document)
 															$('#approvalComent').focus();
 															return true;
 														} else {
-															if (validateForm(validator))
-																validateWorkFlowApprover(action);
-															
-															$('.loader-class').modal('show', {
-																backdrop : 'static'
-															});
-															document.forms[0].submit();
+                                                            validateForm(validator);
 														}
 													} else {
 														e.stopPropagation();
@@ -221,66 +215,95 @@ jQuery(document)
 													}
 												}
 											});
-											
 											return false;
-										}
-
-										if (action == 'CANCEL APPLICATION') {
-											$('#Cancel').attr('formnovalidate', 'true');
-											bootbox
-											.confirm({
-												message : 'Do you really want to Cancel the application ?',
-												buttons : {
-													'cancel' : {
-														label : 'No',
-														className : 'btn-danger'
-													},
-													'confirm' : {
-														label : 'Yes',
-														className : 'btn-primary'
-													}
-												},
-												callback : function(result) {
-													if (result) {
-														if (validateForm(validator))
-															validateWorkFlowApprover(action);
-														
-														$('.loader-class').modal('show', {
-															backdrop : 'static'
-														});
-														document.forms[0].submit();
-													} else {
-														e.stopPropagation();
-														e.preventDefault();
-													}
-												}
-											});
-											return false;
-										}
-										validateWorkFlowApprover(action);
-										if ($('#wfstateDesc').val() == 'NEW') {
-											$('#approvalDepartment')
-													.removeAttr('required');
-											$('#approvalDesignation')
-													.removeAttr('required');
-											$('#approvalPosition').removeAttr(
-													'required');
-											document.forms[0].submit;
-											return true;
-
-										}
-										if ($('#wfstateDesc').val() != 'NEW') {
-											var serviceTypeName = $("#serviceType").val();
-											if($('#showPermitConditions').val() && serviceTypeName != 'Tower Construction'
-													&& serviceTypeName !=  'Pole Structures') {
-												var chkbxLength = $('.modifiablePermitConditions:checked').length;
-												var chkbxLength1 = $('.staticPermitConditions:checked').length;
-												if(chkbxLength <= 0 && chkbxLength1 <= 0){
-													bootbox.alert('Please select atleast one permit condition is mandatory');
-													return false;
-												}
-											}
-											return validateForm(validator);
+										} else if (action == 'Revert') {
+                                            bootbox
+                                                .confirm({
+                                                    message : 'Do you really want to send back the application to previously approved official ?',
+                                                    buttons : {
+                                                        'cancel' : {
+                                                            label : 'No',
+                                                            className : 'btn-danger'
+                                                        },
+                                                        'confirm' : {
+                                                            label : 'Yes',
+                                                            className : 'btn-primary'
+                                                        }
+                                                    },
+                                                    callback: function (result) {
+                                                        if (result) {
+                                                            var approvalComent = $('#approvalComent').val();
+                                                            if (approvalComent == "") {
+                                                                $('#approvalComent').focus();
+                                                                bootbox.alert("Please enter comments for sending back to previous official");
+                                                                return true;
+                                                            } else {
+                                                                validateForm(validator);
+                                                            }
+                                                        } else {
+                                                            e.stopPropagation();
+                                                            e.preventDefault();
+                                                        }
+                                                    }
+                                                });
+                                            return false;
+                                        } else if (action == 'Approve') {
+                                            bootbox
+                                                .confirm({
+                                                    message : 'Are you want approve this application ?',
+                                                    buttons : {
+                                                        'cancel' : {
+                                                            label : 'No',
+                                                            className : 'btn-danger'
+                                                        },
+                                                        'confirm' : {
+                                                            label : 'Yes',
+                                                            className : 'btn-primary'
+                                                        }
+                                                    },
+                                                    callback : function(result) {
+                                                        if (result) {
+                                                            validateOnApproveAndForward(validator, action);
+                                                        } else {
+                                                            e.stopPropagation();
+                                                            e.preventDefault();
+                                                        }
+                                                    }
+                                                });
+                                            return false;
+                                        } else if (action == 'Forward') {
+                                            bootbox
+                                                .confirm({
+                                                    message : 'Are you want forward this application to next official ?',
+                                                    buttons : {
+                                                        'cancel' : {
+                                                            label : 'No',
+                                                            className : 'btn-danger'
+                                                        },
+                                                        'confirm' : {
+                                                            label : 'Yes',
+                                                            className : 'btn-primary'
+                                                        }
+                                                    },
+                                                    callback: function (result) {
+                                                        if (result) {
+                                                            var approvalComent = $('#approvalComent').val();
+                                                            if ($("#approvalDesignation option:selected").text() == 'Town Surveyor' && approvalComent == "") {
+                                                                $('#approvalComent').focus();
+                                                                bootbox.alert("Please enter comments to forward town surveyor");
+                                                                return true;
+                                                            } else {
+                                                                validateOnApproveAndForward(validator, action);
+                                                            }
+                                                        } else {
+                                                            e.stopPropagation();
+                                                            e.preventDefault();
+                                                        }
+                                                    }
+                                                });
+                                            return false;
+                                        } else {
+                                            validateOnApproveAndForward(validator, action);
 										}
 									});
 
@@ -397,7 +420,10 @@ jQuery(document)
 
 function validateForm(validator) {
 	if ($('#viewBpaApplicationForm').valid()) {
-		return true;
+        $('.loader-class').modal('show', {
+            backdrop: 'static'
+        });
+        document.forms[0].submit();
 	} else {
 		$errorInput=undefined;
 		
@@ -420,4 +446,30 @@ function validateForm(validator) {
 		validator.focusInvalid();
 		return false;
 	}
+}
+
+
+function validateOnApproveAndForward(validator, action) {
+    validateWorkFlowApprover(action);
+    if ($('#wfstateDesc').val() == 'NEW') {
+        $('#approvalDepartment')
+            .removeAttr('required');
+        $('#approvalDesignation')
+            .removeAttr('required');
+        $('#approvalPosition').removeAttr(
+            'required');
+        document.forms[0].submit;
+    } else {
+        var serviceTypeName = $("#serviceType").val();
+        if($('#showPermitConditions').val() && serviceTypeName != 'Tower Construction'
+            && serviceTypeName !=  'Pole Structures') {
+            var chkbxLength = $('.modifiablePermitConditions:checked').length;
+            var chkbxLength1 = $('.staticPermitConditions:checked').length;
+            if(chkbxLength <= 0 && chkbxLength1 <= 0){
+                bootbox.alert('Please select atleast one permit condition is mandatory');
+                return false;
+            }
+        }
+        return validateForm(validator);
+    }
 }

@@ -446,20 +446,33 @@ $(document).ready(function() {
 	// onchange of main occupancy reset floorwise occupancy details column value
 	function resetOccupancyDetails() {
 		$('#buildingAreaDetails tbody tr *[name$="occupancy"]').each(function(idx){
+            var  selectBoxName = "buildingDetail[0].applicationFloorDetails["+idx+"].occupancy";
+            var  selectBoxName1 = "buildingDetail[0].applicationFloorDetailsForUpdate["+idx+"].occupancy";
+            clearExistingDropDownValues(selectBoxName);
+            clearExistingDropDownValues(selectBoxName1);
 			if($("#occupancyapplnlevel option:selected" ).text() == 'Mixed'){
-				var  selectBoxName = "buildingDetail[0].applicationFloorDetails["+idx+"].occupancy";
-				$('select[name="'+"buildingDetail[0].applicationFloorDetails["+idx+"].occupancy"+'"]').empty();
 				$('select[name="'+selectBoxName+'"]').append($("<option value=''>Select </option>"));
+                $('select[name="'+selectBoxName1+'"]').append($("<option value=''>Select </option>"));
 				$.each(mixedOccupancyResponse, function(index, occupancyObj) {
 					if(occupancyObj.description != 'Mixed')
-					$('select[name="'+selectBoxName+'"]').append($('<option>').val(occupancyObj.id).text(occupancyObj.description));
+                        loadOccupancyDetails(selectBoxName, occupancyObj.id, occupancyObj.description);
+                    	loadOccupancyDetails(selectBoxName1, occupancyObj.id, occupancyObj.description);
 				});
 			} else {
-				$('select[name="'+"buildingDetail[0].applicationFloorDetails["+idx+"].occupancy"+'"]').empty();
-				$('select[name="'+"buildingDetail[0].applicationFloorDetails["+idx+"].occupancy"+'"]').append($('<option>').val($("#occupancyapplnlevel option:selected" ).val()).text($("#occupancyapplnlevel option:selected" ).text()));
+                loadOccupancyDetails(selectBoxName, $("#occupancyapplnlevel option:selected" ).val(), $("#occupancyapplnlevel option:selected" ).text());
+                loadOccupancyDetails(selectBoxName1, $("#occupancyapplnlevel option:selected" ).val(), $("#occupancyapplnlevel option:selected" ).text());
 			}
 		});
 	}
+
+    function loadOccupancyDetails(selectBoxName,id,value){
+        $('select[name="'+selectBoxName+'"]').append($('<option>').val(id).text(value));
+    }
+
+    function clearExistingDropDownValues(selectBoxName) {
+        $('select[name="'+selectBoxName+'"]').empty();
+	}
+
 	$(document).on('blur', '.floorArea', function(e) {
 		var isCitizenAcceptedForAdditionalFee = $('#isCitizenAcceptedForAdditionalFee').is(':checked');
 		var seviceTypeName = $( "#serviceType option:selected" ).text();

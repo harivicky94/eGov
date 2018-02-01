@@ -127,7 +127,7 @@ public class LettertoPartyService {
         Long docSrcuityUserPos = null;
         if (!bpaApplication.getStateHistory().isEmpty()) {
             for (final StateHistory stateHistory : bpaApplication.getStateHistory()) {
-                if (stateHistory.getValue().equals(BpaConstants.BPA_STATUS_SUPERINDENT_APPROVED)) {
+                if (stateHistory.getValue().equals(BpaConstants.APPLICATION_STATUS_REGISTERED)) {
                     docSrcuityUserPos = stateHistory.getOwnerPosition().getId();
                     break;
                 }

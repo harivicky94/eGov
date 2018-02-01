@@ -109,6 +109,13 @@ jQuery(document)
 						$(".show-row").hide();
 					}
 
+					// Prevent continuous send back to previous owners, one step backward only allowed
+                    if ($('#sentToPreviousOwner').val() == 'true') {
+                        $("#Revert").hide();
+                    } else {
+                        $("#Revert").show();
+					}
+
 					function removeWorkFlowMandatoryAndHideDepartmentDetails() {
 						$('#approvalDepartment').removeAttr('required');
 						$('#approvalDesignation').removeAttr('required');
@@ -119,7 +126,13 @@ jQuery(document)
 					var tabfocus;
 					if ($('#showUpdateNoc').val()) {
 						tabfocus = '#checklist-info';
-					} else {
+					} else if ($('#showPermitConditions').val()) {
+                        tabfocus = '#permit-conditions';
+                    } else if ($('#captureTSRemarks').val()) {
+                        tabfocus = '#ts-remarks';
+                    } else if ($('#viewTsRemarks').val()) {
+                        tabfocus = '#view-ts-remarks';
+                    } else {
 						tabfocus = '#applicant-info';
 					}
 

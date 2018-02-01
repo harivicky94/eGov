@@ -93,7 +93,7 @@
 								<form:input class="form-control patternvalidation"
 									maxlength="120" data-pattern="alphanumeric" required="required"
 									data-role="tagsinput" id="reSurveynumber"
-									path="documentScrutiny[0].reSurveynumber"
+									path="documentScrutiny[0].reSurveynumber" readonly="true"
 									value="${bpaApplication.siteDetail[0].reSurveyNumber}" />
 								<form:errors path="documentScrutiny[0].reSurveynumber"
 									cssClass="add-margin error-msg" />
@@ -122,7 +122,7 @@
 							<div class="col-sm-3 add-margin">
 								<form:input class="form-control patternvalidation decimalfixed"
 									maxlength="10" data-pattern="number" id="extentinsqmts"
-									path="documentScrutiny[0].extentinsqmts" required="required"
+									path="documentScrutiny[0].extentinsqmts" readonly="true" required="required"
 									value="${bpaApplication.siteDetail[0].extentinsqmts}" />
 								<form:errors path="documentScrutiny[0].extentinsqmts"
 									cssClass="add-margin error-msg" />
@@ -143,7 +143,7 @@
 							<div class="col-sm-3 add-margin">
 								<form:input class="form-control patternvalidation"
 									maxlength="120" data-pattern="alphanumeric" required="required"
-									id="registrarOffice" path="documentScrutiny[0].registrarOffice"
+									id="registrarOffice" readonly="true" path="documentScrutiny[0].registrarOffice"
 									value="${bpaApplication.siteDetail[0].registrarOffice.registrarOffice.name}" />
 								<form:errors path="documentScrutiny[0].registrarOffice"
 									cssClass="add-margin error-msg" />
@@ -153,7 +153,7 @@
 							<div class="col-sm-3 add-margin">
 								<form:input class="form-control patternvalidation"
 									maxlength="120" data-pattern="alphanumeric"
-									id="natureofOwnership"
+									id="natureofOwnership" readonly="true"
 									path="documentScrutiny[0].natureofOwnership"
 									value="${bpaApplication.siteDetail[0].natureofOwnership}" />
 								<form:errors path="documentScrutiny[0].natureofOwnership"
@@ -168,7 +168,7 @@
 							<div class="col-sm-3 add-margin">
 								<form:input class="form-control patternvalidation"
 									maxlength="120" data-pattern="alphanumeric" id="taluk"
-									path="documentScrutiny[0].taluk"
+									path="documentScrutiny[0].taluk" readonly="true"
 									value="${bpaApplication.siteDetail[0].postalAddress.taluk}" />
 								<form:errors path="documentScrutiny[0].taluk"
 									cssClass="add-margin error-msg" />
@@ -179,7 +179,7 @@
 							<div class="col-sm-3 add-margin">
 								<form:input class="form-control patternvalidation"
 									maxlength="120" data-pattern="alphanumeric" id="district"
-									path="documentScrutiny[0].district"
+									path="documentScrutiny[0].district" readonly="true"
 									value="${bpaApplication.siteDetail[0].postalAddress.district}" />
 								<form:errors path="documentScrutiny[0].district"
 									cssClass="add-margin error-msg" />

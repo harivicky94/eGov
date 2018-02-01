@@ -81,6 +81,7 @@
 			<form:hidden path="" id="scheduleType" name="scheduleType"
 				value="${scheduleType}" />
 			<form:hidden path="" id="showPermitConditions" value="${showpermitconditions}" />
+			<form:hidden path="sentToPreviousOwner" id="sentToPreviousOwner" />
 			<ul class="nav nav-tabs" id="settingstab">
 				<li class="active"><a data-toggle="tab" href="#applicant-info"
 					data-tabidx=0><spring:message code='lbl.appln.details' /></a></li>
@@ -94,25 +95,33 @@
 					<li><a data-toggle="tab" href="#view-inspection" data-tabidx=3><spring:message
 								code='lbl.inspection.appln' /></a></li>
 				</c:if>
+				<c:if test="${captureTSRemarks}">
+					<li><a data-toggle="tab" href="#ts-remarks"
+						   data-tabidx=4><spring:message code='lbl.town.surveyor.remarks' /></a></li>
+				</c:if>
+				<c:if test="${(null eq captureTSRemarks || !captureTSRemarks) && null ne bpaApplication.townSurveyorRemarks}">
+					<li><a data-toggle="tab" href="#view-ts-remarks"
+						   data-tabidx=4><spring:message code='lbl.town.surveyor.remarks' /></a></li>
+				</c:if>
 				<c:if test="${showUpdateNoc}">
-					<li><a data-toggle="tab" href="#checklist-info" data-tabidx=4><spring:message
+					<li><a data-toggle="tab" href="#checklist-info" data-tabidx=5><spring:message
 								code='lbl.noc.doc.details' /></a></li>
 				</c:if>
 				<c:if test="${not empty bpaApplication.applicationNOCDocument}">
-						<li><a data-toggle="tab" href="#noc-info" data-tabidx=4><spring:message
+						<li><a data-toggle="tab" href="#noc-info" data-tabidx=5><spring:message
 									code='lbl.noc.details' /></a></li>
 				</c:if>
 				<c:if test="${not empty bpaApplication.applicationFee}">
-					<li><a data-toggle="tab" href="#view-fee" data-tabidx=5><spring:message
+					<li><a data-toggle="tab" href="#view-fee" data-tabidx=6><spring:message
 								code='lbl.fee.details' /></a></li>
 				</c:if>
 				<c:if test="${not empty lettertopartylist}">
-					<li><a data-toggle="tab" href="#view-lp" data-tabidx=6><spring:message
+					<li><a data-toggle="tab" href="#view-lp" data-tabidx=7><spring:message
 								code='lbl.lp.details' /></a></li>
 				</c:if>
 				<c:if test="${showpermitconditions}">
 					<li><a data-toggle="tab" href="#permit-conditions"
-						data-tabidx=7><spring:message code='lbl.permit.conditions' /></a></li>
+						data-tabidx=8><spring:message code='lbl.permit.conditions' /></a></li>
 				</c:if>
 			</ul>
 			<div class="tab-content">
@@ -167,6 +176,24 @@
 							</div>
 						</div>
 				</c:if>
+				<c:if test="${captureTSRemarks}">
+					<input type="hidden" id="captureTSRemarks" value="${captureTSRemarks}">
+					<div id="ts-remarks" class="tab-pane fade">
+						<div class="panel panel-primary" data-collapsed="0">
+							<jsp:include page="town-surveyor-remarks.jsp"></jsp:include>
+						</div>
+					</div>
+				</c:if>
+				<c:if test="${(null eq captureTSRemarks || !captureTSRemarks) && null ne bpaApplication.townSurveyorRemarks}">
+				<c:if test="${'Town Surveyor Inspected' eq bpaApplication.status.code}">
+					<input type="hidden" id="viewTsRemarks" value="true">
+				</c:if>
+					<div id="view-ts-remarks" class="tab-pane fade">
+						<div class="panel panel-primary" data-collapsed="0">
+							<jsp:include page="view-town-surveyor-remarks.jsp"></jsp:include>
+						</div>
+					</div>
+				</c:if>
 				<c:if test="${not empty bpaApplication.applicationNOCDocument}">
 						<div id="noc-info" class="tab-pane fade">
 							<div class="panel panel-primary" data-collapsed="0">
@@ -197,6 +224,7 @@
 						</div>
 				</c:if>
 				<c:if test="${showpermitconditions}">
+					<input type="hidden" id="showPermitConditions" value="${showpermitconditions}">
 					<div id="permit-conditions" class="tab-pane fade">
 						<div class="panel panel-primary" data-collapsed="0">
 							<jsp:include page="permit-conditions.jsp"></jsp:include>

@@ -51,7 +51,7 @@ import static org.egov.bpa.utils.BpaConstants.FILESTORE_MODULECODE;
 import static org.egov.bpa.utils.BpaConstants.ROLE_CITIZEN;
 import static org.egov.bpa.utils.BpaConstants.WF_NEW_STATE;
 import static org.egov.bpa.utils.BpaConstants.WF_REJECT_BUTTON;
-import static org.egov.bpa.utils.BpaConstants.WF_SURVEYOR_FORWARD_BUTTON;
+import static org.egov.bpa.utils.BpaConstants.WF_LBE_SUBMIT_BUTTON;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -214,7 +214,7 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
             bpaUtils.redirectToBpaWorkFlow(approvalPosition, application, curentState, null, null,
                     null);
         }
-        if (workFlowAction != null && workFlowAction.equals(WF_SURVEYOR_FORWARD_BUTTON)
+        if (workFlowAction != null && workFlowAction.equals(WF_LBE_SUBMIT_BUTTON)
                 && (bpaUtils.logedInuseCitizenOrBusinessUser())) {
             final WorkFlowMatrix wfmatrix = bpaUtils.getWfMatrixByCurrentState(application, WF_NEW_STATE);
             if (wfmatrix != null)
@@ -324,6 +324,7 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
     public BpaApplication updateApplication(final BpaApplication application, final Long approvalPosition,
             String workFlowAction, BigDecimal amountRule) {
         application.setSource(Source.SYSTEM);
+        application.setSentToPreviousOwner(false);
         persistBpaNocDocuments(application);
         buildExistingAndProposedBuildingDetails(application);
         persistPostalAddress(application);

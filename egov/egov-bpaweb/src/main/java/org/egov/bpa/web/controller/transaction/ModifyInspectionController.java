@@ -120,7 +120,7 @@ public class ModifyInspectionController extends BpaGenericApplicationController 
     private void loadApplication(final Model model, final String applicationNumber) {
         final BpaApplication application = applicationBpaService.findByApplicationNumber(applicationNumber);
         if (application != null && application.getState() != null
-                && application.getState().getValue().equalsIgnoreCase(BpaConstants.BPA_STATUS_SUPERINDENT_APPROVED)) {
+                && application.getState().getValue().equalsIgnoreCase(BpaConstants.APPLICATION_STATUS_REGISTERED)) {
             loadViewdata(model, application);
             model.addAttribute("loginUser", securityUtils.getCurrentUser());
             model.addAttribute(BpaConstants.APPLICATION_HISTORY,

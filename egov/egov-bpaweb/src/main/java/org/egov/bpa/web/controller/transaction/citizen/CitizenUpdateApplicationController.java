@@ -46,7 +46,7 @@ import static org.egov.bpa.utils.BpaConstants.DISCLIMER_MESSAGE_ONSAVE;
 import static org.egov.bpa.utils.BpaConstants.ENABLEONLINEPAYMENT;
 import static org.egov.bpa.utils.BpaConstants.WF_CANCELAPPLICATION_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_NEW_STATE;
-import static org.egov.bpa.utils.BpaConstants.WF_SURVEYOR_FORWARD_BUTTON;
+import static org.egov.bpa.utils.BpaConstants.WF_LBE_SUBMIT_BUTTON;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -161,16 +161,16 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
         String enableOrDisablePayOnline = bpaUtils.getAppconfigValueByKeyName(ENABLEONLINEPAYMENT);
         if (workFlowAction != null
                 && workFlowAction
-                        .equals(WF_SURVEYOR_FORWARD_BUTTON)
+                        .equals(WF_LBE_SUBMIT_BUTTON)
                 && enableOrDisablePayOnline.equalsIgnoreCase("YES") && !bpaUtils.logedInuserIsCitizen()) {
             return genericBillGeneratorService
                     .generateBillAndRedirectToCollection(bpaApplication, model);
         }
         if (workFlowAction != null && !bpaUtils.logedInuserIsCitizen()
-                && (workFlowAction.equals(WF_SURVEYOR_FORWARD_BUTTON)
+                && (workFlowAction.equals(WF_LBE_SUBMIT_BUTTON)
                         || WF_CANCELAPPLICATION_BUTTON.equalsIgnoreCase(workFlowAction))
                 && (bpaUtils.logedInuseCitizenOrBusinessUser())) {
-            if (workFlowAction.equals(WF_SURVEYOR_FORWARD_BUTTON)) {
+            if (workFlowAction.equals(WF_LBE_SUBMIT_BUTTON)) {
                 final WorkFlowMatrix wfmatrix = bpaUtils.getWfMatrixByCurrentState(bpaApplication,
                         WF_NEW_STATE);
                 if (wfmatrix != null)
@@ -195,7 +195,7 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
         bpaUtils.updatePortalUserinbox(bpaApplication, null);
         if (workFlowAction != null
                 && workFlowAction
-                        .equals(WF_SURVEYOR_FORWARD_BUTTON)
+                        .equals(WF_LBE_SUBMIT_BUTTON)
                 && !bpaUtils.logedInuserIsCitizen()) {
             Position pos = positionMasterService.getPositionById(bpaApplication.getCurrentState().getOwnerPosition().getId());
             User wfUser = bpaThirdPartyService.getUserPositionByPassingPosition(pos.getId());
@@ -211,7 +211,7 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
         } else
             model.addAttribute(MESSAGE,
                     "Sucessfully saved with ApplicationNumber " + bpaApplication.getApplicationNumber());
-        if (workFlowAction != null && workFlowAction.equals(WF_SURVEYOR_FORWARD_BUTTON))
+        if (workFlowAction != null && workFlowAction.equals(WF_LBE_SUBMIT_BUTTON))
             bpaUtils.sendSmsEmailOnCitizenSubmit(bpaApplication);
         return BPAAPPLICATION_CITIZEN;
     }

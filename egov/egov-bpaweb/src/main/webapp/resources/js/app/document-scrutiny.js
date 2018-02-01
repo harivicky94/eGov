@@ -73,14 +73,53 @@ $(document).ready(function() {
 	});
 
 	$(".workAction").click(function(e) {
-		return validateDocScrutinyForm(validator);
+        var action = document
+            .getElementById("workFlowAction").value;
+        if (action == 'Cancel Application') {
+            $('#Cancel').attr('formnovalidate', 'true');
+            bootbox
+                .confirm({
+                    message : 'Do you really want to Cancel the application ?',
+                    buttons : {
+                        'cancel' : {
+                            label : 'No',
+                            className : 'btn-danger'
+                        },
+                        'confirm' : {
+                            label : 'Yes',
+                            className : 'btn-primary'
+                        }
+                    },
+                    callback : function(result) {
+                        if (result) {
+                            var approvalComent = $('#approvalComent').val();
+                            if (approvalComent == "") {
+                                bootbox.alert("Please enter cancellation comments!");
+                                $('#approvalComent').focus();
+                                return true;
+                            } else {
+                                return validateDocScrutinyForm(validator);
+                            }
+                        } else {
+                            e.stopPropagation();
+                            e.preventDefault();
+                        }
+                    }
+                });
+            return false;
+        } else {
+            return validateDocScrutinyForm(validator);
+		}
 	});
 
 });
 
 function validateDocScrutinyForm(validator) {
 	if ($('#documentscrutinyform').valid()) {
-		return true;
+        $('.loader-class').modal('show', {
+            backdrop: 'static'
+        });
+        document.forms[0].submit();
 	} else {
 		$errorInput = undefined;
 

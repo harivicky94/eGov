@@ -40,7 +40,7 @@
 package org.egov.bpa.web.controller.transaction.citizen;
 
 import static org.egov.bpa.utils.BpaConstants.DISCLIMER_MESSAGE_ONSAVE;
-import static org.egov.bpa.utils.BpaConstants.WF_SURVEYOR_FORWARD_BUTTON;
+import static org.egov.bpa.utils.BpaConstants.WF_LBE_SUBMIT_BUTTON;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
@@ -243,7 +243,7 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
                             && bpaApplication.getSiteDetail().get(0).getElectionBoundary() != null
                                     ? bpaApplication.getSiteDetail().get(0).getElectionBoundary().getId() : null);
         if (citizenOrBusinessUser && workFlowAction != null
-                && workFlowAction.equals(WF_SURVEYOR_FORWARD_BUTTON)
+                && workFlowAction.equals(WF_LBE_SUBMIT_BUTTON)
                 && (userPosition == 0 || userPosition == null)) {
             applicationBpaService.buildExistingAndProposedBuildingDetails(bpaApplication);
             model.addAttribute("noJAORSAMessage", SUPERINTENDANT_NOT_EXISTS);
@@ -280,7 +280,7 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
         applicationBpaService.persistOrUpdateApplicationDocument(bpaApplication);
         if (workFlowAction != null
                 && workFlowAction
-                        .equals(WF_SURVEYOR_FORWARD_BUTTON)
+                        .equals(WF_LBE_SUBMIT_BUTTON)
                 && onlinePaymentEnable) {
             return genericBillGeneratorService
                     .generateBillAndRedirectToCollection(bpaApplication, model);
@@ -300,7 +300,7 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
                         Arrays.asList(bpaApplicationRes.getOwner().getUser(), securityUtils.getCurrentUser()), workFlowAction);
             if (workFlowAction != null
                     && workFlowAction
-                            .equals(WF_SURVEYOR_FORWARD_BUTTON)) {
+                            .equals(WF_LBE_SUBMIT_BUTTON)) {
                 Position pos = positionMasterService
                         .getPositionById(bpaApplicationRes.getCurrentState().getOwnerPosition().getId());
                 User wfUser = bpaThirdPartyService.getUserPositionByPassingPosition(pos.getId());

@@ -40,25 +40,31 @@
 
 package org.egov.bpa.transaction.workflow;
 
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.LettertoParty;
+import org.egov.bpa.transaction.entity.dto.BpaStateInfo;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.utils.StringUtils;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.matrix.service.CustomizedWorkFlowService;
 import org.egov.pims.commons.Position;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -177,4 +183,31 @@ public class BpaWorkFlowService {
                 .filter(history -> history.getValue().equalsIgnoreCase(lettertoParties.get(0).getStateForOwnerPosition()))
                 .findAny().orElse(null);
     }
+
+    public Assignment getApproverAssignment(final Position position) {
+        return assignmentService.getPrimaryAssignmentForPositon(position.getId());
+    }
+
+    public Optional<StateHistory<Position>> getLastStateHstryObj(final BpaApplication bpaApplication) {
+        return bpaApplication.getStateHistory().stream().reduce((sh1, sh2) -> sh2);
+    }
+
+    public BpaStateInfo getBpaStateinfo(final BpaApplication application, final BpaStateInfo bpaStateInfo, final WorkFlowMatrix wfmatrix) {
+        bpaStateInfo.setWfMatrixRef(wfmatrix.getId());
+        return bpaStateInfo;
+    }
+
+    public Long getPreviousWfMatrixId(final BpaApplication application) {
+        Optional<StateHistory<Position>> stateHistory = getLastStateHstryObj(application);
+        JSONParser parser = new JSONParser();
+        JSONObject json = null;
+        try {
+            if (stateHistory.isPresent() && StringUtils.isNotEmpty(stateHistory.get().getExtraInfo()))
+                json = (JSONObject) parser.parse(stateHistory.get().getExtraInfo());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return Long.valueOf(json.get("wfMatrixRef").toString());
+    }
+
 }
