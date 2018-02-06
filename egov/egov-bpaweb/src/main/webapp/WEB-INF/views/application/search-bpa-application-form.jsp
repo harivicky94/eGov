@@ -72,7 +72,7 @@
 							code="lbl.applicant.name" /></label>
 					<div class="col-sm-3 add-margin">
 						<form:input class="form-control patternvalidation"
-							data-pattern="alphabetwithspace" maxlength="128"
+							data-pattern="alphabetspecialcharacters" maxlength="128"
 							id="applicantName" path="applicantName" />
 						<form:errors path="applicantName" cssClass="add-margin error-msg" />
 					</div>

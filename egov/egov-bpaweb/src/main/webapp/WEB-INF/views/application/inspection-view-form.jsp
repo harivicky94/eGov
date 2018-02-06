@@ -51,7 +51,7 @@
 				<div class="panel-title">Inspection Details</div>
 			</div>
 			<div class="panel-body">
-				<div class="row add-border">
+				<%--<div class="row add-border">
 					<div class="col-sm-3 add-margin">Location of the Plot</div>
 					<div class="col-sm-3 add-margin view-content">
 						<c:out value="${docket[0].locationOfPlot}" default="N/A"></c:out>
@@ -86,7 +86,7 @@
 					<div class="col-sm-3 add-margin view-content">
 						<c:out value="${inspection.lndMinPlotExtent}" default="N/A"></c:out>
 					</div>
-				</div>
+				</div>--%>
 				<div class="row add-border">
 					<div class="col-sm-3 add-margin">
 						<spring:message code="lbl.dimensionofplot" />
@@ -104,16 +104,16 @@
 					</div>
 				</div>
 				<div class="row add-border">
-					<div class="col-sm-3 add-margin">
+					<%--<div class="col-sm-3 add-margin">
 						<spring:message code="lbl.typeofland" />
 					</div>
 					<div class="col-sm-3 add-margin view-content">
 						<c:out value="${inspection.typeofLand}" default="N/A"></c:out>
-					</div>
+					</div>--%>
 					<div class="col-sm-3 add-margin">
 						<spring:message code="lbl.ins.remarks" />
 					</div>
-					<div class="col-sm-3 add-margin view-content">
+					<div class="col-sm-9 add-margin view-content">
 						<c:out value="${inspection.inspectionRemarks}" default="N/A"></c:out>
 					</div>
 				</div>

@@ -83,17 +83,18 @@
 						</div>
 						<div class="form-group">
 							<label class="col-sm-3 control-label text-right"><spring:message
-									code="lbl.re.survey.no" /><span class="mandatory"></span></label>
+									code="lbl.re.survey.no" /></label>
 							<div class="col-sm-3 add-margin">
 								<form:hidden path="documentScrutiny[0].application"
 									id="scrutinyapplicationid" value="${bpaApplication.id}" />
 								<form:hidden path="documentScrutiny[0].verifiedBy"
 									id="verifiedById" value="${loginUser.id}" />
-
+								<form:hidden path="documentScrutiny[0].reSurveynumber"
+											 id="verifiedById" value="${bpaApplication.siteDetail[0].reSurveyNumber}" />
 								<form:input class="form-control patternvalidation"
-									maxlength="120" data-pattern="alphanumeric" required="required"
+									maxlength="120" data-pattern="alphanumeric"
 									data-role="tagsinput" id="reSurveynumber"
-									path="documentScrutiny[0].reSurveynumber" readonly="true"
+									path="" disabled="true"
 									value="${bpaApplication.siteDetail[0].reSurveyNumber}" />
 								<form:errors path="documentScrutiny[0].reSurveynumber"
 									cssClass="add-margin error-msg" />
@@ -116,9 +117,9 @@
 						<div class="form-group">
 
 							<label class="col-sm-3 control-label text-right extentOfLand"><spring:message
-									code="lbl.extent.of.land" /><span class="mandatory"></span></label> <label
+									code="lbl.extent.of.land" /></label> <label
 								class="col-sm-3 control-label text-right areaOfBase"><spring:message
-									code="lbl.area.base" /> <span class="mandatory"></span> </label>
+									code="lbl.area.base" /> </label>
 							<div class="col-sm-3 add-margin">
 								<form:input class="form-control patternvalidation decimalfixed"
 									maxlength="10" data-pattern="number" id="extentinsqmts"
@@ -139,7 +140,7 @@
 						</div>
 						<div class="form-group">
 							<label class="col-sm-3 control-label text-right"><spring:message
-									code="lbl.registraroffice" /><span class="mandatory"></span></label>
+									code="lbl.registraroffice" /></label>
 							<div class="col-sm-3 add-margin">
 								<form:input class="form-control patternvalidation"
 									maxlength="120" data-pattern="alphanumeric" required="required"

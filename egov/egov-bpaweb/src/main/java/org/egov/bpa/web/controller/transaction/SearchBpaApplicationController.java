@@ -59,7 +59,9 @@ import org.egov.bpa.transaction.service.LettertoPartyService;
 import org.egov.bpa.transaction.service.SearchBpaApplicationService;
 import org.egov.bpa.web.controller.adaptor.SearchBpaApplicationFormAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -114,8 +116,8 @@ public class SearchBpaApplicationController extends BpaGenericApplicationControl
     }
 
     @RequestMapping(value = "/downloadfile/{fileStoreId}")
-    public void download(@PathVariable final String fileStoreId) {
-        fileStoreUtils.fileAsResponseEntity(fileStoreId, FILESTORE_MODULECODE, true);
+    public ResponseEntity<InputStreamResource> download(@PathVariable final String fileStoreId) {
+        return fileStoreUtils.fileAsResponseEntity(fileStoreId, FILESTORE_MODULECODE, true);
     }
 
     @RequestMapping(value = "/bpacollectfee", method = RequestMethod.GET)

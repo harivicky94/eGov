@@ -1019,7 +1019,7 @@
 
 				<div class="col-sm-3 add-margin text-center">
 					<form:textarea class="form-control patternvalidation"
-						data-pattern="alphanumericwithspace" maxlength="256"
+						data-pattern="alphabetspecialcharacters" maxlength="256"
 						id="docketDetailRoofConversion${status.index}remarks"
 						path="docketDetailRoofConversion[${status.index}].remarks" />
 

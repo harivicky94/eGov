@@ -56,7 +56,7 @@
 				code="lbl.remarks"/><span class="mandatory"></span></label>
 		<div class="col-sm-7 add-margin text-center">
 			<form:textarea class="form-control patternvalidation"
-						   data-pattern="alphanumericwithspace" rows="5" maxlength="5000"
+						   data-pattern="alphabetspecialcharacters" rows="5" maxlength="5000"
 						   id="townSurveyorRemarks" path="townSurveyorRemarks" required="required"/>
 			<form:errors path="townSurveyorRemarks"
 						 cssClass="add-margin error-msg"/>
