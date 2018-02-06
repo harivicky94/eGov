@@ -372,9 +372,21 @@ $(document).ready(function() {
 			$('#stateOfConstruction').attr('required', false);
 		}
 	});
-	
-	
-	// on form load get occupancy details List
+
+    $('#workCompletionDate').on('changeDate', function() {
+
+        if (!$('#workCommencementDate').val()) {
+            bootbox.alert("Please enter work Commencement Date");
+            $('#workCompletionDate').val('').datepicker("refresh");
+        } else if ($('#workCommencementDate').val() && moment($('#workCompletionDate').val(),'DD/MM/YYYY').isSameOrBefore(moment($('#workCommencementDate').val(),'DD/MM/YYYY'))) {
+        	bootbox.alert("Work completion date should be greater than the work commencement date");
+            $('#workCompletionDate').val('').datepicker("refresh");
+        }
+    });
+
+
+
+    // on form load get occupancy details List
 	$.ajax({
 		url: "/bpa/application/getoccupancydetails",     
 		type: "GET",
@@ -507,7 +519,7 @@ $(document).ready(function() {
 					} else if(parseFloat(totalFloorArea) > areaPermissibleWOAddnlFee && !isCitizenAcceptedForAdditionalFee) {
 						bootbox
 						.confirm({
-							message : 'For the occupancy type of ' +occpancyObj[0].description+', maximum permissible area allowed with out addtional fee is '+areaPermissibleWOAddnlFee+' Sq.Mtrs, Do you want continue construction in additional area with addtional cost of Rs.3000 per Sq.Mtr.Are you ready pay additional amount ? , please select Yes / No ',
+							message : 'For the occupancy type of ' +occpancyObj[0].description+', maximum permissible area allowed with out addtional fee is '+areaPermissibleWOAddnlFee+' Sq.Mtrs, Do you want continue construction in additional area with addtional cost of Rs.5000 per Sq.Mtr.Are you ready pay additional amount ? , please select Yes / No ',
 							buttons : {
 								'cancel' : {
 									label : 'No',

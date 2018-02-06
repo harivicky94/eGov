@@ -286,7 +286,7 @@
 		<div class="col-sm-3 add-margin">
 			<form:input
 				class="form-control patternvalidation clear-values handle-mandatory nonzero floorCount"
-				data-pattern="number" maxlength="3" id="floorCount"
+				data-pattern="number" maxlength="3" id="floorCount" readonly="true"
 				path="buildingDetail[0].floorCount" required="required" />
 			<form:errors path="buildingDetail[0].floorCount"
 				cssClass="add-margin error-msg" />
@@ -390,7 +390,7 @@
 	</div>
 </div> --%>
 
-	<%-- <div class="form-group">
+	<div class="form-group">
 		<label class="col-sm-3 control-label text-right"><spring:message
 				code="lbl.if.regularized" /> </label>
 		<div class="col-sm-3 add-margin">
@@ -456,7 +456,7 @@
 	</div>
 
 
-	<div class="form-group">
+	<%--<div class="form-group">
 		<label class="col-sm-3 control-label text-right"><spring:message
 				code="lbl.permt.plan.obtain" /> </label>
 		<div class="col-sm-3 add-margin">
@@ -507,5 +507,8 @@
 					cssClass="add-margin error-msg" />
 			</div>
 		</div>
-	</div> --%>
+	</div>--%>
 </div>
+
+<script
+		src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/moment.min.js' context='/egi'/>"></script>
