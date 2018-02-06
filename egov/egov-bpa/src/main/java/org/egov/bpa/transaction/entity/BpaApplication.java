@@ -168,6 +168,7 @@ public class BpaApplication extends StateAware<Position> {
     @OrderBy("id ASC")
     @OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ApplicationDocument> applicationDocument = new ArrayList<>(0);
+    @OrderBy("id ASC")
     @OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ApplicationNocDocument> applicationNOCDocument = new ArrayList<>(0);
     @OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -586,7 +587,7 @@ public class BpaApplication extends StateAware<Position> {
 
     public boolean isFeeCollected() {
         if (demand != null)
-            return demand.getBaseDemand().compareTo(demand.getAmtCollected()) <= 0 ? true : false;
+            return demand.getBaseDemand().compareTo(demand.getAmtCollected()) <= 0;
         else
             return false;
     }

@@ -46,40 +46,13 @@
  */
 package org.egov.bpa.web.controller.transaction;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.ADMIN_HIERARCHY_TYPE;
-import static org.egov.ptis.constants.PropertyTaxConstants.WARD;
-
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.lang.StringUtils;
-import org.egov.bpa.master.entity.BpaScheme;
-import org.egov.bpa.master.entity.BuildingCategory;
-import org.egov.bpa.master.entity.ConstructionStages;
-import org.egov.bpa.master.entity.Occupancy;
-import org.egov.bpa.master.entity.ServiceType;
-import org.egov.bpa.master.entity.VillageName;
-import org.egov.bpa.master.service.BpaSchemeService;
-import org.egov.bpa.master.service.BuildingCategoryService;
-import org.egov.bpa.master.service.CheckListDetailService;
-import org.egov.bpa.master.service.ConstructionStagesService;
-import org.egov.bpa.master.service.OccupancyService;
-import org.egov.bpa.master.service.ServiceTypeService;
-import org.egov.bpa.master.service.VillageNameService;
+import org.egov.bpa.master.entity.*;
+import org.egov.bpa.master.service.*;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.BpaStatus;
-import org.egov.bpa.transaction.entity.enums.ApplicantMode;
-import org.egov.bpa.transaction.entity.enums.BpaUom;
-import org.egov.bpa.transaction.entity.enums.GovernmentType;
-import org.egov.bpa.transaction.entity.enums.StakeHolderType;
-import org.egov.bpa.transaction.service.ApplicationBpaService;
-import org.egov.bpa.transaction.service.BpaApplicationValidationService;
-import org.egov.bpa.transaction.service.BpaStatusService;
-import org.egov.bpa.transaction.service.BpaThirdPartyService;
-import org.egov.bpa.transaction.service.BuildingFloorDetailsService;
-import org.egov.bpa.transaction.service.ExistingBuildingFloorDetailsService;
+import org.egov.bpa.transaction.entity.enums.*;
+import org.egov.bpa.transaction.service.*;
 import org.egov.bpa.transaction.service.collection.BpaDemandService;
 import org.egov.bpa.transaction.service.messaging.BPASmsAndEmailService;
 import org.egov.bpa.transaction.workflow.BpaWorkFlowService;
@@ -108,6 +81,14 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.egov.ptis.constants.PropertyTaxConstants.ADMIN_HIERARCHY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WARD;
 
 public abstract class BpaGenericApplicationController extends GenericWorkFlowController {
 
@@ -267,6 +248,11 @@ public abstract class BpaGenericApplicationController extends GenericWorkFlowCon
     @ModelAttribute("schemesList")
     public List<BpaScheme> getSchemesList() {
         return bpaSchemeService.findAll();
+    }
+
+    @ModelAttribute("nocStatusList")
+    public NocStatus[] getNocStatusList() {
+        return NocStatus.values();
     }
 
     public Map<String, String> getApplicationModeMap() {

@@ -123,6 +123,12 @@ jQuery(document)
 						$(".show-row").hide();
 					}
 
+					// When SUP updating noc details, Noc status is mandatory
+                    if ($('#showUpdateNoc').val()) {
+                        $('.nocStatus').attr('required', true);
+                        $('.nocStatusHeader').addClass( "mandatory" );
+                    }
+
 					var tabfocus;
 					if ($('#showUpdateNoc').val()) {
 						tabfocus = '#checklist-info';

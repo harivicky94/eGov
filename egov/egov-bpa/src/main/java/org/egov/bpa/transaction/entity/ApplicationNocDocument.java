@@ -39,44 +39,37 @@
  */
 package org.egov.bpa.transaction.entity;
 
-import java.util.Date;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
-
 import org.egov.bpa.master.entity.CheckListDetail;
+import org.egov.bpa.transaction.entity.enums.NocStatus;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 @Entity
 @Table(name = "egbpa_NOC_Document")
 @SequenceGenerator(name = ApplicationNocDocument.SEQ_APPLICATIONDOCUMENT, sequenceName = ApplicationNocDocument.SEQ_APPLICATIONDOCUMENT, allocationSize = 1)
 public class ApplicationNocDocument extends AbstractAuditable {
 
-    private static final long serialVersionUID = -4555037259173138199L;
     public static final String SEQ_APPLICATIONDOCUMENT = "seq_egbpa_NOC_Document";
-
+    private static final long serialVersionUID = -4555037259173138199L;
     @Id
     @GeneratedValue(generator = SEQ_APPLICATIONDOCUMENT, strategy = GenerationType.SEQUENCE)
     private Long id;
-    
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "nocFileStore")
-    private FileStoreMapper nocFileStore;
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinTable(name = "egbpa_noc_document_store", joinColumns = @JoinColumn(name = "nocdocumentid"), inverseJoinColumns = @JoinColumn(name = "filestoreid"))
+    private Set<FileStoreMapper> nocSupportDocs = Collections.emptySet();
+
     private transient MultipartFile[] files;
     @ManyToOne
     @NotNull
@@ -96,11 +89,15 @@ public class ApplicationNocDocument extends AbstractAuditable {
     private String remarks;
     @Length(min = 1, max = 256)
     private String natureOfRequest;
+    @Temporal(value = TemporalType.DATE)
     private Date letterSentOn;
+    @Temporal(value = TemporalType.DATE)
     private Date replyReceivedOn;
     private Boolean rejection = false;
     private Boolean notApplicable = false;
-    
+    @Enumerated(EnumType.STRING)
+    private NocStatus nocStatus;
+
     @Override
     public Long getId() {
         return id;
@@ -167,12 +164,15 @@ public class ApplicationNocDocument extends AbstractAuditable {
         this.createduser = createduser;
     }
 
-    public FileStoreMapper getNocFileStore() {
-        return nocFileStore;
+    public Set<FileStoreMapper> getNocSupportDocs() {
+        return this.nocSupportDocs
+                .stream()
+                .sorted(Comparator.comparing(FileStoreMapper::getId))
+                .collect(Collectors.toSet());
     }
 
-    public void setNocFileStore(FileStoreMapper nocFileStore) {
-        this.nocFileStore = nocFileStore;
+    public void setNocSupportDocs(Set<FileStoreMapper> nocSupportDocs) {
+        this.nocSupportDocs = nocSupportDocs;
     }
 
     public String getNatureOfRequest() {
@@ -214,4 +214,13 @@ public class ApplicationNocDocument extends AbstractAuditable {
     public void setNotApplicable(Boolean notApplicable) {
         this.notApplicable = notApplicable;
     }
+
+    public NocStatus getNocStatus() {
+        return nocStatus;
+    }
+
+    public void setNocStatus(NocStatus nocStatus) {
+        this.nocStatus = nocStatus;
+    }
+
 }

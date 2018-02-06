@@ -39,39 +39,9 @@
  */
 package org.egov.bpa.transaction.service;
 
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_APPROVED;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CREATED;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_DIGI_SIGNED;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_FIELD_INS;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_REJECTED;
-import static org.egov.bpa.utils.BpaConstants.BPAFEETYPE;
-import static org.egov.bpa.utils.BpaConstants.BPASTATUS_MODULETYPE;
-import static org.egov.bpa.utils.BpaConstants.CHECKLIST_TYPE_NOC;
-import static org.egov.bpa.utils.BpaConstants.FILESTORE_MODULECODE;
-import static org.egov.bpa.utils.BpaConstants.ROLE_CITIZEN;
-import static org.egov.bpa.utils.BpaConstants.WF_NEW_STATE;
-import static org.egov.bpa.utils.BpaConstants.WF_REJECT_BUTTON;
-import static org.egov.bpa.utils.BpaConstants.WF_LBE_SUBMIT_BUTTON;
-
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.apache.commons.lang3.ArrayUtils;
 import org.egov.bpa.autonumber.PlanPermissionNumberGenerator;
 import org.egov.bpa.master.entity.BpaFeeDetail;
-import org.egov.bpa.master.entity.CheckListDetail;
 import org.egov.bpa.master.entity.ServiceType;
 import org.egov.bpa.master.service.BpaSchemeLandUsageService;
 import org.egov.bpa.master.service.CheckListDetailService;
@@ -112,6 +82,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static org.egov.bpa.utils.BpaConstants.*;
 
 @Service
 @Transactional(readOnly = true)
@@ -191,6 +170,7 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
             application.getSiteDetail().get(0)
                     .setLandUsage((bpaSchemeLandUsageService.findById(application.getSiteDetail().get(0).getLandUsageId())));
         buildRegistrarOfficeForVillage(application);
+        persistBpaNocDocuments(application);
         final BpaStatus bpaStatus = getStatusByCodeAndModuleType(APPLICATION_STATUS_CREATED);
         application.setStatus(bpaStatus);
         setSource(application);
@@ -242,7 +222,7 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
     }
 
     private Long getZone(final BpaApplication application) {
-        return application.getZoneId() != null ? application.getZoneId() : null;
+        return application.getZoneId();
     }
 
     private void buildPermitConditions(final BpaApplication application) {
@@ -268,11 +248,8 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
     }
 
     public void persistBpaNocDocuments(final BpaApplication application) {
-        final Map<Long, CheckListDetail> generalDocumentAndId = new HashMap<>();
-        checkListDetailService
-                .findActiveCheckListByServiceType(application.getServiceType().getId(), CHECKLIST_TYPE_NOC)
-                .forEach(document -> generalDocumentAndId.put(document.getId(), document));
-        addDocumentsToFileStore(application, generalDocumentAndId);
+
+        processAndStoreNocDocuments(application);
     }
 
     public BpaStatus getStatusByCodeAndModuleType(final String code) {
@@ -281,11 +258,7 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
 
     @Transactional
     public void saveAndFlushApplication(final BpaApplication application) {
-        if (!application.getApplicationAmenity().isEmpty()
-                && APPLICATION_STATUS_CREATED.equalsIgnoreCase(application.getStatus().getCode())) {
-            application.setDemand(applicationBpaBillService.createDemand(application));
-        }
-
+        persistBpaNocDocuments(application);
         buildPermitConditions(application);
         persistPostalAddress(application);
         buildRegistrarOfficeForVillage(application);
@@ -329,7 +302,7 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         buildExistingAndProposedBuildingDetails(application);
         persistPostalAddress(application);
         buildSchemeLandUsage(application);
-        if (APPLICATION_STATUS_FIELD_INS.equalsIgnoreCase(application.getStatus().getCode())
+        if (!WF_SAVE_BUTTON.equalsIgnoreCase(workFlowAction) && APPLICATION_STATUS_FIELD_INS.equalsIgnoreCase(application.getStatus().getCode())
                 && NOC_UPDATION_IN_PROGRESS.equalsIgnoreCase(application.getState().getValue())) {
             bpaDemandService.generateDemandUsingSanctionFeeList(applicationFeeService
                     .saveApplicationFee(applicationBpaFeeCalculationService.calculateBpaSanctionFees(application)));
@@ -349,7 +322,7 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
             buildRejectionReasons(application);
         }
         final BpaApplication updatedApplication = applicationBpaRepository.save(application);
-        if (updatedApplication.getCurrentState() != null
+        if (!WF_SAVE_BUTTON.equalsIgnoreCase(workFlowAction) && updatedApplication.getCurrentState() != null
                 && !updatedApplication.getCurrentState().getValue().equals(WF_NEW_STATE)) {
             bpaUtils.redirectToBpaWorkFlow(approvalPosition, application, application.getCurrentState().getValue(),
                     application.getApprovalComent(), workFlowAction, amountRule);
@@ -413,23 +386,29 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         return applicationBpaRepository.findByApplicationNumber(applicationNumber);
     }
 
-    private void addDocumentsToFileStore(final BpaApplication bpaApplication,
-            final Map<Long, CheckListDetail> documentAndId) {
+    private void processAndStoreNocDocuments(final BpaApplication bpaApplication) {
         final User user = securityUtils.getCurrentUser();
-        final List<CheckListDetail> documents = bpaApplication.getCheckListDocumentsForNOC();
-        documents.stream().filter(document -> !document.getFile().isEmpty() && document.getFile().getSize() > 0)
-                .map(document -> {
-                    for (ApplicationNocDocument applicationNocDocument : bpaApplication.getApplicationNOCDocument()) {
-                        if (documentAndId.get(document.getId()).equals(applicationNocDocument.getChecklist())) {
-                            applicationNocDocument.setApplication(bpaApplication);
-                            applicationNocDocument.setCreatedBy(user);
-                            applicationNocDocument.setChecklist(documentAndId.get(document.getId()));
-                            applicationNocDocument.setNocFileStore(addToFileStore(document.getFile()));
-                            return applicationNocDocument;
-                        }
-                    }
-                    return null;
-                }).collect(Collectors.toList()).forEach(doc -> bpaApplication.addApplicationNocDocument(doc));
+        if (!bpaApplication.getApplicationNOCDocument().isEmpty() && null == bpaApplication.getApplicationNOCDocument().get(0).getId())
+            for (final ApplicationNocDocument nocDocument : bpaApplication.getApplicationNOCDocument()) {
+                nocDocument.setChecklist(
+                        checkListDetailService.load(nocDocument.getChecklist().getId()));
+                nocDocument.setApplication(bpaApplication);
+                nocDocument.setCreateduser(user);
+                buildNocFiles(nocDocument);
+            }
+        else
+            for (final ApplicationNocDocument nocDocument : bpaApplication.getApplicationNOCDocument())
+                buildNocFiles(nocDocument);
+    }
+
+    private void buildNocFiles(ApplicationNocDocument nocDocument) {
+        if (nocDocument.getFiles() != null && nocDocument.getFiles().length > 0) {
+            Set<FileStoreMapper> existingFiles = new HashSet<>();
+            existingFiles.addAll(nocDocument.getNocSupportDocs());
+            existingFiles.addAll(addToFileStore(nocDocument.getFiles()));
+            nocDocument.setNocSupportDocs(existingFiles);
+            nocDocument.setIssubmitted(true);
+        }
     }
 
     private FileStoreMapper addToFileStore(final MultipartFile file) {
@@ -444,19 +423,27 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
     }
 
     protected void processAndStoreApplicationDocuments(final BpaApplication bpaApplication) {
-        if (!bpaApplication.getApplicationDocument().isEmpty())
+        if (!bpaApplication.getApplicationDocument().isEmpty() && null == bpaApplication.getApplicationDocument().get(0).getId())
             for (final ApplicationDocument applicationDocument : bpaApplication.getApplicationDocument()) {
                 applicationDocument.setChecklistDetail(
                         checkListDetailService.load(applicationDocument.getChecklistDetail().getId()));
                 applicationDocument.setApplication(bpaApplication);
-                if (applicationDocument.getFiles() != null) {
-                    for (MultipartFile tempFile : applicationDocument.getFiles()) {
-                        if (!tempFile.isEmpty()) {
-                            applicationDocument.setSupportDocs(addToFileStore(applicationDocument.getFiles()));
-                        }
-                    }
-                }
+                buildApplicationDocFiles(applicationDocument);
             }
+        else
+            for (final ApplicationDocument applicationDocument : bpaApplication.getApplicationDocument()) {
+                buildApplicationDocFiles(applicationDocument);
+            }
+    }
+
+    private void buildApplicationDocFiles(ApplicationDocument applicationDocument) {
+        if (applicationDocument.getFiles() != null && applicationDocument.getFiles().length > 0) {
+            Set<FileStoreMapper> existingFiles = new HashSet<>();
+            existingFiles.addAll(applicationDocument.getSupportDocs());
+            existingFiles.addAll(addToFileStore(applicationDocument.getFiles()));
+            applicationDocument.setSupportDocs(existingFiles);
+            applicationDocument.setIssubmitted(true);
+        }
     }
 
     protected Set<FileStoreMapper> addToFileStore(final MultipartFile[] files) {

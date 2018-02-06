@@ -59,11 +59,9 @@
 				<th><spring:message code="lbl.nature.noc.req" /></th>
 				<th><spring:message code="lbl.letr.sent.on" /></th>
 				<th><spring:message code="lbl.reply.recv.on" /></th>
-				<th><spring:message code="lbl.noc.reject" /></th>
-				<th><spring:message code="lbl.noc.not.aplicable" /></th>
-				<th width="8%"><spring:message code="lbl.obtained" /></th>
+				<th><spring:message code="lbl.noc.status" /></th>
 				<th><spring:message code="lbl.remarks" /></th>
-				<th><spring:message code="lbl.attachdocument" /></th>
+				<th><spring:message code="lbl.files" /></th>
 			</tr>
 		</thead>
 		<tbody>
@@ -72,24 +70,23 @@
 				items="${bpaApplication.applicationNOCDocument}" varStatus="status">
 				<tr>
 					<td><c:out value="${status.index+1}"></c:out></td>
-					<td><c:out value="${nocdoc.checklist.description}"></c:out></td>
-					<td><c:out value="${nocdoc.natureOfRequest}"></c:out></td>
-					<td><c:out value="${nocdoc.letterSentOn}"></c:out></td>
-					<td><c:out value="${nocdoc.replyReceivedOn}"></c:out></td>
-					<td class="text-center"><c:out value="${nocdoc.rejection ? 'YES' : 'NO'}"
-							default="N/A"></c:out></td>
-					<td class="text-center"><c:out value="${nocdoc.notApplicable ? 'YES' : 'NO'}"
-							default="N/A"></c:out></td>
-					<td class="text-center"><c:out value="${nocdoc.issubmitted ? 'YES' : 'NO'}"
-							default="N/A"></c:out></td>
+					<td><c:out value="${nocdoc.checklist.description}" default="N/A"></c:out></td>
+					<td><c:out value="${nocdoc.natureOfRequest}" default="N/A"></c:out></td>
+					<td><c:if test="${nocdoc.letterSentOn eq null}"> <c:out value="N/A"></c:out></c:if> <fmt:formatDate value="${nocdoc.letterSentOn}" pattern="dd/MM/yyyy"></fmt:formatDate></td>
+					<td><c:if test="${nocdoc.replyReceivedOn eq null}"> <c:out value="N/A"></c:out></c:if><fmt:formatDate value="${nocdoc.replyReceivedOn}" pattern="dd/MM/yyyy"></fmt:formatDate></td>
+					<td><c:out value="${nocdoc.nocStatus}" default="N/A"></c:out></td>
 					<td><c:out value="${nocdoc.remarks}" default="N/A"></c:out></td>
-					<td>
-						<a
-								href="/bpa/application/downloadfile/${nocdoc.nocFileStore.fileStoreId}"
-								data-gallery>
-								${nocdoc.nocFileStore.fileName}
-						</a>
-					</td>
+					<td><c:set value="false" var="isDocFound"></c:set> <c:forEach
+							var="bpanoc" items="${nocdoc.nocSupportDocs}" varStatus="loop">
+						<c:if test="${bpanoc.fileStoreId ne null}">
+							<c:set value="true" var="isDocFound"></c:set>
+							<a target="_blank" href="/bpa/application/downloadfile/${bpanoc.fileStoreId}"
+							   data-gallery>${loop.index +1}-${bpanoc.fileName} </a>
+							<c:if test="${!loop.last}">,</c:if>&nbsp;
+						</c:if>
+					</c:forEach> <c:if test="${!isDocFound}">
+						N/A
+					</c:if></td>
 				</tr>
 			</c:forEach>
 		</tbody>

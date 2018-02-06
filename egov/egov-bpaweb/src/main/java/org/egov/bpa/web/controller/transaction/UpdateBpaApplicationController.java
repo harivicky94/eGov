@@ -173,20 +173,21 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
         model.addAttribute(APPLICATION_HISTORY,
                 bpaThirdPartyService.getHistory(application));
 
+        if (APPLICATION_STATUS_CREATED.equals(application.getStatus().getCode())
+            || APPLICATION_STATUS_REGISTERED.equals(application.getStatus().getCode())) {
+            if (applicationBpaService.applicationinitiatedByNonEmployee(application)
+                && applicationBpaService.checkAnyTaxIsPendingToCollect(application)) {
+                model.addAttribute(COLLECT_FEE_VALIDATE, "Please Collect Application Fees to Process Application");
+            } else
+                model.addAttribute(COLLECT_FEE_VALIDATE, "");
+        }
+
         if (application != null) {
             loadViewdata(model, application);
             if (application.getState() != null
                     && application.getState().getValue().equalsIgnoreCase(APPLICATION_STATUS_REGISTERED)) {
                 return DOCUMENTSCRUTINY_FORM;
             }
-        }
-        if (APPLICATION_STATUS_CREATED.equals(application.getStatus().getCode())
-                || APPLICATION_STATUS_REGISTERED.equals(application.getStatus().getCode())) {
-            if (applicationBpaService.applicationinitiatedByNonEmployee(application)
-                    && applicationBpaService.checkAnyTaxIsPendingToCollect(application)) {
-                model.addAttribute(COLLECT_FEE_VALIDATE, "Collect Fees to Process Application");
-            } else
-                model.addAttribute(COLLECT_FEE_VALIDATE, "");
         }
         return APPLICATION_VIEW;
     }
@@ -341,8 +342,6 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
         model.addAttribute("electionBoundaryName", application.getSiteDetail().get(0).getElectionBoundary().getName());
         model.addAttribute("revenueBoundaryName", application.getSiteDetail().get(0).getAdminBoundary().getName());
         model.addAttribute("bpaPrimaryDept", bpaUtils.getAppconfigValueByKeyNameForDefaultDept());
-        model.addAttribute("nocCheckListDetails", checkListDetailService
-                .findActiveCheckListByServiceType(application.getServiceType().getId(), CHECKLIST_TYPE_NOC));
         model.addAttribute("checkListDetailList", checkListDetailService
                 .findActiveCheckListByServiceType(application.getServiceType().getId(), CHECKLIST_TYPE));
         model.addAttribute("applicationDocumentList", application.getApplicationDocument());
@@ -445,6 +444,8 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
                             .concat(getDesinationNameByPosition(pos))
                             : "",
                     bpaAppln.getApplicationNumber(), approvalComent }, LocaleContextHolder.getLocale());
+        } else if (WF_SAVE_BUTTON.equalsIgnoreCase(workFlowAction)) {
+            message = messageSource.getMessage("msg.noc.update.success", new String[] {}, LocaleContextHolder.getLocale());
         } else {
             message = messageSource.getMessage(MSG_UPDATE_FORWARD_REGISTRATION, new String[] {
                     user != null ? user.getUsername().concat("~")

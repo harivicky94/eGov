@@ -39,21 +39,10 @@
  */
 package org.egov.bpa.web.controller.transaction.citizen;
 
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CANCELLED;
-import static org.egov.bpa.utils.BpaConstants.CHECKLIST_TYPE_NOC;
-import static org.egov.bpa.utils.BpaConstants.CREATE_ADDITIONAL_RULE_CREATE;
-import static org.egov.bpa.utils.BpaConstants.DISCLIMER_MESSAGE_ONSAVE;
-import static org.egov.bpa.utils.BpaConstants.ENABLEONLINEPAYMENT;
-import static org.egov.bpa.utils.BpaConstants.WF_CANCELAPPLICATION_BUTTON;
-import static org.egov.bpa.utils.BpaConstants.WF_NEW_STATE;
-import static org.egov.bpa.utils.BpaConstants.WF_LBE_SUBMIT_BUTTON;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.service.InspectionService;
 import org.egov.bpa.transaction.service.LettertoPartyService;
+import org.egov.bpa.transaction.service.collection.ApplicationBpaBillService;
 import org.egov.bpa.transaction.service.collection.GenericBillGeneratorService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.web.controller.transaction.BpaGenericApplicationController;
@@ -67,12 +56,13 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+
+import static org.egov.bpa.utils.BpaConstants.*;
 
 @Controller
 @RequestMapping(value = "/application")
@@ -93,6 +83,8 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
     private InspectionService inspectionService;
     @Autowired
     private PositionMasterService positionMasterService;
+    @Autowired
+    private ApplicationBpaBillService applicationBpaBillService;
 
     @ModelAttribute
     public BpaApplication getBpaApplication(@PathVariable final String applicationNumber) {
@@ -191,6 +183,11 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
         }
         if (bpaApplication.getOwner().getUser() != null && bpaApplication.getOwner().getUser().getId() == null)
             buildOwnerDetails(bpaApplication);
+        if (!bpaApplication.getApplicationAmenity().isEmpty()
+            && (APPLICATION_STATUS_CREATED.equalsIgnoreCase(bpaApplication.getStatus().getCode())
+                || APPLICATION_STATUS_REGISTERED.equalsIgnoreCase(bpaApplication.getStatus().getCode()))) {
+            bpaApplication.setDemand(applicationBpaBillService.createDemand(bpaApplication));
+        }
         applicationBpaService.saveAndFlushApplication(bpaApplication);
         bpaUtils.updatePortalUserinbox(bpaApplication, null);
         if (workFlowAction != null

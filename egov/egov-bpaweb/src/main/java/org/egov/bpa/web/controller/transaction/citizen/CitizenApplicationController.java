@@ -39,25 +39,13 @@
  */
 package org.egov.bpa.web.controller.transaction.citizen;
 
-import static org.egov.bpa.utils.BpaConstants.DISCLIMER_MESSAGE_ONSAVE;
-import static org.egov.bpa.utils.BpaConstants.WF_LBE_SUBMIT_BUTTON;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-
 import org.egov.bpa.master.entity.CheckListDetail;
 import org.egov.bpa.master.entity.ServiceType;
 import org.egov.bpa.master.entity.StakeHolder;
 import org.egov.bpa.master.service.ServiceTypeService;
 import org.egov.bpa.master.service.StakeHolderService;
 import org.egov.bpa.transaction.entity.ApplicationDocument;
+import org.egov.bpa.transaction.entity.ApplicationNocDocument;
 import org.egov.bpa.transaction.entity.ApplicationStakeHolder;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.enums.ApplicantMode;
@@ -76,6 +64,17 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
+import static org.egov.bpa.utils.BpaConstants.*;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Controller
 @RequestMapping(value = "/application/citizen")
@@ -117,7 +116,7 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
 
     private void setCityName(final Model model, final HttpServletRequest request) {
         if (request.getSession().getAttribute("cityname") != null)
-            model.addAttribute("cityName", (String) request.getSession().getAttribute("cityname"));
+            model.addAttribute("cityName", request.getSession().getAttribute("cityname"));
     }
 
     private String loadNewForm(final BpaApplication bpaApplication, final Model model, String serviceCode) {
@@ -139,6 +138,15 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
             ApplicationDocument appdoc = new ApplicationDocument();
             appdoc.setChecklistDetail(checkdet);
             appDocList.add(appdoc);
+        }
+        if(bpaApplication.getApplicationNOCDocument().isEmpty()) {
+            for(CheckListDetail chckListDetail : checkListDetailService
+                    .findActiveCheckListByServiceType(bpaApplication.getServiceType().getId(), CHECKLIST_TYPE_NOC)) {
+                ApplicationNocDocument nocDocument = new ApplicationNocDocument();
+                nocDocument.setChecklist(chckListDetail);
+                nocDocument.setApplication(bpaApplication);
+                bpaApplication.getApplicationNOCDocument().add(nocDocument);
+            }
         }
         model.addAttribute("applicationDocumentList", appDocList);
         return "citizenApplication-form";

@@ -47,11 +47,7 @@
 package org.egov.bpa.utils;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class BpaConstants {
     // service type constants
@@ -238,6 +234,7 @@ public class BpaConstants {
     public static final String WF_LBE_SUBMIT_BUTTON = "Submit";
     public static final String WF_PAY_ONLINE_BUTTON = "Pay Online";
     public static final String WF_REVERT_BUTTON = "Revert";
+    public static final String WF_SAVE_BUTTON = "Save";
     // building details related constants
     public static final String TOTAL_PLINT_AREA = "totalPlintArea";
     public static final String BUILDINGHEIGHT_GROUND = "buildingheightGround";

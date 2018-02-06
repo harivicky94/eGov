@@ -107,7 +107,7 @@
 					<li><a data-toggle="tab" href="#checklist-info" data-tabidx=5><spring:message
 								code='lbl.noc.doc.details' /></a></li>
 				</c:if>
-				<c:if test="${not empty bpaApplication.applicationNOCDocument}">
+				<c:if test="${!showUpdateNoc && not empty bpaApplication.applicationNOCDocument}">
 						<li><a data-toggle="tab" href="#noc-info" data-tabidx=5><spring:message
 									code='lbl.noc.details' /></a></li>
 				</c:if>
@@ -194,7 +194,7 @@
 						</div>
 					</div>
 				</c:if>
-				<c:if test="${not empty bpaApplication.applicationNOCDocument}">
+				<c:if test="${!showUpdateNoc && not empty bpaApplication.applicationNOCDocument}">
 						<div id="noc-info" class="tab-pane fade">
 							<div class="panel panel-primary" data-collapsed="0">
 								<jsp:include page="view-noc-document.jsp"></jsp:include>
@@ -259,6 +259,10 @@
 						class="btn btn-primary">Modify Fee </a>
 
 				</c:if>
+				<c:if test="${bpaApplication.status.code eq 'Field Inspected'}">
+					<input type="button" name="save" id="btnSave" value="Save"
+						   class="btn btn-primary"/>
+				</c:if>
 				<c:if test="${createlettertoparty}">
 				<a
 						href="/bpa/lettertoparty/create/${bpaApplication.applicationNumber}"
@@ -270,7 +274,7 @@
 				<c:when
 					test="${isFeeCollected && bpaApplication.status.code eq 'Approved'}">
 					<div class="buttonbottom" align="center">
-						<input type="button" name="button2" id="button2" value="Close"
+						<input type="button" name="button2" value="Close"
 							class="btn btn-default" onclick="window.close();" />
 					</div>
 				</c:when> 
@@ -281,7 +285,7 @@
 							<div class="buttonbottom" align="center">
 								<form:button type="submit" id="buttonSubmit"
 									class="btn btn-primary" value="Forward">Forward</form:button>
-								<input type="button" name="button2" id="button2" value="Close"
+								<input type="button" name="button2" value="Close"
 									class="btn btn-default" onclick="window.close();" />
 							</div>
 						</c:when>
