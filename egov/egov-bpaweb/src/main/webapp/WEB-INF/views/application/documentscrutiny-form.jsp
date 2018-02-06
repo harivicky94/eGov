@@ -58,7 +58,8 @@
 			id="documentscrutinyform"
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
-			
+
+			<form:hidden path="" id="collectFeeValidate" value="${collectFeeValidate}" />
 			<ul class="nav nav-tabs" id="settingstab">
 				<li class="active"><a data-toggle="tab" href="#applicant-info"
 					data-tabidx=0><spring:message code='lbl.appln.details' /></a></li>
@@ -101,19 +102,22 @@
 			</div>
 
 			<div align="center">
-				<c:if test="${mode eq 'newappointment'}">
+				<c:if test="${collectFeeValidate eq ''}">
+					<c:if test="${mode eq 'newappointment'}">
+						<a
+								href="/bpa/application/scheduleappointment/${bpaApplication.applicationNumber}"
+								class="btn btn-primary"> New Appointment </a>
+					</c:if>
+					<c:if test="${mode eq 'postponeappointment'}">
+						<a
+								href="/bpa/application/postponeappointment/${scheduleType}/${bpaApplication.applicationNumber}"
+								class="btn btn-primary"> Reschedule Appointment </a>
+					</c:if>
 					<a
-						href="/bpa/application/scheduleappointment/${bpaApplication.applicationNumber}"
-						class="btn btn-primary"> New Appointment </a>
+							href="/bpa/application/documentscrutiny/${bpaApplication.applicationNumber}"
+							class="btn btn-primary"> Document Scrutiny </a>
 				</c:if>
-				<c:if test="${mode eq 'postponeappointment'}">
-					<a
-						href="/bpa/application/postponeappointment/${scheduleType}/${bpaApplication.applicationNumber}"
-						class="btn btn-primary"> Reschedule Appointment </a>
-				</c:if>
-				<a
-					href="/bpa/application/documentscrutiny/${bpaApplication.applicationNumber}"
-					class="btn btn-primary"> Document Scrutiny </a> <input
+				<input
 					type="button" name="button2" id="button2" value="Close"
 					class="btn btn-default" onclick="window.close();" />
 			</div>
