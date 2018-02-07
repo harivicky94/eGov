@@ -148,7 +148,6 @@
 											 data-placement="top" title="${file.fileName}">
 											<a class="download" target="_blank"
 											   href="/bpa/application/downloadfile/${file.fileStoreId}"></a>
-											<form:hidden path="applicationNOCDocument[${status.index}].existingFilestoreIds" value="${file.fileStoreId}"></form:hidden>
 											<c:choose>
 												<c:when test="${file.contentType eq 'application/pdf'}">
 													<i class="fa fa-file-pdf-o" aria-hidden="true"></i>
