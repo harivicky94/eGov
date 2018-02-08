@@ -103,6 +103,7 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
 
     private String loadViewdata(final Model model, final BpaApplication application) {
         buildReceiptDetails(application);
+        application.setApplicationAmenityTemp(application.getApplicationAmenity());
         applicationBpaService.buildExistingAndProposedBuildingDetails(application);
         model.addAttribute("stateType", application.getClass().getSimpleName());
         model.addAttribute(ADDITIONALRULE, CREATE_ADDITIONAL_RULE_CREATE);
