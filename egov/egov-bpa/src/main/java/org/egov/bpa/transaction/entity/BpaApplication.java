@@ -46,7 +46,6 @@
  */
 package org.egov.bpa.transaction.entity;
 
-import org.egov.bpa.master.entity.CheckListDetail;
 import org.egov.bpa.master.entity.Occupancy;
 import org.egov.bpa.master.entity.ServiceType;
 import org.egov.bpa.transaction.entity.dto.BpaStateInfo;
@@ -203,11 +202,11 @@ public class BpaApplication extends StateAware<Position> {
     private transient String approvalComent;
     private transient Set<Receipt> receipts = new HashSet<>();
     private transient boolean mailPwdRequired;
-    private transient List<CheckListDetail> checkListDocumentsForNOC = new ArrayList<>(0);
     private transient List<ApplicationPermitConditions> dynamicPermitConditionsTemp = new ArrayList<>(0);
     private transient List<ApplicationPermitConditions> staticPermitConditionsTemp = new ArrayList<>(0);
     private transient List<ApplicationPermitConditions> rejectionReasonsTemp = new ArrayList<>(0);
     private transient List<ApplicationPermitConditions> additionalPermitConditionsTemp = new ArrayList<>(0);
+    private transient List<ServiceType> applicationAmenityTemp = new ArrayList<>(0);
 
     @Override
     public Long getId() {
@@ -498,14 +497,6 @@ public class BpaApplication extends StateAware<Position> {
         this.applicationNOCDocument = applicationNOCDocument;
     }
 
-    public List<CheckListDetail> getCheckListDocumentsForNOC() {
-        return checkListDocumentsForNOC;
-    }
-
-    public void setCheckListDocumentsForNOC(List<CheckListDetail> checkListDocumentsForNOC) {
-        this.checkListDocumentsForNOC = checkListDocumentsForNOC;
-    }
-
     public void addApplicationNocDocument(final ApplicationNocDocument nocDocument) {
         nocDocument.setApplication(this);
         getApplicationNOCDocument().add(nocDocument);
@@ -792,6 +783,14 @@ public class BpaApplication extends StateAware<Position> {
 
     public void setAdditionalPermitConditionsTemp(List<ApplicationPermitConditions> additionalPermitConditionsTemp) {
         this.additionalPermitConditionsTemp = additionalPermitConditionsTemp;
+    }
+
+    public List<ServiceType> getApplicationAmenityTemp() {
+        return applicationAmenityTemp;
+    }
+
+    public void setApplicationAmenityTemp(List<ServiceType> applicationAmenityTemp) {
+        this.applicationAmenityTemp = applicationAmenityTemp;
     }
 
     public BpaStateInfo extraInfo() {

@@ -59,6 +59,12 @@ $(document)
 										'data-original-title', $(this).val());
 								evt.stopImmediatePropagation();
 							});
+                    if ($('#currentState').val() == 'NOC updation in progress') {
+                        $('#bpaupdatenocdetails ').each(function () {
+                            $(this).find("th").removeClass("hide");
+                            $(this).find("td").removeClass("hide");
+                        });
+                    }
 
 					$(document).on(
 							'click',

@@ -259,7 +259,7 @@
 						class="btn btn-primary">Modify Fee </a>
 
 				</c:if>
-				<c:if test="${bpaApplication.status.code eq 'Field Inspected'}">
+				<c:if test="${bpaApplication.state.value ne 'Field Inspection completed' && bpaApplication.status.code eq 'Field Inspected'}">
 					<input type="button" name="save" id="btnSave" value="Save"
 						   class="btn btn-primary"/>
 				</c:if>

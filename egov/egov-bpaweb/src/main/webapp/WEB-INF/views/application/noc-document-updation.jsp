@@ -58,9 +58,9 @@
 				<th><spring:message code="lbl.srl.no" /></th>
 				<th><spring:message code="lbl.department" /></th>
 				<th><spring:message code="lbl.nature.noc.req" /></th>
-				<th><spring:message code="lbl.letr.sent.on" /></th>
-				<th><spring:message code="lbl.reply.recv.on" /></th>
-				<th class="nocStatusHeader"><spring:message code="lbl.noc.status" /></th>
+				<th class="hide"><spring:message code="lbl.letr.sent.on" /></th>
+				<th class="hide"><spring:message code="lbl.reply.recv.on" /></th>
+				<th class="nocStatusHeader hide"><spring:message code="lbl.noc.status" /></th>
 				<th><spring:message code="lbl.remarks" /></th>
 				<th><spring:message code="lbl.attachdocument" /><br>(<spring:message
 						code="lbl.mesg.document" />)</th>
@@ -101,18 +101,18 @@
 								class="glyphicon glyphicon-pencil" style="cursor: pointer"></span></span>
 						</div>
 					</td>
-					<td><form:input class="form-control datepicker letterSentOn" maxlength="50"
+					<td class="hide"><form:input class="form-control datepicker letterSentOn" maxlength="50"
 							data-date-end-date="0d" data-inputmask="'mask': 'd/m/y'"
 							path="applicationNOCDocument[${status.index}].letterSentOn" /> <form:errors
 							path="applicationNOCDocument[${status.index}].letterSentOn"
 							cssClass="add-margin error-msg" /></td>
-					<td><form:input class="form-control datepicker replyReceivedOn" maxlength="50"
+					<td class="hide"><form:input class="form-control datepicker replyReceivedOn" maxlength="50"
 							data-date-end-date="0d" data-inputmask="'mask': 'd/m/y'"
 							path="applicationNOCDocument[${status.index}].replyReceivedOn" />
 						<form:errors
 							path="applicationNOCDocument[${status.index}].replyReceivedOn"
 							cssClass="add-margin error-msg" /></td>
-					<td><form:select path="applicationNOCDocument[${status.index}].nocStatus"
+					<td class="hide"><form:select path="applicationNOCDocument[${status.index}].nocStatus"
 									 cssClass="form-control nocStatus" cssErrorClass="form-control error">
 						<form:option value="">
 							<spring:message code="lbl.select" />

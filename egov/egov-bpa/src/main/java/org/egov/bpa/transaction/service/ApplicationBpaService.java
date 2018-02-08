@@ -163,6 +163,8 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         application.getSiteDetail().get(0).setAdminBoundary(boundaryObj);
         application.getSiteDetail().get(0).setApplication(application);
         buildExistingAndProposedBuildingDetails(application);
+        application.getApplicationAmenity().clear();
+        application.setApplicationAmenity(application.getApplicationAmenityTemp());
         application.getSiteDetail().get(0)
                 .setPostalAddress(postalAddressService.findById(application.getSiteDetail().get(0).getPostalId()));
         application.setApplicationNumber(applicationNumberGenerator.generate());

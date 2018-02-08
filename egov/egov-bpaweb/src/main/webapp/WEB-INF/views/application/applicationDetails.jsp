@@ -77,14 +77,14 @@
 
 			</label>
 			<div class="col-sm-3 add-margin">
-				<select name="applicationAmenity" multiple id="applicationAmenity"
+				<select name="applicationAmenityTemp" multiple id="applicationAmenity"
 					class="form-control applicationAmenity tick-indicator">
 					<c:forEach items="${amenityTypeList}" var="amenity">
 						<option value="${amenity.id}" title="${amenity.description}" <c:if test="${fn:contains(bpaApplication.applicationAmenity, amenity)}"> Selected </c:if> >${amenity.description}</option>
 					</c:forEach>
 				</select>
 
-				<form:errors path="applicationAmenity"
+				<form:errors path="applicationAmenityTemp"
 					cssClass="add-margin error-msg" />
 			</div>
 
