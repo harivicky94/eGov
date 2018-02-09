@@ -39,7 +39,10 @@
  */
 package org.egov.bpa.transaction.repository;
 
+import java.util.List;
+
 import org.egov.bpa.transaction.entity.BpaApplication;
+import org.egov.bpa.transaction.entity.BpaStatus;
 import org.egov.demand.model.EgDemand;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -50,8 +53,13 @@ import org.springframework.stereotype.Repository;
 public interface ApplicationBpaRepository extends JpaRepository<BpaApplication, Long> {
 
     @Query("select app from BpaApplication app where app.demand=:demand")
-    BpaApplication findByDemand(@Param("demand") EgDemand demand);
+	BpaApplication findByDemand(@Param("demand") EgDemand demand);
 
     BpaApplication findByApplicationNumber(String applicationNumber);
+    
+    @Query("select app from BpaApplication app where app.status= :status order by createddate asc")
+    List<BpaApplication> findByStatusOrderByCreatedDateAsc(@Param("status") BpaStatus status);
+    
+	BpaApplication findById(Long id);
 
 }
