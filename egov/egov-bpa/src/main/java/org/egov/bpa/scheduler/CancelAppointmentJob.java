@@ -37,88 +37,29 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.bpa.transaction.entity;
+package org.egov.bpa.scheduler;
 
-import java.util.Date;
-import java.util.List;
+import org.apache.log4j.Logger;
+import org.egov.bpa.transaction.service.BpaApplicationCancellationService;
+import org.egov.infra.scheduler.quartz.AbstractQuartzJob;
+import org.quartz.DisallowConcurrentExecution;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
-
-import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-
-@Entity
-@Table(name = "egbpa_slot")
-@SequenceGenerator(name = Slot.SEQ, sequenceName = Slot.SEQ, allocationSize = 1)
-public class Slot extends AbstractAuditable {
-	/**
-	 * 
-	 */
+@DisallowConcurrentExecution
+public class CancelAppointmentJob extends AbstractQuartzJob {
 	private static final long serialVersionUID = 1L;
+	private static final Logger LOGGER = Logger.getLogger(CancelAppointmentJob.class);
 
-	public static final String SEQ = "seq_egbpa_slot";
-
-	@Id
-	@GeneratedValue(generator = SEQ, strategy = GenerationType.SEQUENCE)
-	private Long id;
-
-	@NotNull
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	@JoinColumn(name = "zone")
-	private Boundary zone;
-
-	@Temporal(value = TemporalType.DATE)
-	@NotNull
-	private Date appointmentDate;
-
-	@OneToMany(mappedBy = "slot", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	private List<SlotDetail> slotDetail;
-
-	public List<SlotDetail> getSlotDetail() {
-		return slotDetail;
-	}
-
-	public void setSlotDetail(List<SlotDetail> slotDetail) {
-		this.slotDetail = slotDetail;
-	}
+	@Autowired
+	transient BpaApplicationCancellationService bpaApplicationCancellationService;
 
 	@Override
-	public Long getId() {
-		return id;
-	}
+	public void executeJob() {
+		LOGGER.debug("Entered into CancelAppointmentJob.execute");
 
-	@Override
-	public void setId(Long id) {
-		this.id = id;
-	}
+		bpaApplicationCancellationService.cancelNonverifiedApplications();
 
-	public Boundary getZone() {
-		return zone;
-	}
-
-	public void setZone(Boundary zone) {
-		this.zone = zone;
-	}
-
-	public Date getAppointmentDate() {
-		return appointmentDate;
-	}
-
-	public void setAppointmentDate(Date appointmentDate) {
-		this.appointmentDate = appointmentDate;
+		LOGGER.debug("Exting from CancelAppointmentJob.execute");
 	}
 
 }

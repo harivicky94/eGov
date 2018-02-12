@@ -137,6 +137,10 @@ public class BpaConstants {
     public static final String APPLICATION_STATUS_REJECTED = "Rejected";
     public static final String APPLICATION_STATUS_DOC_VERIFIED = "Document Verified";
     public static final String APPLICATION_STATUS_TS_INS = "Town Surveyor Inspected";
+	public static final String APPLICATION_STATUS_SCHEDULED = "Scheduled For Document Scrutiny";
+	public static final String APPLICATION_STATUS_RESCHEDULED = "Rescheduled For Document Scrutiny";
+	public static final String APPLICATION_STATUS_PENDING_FOR_RESCHEDULING = "Pending For Rescheduling For Document Scrutiny";
+
     // document realted constants
     public static final String STAKE_HOLDER_CHECK_LIST_TYPE = "STAKEHOLDERDOCUMENT";
     public static final String CHECKLIST_TYPE_NOC = "NOC";
