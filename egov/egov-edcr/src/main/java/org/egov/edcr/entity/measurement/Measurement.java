@@ -1,31 +1,22 @@
-package org.egov.edcr.entity;
+package org.egov.edcr.entity.measurement;
 
 import java.math.BigDecimal;
 
 public class Measurement {
-//TODO: DEFINE MEASUREMENTTYPE OBJECT OUTSIDE AND EXTEND MEASUREMENT.
-    private MeasurementType measurementType;
 
     private BigDecimal minimumDistance;
+
     private BigDecimal length;
+
     private BigDecimal width;
+
     private BigDecimal height;
+
     private BigDecimal mean;
+
     private BigDecimal area;
     //DXFpolyline
     
-    public MeasurementType getMeasurementType() {
-        return measurementType;
-    }
-
-    public void setMeasurementType(MeasurementType measurementType) {
-        this.measurementType = measurementType;
-    }
-
-    public BigDecimal getMinimumDistance() {
-        return minimumDistance;
-    }
-
     public void setMinimumDistance(BigDecimal minimumDistance) {
         this.minimumDistance = minimumDistance;
     }

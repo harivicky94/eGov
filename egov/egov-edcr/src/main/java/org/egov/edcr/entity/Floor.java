@@ -1,5 +1,7 @@
 package org.egov.edcr.entity;
 
+import org.egov.edcr.entity.measurement.Measurement;
+
 import java.math.BigDecimal;
 import java.util.List;
 

@@ -1,6 +1,7 @@
 package org.egov.edcr.entity;
 
-import java.math.BigDecimal;
+import org.egov.edcr.entity.measurement.Measurement;
+
 import java.util.List;
 
 public class Plot {
