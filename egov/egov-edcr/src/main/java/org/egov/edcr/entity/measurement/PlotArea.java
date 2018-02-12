@@ -1,4 +1,4 @@
 package org.egov.edcr.entity.measurement;
 
-public class PlotArea {
+public class PlotArea extends Measurement {
 }
