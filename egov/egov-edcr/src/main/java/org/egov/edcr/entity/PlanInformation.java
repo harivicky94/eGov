@@ -17,4 +17,28 @@ public class PlanInformation {
         this.plotArea = plotArea;
     }
 
+    public String getOwnerName() {
+        return ownerName;
+    }
+
+    public void setOwnerName(String ownerName) {
+        this.ownerName = ownerName;
+    }
+
+    public String getArchitectName() {
+        return architectName;
+    }
+
+    public void setArchitectName(String architectName) {
+        this.architectName = architectName;
+    }
+
+    public String getOccupancy() {
+        return occupancy;
+    }
+
+    public void setOccupancy(String occupancy) {
+        this.occupancy = occupancy;
+    }
+
 }

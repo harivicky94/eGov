@@ -1,6 +1,8 @@
 package org.egov.edcr.entity;
 
+import java.io.File;
 import java.util.Date;
+import java.util.List;
 
 public class EdcrApplication {
     /*
@@ -11,6 +13,9 @@ public class EdcrApplication {
     private String applicationNumber;
     private String dcrNumber;
     private Date applicationDate;
+    private File dxfFile; //File to be process.
+    private List <File> fileHistory;  
+    private PlanInformation planInformation;
     
     
     

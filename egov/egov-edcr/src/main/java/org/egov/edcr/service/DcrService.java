@@ -22,7 +22,8 @@ public class DcrService  {
 
     
     public PlanDetail process(File dxfFile, EdcrApplication dcrApplication) {
-       
+      
+        //TODO:
         //BASIC VALIDATION
         // EXTRACT DATA FROM DXFFILE TO planDetail;   
         // USING PLANDETAIL OBJECT, FINDOUT RULES.
