@@ -16,7 +16,7 @@ public class PlanDetail {
 	private PlanInformation planInformation;
 	private Plot landDetail;
 	private Building buildingDetail;
-	private HashMap<String, HashMap<String, Object>> reportOutput;
+	public ReportOutput reportOutput= new ReportOutput();
 	private Boolean edcrPassed=false;
 
 	private List<NonNotifiedRoad> nonNotifiedRoads;
@@ -25,7 +25,35 @@ public class PlanDetail {
 	private HashMap<String, String> errors = new HashMap<String, String>();
 	private HashMap<String, String> generalInformation = new HashMap<String, String>();
 
-	public HashMap<String, String> getGeneralInformation() {
+	
+	
+	
+
+    public Boolean getEdcrPassed() {
+        return edcrPassed;
+    }
+
+    public void setEdcrPassed(Boolean edcrPassed) {
+        this.edcrPassed = edcrPassed;
+    }
+
+    public List<NonNotifiedRoad> getNonNotifiedRoads() {
+        return nonNotifiedRoads;
+    }
+
+    public void setNonNotifiedRoads(List<NonNotifiedRoad> nonNotifiedRoads) {
+        this.nonNotifiedRoads = nonNotifiedRoads;
+    }
+
+    public List<NotifiedRoad> getNotifiedRoads() {
+        return notifiedRoads;
+    }
+
+    public void setNotifiedRoads(List<NotifiedRoad> notifiedRoads) {
+        this.notifiedRoads = notifiedRoads;
+    }
+
+    public HashMap<String, String> getGeneralInformation() {
 		return generalInformation;
 	}
 
@@ -59,15 +87,16 @@ public class PlanDetail {
 		this.utilities = utilities;
 	}
 
-	public HashMap<String, HashMap<String, Object>> getReportOutput() {
-		return reportOutput;
-	}
+	
+	public ReportOutput getReportOutput() {
+        return reportOutput;
+    }
 
-	public void setReportOutput(HashMap<String, HashMap<String, Object>> reportOutput) {
-		this.reportOutput = reportOutput;
-	}
+    public void setReportOutput(ReportOutput reportOutput) {
+        this.reportOutput = reportOutput;
+    }
 
-	public PlanInformation getPlanInformation() {
+    public PlanInformation getPlanInformation() {
 		return planInformation;
 	}
 
