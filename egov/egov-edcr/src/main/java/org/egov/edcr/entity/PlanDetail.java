@@ -1,53 +1,88 @@
 package org.egov.edcr.entity;
 
-import org.egov.edcr.entity.utility.Utility;
-
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import org.egov.edcr.entity.utility.Utility;
 
 /*All the details extracted from the plan are referred in this object*/
 public class PlanDetail {
-   
 
     private List<Utility> utilities;
     private PlanInformation planInformation;
     private Plot landDetail;
     private Building buildingDetail;
-    private HashMap<String, HashMap<String,Object>> reportOutput;
+    private HashMap<String, HashMap<String, Object>> reportOutput;
 
-    
-    
+    private HashMap<String, String> errors = new HashMap<String, String>();
+    private HashMap<String, String> generalInformation = new HashMap<String, String>();
+
+    public HashMap<String, String> getGeneralInformation() {
+        return generalInformation;
+    }
+
+    public void setGeneralInformation(HashMap<String, String> generalInformation) {
+        this.generalInformation = generalInformation;
+    }
+
+    public void addGeneralInformation(Map<String, String> generalInformation) {
+        if (generalInformation != null)
+            getGeneralInformation().entrySet().add((Entry<String, String>) generalInformation);
+    }
+
+    public void addErrors(Map<String, String> errors) {
+        if (errors != null)
+            getErrors().entrySet().add((Entry<String, String>) errors);
+    }
+
+    public HashMap<String, String> getErrors() {
+        return errors;
+    }
+
+    public void setErrors(HashMap<String, String> errors) {
+        this.errors = errors;
+    }
+
     public List<Utility> getUtilities() {
         return utilities;
     }
+
     public void setUtilities(List<Utility> utilities) {
         this.utilities = utilities;
     }
+
     public HashMap<String, HashMap<String, Object>> getReportOutput() {
         return reportOutput;
     }
+
     public void setReportOutput(HashMap<String, HashMap<String, Object>> reportOutput) {
         this.reportOutput = reportOutput;
     }
+
     public PlanInformation getPlanInformation() {
         return planInformation;
     }
+
     public void setPlanInformation(PlanInformation planInformation) {
         this.planInformation = planInformation;
     }
+
     public Plot getLandDetail() {
         return landDetail;
     }
+
     public void setLandDetail(Plot landDetail) {
         this.landDetail = landDetail;
     }
+
     public Building getBuildingDetail() {
         return buildingDetail;
     }
+
     public void setBuildingDetail(Building buildingDetail) {
         this.buildingDetail = buildingDetail;
     }
-    
-    
-   
+
 }

@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 
 public class Measurement {
 
+    private Boolean presentInDxf=true;
     private BigDecimal minimumDistance;
 
     private BigDecimal length;
@@ -17,8 +18,17 @@ public class Measurement {
     private BigDecimal area;
     //DXFpolyline
     
+    
     public void setMinimumDistance(BigDecimal minimumDistance) {
         this.minimumDistance = minimumDistance;
+    }
+
+    public Boolean getPresentInDxf() {
+        return presentInDxf;
+    }
+
+    public void setPresentInDxf(Boolean present) {
+        this.presentInDxf = present;
     }
 
     public BigDecimal getLength() {
