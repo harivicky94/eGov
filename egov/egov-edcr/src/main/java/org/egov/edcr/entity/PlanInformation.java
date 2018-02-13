@@ -40,5 +40,4 @@ public class PlanInformation {
     public void setOccupancy(String occupancy) {
         this.occupancy = occupancy;
     }
-
 }

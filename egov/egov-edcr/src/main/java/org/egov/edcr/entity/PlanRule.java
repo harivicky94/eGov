@@ -1,10 +1,23 @@
 package org.egov.edcr.entity;
 
+import org.egov.infra.persistence.entity.AbstractAuditable;
+
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
-import java.util.List;
 
 /*Used to determine the rules to be validated for a building plan*/
-public class PlanRule {
+@Entity
+@Table(name = "EDCR_PLANRULE")
+@SequenceGenerator(name = PlanRule.SEQ_EDCR_PLANRULE, sequenceName = PlanRule.SEQ_EDCR_PLANRULE, allocationSize = 1)
+public class PlanRule extends AbstractAuditable {
+
+    public static final String SEQ_EDCR_PLANRULE = "SEQ_EDCR_PLANRULE";
+    private static final long serialVersionUID = 6649463259841178605L;
+
+    @Id
+    @GeneratedValue(generator = SEQ_EDCR_PLANRULE, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
     private String service;
 
@@ -16,7 +29,22 @@ public class PlanRule {
 
     private BigDecimal heightOfBuilding;
 
-    private List<String> rules;
+    @ManyToOne
+    @JoinColumn(name = "rule")
+    private Rule rule;
+
+    @NotNull
+    private Boolean active;
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getService() {
         return service;
@@ -50,12 +78,12 @@ public class PlanRule {
         this.heightOfBuilding = heightOfBuilding;
     }
 
-    public List<String> getRules() {
-        return rules;
+    public Rule getRule() {
+        return rule;
     }
 
-    public void setRules(List<String> rules) {
-        this.rules = rules;
+    public void setRule(Rule rule) {
+        this.rule = rule;
     }
 
     public Double getNoOfFloors() {
@@ -64,5 +92,13 @@ public class PlanRule {
 
     public void setNoOfFloors(Double noOfFloors) {
         this.noOfFloors = noOfFloors;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 }
