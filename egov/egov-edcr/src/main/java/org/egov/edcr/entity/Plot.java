@@ -3,7 +3,6 @@ package org.egov.edcr.entity;
 import org.egov.edcr.entity.measurement.FrontYard;
 import org.egov.edcr.entity.measurement.NonNotifiedRoad;
 import org.egov.edcr.entity.measurement.NotifiedRoad;
-import org.egov.edcr.entity.measurement.PlotArea;
 import org.egov.edcr.entity.measurement.RearYard;
 import org.egov.edcr.entity.measurement.SideYard1;
 import org.egov.edcr.entity.measurement.SideYard2;
@@ -12,30 +11,11 @@ public class Plot {
     
     private FrontYard frontYard;
     private RearYard rearYard;
-    private PlotArea plotArea;
     private SideYard1 sideYard1;
     private SideYard2 sideYard2;
 
-    private NonNotifiedRoad nonNotifiedRoad;
-    private NotifiedRoad notifiedRoad;
     
-    
-    
-    public NonNotifiedRoad getNonNotifiedRoad() {
-        return nonNotifiedRoad;
-    }
-
-    public void setNonNotifiedRoad(NonNotifiedRoad nonNotifiedRoad) {
-        this.nonNotifiedRoad = nonNotifiedRoad;
-    }
-
-    public NotifiedRoad getNotifiedRoad() {
-        return notifiedRoad;
-    }
-
-    public void setNotifiedRoad(NotifiedRoad notifiedRoad) {
-        this.notifiedRoad = notifiedRoad;
-    }
+   
 
     public FrontYard getFrontYard() {
         return frontYard;
@@ -53,14 +33,7 @@ public class Plot {
         this.rearYard = rearYard;
     }
 
-    public PlotArea getPlotArea() {
-        return plotArea;
-    }
-
-    public void setPlotArea(PlotArea plotArea) {
-        this.plotArea = plotArea;
-    }
-
+   
     public SideYard1 getSideYard1() {
         return sideYard1;
     }

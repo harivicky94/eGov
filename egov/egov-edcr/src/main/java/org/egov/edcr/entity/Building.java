@@ -3,59 +3,38 @@ package org.egov.edcr.entity;
 import java.math.BigDecimal;
 import java.util.List;
 
-import org.egov.edcr.entity.measurement.BuildingArea;
-import org.egov.edcr.entity.measurement.ShortestDistanceToRoad;
+import org.egov.edcr.entity.measurement.Measurement;
 import org.egov.edcr.entity.measurement.WasteDisposal;
 
-public class Building {
+public class Building extends Measurement {
 
-    private BigDecimal buildingHeight;
-    private List<Floor> floors;
-    private BuildingArea buildingArea;
+	private BigDecimal buildingHeight;
+	private List<Floor> floors;
 
-    private WasteDisposal wasteDisposal;
-    private ShortestDistanceToRoad shortestDistanceToRoad;
-    
-    
-    
-    public ShortestDistanceToRoad getShortestDistanceToRoad() {
-        return shortestDistanceToRoad;
-    }
+	private WasteDisposal wasteDisposal;
 
-    public void setShortestDistanceToRoad(ShortestDistanceToRoad shortestDistanceToRoad) {
-        this.shortestDistanceToRoad = shortestDistanceToRoad;
-    }
+	public WasteDisposal getWasteDisposal() {
+		return wasteDisposal;
+	}
 
-    public WasteDisposal getWasteDisposal() {
-        return wasteDisposal;
-    }
+	public void setWasteDisposal(WasteDisposal wasteDisposal) {
+		this.wasteDisposal = wasteDisposal;
+	}
 
-    public void setWasteDisposal(WasteDisposal wasteDisposal) {
-        this.wasteDisposal = wasteDisposal;
-    }
+	public BigDecimal getBuildingHeight() {
+		return buildingHeight;
+	}
 
-    public BuildingArea getBuildingArea() {
-        return buildingArea;
-    }
+	public void setBuildingHeight(BigDecimal buildingHeight) {
+		this.buildingHeight = buildingHeight;
+	}
 
-    public void setBuildingArea(BuildingArea buildingArea) {
-        this.buildingArea = buildingArea;
-    }
+	public List<Floor> getFloors() {
+		return floors;
+	}
 
-    public BigDecimal getBuildingHeight() {
-        return buildingHeight;
-    }
-
-    public void setBuildingHeight(BigDecimal buildingHeight) {
-        this.buildingHeight = buildingHeight;
-    }
-
-    public List<Floor> getFloors() {
-        return floors;
-    }
-
-    public void setFloors(List<Floor> floors) {
-        this.floors = floors;
-    }
+	public void setFloors(List<Floor> floors) {
+		this.floors = floors;
+	}
 
 }
