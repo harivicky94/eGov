@@ -14,8 +14,8 @@ public class PlanDetail {
 
 	private List<Utility> utilities;
 	private PlanInformation planInformation;
-	private Plot landDetail;
-	private Building buildingDetail;
+	private Plot plot;
+	private Building building;
 	public ReportOutput reportOutput= new ReportOutput();
 	private Boolean edcrPassed=false;
 
@@ -104,20 +104,21 @@ public class PlanDetail {
 		this.planInformation = planInformation;
 	}
 
-	public Plot getLandDetail() {
-		return landDetail;
-	}
+    public Plot getPlot() {
+        return plot;
+    }
 
-	public void setLandDetail(Plot landDetail) {
-		this.landDetail = landDetail;
-	}
+    public void setPlot(Plot plot) {
+        this.plot = plot;
+    }
 
-	public Building getBuildingDetail() {
-		return buildingDetail;
-	}
+    public Building getBuilding() {
+        return building;
+    }
 
-	public void setBuildingDetail(Building buildingDetail) {
-		this.buildingDetail = buildingDetail;
-	}
+    public void setBuilding(Building building) {
+        this.building = building;
+    }
+
 
 }

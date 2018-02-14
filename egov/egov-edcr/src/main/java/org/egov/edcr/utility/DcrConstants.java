@@ -8,6 +8,7 @@ public class DcrConstants {
 
     
     public static final String RULE26 = "RULE26";
+    public static final String RULE60 = "RULE60";
     public static final String OBJECTDEFINED="msg.object.defined";
     public static final String WASTEDISPOSAL_DEFINED_KEY="WASTEDISPOSAL_DEFINED";
     public static final String OBJECTNOTDEFINED="msg.error.not.defined";
@@ -15,13 +16,11 @@ public class DcrConstants {
 
     public static final String WASTEDISPOSAL="Waste disposal";
     public static final String ROAD="Road";
+    public static final String PLOT_AREA = "Plot Area ";
     public static final String WASTEDISPOSAL_NOTDEFINED_VALUE="Waste disposal not defined in the plan.";
+    public static final String LESSTHANOREQUAL = "Less than or equal to ";
+    public static final String IN_METER = "(MTR)";
     
-    public static final String ERROR_SHORTESTDISTINCTTOROAD_NOTDEFINED_KEY="SHORTESTDISTINCTTOROAD_NOTDEFINED";
-    public static final String ERROR_SHORTESTDISTINCTTOROAD_NOTDEFINED_VALUE = "Shortest Distance to road not defined.";
-    
-    public static final String ERROR_ROAD_NOTDEFINED_KEY="NOTIFIED_NONNOTIFIEDROAD";
-    public static final String ERROR_ROAD_NOTDEFINED_VALUE = "Road type not defined. Road should be either notified or non notified road type.";
     
     
 }

@@ -5,35 +5,28 @@ import java.util.HashMap;
 
 import org.egov.edcr.entity.PlanDetail;
 import org.egov.edcr.entity.Result;
-import org.egov.edcr.entity.RuleOutput;
-import org.egov.edcr.entity.SubRuleOutput;
 import org.egov.edcr.entity.measurement.NonNotifiedRoad;
 import org.egov.edcr.entity.measurement.NotifiedRoad;
 import org.egov.edcr.utility.DcrConstants;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 
 public class Rule26 extends GeneralRule {
     private static final BigDecimal _NOTIFIEDROADDISTINCE = BigDecimal.valueOf(3);
     private static final BigDecimal _NONNOTIFIEDROADDISTINCE = BigDecimal.valueOf(1.8);
 
-    @Autowired
-    @Qualifier("parentMessageSource")
-    private MessageSource edcrMessageSource;
-
-    protected HashMap<String, String> errors = new HashMap<String, String>();
+   
 
     @Override
     public PlanDetail validate(PlanDetail planDetail) {
+        HashMap<String, String> errors = new HashMap<String, String>();
 
-        if (planDetail != null && planDetail.getLandDetail() != null) {
+        if (planDetail != null) {
 
             // TODO: CHECK WHETHER ANY ROAD SHOULD PASS THROUGH SITE IS MANDATORY ??????
-
+            
+            
             // If either notified or non notified road width not defined, then show error.
-            if (planDetail.getNotifiedRoads() != null &&
+            if ((planDetail.getNotifiedRoads() == null ||  planDetail.getNonNotifiedRoads()==null) &&
                     !(planDetail.getNotifiedRoads().size() > 0 ||
                             planDetail.getNonNotifiedRoads().size() > 0)) {
                 errors.put(DcrConstants.ROAD,
@@ -65,10 +58,10 @@ public class Rule26 extends GeneralRule {
 
         }
 
-        if (planDetail != null && planDetail.getBuildingDetail() != null) {
+        if (planDetail != null && planDetail.getBuilding() != null) {
             // waste disposal defined or not
-            if (planDetail.getBuildingDetail().getWasteDisposal() != null &&
-                    !planDetail.getBuildingDetail().getWasteDisposal().getPresentInDxf()) {
+            if (planDetail.getBuilding().getWasteDisposal() != null &&
+                    !planDetail.getBuilding().getWasteDisposal().getPresentInDxf()) {
                 errors.put(DcrConstants.WASTEDISPOSAL,
                         prepareMessage(DcrConstants.OBJECTNOTDEFINED,DcrConstants.WASTEDISPOSAL));
                 planDetail.addErrors(errors);
@@ -86,9 +79,7 @@ public class Rule26 extends GeneralRule {
 
     @Override
     public PlanDetail process(PlanDetail planDetail) {
-
         // TODO: NEED TO ADD APPLICABLE NOT APPLICABLE.. IRRESPECTIVE OF DATA PROVIDED or not.
-
         rule26(planDetail);
         rule26A(planDetail);
         return planDetail;
@@ -110,16 +101,15 @@ public class Rule26 extends GeneralRule {
                     if (notifiedRoad.getShortestDistanceToRoad().compareTo(_NOTIFIEDROADDISTINCE) >= 0) {// TDDO CHECK
                         planDetail.reportOutput
                                 .add(buildRuleOutput(DcrConstants.RULE26, DcrConstants.NOTIFIED_SHORTESTDISTINCTTOROAD,
-                                        _NOTIFIEDROADDISTINCE.toString(),
-                                        notifiedRoad.getShortestDistanceToRoad().toString(), Result.Accepted,
+                                        _NOTIFIEDROADDISTINCE.toString()+DcrConstants.IN_METER,
+                                        notifiedRoad.getShortestDistanceToRoad().toString()+DcrConstants.IN_METER, Result.Accepted,
                                         DcrConstants.EXPECTEDRESULT));
                     } else {
                         planDetail.reportOutput
                                 .add(buildRuleOutput(DcrConstants.RULE26, DcrConstants.NOTIFIED_SHORTESTDISTINCTTOROAD,
-                                        _NOTIFIEDROADDISTINCE.toString(),
-                                        notifiedRoad.getShortestDistanceToRoad().toString(), Result.Not_Accepted,
+                                        _NOTIFIEDROADDISTINCE.toString()+DcrConstants.IN_METER,
+                                        notifiedRoad.getShortestDistanceToRoad().toString()+DcrConstants.IN_METER, Result.Not_Accepted,
                                         DcrConstants.EXPECTEDRESULT));
-
                     }
             }
         }
@@ -132,58 +122,31 @@ public class Rule26 extends GeneralRule {
                     if (nonNotifiedRoad.getShortestDistanceToRoad().compareTo(_NONNOTIFIEDROADDISTINCE) >= 0) {// TDDO CHECK
                         planDetail.reportOutput
                                 .add(buildRuleOutput(DcrConstants.RULE26, DcrConstants.NONNOTIFIED_SHORTESTDISTINCTTOROAD,
-                                        _NONNOTIFIEDROADDISTINCE.toString(),
-                                        nonNotifiedRoad.getShortestDistanceToRoad().toString(), Result.Accepted,
+                                        _NONNOTIFIEDROADDISTINCE.toString()+DcrConstants.IN_METER,
+                                        nonNotifiedRoad.getShortestDistanceToRoad().toString()+DcrConstants.IN_METER, Result.Accepted,
                                         DcrConstants.EXPECTEDRESULT));
                     } else {
                         planDetail.reportOutput
                                 .add(buildRuleOutput(DcrConstants.RULE26, DcrConstants.NONNOTIFIED_SHORTESTDISTINCTTOROAD,
-                                        _NONNOTIFIEDROADDISTINCE.toString(),
-                                        nonNotifiedRoad.getShortestDistanceToRoad().toString(), Result.Not_Accepted,
+                                        _NONNOTIFIEDROADDISTINCE.toString()+DcrConstants.IN_METER,
+                                        nonNotifiedRoad.getShortestDistanceToRoad().toString()+DcrConstants.IN_METER, Result.Not_Accepted,
                                         DcrConstants.EXPECTEDRESULT));
-
                     }
             }
         }
     }
 
-    private RuleOutput buildRuleOutput(String rule26, String notifiedShortestdistincttoroad, String notifiedroaddistince,
-            String shortestDistanceToRoad, Result accepted, String expectedresult) {
-        RuleOutput ruleOutput = new RuleOutput();
-        SubRuleOutput subRuleOutput = new SubRuleOutput();
-        ruleOutput.key = rule26;
-        subRuleOutput.message = edcrMessageSource.getMessage(expectedresult,
-                new String[] { notifiedShortestdistincttoroad, notifiedroaddistince, shortestDistanceToRoad,accepted.toString() },
-                LocaleContextHolder.getLocale());
-               // expectedresult +" "+notifiedShortestdistincttoroad +" Expected Result " + notifiedroaddistince + " Actual result " + shortestDistanceToRoad +" \n Result : "+ accepted;
-        subRuleOutput.result = accepted;
-        ruleOutput.subRuleOutputs.add(subRuleOutput);
-        return ruleOutput;
-    }
-
     private void rule26A(PlanDetail planDetail) {
-
-        if (planDetail.getBuildingDetail().getWasteDisposal() != null &&
-                planDetail.getBuildingDetail().getWasteDisposal().getPresentInDxf()) {
+        if (planDetail.getBuilding().getWasteDisposal() != null &&
+                planDetail.getBuilding().getWasteDisposal().getPresentInDxf()) {
 
             planDetail.reportOutput.add(buildRuleOutput(DcrConstants.RULE26, DcrConstants.WASTEDISPOSAL, Result.Accepted,
                     DcrConstants.OBJECTDEFINED));
         } else
             planDetail.reportOutput.add(buildRuleOutput(DcrConstants.RULE26, DcrConstants.WASTEDISPOSAL, Result.Not_Accepted,
                     DcrConstants.OBJECTNOTDEFINED));
-
     }
 
-    private RuleOutput buildRuleOutput(String reportOutputKey, String messageParam, Result result, String messageKey) {
-        RuleOutput ruleOutput = new RuleOutput();
-        SubRuleOutput subRuleOutput = new SubRuleOutput();
-        ruleOutput.key = reportOutputKey;
-        subRuleOutput.message = edcrMessageSource.getMessage(messageKey,
-                new String[] { messageParam }, LocaleContextHolder.getLocale());
-               // messageKey +" "+messageParam;
-        subRuleOutput.result = result;
-        ruleOutput.subRuleOutputs.add(subRuleOutput);
-        return ruleOutput;
-    }
+   
 
 }
