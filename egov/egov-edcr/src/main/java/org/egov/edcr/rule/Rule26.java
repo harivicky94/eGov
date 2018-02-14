@@ -23,9 +23,7 @@ public class Rule26 extends GeneralRule {
     @Qualifier("parentMessageSource")
     private MessageSource edcrMessageSource;
 
-    // protected HashMap<String, HashMap<String, Object>> reportOutput = new HashMap<String, HashMap<String, Object>>();
     protected HashMap<String, String> errors = new HashMap<String, String>();
-    protected HashMap<String, String> generalInformation = new HashMap<String, String>();
 
     @Override
     public PlanDetail validate(PlanDetail planDetail) {
@@ -39,19 +37,16 @@ public class Rule26 extends GeneralRule {
                     !(planDetail.getNotifiedRoads().size() > 0 ||
                             planDetail.getNonNotifiedRoads().size() > 0)) {
                 errors.put(DcrConstants.ROAD,
-                        edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
-                                new String[] { DcrConstants.ROAD }, LocaleContextHolder.getLocale()));
+                        prepareMessage(DcrConstants.OBJECTNOTDEFINED, DcrConstants.ROAD));
                 planDetail.addErrors(errors);
             }
-
             if (planDetail.getNotifiedRoads() != null &&
                     planDetail.getNotifiedRoads().size() > 0) {
                 for (NotifiedRoad notifiedRoad : planDetail.getNotifiedRoads()) {
                     if (notifiedRoad.getShortestDistanceToRoad() == null ||
                             notifiedRoad.getShortestDistanceToRoad().compareTo(BigDecimal.ZERO) <= 0) {
                         errors.put(DcrConstants.SHORTESTDISTINCTTOROAD,
-                                edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
-                                        new String[] { DcrConstants.SHORTESTDISTINCTTOROAD }, LocaleContextHolder.getLocale()));
+                                prepareMessage(DcrConstants.OBJECTNOTDEFINED, DcrConstants.SHORTESTDISTINCTTOROAD));
                         planDetail.addErrors(errors);
                     }
                 }
@@ -62,8 +57,7 @@ public class Rule26 extends GeneralRule {
                     if (nonNotifiedRoad.getShortestDistanceToRoad() == null ||
                             nonNotifiedRoad.getShortestDistanceToRoad().compareTo(BigDecimal.ZERO) <= 0) {
                         errors.put(DcrConstants.SHORTESTDISTINCTTOROAD,
-                                edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
-                                        new String[] { DcrConstants.SHORTESTDISTINCTTOROAD }, LocaleContextHolder.getLocale()));
+                                prepareMessage(DcrConstants.OBJECTNOTDEFINED, DcrConstants.SHORTESTDISTINCTTOROAD));
                         planDetail.addErrors(errors);
                     }
                 }
@@ -76,8 +70,7 @@ public class Rule26 extends GeneralRule {
             if (planDetail.getBuildingDetail().getWasteDisposal() != null &&
                     !planDetail.getBuildingDetail().getWasteDisposal().getPresentInDxf()) {
                 errors.put(DcrConstants.WASTEDISPOSAL,
-                        edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
-                                new String[] { DcrConstants.WASTEDISPOSAL }, LocaleContextHolder.getLocale()));
+                        prepareMessage(DcrConstants.OBJECTNOTDEFINED,DcrConstants.WASTEDISPOSAL));
                 planDetail.addErrors(errors);
             }
         }
@@ -85,55 +78,72 @@ public class Rule26 extends GeneralRule {
         return planDetail;
     }
 
+    private String prepareMessage(String code, String args ) {
+        return edcrMessageSource.getMessage(code,
+                new String[] { args }, LocaleContextHolder.getLocale());
+    }
+
     @Override
     public PlanDetail process(PlanDetail planDetail) {
 
         // TODO: NEED TO ADD APPLICABLE NOT APPLICABLE.. IRRESPECTIVE OF DATA PROVIDED or not.
 
+        rule26(planDetail);
+        rule26A(planDetail);
+        return planDetail;
+    }
+
+    private void rule26(PlanDetail planDetail) {
+        // If both roads are not defined.
         if (planDetail.getNotifiedRoads() != null &&
                 !(planDetail.getNotifiedRoads().size() > 0 ||
                         planDetail.getNonNotifiedRoads().size() > 0)) {
             planDetail.reportOutput.add(buildRuleOutput(DcrConstants.RULE26, DcrConstants.ROAD, Result.Not_Accepted,
                     DcrConstants.OBJECTNOTDEFINED));
-        }else if (planDetail.getNotifiedRoads() != null &&
-                planDetail.getNotifiedRoads().size() > 0) {
+        } else if (planDetail.getNotifiedRoads() != null &&
+                planDetail.getNotifiedRoads().size() > 0) { // If notified road present then check 3 mts distance should maintain
 
             for (NotifiedRoad notifiedRoad : planDetail.getNotifiedRoads()) {
                 if (notifiedRoad.getShortestDistanceToRoad() != null &&
                         notifiedRoad.getShortestDistanceToRoad().compareTo(BigDecimal.ZERO) > 0)
-                    if (notifiedRoad.getShortestDistanceToRoad().compareTo(_NOTIFIEDROADDISTINCE) >=0) {//TDDO CHECK
+                    if (notifiedRoad.getShortestDistanceToRoad().compareTo(_NOTIFIEDROADDISTINCE) >= 0) {// TDDO CHECK
                         planDetail.reportOutput
-                                .add(buildRuleOutput(DcrConstants.RULE26, DcrConstants.NOTIFIED_SHORTESTDISTINCTTOROAD, _NOTIFIEDROADDISTINCE.toString(),
-                                        notifiedRoad.getShortestDistanceToRoad().toString(),Result.Accepted, DcrConstants.EXPECTEDRESULT));
+                                .add(buildRuleOutput(DcrConstants.RULE26, DcrConstants.NOTIFIED_SHORTESTDISTINCTTOROAD,
+                                        _NOTIFIEDROADDISTINCE.toString(),
+                                        notifiedRoad.getShortestDistanceToRoad().toString(), Result.Accepted,
+                                        DcrConstants.EXPECTEDRESULT));
                     } else {
-                            planDetail.reportOutput
-                        .add(buildRuleOutput(DcrConstants.RULE26, DcrConstants.NOTIFIED_SHORTESTDISTINCTTOROAD, _NOTIFIEDROADDISTINCE.toString(),
-                                notifiedRoad.getShortestDistanceToRoad().toString(),Result.Not_Accepted, DcrConstants.EXPECTEDRESULT));
-      
+                        planDetail.reportOutput
+                                .add(buildRuleOutput(DcrConstants.RULE26, DcrConstants.NOTIFIED_SHORTESTDISTINCTTOROAD,
+                                        _NOTIFIEDROADDISTINCE.toString(),
+                                        notifiedRoad.getShortestDistanceToRoad().toString(), Result.Not_Accepted,
+                                        DcrConstants.EXPECTEDRESULT));
+
                     }
             }
         }
+        // If non notified road present then check 1.8 mts distance should maintain
         if (planDetail.getNonNotifiedRoads() != null &&
                 planDetail.getNonNotifiedRoads().size() > 0) {
             for (NonNotifiedRoad nonNotifiedRoad : planDetail.getNonNotifiedRoads()) {
                 if (nonNotifiedRoad.getShortestDistanceToRoad() != null &&
                         nonNotifiedRoad.getShortestDistanceToRoad().compareTo(BigDecimal.ZERO) > 0)
-                    if (nonNotifiedRoad.getShortestDistanceToRoad().compareTo(_NONNOTIFIEDROADDISTINCE) >=0) {//TDDO CHECK
+                    if (nonNotifiedRoad.getShortestDistanceToRoad().compareTo(_NONNOTIFIEDROADDISTINCE) >= 0) {// TDDO CHECK
                         planDetail.reportOutput
-                                .add(buildRuleOutput(DcrConstants.RULE26, DcrConstants.NONNOTIFIED_SHORTESTDISTINCTTOROAD, _NONNOTIFIEDROADDISTINCE.toString(),
-                                        nonNotifiedRoad.getShortestDistanceToRoad().toString(),Result.Accepted, DcrConstants.EXPECTEDRESULT));
+                                .add(buildRuleOutput(DcrConstants.RULE26, DcrConstants.NONNOTIFIED_SHORTESTDISTINCTTOROAD,
+                                        _NONNOTIFIEDROADDISTINCE.toString(),
+                                        nonNotifiedRoad.getShortestDistanceToRoad().toString(), Result.Accepted,
+                                        DcrConstants.EXPECTEDRESULT));
                     } else {
-                            planDetail.reportOutput
-                        .add(buildRuleOutput(DcrConstants.RULE26, DcrConstants.NONNOTIFIED_SHORTESTDISTINCTTOROAD, _NONNOTIFIEDROADDISTINCE.toString(),
-                                nonNotifiedRoad.getShortestDistanceToRoad().toString(),Result.Not_Accepted, DcrConstants.EXPECTEDRESULT));
-      
+                        planDetail.reportOutput
+                                .add(buildRuleOutput(DcrConstants.RULE26, DcrConstants.NONNOTIFIED_SHORTESTDISTINCTTOROAD,
+                                        _NONNOTIFIEDROADDISTINCE.toString(),
+                                        nonNotifiedRoad.getShortestDistanceToRoad().toString(), Result.Not_Accepted,
+                                        DcrConstants.EXPECTEDRESULT));
+
                     }
             }
         }
-
-
-        rule26A(planDetail);
-        return planDetail;
     }
 
     private RuleOutput buildRuleOutput(String rule26, String notifiedShortestdistincttoroad, String notifiedroaddistince,
@@ -142,7 +152,8 @@ public class Rule26 extends GeneralRule {
         SubRuleOutput subRuleOutput = new SubRuleOutput();
         ruleOutput.key = rule26;
         subRuleOutput.message = edcrMessageSource.getMessage(expectedresult,
-                new String[] { notifiedShortestdistincttoroad, notifiedroaddistince,shortestDistanceToRoad}, LocaleContextHolder.getLocale());
+                new String[] { notifiedShortestdistincttoroad, notifiedroaddistince, shortestDistanceToRoad },
+                LocaleContextHolder.getLocale());
         subRuleOutput.result = accepted;
         ruleOutput.subRuleOutputs.add(subRuleOutput);
         return ruleOutput;
