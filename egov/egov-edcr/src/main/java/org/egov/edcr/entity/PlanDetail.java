@@ -68,7 +68,7 @@ public class PlanDetail {
 
 	public void addErrors(Map<String, String> errors) {
 		if (errors != null)
-			getErrors().entrySet().add((Entry<String, String>) errors);
+		getErrors().putAll(errors);
 	}
 
 	public HashMap<String, String> getErrors() {

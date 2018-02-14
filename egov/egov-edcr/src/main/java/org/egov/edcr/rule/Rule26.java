@@ -45,7 +45,7 @@ public class Rule26 extends GeneralRule {
                 for (NotifiedRoad notifiedRoad : planDetail.getNotifiedRoads()) {
                     if (notifiedRoad.getShortestDistanceToRoad() == null ||
                             notifiedRoad.getShortestDistanceToRoad().compareTo(BigDecimal.ZERO) <= 0) {
-                        errors.put(DcrConstants.SHORTESTDISTINCTTOROAD,
+                        errors.put(DcrConstants.NOTIFIED_SHORTESTDISTINCTTOROAD,
                                 prepareMessage(DcrConstants.OBJECTNOTDEFINED, DcrConstants.SHORTESTDISTINCTTOROAD));
                         planDetail.addErrors(errors);
                     }
@@ -56,7 +56,7 @@ public class Rule26 extends GeneralRule {
                 for (NonNotifiedRoad nonNotifiedRoad : planDetail.getNonNotifiedRoads()) {
                     if (nonNotifiedRoad.getShortestDistanceToRoad() == null ||
                             nonNotifiedRoad.getShortestDistanceToRoad().compareTo(BigDecimal.ZERO) <= 0) {
-                        errors.put(DcrConstants.SHORTESTDISTINCTTOROAD,
+                        errors.put(DcrConstants.NONNOTIFIED_SHORTESTDISTINCTTOROAD,
                                 prepareMessage(DcrConstants.OBJECTNOTDEFINED, DcrConstants.SHORTESTDISTINCTTOROAD));
                         planDetail.addErrors(errors);
                     }
@@ -81,6 +81,7 @@ public class Rule26 extends GeneralRule {
     private String prepareMessage(String code, String args ) {
         return edcrMessageSource.getMessage(code,
                 new String[] { args }, LocaleContextHolder.getLocale());
+       // return code+"  "+args;
     }
 
     @Override
@@ -152,8 +153,9 @@ public class Rule26 extends GeneralRule {
         SubRuleOutput subRuleOutput = new SubRuleOutput();
         ruleOutput.key = rule26;
         subRuleOutput.message = edcrMessageSource.getMessage(expectedresult,
-                new String[] { notifiedShortestdistincttoroad, notifiedroaddistince, shortestDistanceToRoad },
+                new String[] { notifiedShortestdistincttoroad, notifiedroaddistince, shortestDistanceToRoad,accepted.toString() },
                 LocaleContextHolder.getLocale());
+               // expectedresult +" "+notifiedShortestdistincttoroad +" Expected Result " + notifiedroaddistince + " Actual result " + shortestDistanceToRoad +" \n Result : "+ accepted;
         subRuleOutput.result = accepted;
         ruleOutput.subRuleOutputs.add(subRuleOutput);
         return ruleOutput;
@@ -178,6 +180,7 @@ public class Rule26 extends GeneralRule {
         ruleOutput.key = reportOutputKey;
         subRuleOutput.message = edcrMessageSource.getMessage(messageKey,
                 new String[] { messageParam }, LocaleContextHolder.getLocale());
+               // messageKey +" "+messageParam;
         subRuleOutput.result = result;
         ruleOutput.subRuleOutputs.add(subRuleOutput);
         return ruleOutput;

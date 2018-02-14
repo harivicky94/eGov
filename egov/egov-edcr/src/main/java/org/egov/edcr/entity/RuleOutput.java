@@ -6,7 +6,7 @@ import java.util.List;
 public class RuleOutput {
 
     public String key;
-    public List<SubRuleOutput> subRuleOutputs;
+    public List<SubRuleOutput> subRuleOutputs = new ArrayList<>();
     public String message;
     public Result result;
     
