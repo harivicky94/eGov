@@ -145,48 +145,42 @@ public class BpaThirdPartyService {
             final List<HashMap<String, Object>> historyTable) {
         if (!application.getAppointmentSchedule().isEmpty()) {
             for (BpaAppointmentSchedule appointmentSchedule : application.getAppointmentSchedule()) {
-                final HashMap<String, Object> appointmentHistory = new HashMap<>();
-                appointmentHistory.put(DATE, appointmentSchedule.getCreatedDate());
-                String comments = StringUtils.EMPTY;
-                String status = StringUtils.EMPTY;
-                if (DOCUMENTSCRUTINY.equals(appointmentSchedule.getPurpose().name()) && appointmentSchedule.isPostponed()) {
-                    comments = APPOINTMENT_FOR_DOCUMENT_SCRUTINY_RESCHEDULED + " for "
-                            + appointmentSchedule.getPostponementReason();
-                    status = APPOINTMENT_FOR_DOCUMENT_SCRUTINY_RESCHEDULED;
-                } else if (DOCUMENTSCRUTINY.equals(appointmentSchedule.getPurpose().name())
-                        && !appointmentSchedule.isPostponed()) {
-                    comments = APPOINTMENT_FOR_DOCUMENT_SCRUTINY_SCHEDULED;
-                    status = APPOINTMENT_FOR_DOCUMENT_SCRUTINY_SCHEDULED;
-                } else if (INSPECTION.equals(appointmentSchedule.getPurpose().name()) && appointmentSchedule.isPostponed()) {
-                    status = APPOINTMENT_FOR_INSPECTION_RESCHEDULED;
-                    comments = APPOINTMENT_FOR_INSPECTION_RESCHEDULED + " for " + appointmentSchedule.getPostponementReason();
-                } else if (INSPECTION.equals(appointmentSchedule.getPurpose().name()) && !appointmentSchedule.isPostponed()) {
-                    status = APPOINTMENT_FOR_INSPECTION_SCHEDULED;
-                    comments = APPOINTMENT_FOR_INSPECTION_SCHEDULED;
-                }
-                appointmentHistory.put(COMMENTS, comments);
-                appointmentHistory.put(UPDATED_BY, appointmentSchedule.getLastModifiedBy().getUsername() + "::"
-                        + appointmentSchedule.getLastModifiedBy().getName());
-                appointmentHistory.put(STATUS, status);
+                if (INSPECTION.equals(appointmentSchedule.getPurpose().name())) {
+                    final HashMap<String, Object> appointmentHistory = new HashMap<>();
+                    appointmentHistory.put(DATE, appointmentSchedule.getCreatedDate());
+                    String comments = StringUtils.EMPTY;
+                    String status = StringUtils.EMPTY;
+                    if (INSPECTION.equals(appointmentSchedule.getPurpose().name()) && appointmentSchedule.isPostponed()) {
+                        status = APPOINTMENT_FOR_INSPECTION_RESCHEDULED;
+                        comments = APPOINTMENT_FOR_INSPECTION_RESCHEDULED + " for " + appointmentSchedule.getPostponementReason();
+                    } else if (INSPECTION.equals(appointmentSchedule.getPurpose().name()) && !appointmentSchedule.isPostponed()) {
+                        status = APPOINTMENT_FOR_INSPECTION_SCHEDULED;
+                        comments = APPOINTMENT_FOR_INSPECTION_SCHEDULED;
+                    }
+                    appointmentHistory.put(COMMENTS, comments);
+                    appointmentHistory.put(UPDATED_BY, appointmentSchedule.getLastModifiedBy().getUsername() + "::"
+                                                       + appointmentSchedule.getLastModifiedBy().getName());
+                    appointmentHistory.put(STATUS, status);
 
-                final Position owner = positionMasterService
-                        .getCurrentPositionForUser(appointmentSchedule.getCreatedBy().getId());
-                User user = appointmentSchedule.getCreatedBy();
+                    final Position owner = positionMasterService
+                            .getCurrentPositionForUser(appointmentSchedule.getCreatedBy().getId());
+                    User user = appointmentSchedule.getCreatedBy();
 
-                if (null != user) {
-                    appointmentHistory.put(USER, user.getUsername() + "::" + user.getName());
-                    appointmentHistory.put(DEPARTMENT,
-                            null != eisCommonService.getDepartmentForUser(user.getId()) ? eisCommonService
-                                    .getDepartmentForUser(user.getId()).getName() : "");
-                } else if (null != owner && null != owner.getDeptDesig()) {
-                    user = getUserPositionByPassingPosition(owner.getId());
-                    appointmentHistory
-                            .put(USER, null != user.getUsername() ? user.getUsername() + "::" + user.getName()
-                                    : "");
-                    appointmentHistory.put(DEPARTMENT, null != owner.getDeptDesig().getDepartment() ? owner.getDeptDesig()
-                            .getDepartment().getName() : "");
+                    if (null != user) {
+                        appointmentHistory.put(USER, user.getUsername() + "::" + user.getName());
+                        appointmentHistory.put(DEPARTMENT,
+                                null != eisCommonService.getDepartmentForUser(user.getId()) ? eisCommonService
+                                        .getDepartmentForUser(user.getId()).getName() : "");
+                    } else if (null != owner && null != owner.getDeptDesig()) {
+                        user = getUserPositionByPassingPosition(owner.getId());
+                        appointmentHistory
+                                .put(USER, null != user.getUsername() ? user.getUsername() + "::" + user.getName()
+                                                                      : "");
+                        appointmentHistory.put(DEPARTMENT, null != owner.getDeptDesig().getDepartment() ? owner.getDeptDesig()
+                                                                                                               .getDepartment().getName() : "");
+                    }
+                    historyTable.add(appointmentHistory);
                 }
-                historyTable.add(appointmentHistory);
             }
         }
     }

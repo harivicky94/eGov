@@ -79,7 +79,7 @@ public class BpaSchedulerConfiguration extends QuartzSchedulerConfiguration {
 		demandActivationCron.setJobDetail(openSlotsJobDetail().getObject());
 		demandActivationCron.setGroup("BPA_TRIGGER_GROUP");
 		demandActivationCron.setName("BPA_OPEN_SLOT_TRIGGER");
-		demandActivationCron.setCronExpression("0 */5 * * * ?");
+		demandActivationCron.setCronExpression("0 */4 * * * ?");
 		demandActivationCron.setMisfireInstruction(MISFIRE_INSTRUCTION_DO_NOTHING);
 		return demandActivationCron;
 	}
@@ -100,28 +100,28 @@ public class BpaSchedulerConfiguration extends QuartzSchedulerConfiguration {
 		CronTriggerFactoryBean demandActivationCron = new CronTriggerFactoryBean();
 		demandActivationCron.setJobDetail(cancelAppointmentJobDetail().getObject());
 		demandActivationCron.setGroup("BPA_TRIGGER_GROUP");
-		demandActivationCron.setName("PTIS_CANCEL_APPOINTMENT_TRIGGER");
-		demandActivationCron.setCronExpression("0 */5 * * * ?");
+		demandActivationCron.setName("BPA_CANCEL_APPOINTMENT_TRIGGER");
+		demandActivationCron.setCronExpression("0 */6 * * * ?");
 		demandActivationCron.setMisfireInstruction(MISFIRE_INSTRUCTION_DO_NOTHING);
 		return demandActivationCron;
 	}
 
-	@Bean("OpenSlotsJob")
+	@Bean("openSlotsJob")
 	public OpenSlotsJob openSlotsJob() {
 		return new OpenSlotsJob();
 	}
 
-	@Bean("ScheduleAppointmentJob")
+	@Bean("scheduleAppointmentJob")
 	public ScheduleAppointmentJob scheduleAppointmentJob() {
 		return new ScheduleAppointmentJob();
 	}
 
-	@Bean("CancelAppointmentJob")
+	@Bean("cancelAppointmentJob")
 	public CancelAppointmentJob scheduleDocumentScrutinyJob() {
 		return new CancelAppointmentJob();
 	}
 
-	@Bean(name = "openSlotsJobDetail")
+	@Bean
 	public JobDetailFactoryBean openSlotsJobDetail() {
 		JobDetailFactoryBean openSlotsJobDetail = new JobDetailFactoryBean();
 		openSlotsJobDetail.setGroup("BPA_JOB_GROUP");
@@ -130,7 +130,7 @@ public class BpaSchedulerConfiguration extends QuartzSchedulerConfiguration {
 		openSlotsJobDetail.setJobClass(OpenSlotsJob.class);
 		openSlotsJobDetail.setRequestsRecovery(true);
 		Map<String, String> jobDetailMap = new HashMap<>();
-		jobDetailMap.put("jobBeanName", "OpenSlotsJob");
+		jobDetailMap.put("jobBeanName", "openSlotsJob");
 		jobDetailMap.put("userName", "system");
 		jobDetailMap.put("cityDataRequired", "true");
 		jobDetailMap.put("moduleName", "bpa");
@@ -138,7 +138,7 @@ public class BpaSchedulerConfiguration extends QuartzSchedulerConfiguration {
 		return openSlotsJobDetail;
 	}
 
-	@Bean(name = "scheduleAppointmentJobDetail")
+	@Bean
 	public JobDetailFactoryBean scheduleAppointmentJobDetail() {
 		JobDetailFactoryBean scheduleAppointmentJobDetail = new JobDetailFactoryBean();
 		scheduleAppointmentJobDetail.setGroup("BPA_JOB_GROUP");
@@ -147,7 +147,7 @@ public class BpaSchedulerConfiguration extends QuartzSchedulerConfiguration {
 		scheduleAppointmentJobDetail.setJobClass(ScheduleAppointmentJob.class);
 		scheduleAppointmentJobDetail.setRequestsRecovery(true);
 		Map<String, String> jobDetailMap = new HashMap<>();
-		jobDetailMap.put("jobBeanName", "ScheduleAppointmentJob");
+		jobDetailMap.put("jobBeanName", "scheduleAppointmentJob");
 		jobDetailMap.put("userName", "system");
 		jobDetailMap.put("cityDataRequired", "true");
 		jobDetailMap.put("moduleName", "bpa");
@@ -155,7 +155,7 @@ public class BpaSchedulerConfiguration extends QuartzSchedulerConfiguration {
 		return scheduleAppointmentJobDetail;
 	}
 
-	@Bean(name = "cancelAppointmentJobDetail")
+	@Bean
 	public JobDetailFactoryBean cancelAppointmentJobDetail() {
 		JobDetailFactoryBean cancelAppointmentJobDetail = new JobDetailFactoryBean();
 		cancelAppointmentJobDetail.setGroup("BPA_JOB_GROUP");
@@ -164,7 +164,7 @@ public class BpaSchedulerConfiguration extends QuartzSchedulerConfiguration {
 		cancelAppointmentJobDetail.setJobClass(CancelAppointmentJob.class);
 		cancelAppointmentJobDetail.setRequestsRecovery(true);
 		Map<String, String> jobDetailMap = new HashMap<>();
-		jobDetailMap.put("jobBeanName", "CancelAppointmentJob");
+		jobDetailMap.put("jobBeanName", "cancelAppointmentJob");
 		jobDetailMap.put("userName", "system");
 		jobDetailMap.put("cityDataRequired", "true");
 		jobDetailMap.put("moduleName", "bpa");

@@ -291,6 +291,8 @@ $(document).on('change', '.carpetArea', function() {
      $("#buildingAreaDetails tbody tr").each(function () {
     	 var rowFloorArea = parseFloat($(this).find('td:eq(5) input.floorArea').val());
     	 var rowCarpetArea = parseFloat($(this).find('td:eq(6) input.carpetArea').val());
+         if($(this).find('td:eq(6) input.carpetArea').val() == '.')
+             $(this).find('td:eq(6) input.carpetArea').val(0.0);
     	 if(rowCarpetArea > rowFloorArea) {
     		 $(rowObj).find('.carpetArea').val('');
     		 $( ".plinthArea" ).trigger( "change" );

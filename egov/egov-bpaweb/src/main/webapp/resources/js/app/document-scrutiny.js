@@ -46,7 +46,40 @@
  */
 
 $(document).ready(function() {
-	
+
+    var tbody = $('#bpaAdditionalPermitConditions').children('tbody');
+    var table = tbody.length ? tbody : $('#bpaAdditionalPermitConditions');
+    var row = '<tr>'+
+        '<td class="text-center"><span class="serialNo text-center" id="slNoInsp">{{sno}}</span><input type="hidden" name="additionalPermitConditionsTemp[{{idx}}].application" value="{{applicationId}}" /><input type="hidden" class="additionalPermitCondition" name="additionalPermitConditionsTemp[{{idx}}].permitConditionType" value="ADDITIONAL_PERMITCONDITION"/><input type="hidden" class="additionalPermitCondition" name="additionalPermitConditionsTemp[{{idx}}].permitCondition" value="{{permitConditionId}}"/><input type="hidden" class="serialNo" data-sno name="additionalPermitConditionsTemp[{{idx}}].orderNumber"/></td>'+
+        '<td><textarea class="form-control patternvalidation additionalPermitCondition" rows="2" maxlength="500" name="additionalPermitConditionsTemp[{{idx}}].additionalPermitCondition"/></td>';
+
+    $('#addAddnlPermitRow').click(function(){
+        var idx=$(tbody).find('tr').length;
+        //Add row
+        var row={
+            'sno' : idx+1,
+            'idx': idx,
+            'permitConditionId':$('#additionalPermitCondition').val(),
+            'applicationId':$('#scrutinyapplicationid').val()
+        };
+        addRowFromObject(row);
+        patternvalidation();
+    });
+
+    function addRowFromObject(rowJsonObj)
+    {
+        table.append(row.compose(rowJsonObj));
+    }
+
+    String.prototype.compose = (function (){
+        var re = /\{{(.+?)\}}/g;
+        return function (o){
+            return this.replace(re, function (_, k){
+                return typeof o[k] != 'undefined' ? o[k] : '';
+            });
+        }
+    }());
+
 	roundOfDecimalPlaces();
 	function roundOfDecimalPlaces() {
 		// Set decimal places of 2
@@ -75,11 +108,10 @@ $(document).ready(function() {
 	$(".workAction").click(function(e) {
         var action = document
             .getElementById("workFlowAction").value;
-        if (action == 'Cancel Application') {
-            $('#Cancel').attr('formnovalidate', 'true');
+        if (action == 'Initiate Rejection') {
             bootbox
                 .confirm({
-                    message : 'Do you really want to Cancel the application ?',
+                    message : 'Please confirm, do you really want to initiate rejection for this the application ?',
                     buttons : {
                         'cancel' : {
                             label : 'No',
@@ -93,8 +125,13 @@ $(document).ready(function() {
                     callback : function(result) {
                         if (result) {
                             var approvalComent = $('#approvalComent').val();
-                            if (approvalComent == "") {
-                                bootbox.alert("Please enter cancellation comments!");
+                            var rejectionReasonsLength = $('.rejectionReasons:checked').length;
+                            if(rejectionReasonsLength <= 0){
+                                $('.rejectionReason').show();
+                                bootbox.alert('Please select atleast one rejection reason is mandatory');
+                                return true;
+                            } else if (approvalComent == "") {
+                                bootbox.alert("Please enter rejection comments!");
                                 $('#approvalComent').focus();
                                 return true;
                             } else {
@@ -107,9 +144,31 @@ $(document).ready(function() {
                     }
                 });
             return false;
-        } else {
-            return validateDocScrutinyForm(validator);
-		}
+        } else if (action == 'Forward') {
+            bootbox
+                .confirm({
+                    message : 'Please confirm, do you really want to forward this application ?',
+                    buttons : {
+                        'cancel' : {
+                            label : 'No',
+                            className : 'btn-danger'
+                        },
+                        'confirm' : {
+                            label : 'Yes',
+                            className : 'btn-primary'
+                        }
+                    },
+                    callback: function (result) {
+                        if (result) {
+                            return validateDocScrutinyForm(validator);
+                        } else {
+                            e.stopPropagation();
+                            e.preventDefault();
+                        }
+                    }
+                });
+            return false;
+        }
 	});
 
 });

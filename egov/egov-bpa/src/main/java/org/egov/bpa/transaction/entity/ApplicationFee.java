@@ -87,6 +87,7 @@ public class ApplicationFee extends StateAware<Position> {
     @OneToMany(mappedBy = "applicationFee", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ApplicationFeeDetail> applicationFeeDetail = new ArrayList<>();
     private Boolean isRevised = false;
+    @Length(min = 1, max = 512)
     private String modifyFeeReason;
 
     @Override

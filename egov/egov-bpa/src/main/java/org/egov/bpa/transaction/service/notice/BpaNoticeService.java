@@ -46,46 +46,11 @@
  */
 package org.egov.bpa.transaction.service.notice;
 
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_MODULE_TYPE;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CANCELLED;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_REJECTED;
-import static org.egov.bpa.utils.BpaConstants.BPADEMANDNOTICETITLE;
-import static org.egov.bpa.utils.BpaConstants.BPAREJECTIONFILENAME;
-import static org.egov.bpa.utils.BpaConstants.BPA_ADM_FEE;
-import static org.egov.bpa.utils.BpaConstants.BPA_DEMAND_NOTICE_TYPE;
-import static org.egov.bpa.utils.BpaConstants.BPA_REJECTION_NOTICE_TYPE;
-import static org.egov.bpa.utils.BpaConstants.BUILDINGDEVELOPPERMITFILENAME;
-import static org.egov.bpa.utils.BpaConstants.BUILDINGPERMITFILENAME;
-import static org.egov.bpa.utils.BpaConstants.DEMANDNOCFILENAME;
-import static org.egov.bpa.utils.BpaConstants.PERMIT_ORDER_NOTICE_TYPE;
-import static org.egov.bpa.utils.BpaConstants.ST_CODE_05;
-import static org.egov.bpa.utils.BpaConstants.ST_CODE_08;
-import static org.egov.bpa.utils.BpaConstants.ST_CODE_09;
-import static org.egov.bpa.utils.BpaConstants.ST_CODE_14;
-import static org.egov.bpa.utils.BpaConstants.ST_CODE_15;
-import static org.egov.infra.utils.DateUtils.currentDateToDefaultDateFormat;
-
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.WordUtils;
 import org.egov.bpa.master.entity.ServiceType;
-import org.egov.bpa.transaction.entity.ApplicationPermitConditions;
-import org.egov.bpa.transaction.entity.BpaApplication;
-import org.egov.bpa.transaction.entity.BpaNotice;
-import org.egov.bpa.transaction.entity.BuildingDetail;
-import org.egov.bpa.transaction.entity.Response;
+import org.egov.bpa.transaction.entity.*;
 import org.egov.bpa.transaction.entity.enums.PermitConditionType;
 import org.egov.bpa.transaction.repository.BpaNoticeRepository;
 import org.egov.bpa.transaction.service.ApplicationBpaService;
@@ -109,6 +74,17 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.egov.bpa.utils.BpaConstants.*;
+import static org.egov.infra.utils.DateUtils.currentDateToDefaultDateFormat;
 
 @Service
 @Transactional(readOnly = true)
@@ -359,7 +335,7 @@ public class BpaNoticeService {
         return permitConditions.toString();
     }
 
-    private void buildAdditionalPermitConditionsOrRejectionReason(StringBuilder permitConditions,
+    private int buildAdditionalPermitConditionsOrRejectionReason(StringBuilder permitConditions,
             List<ApplicationPermitConditions> additionalPermitConditions, int order) {
         int additionalOrder = order;
         if (!additionalPermitConditions.isEmpty()
@@ -370,6 +346,7 @@ public class BpaNoticeService {
                 additionalOrder++;
             }
         }
+        return additionalOrder;
     }
 
     private String buildRejectionReasons(final BpaApplication bpaApplication) {
@@ -377,11 +354,9 @@ public class BpaNoticeService {
                 .findAllByApplicationAndPermitConditionType(bpaApplication, PermitConditionType.ADDITIONAL_PERMITCONDITION);
         StringBuilder rejectReasons = new StringBuilder();
         int order = buildPredefinedRejectReasons(bpaApplication, rejectReasons);
-        StateHistory stateHistory = bpaApplication.getStateHistory().stream()
-                .filter(history -> history.getValue().equalsIgnoreCase(APPLICATION_STATUS_REJECTED))
-                .findAny().orElse(null);
-        rejectReasons.append(String.valueOf(order) + ") " + stateHistory != null ? stateHistory.getComments() : EMPTY + "\n\n");
-        buildAdditionalPermitConditionsOrRejectionReason(rejectReasons, additionalPermitConditions, order);
+        int additionalOrder = buildAdditionalPermitConditionsOrRejectionReason(rejectReasons, additionalPermitConditions, order);
+        StateHistory stateHistory = bpaUtils.getRejectionComments(bpaApplication);
+        rejectReasons.append(String.valueOf(additionalOrder) + ") " + (stateHistory != null && StringUtils.isNotBlank(stateHistory.getComments()) ? stateHistory.getComments() : EMPTY) + "\n\n");
         return rejectReasons.toString();
     }
 

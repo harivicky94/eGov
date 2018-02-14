@@ -65,6 +65,17 @@ $(document)
                             $(this).find("td").removeClass("hide");
                         });
                     }
+                    $('.nocStatus').on('change', function () {
+                        var rowObj = $(this).closest('tr');
+                        if ($(rowObj).find('.nocStatus').val() == 'REJECTED') {
+                            $(rowObj).find('.nocRemarks').attr('required', true);
+                        } else {
+                            $(rowObj).find('.nocRemarks').removeAttr('required');
+                            var elemt =$(rowObj).data('input-element');
+                            rowObj.find('label').hide();
+                            rowObj.find('.nocRemarks').removeClass('error');
+                        }
+                    });
 
 					$(document).on(
 							'click',

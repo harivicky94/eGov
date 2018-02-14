@@ -51,13 +51,22 @@ package org.egov.bpa.transaction.entity.dto;
 
 public class BpaStateInfo {
 
-    private Long wfMatrixRef;
+	private Long wfMatrixRef;
+	private Long tsInitiatorPos;
 
-    public Long getWfMatrixRef() {
-        return wfMatrixRef;
-    }
+	public Long getWfMatrixRef() {
+		return wfMatrixRef;
+	}
 
-    public void setWfMatrixRef(Long wfMatrixRef) {
-        this.wfMatrixRef = wfMatrixRef;
-    }
+	public void setWfMatrixRef(Long wfMatrixRef) {
+		this.wfMatrixRef = wfMatrixRef;
+	}
+
+	public Long getTsInitiatorPos() {
+		return tsInitiatorPos;
+	}
+
+	public void setTsInitiatorPos(Long tsInitiatorPos) {
+		this.tsInitiatorPos = tsInitiatorPos;
+	}
 }

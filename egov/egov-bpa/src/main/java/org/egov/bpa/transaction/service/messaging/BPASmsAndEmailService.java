@@ -39,33 +39,15 @@
  */
 package org.egov.bpa.transaction.service.messaging;
 
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CANCELLED;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CREATED;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_REGISTERED;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_REJECTED;
-import static org.egov.bpa.utils.BpaConstants.CREATEDLETTERTOPARTY;
-import static org.egov.bpa.utils.BpaConstants.EGMODULE_NAME;
-import static org.egov.bpa.utils.BpaConstants.NO;
-import static org.egov.bpa.utils.BpaConstants.SENDEMAILFORBPA;
-import static org.egov.bpa.utils.BpaConstants.SENDSMSFORBPA;
-import static org.egov.bpa.utils.BpaConstants.SMSEMAILTYPELETTERTOPARTY;
-import static org.egov.bpa.utils.BpaConstants.SMSEMAILTYPENEWBPAREGISTERED;
-import static org.egov.bpa.utils.BpaConstants.YES;
-
-import java.util.List;
-import java.util.Locale;
-
 import org.egov.bpa.master.entity.StakeHolder;
 import org.egov.bpa.transaction.entity.ApplicationStakeHolder;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.BpaAppointmentSchedule;
 import org.egov.bpa.transaction.entity.SlotApplication;
 import org.egov.bpa.transaction.entity.enums.AppointmentSchedulePurpose;
-import org.egov.bpa.transaction.entity.enums.ScheduleAppointmentType;
 import org.egov.bpa.transaction.service.BpaThirdPartyService;
 import org.egov.bpa.utils.BpaConstants;
+import org.egov.bpa.utils.BpaUtils;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
@@ -77,6 +59,13 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Locale;
+
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.egov.bpa.utils.BpaConstants.*;
 
 @Service
 public class BPASmsAndEmailService {
@@ -121,6 +110,8 @@ public class BPASmsAndEmailService {
     private AppConfigValueService appConfigValuesService;
     @Autowired
     private BpaThirdPartyService bpaThirdPartyService;
+	@Autowired
+    private BpaUtils bpaUtils;
  
 
     public String getMunicipalityName() {
@@ -327,19 +318,21 @@ public class BPASmsAndEmailService {
             body = bpaMessageSource.getMessage(code,
                     new String[] { applicantName, bpaApplication.getApplicationNumber(), getMunicipalityName() }, null);
         else if (APPLICATION_STATUS_CANCELLED.equalsIgnoreCase(type)) {
-            StateHistory stateHistory = bpaApplication.getStateHistory().stream()
-                    .filter(history -> history.getValue().equalsIgnoreCase(APPLICATION_STATUS_REJECTED))
-                    .findAny().orElse(null);
-            body = bpaMessageSource.getMessage(code,
-                    new String[] { applicantName, bpaApplication.getApplicationNumber(),
-                            isNotBlank(stateHistory.getComments()) ? stateHistory.getComments() : EMPTY,
-                            getMunicipalityName() },
-                    null);
+			body = getCancelApplnMessage(code, applicantName, bpaApplication);
         }
         return body;
     }
 
-    private String smsBodyByCodeAndArgsWithType(String code, String applicantName, BpaApplication bpaApplication,
+	private String getCancelApplnMessage(String code, String applicantName, BpaApplication bpaApplication) {
+		StateHistory stateHistory = bpaUtils.getRejectionComments(bpaApplication);
+		return bpaMessageSource.getMessage(code,
+				new String[]{applicantName, bpaApplication.getApplicationNumber(),
+						stateHistory != null && isNotBlank(stateHistory.getComments()) ? stateHistory.getComments() : EMPTY,
+						getMunicipalityName()},
+				null);
+	}
+
+	private String smsBodyByCodeAndArgsWithType(String code, String applicantName, BpaApplication bpaApplication,
             String type, String loginUserName, String password) {
         String smsMsg = EMPTY;
         if (SMSEMAILTYPENEWBPAREGISTERED.equalsIgnoreCase(type)) {
@@ -357,14 +350,8 @@ public class BPASmsAndEmailService {
             smsMsg = bpaMessageSource.getMessage(code,
                     new String[] { applicantName, bpaApplication.getApplicationNumber(), getMunicipalityName() }, null);
         else if (APPLICATION_STATUS_CANCELLED.equalsIgnoreCase(type)) {
-            StateHistory stateHistory = bpaApplication.getStateHistory().stream()
-                    .filter(history -> history.getValue().equalsIgnoreCase(APPLICATION_STATUS_REJECTED))
-                    .findAny().orElse(null);
-            smsMsg = bpaMessageSource.getMessage(code,
-                    new String[] { applicantName, bpaApplication.getApplicationNumber(),
-                            isNotBlank(stateHistory.getComments()) ? stateHistory.getComments() : EMPTY,
-                            getMunicipalityName() },
-                    null);
+
+			smsMsg = getCancelApplnMessage(code, applicantName, bpaApplication);
         }
         return smsMsg;
     }

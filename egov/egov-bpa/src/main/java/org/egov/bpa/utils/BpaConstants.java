@@ -124,6 +124,10 @@ public class BpaConstants {
     public static final String FORWARDED_TO_NOC_UPDATE = "Forwarded to Superintendent for Noc Updation";
     public static final String FWD_TO_AE_FOR_FIELD_ISPECTION = "Forwarded to Assistant Engineer for field ispection";
     public static final String WF_PERMIT_FEE_COLL_PENDING = "Permit Fee Collection Pending";
+    public static final String WF_DOC_SCRTNY_RE_SCHDLE_PENDING = "Document Scrutiny ReScheduling Pending";
+    public static final String FWD_TO_AE_AFTER_TS_INSP = "Forwarded to Assistant Engineer";
+    public static final String FWD_TO_OVERSEER_AFTER_TS_INSPN = "Forwarded to Overseer";
+    public static final String REJECT_BY_CLERK = "Rejection initiated by clerk";
     // application status constants
     public static final String APPROVED = "Approved";
     public static final String APPLICATION_STATUS_APPROVED = APPROVED;
@@ -140,6 +144,8 @@ public class BpaConstants {
 	public static final String APPLICATION_STATUS_SCHEDULED = "Scheduled For Document Scrutiny";
 	public static final String APPLICATION_STATUS_RESCHEDULED = "Rescheduled For Document Scrutiny";
 	public static final String APPLICATION_STATUS_PENDING_FOR_RESCHEDULING = "Pending For Rescheduling For Document Scrutiny";
+    public static final String APPLICATION_STATUS_TS_INS_INITIATED = "Town Surveyor Inspection Initiated";
+    public static final String APPLICATION_STATUS_REJECT_CLERK = "Rejection initiated by clerk";
 
     // document realted constants
     public static final String STAKE_HOLDER_CHECK_LIST_TYPE = "STAKEHOLDERDOCUMENT";
@@ -212,10 +218,9 @@ public class BpaConstants {
     public static final String DESIGNATION_AEE = "Assistant executive engineer";
     public static final String DESIGNATION_AE = "Assistant engineer";
     public static final String DESIGNATION_EE = "Executive engineer";
-    public static final String DESIGNATION_COMMISSIONER = "Commissioner";
     public static final String DESIGNATION_SECRETARY = "Secretary";
-    public static final String DESIGNATION_SUPERIAPPROVAL = "Superintendent of Approval";
     public static final String DESIGNATION_TOWN_SURVEYOR = "Town Surveyor";
+    public static final String DESIGNATION_OVERSEER = "Town Planning Building Overseer";
     // occupancy constants
     public static final String THATCHED_TILED_HOUSE = "Thatched / Tiled House";
     public static final String MERCANTILE_COMMERCIAL = "Mercantile / Commercial";
@@ -239,6 +244,8 @@ public class BpaConstants {
     public static final String WF_PAY_ONLINE_BUTTON = "Pay Online";
     public static final String WF_REVERT_BUTTON = "Revert";
     public static final String WF_SAVE_BUTTON = "Save";
+    public static final String WF_RESCHDLE_APPMNT_BUTTON = "Reschedule Appointment";
+    public static final String WF_INITIATE_REJECTION_BUTTON = "Initiate Rejection";
     // building details related constants
     public static final String TOTAL_PLINT_AREA = "totalPlintArea";
     public static final String BUILDINGHEIGHT_GROUND = "buildingheightGround";

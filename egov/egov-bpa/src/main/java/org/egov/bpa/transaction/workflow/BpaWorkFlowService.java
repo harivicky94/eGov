@@ -43,6 +43,8 @@ package org.egov.bpa.transaction.workflow;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.LettertoParty;
 import org.egov.bpa.transaction.entity.dto.BpaStateInfo;
+import org.egov.bpa.utils.BpaConstants;
+import org.egov.bpa.utils.BpaUtils;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.contract.WorkflowContainer;
@@ -74,6 +76,8 @@ public class BpaWorkFlowService {
     protected AssignmentService assignmentService;
     @Autowired
     protected CustomizedWorkFlowService customizedWorkFlowService;
+    @Autowired
+    private BpaUtils bpaUtils;
 
     public Assignment getWorkFlowInitiator(final BpaApplication application) {
         Assignment wfInitiator = null;
@@ -194,6 +198,11 @@ public class BpaWorkFlowService {
 
     public BpaStateInfo getBpaStateinfo(final BpaApplication application, final BpaStateInfo bpaStateInfo, final WorkFlowMatrix wfmatrix) {
         bpaStateInfo.setWfMatrixRef(wfmatrix.getId());
+        if(application.getTownSurveyorInspectionRequire() && getTownSurveyorInspnInitiator(application) == 0)
+            bpaStateInfo.setTsInitiatorPos(application.getCurrentState().getOwnerPosition().getId());
+        else  if(application.getTownSurveyorInspectionRequire() && getTownSurveyorInspnInitiator(application) != null)
+            bpaStateInfo.setTsInitiatorPos(getTownSurveyorInspnInitiator(application));
+
         return bpaStateInfo;
     }
 
@@ -208,6 +217,33 @@ public class BpaWorkFlowService {
             e.printStackTrace();
         }
         return Long.valueOf(json.get("wfMatrixRef").toString());
+    }
+
+    public Long getTownSurveyorInspnInitiator(final BpaApplication application) {
+        State currentState = application.getCurrentState();
+        JSONParser parser = new JSONParser();
+        JSONObject json = null;
+        try {
+            if (StringUtils.isNotEmpty(currentState.getExtraInfo()))
+                json = (JSONObject) parser.parse(currentState.getExtraInfo());
+            if(json.get("tsInitiatorPos") == null) {
+                Optional<StateHistory<Position>> stateHistory = getLastStateHstryObj(application);
+                if (stateHistory.isPresent() && StringUtils.isNotEmpty(stateHistory.get().getExtraInfo()))
+                    json = (JSONObject) parser.parse(stateHistory.get().getExtraInfo());
+            }
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return json.get("tsInitiatorPos") == null ? 0: Long.valueOf(json.get("tsInitiatorPos").toString());
+    }
+
+    public Position getApproverPositionOnReject(final BpaApplication application, final String currentState) {
+        WorkFlowMatrix wfMatrix = bpaUtils.getWfMatrixByCurrentState(application, currentState);
+        return bpaUtils.getUserPositionByZone(wfMatrix.getNextDesignation(),
+                application.getSiteDetail().get(0) != null
+                && application.getSiteDetail().get(0).getElectionBoundary() != null
+                ? application.getSiteDetail().get(0).getElectionBoundary().getId() : null);
     }
 
 }

@@ -65,6 +65,10 @@
 					data-tabidx=0><spring:message code='lbl.appln.details' /></a></li>
 				<li><a data-toggle="tab" href="#document-info" data-tabidx=1><spring:message
 							code='title.documentdetail' /></a></li>
+				<c:if test="${not empty bpaApplication.applicationNOCDocument}">
+					<li><a data-toggle="tab" href="#noc-info" data-tabidx=2><spring:message
+							code='lbl.noc.details' /></a></li>
+				</c:if>
 				</ul>
 			<div class="tab-content">
 				<div id="applicant-info" class="tab-pane fade in active">
@@ -99,27 +103,36 @@
 						<jsp:include page="view-bpaDocumentdetails.jsp"></jsp:include>
 					</div>
 				</div>
+				<c:if test="${ not empty bpaApplication.applicationNOCDocument}">
+					<div id="noc-info" class="tab-pane fade">
+						<div class="panel panel-primary" data-collapsed="0">
+							<jsp:include page="view-noc-document.jsp"></jsp:include>
+						</div>
+					</div>
+				</c:if>
 			</div>
 
 			<div align="center">
 				<c:if test="${collectFeeValidate eq ''}">
-					<c:if test="${mode eq 'newappointment'}">
+					<c:if test="${ bpaApplication.status.code eq 'Registered'}">
 						<a
-								href="/bpa/application/scheduleappointment/${bpaApplication.applicationNumber}"
+								href="/bpa/application/scrutiny/schedule/${bpaApplication.applicationNumber}"
 								class="btn btn-primary"> New Appointment </a>
 					</c:if>
-					<c:if test="${mode eq 'postponeappointment'}">
+					<c:if test="${ mode eq 'postponeappointment'}">
 						<a
-								href="/bpa/application/postponeappointment/${scheduleType}/${bpaApplication.applicationNumber}"
+								href="/bpa/application/scrutiny/reschedule/${bpaApplication.applicationNumber}"
 								class="btn btn-primary"> Reschedule Appointment </a>
 					</c:if>
-					<a
-							href="/bpa/application/documentscrutiny/${bpaApplication.applicationNumber}"
-							class="btn btn-primary"> Document Scrutiny </a>
+					<c:if test="${ bpaApplication.status.code eq 'Scheduled For Document Scrutiny' || bpaApplication.status.code eq 'Rescheduled For Document Scrutiny'}">
+						<a
+								href="/bpa/application/documentscrutiny/${bpaApplication.applicationNumber}"
+								class="btn btn-primary"> Document Scrutiny </a>
+					</c:if>
 				</c:if>
 				<input
-					type="button" name="button2" id="button2" value="Close"
-					class="btn btn-default" onclick="window.close();" />
+						type="button" name="button2" id="button2" value="Close"
+						class="btn btn-default" onclick="window.close();"/>
 			</div>
 		</form:form>
 	</div>

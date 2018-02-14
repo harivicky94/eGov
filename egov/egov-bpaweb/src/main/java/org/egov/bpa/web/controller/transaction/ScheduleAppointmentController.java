@@ -39,28 +39,22 @@
  */
 package org.egov.bpa.web.controller.transaction;
 
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_DOC_VERIFIED;
-
-import java.util.List;
-
-import javax.validation.Valid;
-
 import org.egov.bpa.master.service.AppointmentLocationsService;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.BpaAppointmentSchedule;
 import org.egov.bpa.transaction.entity.enums.AppointmentSchedulePurpose;
 import org.egov.bpa.transaction.service.BpaAppointmentScheduleService;
-import org.egov.bpa.transaction.service.messaging.BPASmsAndEmailService;
 import org.egov.bpa.utils.BpaConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.validation.Valid;
+import java.util.List;
+
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_DOC_VERIFIED;
 
 @Controller
 @RequestMapping(value = "/application")
@@ -86,8 +80,6 @@ public class ScheduleAppointmentController extends BpaGenericApplicationControll
 
     @Autowired
     private BpaAppointmentScheduleService bpaAppointmentScheduleService;
-    @Autowired
-    private BPASmsAndEmailService bpaSmsAndEmailService;
     @Autowired
     private AppointmentLocationsService appointmentLocationsService;
 
@@ -163,6 +155,63 @@ public class ScheduleAppointmentController extends BpaGenericApplicationControll
             redirectAttributes.addFlashAttribute(MESSAGE,
                     messageSource.getMessage("msg.update.appoimt.fieldins", null, null));
         }
+        return REDIRECT_APPLICATION_VIEW_APPOINTMENT + schedule.getId();
+    }
+
+    @RequestMapping(value = "/scrutiny/schedule/{applicationNumber}", method = RequestMethod.GET)
+    public String showScheduleAppointmentForDocScrutiny(@PathVariable final String applicationNumber, final Model model) {
+        BpaApplication bpaApplication = applicationBpaService.findByApplicationNumber(applicationNumber);
+        BpaAppointmentSchedule appointmentSchedule = new BpaAppointmentSchedule();
+        appointmentSchedule.setPurpose(AppointmentSchedulePurpose.DOCUMENTSCRUTINY);
+        model.addAttribute(APPOINTMENT_LOCATIONS_LIST, appointmentLocationsService.findAllOrderByOrderNumber());
+        model.addAttribute(BPA_APPOINTMENT_SCHEDULE, appointmentSchedule);
+        model.addAttribute(APPLICATION_NUMBER, applicationNumber);
+        return SCHEDULE_APPIONTMENT_NEW;
+    }
+
+    @RequestMapping(value = "/scrutiny/schedule/{applicationNumber}", method = RequestMethod.POST)
+    public String scheduleAppointmentForDocScrutiny(@Valid @ModelAttribute final BpaAppointmentSchedule appointmentSchedule,
+                                            @PathVariable final String applicationNumber, final Model model, final RedirectAttributes redirectAttributes) {
+        BpaApplication bpaApplication = applicationBpaService.findByApplicationNumber(applicationNumber);
+        appointmentSchedule.setApplication(bpaApplication);
+        bpaUtils.redirectToBpaWorkFlow(bpaApplication.getCurrentState().getOwnerPosition().getId(), bpaApplication, null, BpaConstants.APPLICATION_STATUS_SCHEDULED, "Forward", null);
+        BpaAppointmentSchedule schedule = bpaAppointmentScheduleService.save(appointmentSchedule);
+        bpaSmsAndEmailService.sendSMSAndEmailToscheduleAppointment(schedule, bpaApplication);
+        redirectAttributes.addFlashAttribute(MESSAGE,
+                messageSource.getMessage("msg.new.appoimt", null, null));
+
+        return REDIRECT_APPLICATION_VIEW_APPOINTMENT + schedule.getId();
+    }
+
+    @RequestMapping(value = "/scrutiny/reschedule/{applicationNumber}", method = RequestMethod.GET)
+    public String showReScheduleDcoumentScrutiny(@PathVariable final String applicationNumber, final Model model) {
+        BpaApplication bpaApplication = applicationBpaService.findByApplicationNumber(applicationNumber);
+        List<BpaAppointmentSchedule> appointmentScheduledList = bpaAppointmentScheduleService.findByApplication(bpaApplication,
+                AppointmentSchedulePurpose.DOCUMENTSCRUTINY);
+        BpaAppointmentSchedule appointmentSchedule = new BpaAppointmentSchedule();
+        appointmentSchedule.setPurpose(appointmentScheduledList.get(0).getPurpose());
+        model.addAttribute(APPOINTMENT_LOCATIONS_LIST, appointmentLocationsService.findAllOrderByOrderNumber());
+        model.addAttribute(BPA_APPOINTMENT_SCHEDULE, appointmentSchedule);
+        model.addAttribute(APPLICATION_NUMBER, applicationNumber);
+        model.addAttribute(APPOINTMENT_SCHEDULED_LIST, appointmentScheduledList);
+        model.addAttribute("mode", "postponeappointment");
+        return RESCHEDULE_APPIONTMENT;
+    }
+
+    @RequestMapping(value = "/scrutiny/reschedule/{applicationNumber}", method = RequestMethod.POST)
+    public String rescheduleDocumentScrutiny(@Valid @ModelAttribute final BpaAppointmentSchedule appointmentSchedule,
+                                            @PathVariable final String applicationNumber,
+                                            @RequestParam Long bpaAppointmentScheduleId, final Model model, final RedirectAttributes redirectAttributes) {
+        BpaApplication bpaApplication = applicationBpaService.findByApplicationNumber(applicationNumber);
+        BpaAppointmentSchedule parent = bpaAppointmentScheduleService.findById(bpaAppointmentScheduleId);
+        appointmentSchedule.setApplication(bpaApplication);
+        appointmentSchedule.setPostponed(true);
+        appointmentSchedule.setParent(parent);
+        bpaUtils.redirectToBpaWorkFlow(bpaApplication.getCurrentState().getOwnerPosition().getId(), bpaApplication, null, "document scrutiny re-scheduled", BpaConstants.WF_RESCHDLE_APPMNT_BUTTON, null);
+        BpaAppointmentSchedule schedule = bpaAppointmentScheduleService.save(appointmentSchedule);
+        bpaSmsAndEmailService.sendSMSAndEmailToscheduleAppointment(schedule, bpaApplication);
+        redirectAttributes.addFlashAttribute(MESSAGE,
+                    messageSource.getMessage("msg.rescheduled.appoimt", null, null));
         return REDIRECT_APPLICATION_VIEW_APPOINTMENT + schedule.getId();
     }
 

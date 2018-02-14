@@ -111,7 +111,7 @@
 								<td><c:out
 										value="${modifiablePermitCondition.permitCondition.description}"></c:out></td>
 								<td><form:input
-										class="form-control permitConditionNumber addremovemandatory"
+										class="form-control permitConditionNumber addremovemandatory" maxlength="30"
 										path="dynamicPermitConditionsTemp[${modifyPCStatus.index}].permitConditionNumber" /><span
 									class="error-msg display-hide">Required</span></td>
 								<td><form:input
@@ -145,7 +145,7 @@
 								<td><form:input
 										class="form-control permitConditionNumber addremovemandatory"
 										path="dynamicPermitConditionsTemp[${modifyPCStatus.index}].permitConditionNumber"
-										required="true" /><span class="error-msg display-hide">Required</span>
+										required="true" maxlength="30" /><span class="error-msg display-hide">Required</span>
 								</td>
 								<td><form:input
 										path="dynamicPermitConditionsTemp[${modifyPCStatus.index}].permitConditiondDate"
@@ -270,7 +270,7 @@
 								<c:out value="${addnlPCStatus.index+1}"></c:out></td>
 							<td><form:textarea
 									path="additionalPermitConditionsTemp[${addnlPCStatus.index}].additionalPermitCondition"
-									rows="2"
+									rows="2" maxlength="500" data-pattern="alphanumericspecialcharacters"
 									class="form-control patternvalidation additionalPermitCondition"></form:textarea></td>
 						</tr>
 					</c:forEach>
@@ -290,7 +290,7 @@
 							1</td>
 						<td><form:textarea
 								path="additionalPermitConditionsTemp[0].additionalPermitCondition"
-								rows="2"
+								rows="2" maxlength="500" data-pattern="alphanumericspecialcharacters"
 								class="form-control patternvalidation additionalPermitConditions"></form:textarea></td>
 					</tr>
 				</c:otherwise>

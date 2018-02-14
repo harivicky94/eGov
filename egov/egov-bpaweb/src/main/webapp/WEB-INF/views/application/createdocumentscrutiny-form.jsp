@@ -247,6 +247,9 @@
 							</div>
 						</div>
 					</div>
+					<div class="panel panel-primary" data-collapsed="0">
+						<jsp:include page="rejection-reasons.jsp"></jsp:include>
+					</div>
 				</div>
 				<div id="document-info" class="tab-pane fade">
 					<div class="panel panel-primary" data-collapsed="0">

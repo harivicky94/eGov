@@ -198,7 +198,7 @@
 			<form:hidden path="applicantMode" />
 			<form:hidden path="source" />
 			<form:textarea class="form-control patternvalidation"
-				data-pattern="string" maxlength="128" id="remarks" path="remarks" />
+				data-pattern="alphanumericspecialcharacters" maxlength="128" id="remarks" path="remarks" />
 			<form:errors path="remarks" cssClass="add-margin error-msg" />
 		</div>
 	</div>

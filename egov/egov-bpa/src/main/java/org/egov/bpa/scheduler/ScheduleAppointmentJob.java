@@ -51,14 +51,15 @@ public class ScheduleAppointmentJob extends AbstractQuartzJob {
 	private static final Logger LOGGER = Logger.getLogger(ScheduleAppointmentJob.class);
 
 	@Autowired
-	transient ScheduleAppointmentForDocumentScrutinyService scheduleAppointmentForDocumentScrutinyService;
+	private transient ScheduleAppointmentForDocumentScrutinyService scheduleAppointmentForDocumentScrutinyService;
 
 	@Override
 	public void executeJob() {
-		LOGGER.debug("Entered into ScheduleAppointmentJob.execute");
+		if (LOGGER.isInfoEnabled())
+			LOGGER.info("Start scheduleAppointmentJob.execute");
 
 		scheduleAppointmentForDocumentScrutinyService.scheduleAppointmentsForDocumentScrutiny();
-
-		LOGGER.debug("Exting from ScheduleAppointmentJob.execute");
+		if (LOGGER.isInfoEnabled())
+			LOGGER.info("End ScheduleAppointmentJob.execute");
 	}
 }

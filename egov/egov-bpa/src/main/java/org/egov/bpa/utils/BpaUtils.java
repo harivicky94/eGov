@@ -19,6 +19,7 @@ import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.pims.commons.Position;
@@ -315,5 +316,16 @@ public class BpaUtils {
         List<AppConfigValues> appConfigValueList = appConfigValueService
                 .getConfigValuesByModuleAndKey(APPLICATION_MODULE_TYPE, "BPAPRIMARYDEPARTMENT");
         return !appConfigValueList.isEmpty() ? appConfigValueList.get(0).getValue() : "";
+    }
+
+    public StateHistory getRejectionComments(BpaApplication bpaApplication) {
+        StateHistory stateHistory = bpaApplication.getStateHistory().stream()
+                                                  .filter(history -> history.getValue().equalsIgnoreCase(APPLICATION_STATUS_REJECTED))
+                                                  .findAny().orElse(null);
+        if (stateHistory == null)
+            stateHistory = bpaApplication.getStateHistory().stream()
+                                         .filter(history -> history.getValue().equalsIgnoreCase(APPLICATION_STATUS_REJECT_CLERK))
+                                         .findAny().orElse(null);
+        return stateHistory;
     }
 }

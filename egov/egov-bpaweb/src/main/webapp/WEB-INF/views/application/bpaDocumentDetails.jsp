@@ -109,7 +109,7 @@
 				<div class="col-sm-3 add-margin">
 
 					<form:textarea class="form-control patternvalidation"
-						data-pattern="string" maxlength="256"
+						data-pattern="alphanumericspecialcharacters" maxlength="256"
 						id="applicationDocument${status.index}remarks"
 						path="applicationDocument[${status.index}].remarks"
 						value="{docs.remarks}" />

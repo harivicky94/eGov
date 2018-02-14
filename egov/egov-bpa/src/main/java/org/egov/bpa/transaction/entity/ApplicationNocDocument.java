@@ -85,9 +85,9 @@ public class ApplicationNocDocument extends AbstractAuditable {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "createduser")
     private User createduser;
-    @Length(min = 1, max = 256)
+    @Length(min = 1, max = 1000)
     private String remarks;
-    @Length(min = 1, max = 256)
+    @Length(min = 1, max = 1000)
     private String natureOfRequest;
     @Temporal(value = TemporalType.DATE)
     private Date letterSentOn;

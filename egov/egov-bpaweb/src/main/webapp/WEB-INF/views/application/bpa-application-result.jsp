@@ -59,6 +59,8 @@
 					data-tabidx=0><spring:message code='lbl.appln.details' /></a></li>
 				<li><a data-toggle="tab" href="#document-info" data-tabidx=1><spring:message
 							code='title.documentdetail' /></a></li>
+				<li><a data-toggle="tab" href="#noc-info" data-tabidx=2><spring:message
+					code='lbl.noc.details' /></a></li>
 				</ul>
 			<div class="tab-content">
 				<div id="applicant-info" class="tab-pane fade in active">
@@ -88,6 +90,11 @@
 				<div id="document-info" class="tab-pane fade">
 					<div class="panel panel-primary" data-collapsed="0">
 						<jsp:include page="view-bpaDocumentdetails.jsp"></jsp:include>
+					</div>
+				</div>
+				<div id="noc-info" class="tab-pane fade">
+					<div class="panel panel-primary" data-collapsed="0">
+						<jsp:include page="view-noc-document.jsp"></jsp:include>
 					</div>
 				</div>
 			</div>

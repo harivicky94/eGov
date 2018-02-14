@@ -177,7 +177,7 @@
 								code="lbl.modify.fee.reason" /><span class="mandatory"></span></label>
 						<div class="col-sm-7 add-margin text-center">
 							<form:textarea class="form-control patternvalidation"
-								data-pattern="alphanumericwithspace" rows="3" maxlength="512"
+								data-pattern="alphanumericspecialcharacters" rows="3" maxlength="512"
 								id="modifyFeeReason" path="modifyFeeReason" required="required" />
 							<form:errors path="modifyFeeReason"
 								cssClass="add-margin error-msg" />

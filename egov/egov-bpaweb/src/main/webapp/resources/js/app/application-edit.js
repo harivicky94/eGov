@@ -54,7 +54,7 @@ jQuery(document)
 					var table = tbody.length ? tbody : $('#bpaAdditionalPermitConditions');
 					var row = '<tr>'+
 					'<td class="text-center"><span class="serialNo text-center" id="slNoInsp">{{sno}}</span><input type="hidden" name="additionalPermitConditionsTemp[{{idx}}].application" value="{{applicationId}}" /><input type="hidden" class="additionalPermitCondition" name="additionalPermitConditionsTemp[{{idx}}].permitConditionType" value="ADDITIONAL_PERMITCONDITION"/><input type="hidden" class="additionalPermitCondition" name="additionalPermitConditionsTemp[{{idx}}].permitCondition" value="{{permitConditionId}}"/><input type="hidden" class="serialNo" data-sno name="additionalPermitConditionsTemp[{{idx}}].orderNumber"/></td>'+
-					'<td><textarea class="form-control patternvalidation additionalPermitCondition" rows="2" name="additionalPermitConditionsTemp[{{idx}}].additionalPermitCondition"/></td>';
+					'<td><textarea class="form-control patternvalidation additionalPermitCondition" data-pattern="alphanumericspecialcharacters" rows="2" maxlength="500" name="additionalPermitConditionsTemp[{{idx}}].additionalPermitCondition"/></td>';
 					
 					$('#addAddnlPermitRow').click(function(){
 							var idx=$(tbody).find('tr').length;
@@ -107,6 +107,18 @@ jQuery(document)
 				    		//$(rowObj).find("span").addClass('display-hide');
 				    	}
 				    });
+                    if ($('#townSurveyorInspectionRequire').not(':checked')) {
+                        $('#townSurveyorInspectionRequire').val(false);
+                    }
+                    $("#townSurveyorInspectionRequire").click(function(){
+                    	if($('#townSurveyorInspectionRequire').is(':checked')) {
+                            $('#townSurveyorInspectionRequire').attr('checked', 'true');
+                            $('#townSurveyorInspectionRequire').val(true);
+						} else {
+                            $('#townSurveyorInspectionRequire').attr('checked', 'false');
+                            $('#townSurveyorInspectionRequire').val(false);
+						}
+                    });
 					
 					$(".staticPermitConditions").change(function(){  
 				    	var $hiddenName=$(this).data('change-to');
@@ -202,7 +214,12 @@ jQuery(document)
 														var approvalComent = $(
 																'#approvalComent')
 																.val();
-														if (approvalComent == "") {
+                                                        var rejectionReasonsLength = $('.rejectionReasons:checked').length;
+                                                        if(rejectionReasonsLength <= 0){
+                                                            $('.rejectionReason').show();
+                                                            bootbox.alert('Please select atleast one rejection reason is mandatory');
+                                                            return true;
+                                                        } else if (approvalComent == "") {
 															bootbox.alert("Please enter rejection comments!");
 															$('#approvalComent').focus();
 															return true;
@@ -219,7 +236,7 @@ jQuery(document)
 										} else if (action == 'Revert') {
                                             bootbox
                                                 .confirm({
-                                                    message : 'Do you really want to send back the application to previously approved official ?',
+                                                    message : 'Please confirm, do you really want to send back this application to previously approved official ?',
                                                     buttons : {
                                                         'cancel' : {
                                                             label : 'No',
@@ -250,7 +267,7 @@ jQuery(document)
                                         } else if (action == 'Approve') {
                                             bootbox
                                                 .confirm({
-                                                    message : 'Are you want approve this application ?',
+                                                    message : 'Please confirm, do you really want to approve this application ?',
                                                     buttons : {
                                                         'cancel' : {
                                                             label : 'No',
@@ -274,7 +291,7 @@ jQuery(document)
                                         } else if (action == 'Forward') {
                                             bootbox
                                                 .confirm({
-                                                    message : 'Are you want forward this application to next official ?',
+                                                    message : 'Please confirm, do you really want to forward this application ?',
                                                     buttons : {
                                                         'cancel' : {
                                                             label : 'No',
@@ -288,9 +305,9 @@ jQuery(document)
                                                     callback: function (result) {
                                                         if (result) {
                                                             var approvalComent = $('#approvalComent').val();
-                                                            if ($("#approvalDesignation option:selected").text() == 'Town Surveyor' && approvalComent == "") {
+                                                            if (($("#approvalDesignation option:selected").text() == 'Town Surveyor' || $('#townSurveyorInspectionRequire').val() == 'true') && approvalComent == "") {
                                                                 $('#approvalComent').focus();
-                                                                bootbox.alert("Please enter comments to forward town surveyor");
+                                                                bootbox.alert("Please enter comments for town surveyor inspection");
                                                                 return true;
                                                             } else {
                                                                 validateOnApproveAndForward(validator, action);

@@ -101,7 +101,7 @@
 	<div class="col-sm-3 add-margin">
 		<form:textarea path="remarks" id="remarks"
 			class="form-control patternvalidation"
-			data-pattern="alphanumericwithspace"
+			data-pattern="alphanumericspecialcharacters"
 			maxlength="256" cols="5" rows="4" />
 		<form:errors path="remarks" cssClass="add-margin error-msg" />
 	</div>
@@ -115,7 +115,7 @@
 			<div class="col-sm-3 add-margin">
 				<form:textarea path="postponementReason" id="postponementReason"
 					class="form-control patternvalidation"
-					data-pattern="alphanumericwithspace" required="required"
+					data-pattern="alphanumericspecialcharacters" required="required"
 					maxlength="256" cols="5" rows="4" />
 				<form:errors path="postponementReason"
 					cssClass="add-margin error-msg" />
@@ -132,7 +132,7 @@
 	<div class="col-sm-3 add-margin">
 		<form:textarea path="remarks" id="remarks"
 			class="form-control patternvalidation"
-			data-pattern="alphanumericwithspace" maxlength="256" cols="5"
+			data-pattern="alphanumericspecialcharacters" maxlength="256" cols="5"
 			rows="4" />
 		<form:errors path="remarks" cssClass="add-margin error-msg" />
 	</div>
@@ -142,7 +142,7 @@
 		<div class="col-sm-3 add-margin">
 			<form:textarea path="postponementReason" id="postponementReason"
 				class="form-control patternvalidation"
-				data-pattern="alphanumericwithspace" required="required"
+				data-pattern="alphanumericspecialcharacters" required="required"
 				maxlength="256" cols="5" rows="4" />
 			<form:errors path="postponementReason"
 				cssClass="add-margin error-msg" />
@@ -151,6 +151,8 @@
 </div>
 </c:if>
 
+<script
+		src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
 <link rel="stylesheet"
 	href="<c:url value='/resources/global/css/bootstrap/bootstrap-datetimepicker.min.css' context='/egi'/>">
 <script

@@ -60,7 +60,7 @@
 		<i class="fa fa-angle-up fa-2x"></i>
 	</div>
 </div>
-<div class="panel-body display-hide">
+<div class="panel-body rejectionReason display-hide">
 	<table class="table table-bordered  multiheadertbl"
 		id="bpaStaticPermitConditions">
 		<thead>
@@ -166,7 +166,7 @@
 								<c:out value="${addnlPCStatus.index+1}"></c:out></td>
 							<td><form:textarea
 									path="additionalPermitConditionsTemp[${addnlPCStatus.index}].additionalPermitCondition"
-									rows="2"
+									rows="2" maxlength="500" data-pattern="alphanumericspecialcharacters"
 									class="form-control patternvalidation additionalPermitCondition"></form:textarea></td>
 						</tr>
 					</c:forEach>
@@ -186,7 +186,7 @@
 							1</td>
 						<td><form:textarea
 								path="additionalPermitConditionsTemp[0].additionalPermitCondition"
-								rows="2"
+								rows="2" maxlength="500" data-pattern="alphanumericspecialcharacters"
 								class="form-control patternvalidation additionalPermitConditions"></form:textarea></td>
 					</tr>
 				</c:otherwise>

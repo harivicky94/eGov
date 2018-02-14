@@ -104,7 +104,7 @@
 
 				<div class="col-sm-3 add-margin text-center">
 					<form:textarea class="form-control patternvalidation"
-						data-pattern="alphanumericwithspace" maxlength="256"
+						data-pattern="alphanumericspecialcharacters" maxlength="256"
 						id="docketDetailLocList${status.index}remarks"
 						path="docketDetailLocList[${status.index}].remarks" />
 
@@ -183,7 +183,7 @@
 
 				<div class="col-sm-3 add-margin text-center">
 					<form:textarea class="form-control patternvalidation"
-						data-pattern="alphanumericwithspace" maxlength="256"
+						data-pattern="alphanumericspecialcharacters" maxlength="256"
 						id="docketDetailMeasumentList${status.index}remarks"
 						path="docketDetailMeasumentList[${status.index}].remarks" />
 
@@ -258,7 +258,7 @@
 
 				<div class="col-sm-3 add-margin text-center">
 					<form:textarea class="form-control patternvalidation"
-						data-pattern="alphanumericwithspace" maxlength="256"
+						data-pattern="alphanumericspecialcharacters" maxlength="256"
 						id="docketDetailAccessList${status.index}remarks"
 						path="docketDetailAccessList[${status.index}].remarks" />
 
@@ -336,7 +336,7 @@
 
 				<div class="col-sm-3 add-margin text-center">
 					<form:textarea class="form-control patternvalidation"
-						data-pattern="alphanumericwithspace" maxlength="256"
+						data-pattern="alphanumericspecialcharacters" maxlength="256"
 						id="docketDetlSurroundingPlotList${status.index}remarks"
 						path="docketDetlSurroundingPlotList[${status.index}].remarks" />
 
@@ -414,7 +414,7 @@
 
 				<div class="col-sm-3 add-margin text-center">
 					<form:textarea class="form-control patternvalidation"
-						data-pattern="alphanumericwithspace" maxlength="256"
+						data-pattern="alphanumericspecialcharacters" maxlength="256"
 						id="docketDetailLandTypeList${status.index}remarks"
 						path="docketDetailLandTypeList[${status.index}].remarks" />
 
@@ -492,7 +492,7 @@
 
 				<div class="col-sm-3 add-margin text-center">
 					<form:textarea class="form-control patternvalidation"
-						data-pattern="alphanumericwithspace" maxlength="256"
+						data-pattern="alphanumericspecialcharacters" maxlength="256"
 						id="docketDetailProposedWorkList${status.index}remarks"
 						path="docketDetailProposedWorkList[${status.index}].remarks" />
 
@@ -570,7 +570,7 @@
 
 				<div class="col-sm-3 add-margin text-center">
 					<form:textarea class="form-control patternvalidation"
-						data-pattern="alphanumericwithspace" maxlength="256"
+						data-pattern="alphanumericspecialcharacters" maxlength="256"
 						id="docketDetailWorkAsPerPlanList${status.index}remarks"
 						path="docketDetailWorkAsPerPlanList[${status.index}].remarks" />
 
@@ -648,7 +648,7 @@
 
 				<div class="col-sm-3 add-margin text-center">
 					<form:textarea class="form-control patternvalidation"
-						data-pattern="alphanumericwithspace" maxlength="256"
+						data-pattern="alphanumericspecialcharacters" maxlength="256"
 						id="docketDetailHgtAbuttRoadList${status.index}remarks"
 						path="docketDetailHgtAbuttRoadList[${status.index}].remarks" />
 
@@ -720,7 +720,7 @@
 
 				<div class="col-sm-3 add-margin text-center">
 					<form:textarea class="form-control patternvalidation"
-						data-pattern="alphanumericwithspace" maxlength="256"
+						data-pattern="alphanumericspecialcharacters" maxlength="256"
 						id="docketDetailAreaLoc${status.index}remarks"
 						path="docketDetailAreaLoc[${status.index}].remarks" />
 
@@ -796,7 +796,7 @@
 
 				<div class="col-sm-3 add-margin text-center">
 					<form:textarea class="form-control patternvalidation"
-						data-pattern="alphanumericwithspace" maxlength="256"
+						data-pattern="alphanumericspecialcharacters" maxlength="256"
 						id="docketDetailLengthOfCompWall${status.index}remarks"
 						path="docketDetailLengthOfCompWall[${status.index}].remarks" />
 
@@ -872,7 +872,7 @@
 
 				<div class="col-sm-3 add-margin text-center">
 					<form:textarea class="form-control patternvalidation"
-						data-pattern="alphanumericwithspace" maxlength="256"
+						data-pattern="alphanumericspecialcharacters" maxlength="256"
 						id="docketDetailNumberOfWell${status.index}remarks"
 						path="docketDetailNumberOfWell[${status.index}].remarks" />
 
@@ -943,7 +943,7 @@
 
 				<div class="col-sm-3 add-margin text-center">
 					<form:textarea class="form-control patternvalidation"
-						data-pattern="alphanumericwithspace" maxlength="256"
+						data-pattern="alphanumericspecialcharacters" maxlength="256"
 						id="docketDetailShutter${status.index}remarks"
 						path="docketDetailShutter[${status.index}].remarks" />
 
@@ -1068,7 +1068,7 @@
 			code="lbl.ins.remarks" /></label>
 	<div class="col-sm-6 add-margin text-center">
 		<form:textarea class="form-control patternvalidation"
-			data-pattern="alphanumericwithspace" maxlength="256"
+			data-pattern="alphanumericspecialcharacters" maxlength="1000"
 			id="inspectionRemarks" path="inspectionRemarks" />
 
 		<form:errors path="inspectionRemarks" cssClass="add-margin error-msg" />

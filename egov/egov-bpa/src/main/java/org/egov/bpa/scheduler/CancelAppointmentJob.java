@@ -51,7 +51,7 @@ public class CancelAppointmentJob extends AbstractQuartzJob {
 	private static final Logger LOGGER = Logger.getLogger(CancelAppointmentJob.class);
 
 	@Autowired
-	transient BpaApplicationCancellationService bpaApplicationCancellationService;
+	private transient BpaApplicationCancellationService bpaApplicationCancellationService;
 
 	@Override
 	public void executeJob() {

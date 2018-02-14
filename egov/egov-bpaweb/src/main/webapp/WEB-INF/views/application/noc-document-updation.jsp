@@ -89,7 +89,7 @@
 						<div class="input-group">
 							<form:textarea
 								class="form-control patternvalidation textarea-content"
-								data-pattern="string" maxlength="512"
+								data-pattern="alphanumericspecialcharacters" maxlength="1000"
 								id="applicationNOCDocument${status.index}natureOfRequest"
 								path="applicationNOCDocument[${status.index}].natureOfRequest" />
 							<form:errors
@@ -123,8 +123,8 @@
 					<td>
 						<div class="input-group">
 							<form:textarea
-									class="form-control patternvalidation textarea-content"
-									data-pattern="string" maxlength="512"
+									class="form-control patternvalidation textarea-content nocRemarks"
+									data-pattern="alphanumericspecialcharacters" data-input-element="applicationNOCDocument${status.index}remarks" maxlength="1000"
 									id="applicationNOCDocument${status.index}remarks"
 									path="applicationNOCDocument[${status.index}].remarks"/>
 							<form:errors

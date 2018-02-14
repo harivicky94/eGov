@@ -39,11 +39,7 @@
  */
 package org.egov.bpa.transaction.service;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.egov.bpa.transaction.entity.BpaApplication;
-import org.egov.bpa.transaction.entity.BpaStatus;
 import org.egov.bpa.transaction.entity.SlotApplication;
 import org.egov.bpa.transaction.entity.SlotDetail;
 import org.egov.bpa.transaction.entity.enums.ScheduleAppointmentType;
@@ -53,10 +49,14 @@ import org.egov.bpa.transaction.repository.SlotApplicationRepository;
 import org.egov.bpa.transaction.repository.SlotDetailRepository;
 import org.egov.bpa.transaction.service.messaging.BPASmsAndEmailService;
 import org.egov.bpa.utils.BpaConstants;
+import org.egov.bpa.utils.BpaUtils;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -75,6 +75,7 @@ public class ScheduleAppointmentForDocumentScrutinyService {
 	
 	@Autowired
 	private BPASmsAndEmailService bpaSmsAndEmailService;
+	private BpaUtils bpaUtils;
 
 	@Transactional
 	public void scheduleAppointmentsForDocumentScrutiny() {
@@ -118,19 +119,16 @@ public class ScheduleAppointmentForDocumentScrutinyService {
 				}
 			}
 			if (slotApplication.getSlotDetail() != null) {
-				BpaStatus bpaStatus = new BpaStatus();
 				slotApplicationList.add(slotApplication);
 				if (slotApplication.getScheduleAppointmentType().toString()
 						.equals(ScheduleAppointmentType.SCHEDULE.toString())) {
-					bpaStatus = bpaStatusRepository.findByCode(BpaConstants.APPLICATION_STATUS_SCHEDULED);
-					bpaApplicationList.get(i).setStatus(bpaStatus);
+					bpaUtils.redirectToBpaWorkFlow(bpaApplicationList.get(i).getCurrentState().getOwnerPosition().getId(), bpaApplicationList.get(i), null, BpaConstants.APPLICATION_STATUS_SCHEDULED, "Forward", null);
 					applicationBpaRepository.save(bpaApplicationList.get(i));
 					bpaSmsAndEmailService.sendSMSAndEmailForDocumentScrutiny(slotApplication,
 							bpaApplicationList.get(i));
 				} else if (slotApplication.getScheduleAppointmentType().toString()
 						.equals(ScheduleAppointmentType.RESCHEDULE.toString())) {
-					bpaStatus = bpaStatusRepository.findByCode(BpaConstants.APPLICATION_STATUS_RESCHEDULED);
-					bpaApplicationList.get(i).setStatus(bpaStatus);
+					bpaUtils.redirectToBpaWorkFlow(bpaApplicationList.get(i).getCurrentState().getOwnerPosition().getId(), bpaApplicationList.get(i), null, "document scrutiny re-scheduled", BpaConstants.WF_RESCHDLE_APPMNT_BUTTON, null);
 					applicationBpaRepository.save(bpaApplicationList.get(i));
 					bpaSmsAndEmailService.sendSMSAndEmailForDocumentScrutiny(slotApplication,
 							bpaApplicationList.get(i));

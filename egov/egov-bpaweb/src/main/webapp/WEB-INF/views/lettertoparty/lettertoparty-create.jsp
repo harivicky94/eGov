@@ -77,7 +77,7 @@
 									code="lbl.lpdescription" /><span class="mandatory"></span></label>
 							<div class="col-sm-3 add-margin">
 								<form:textarea path="lpDesc"
-									class="form-control patternvalidation" data-pattern="string"
+									class="form-control patternvalidation" data-pattern="alphanumericspecialcharacters"
 									maxlength="1024" rows="5" id="lpDesc" required="required" />
 								<form:errors path="lpDesc" cssClass="error-msg" />
 							</div>
@@ -147,7 +147,7 @@
 										<div class="col-sm-3 add-margin text-center">
 
 											<form:textarea class="form-control patternvalidation"
-												data-pattern="string" maxlength="256"
+												data-pattern="alphanumericspecialcharacters" maxlength="256"
 												id="lettertoPartyDocument${status.index}remarks"
 												path="lettertoPartyDocument[${status.index}].remarks" />
 											<form:errors

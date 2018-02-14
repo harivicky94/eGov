@@ -270,6 +270,22 @@
 				</c:if>
 			</div>
 			<br>
+			<c:if test="${(not empty bpaApplication.inspections && bpaApplication.status.code eq 'Document Verified') || (bpaApplication.state.value eq 'Field Inspection completed' && bpaApplication.status.code eq 'Field Inspected')}">
+				<div class="panel panel-primary" data-collapsed="0">
+					<div class="panel-heading toggle-header custom_form_panel_heading">
+						<div class="panel-title">
+						</div>
+					</div>
+					<div class="panel-body">
+						<label class="view-content">
+							&nbsp;&nbsp;&nbsp;<form:checkbox path="townSurveyorInspectionRequire"
+															 id="townSurveyorInspectionRequire"/>
+							&nbsp;&nbsp;&nbsp;<spring:message
+								code="lbl.ts.inspn.requr"/>
+						</label>
+					</div>
+				</div>
+			</c:if>
 			<c:choose>
 				<c:when
 					test="${isFeeCollected && bpaApplication.status.code eq 'Approved'}">

@@ -105,8 +105,10 @@ jQuery(document)
 					} else if ($('#wfstateDesc').val() == 'LP Reply Received') {
 						removeWorkFlowMandatoryAndHideDepartmentDetails();
 						$("#buttonSubmit").show();
-					} else if ($('#wfstateDesc').val() == 'Rejected') {
-						$(".show-row").hide();
+					} else if ($('#wfstateDesc').val() == 'Rejected'
+						|| $('#wfstateDesc').val() == 'Town Surveyor Inspection Initiated'
+						|| $('#wfstateDesc').val() == 'Rejection initiated by clerk') {
+						$("#approverDetailBody").hide();
 					}
 
 					// Prevent continuous send back to previous owners, one step backward only allowed

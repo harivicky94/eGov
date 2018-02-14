@@ -51,7 +51,7 @@ public class OpenSlotsJob extends AbstractQuartzJob {
 	private static final Logger LOGGER = Logger.getLogger(OpenSlotsJob.class);
 
 	@Autowired
-	transient SlotOpeningForAppointmentService slotOpeningForAppointmentService;
+	private transient SlotOpeningForAppointmentService slotOpeningForAppointmentService;
 
 	@Override
 	public void executeJob() {

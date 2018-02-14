@@ -319,8 +319,13 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
             buildPermitConditions(application);
         }
 
+        if (APPLICATION_STATUS_TS_INS_INITIATED.equals(application.getStatus().getCode())) {
+            application.setTownSurveyorInspectionRequire(false);
+        }
+
         if (WF_REJECT_BUTTON.equalsIgnoreCase(workFlowAction)
-                || APPLICATION_STATUS_REJECTED.equalsIgnoreCase(application.getStatus().getCode())) {
+            || WF_INITIATE_REJECTION_BUTTON.equalsIgnoreCase(workFlowAction)
+            || APPLICATION_STATUS_REJECTED.equalsIgnoreCase(application.getStatus().getCode())) {
             buildRejectionReasons(application);
         }
         final BpaApplication updatedApplication = applicationBpaRepository.save(application);
@@ -346,7 +351,7 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         return admissionfeeAmount;
     }
 
-    public BigDecimal getTotalFeeAmountByPassingServiceTypeandArea(final Long serviceTypeId, List<ServiceType> amenityList,
+    private BigDecimal getTotalFeeAmountByPassingServiceTypeandArea(final Long serviceTypeId, List<ServiceType> amenityList,
             final String feeType) {
         BigDecimal totalAmount = BigDecimal.ZERO;
         List<Long> serviceTypeList = new ArrayList<>();
@@ -424,7 +429,7 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         return fileStoreMapper;
     }
 
-    protected void processAndStoreApplicationDocuments(final BpaApplication bpaApplication) {
+    private void processAndStoreApplicationDocuments(final BpaApplication bpaApplication) {
         if (!bpaApplication.getApplicationDocument().isEmpty() && null == bpaApplication.getApplicationDocument().get(0).getId())
             for (final ApplicationDocument applicationDocument : bpaApplication.getApplicationDocument()) {
                 applicationDocument.setChecklistDetail(

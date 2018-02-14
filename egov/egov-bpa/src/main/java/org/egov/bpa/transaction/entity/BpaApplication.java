@@ -148,6 +148,7 @@ public class BpaApplication extends StateAware<Position> {
 	private Boolean isSentToPreviousOwner = false;
 	@Length(min = 1, max = 5000)
 	private String townSurveyorRemarks;
+	private Boolean isTownSurveyorInspectionRequire = false;
 
 	@OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<SiteDetail> siteDetail = new ArrayList<>(0);
@@ -195,6 +196,9 @@ public class BpaApplication extends StateAware<Position> {
 	private List<ApplicationPermitConditions> rejectionReasons = new ArrayList<>(0);
 	@OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<BpaNotice> bpaNotice = new ArrayList<>(0);
+	@OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private List<SlotApplication> slotApplications = new ArrayList<>();
+
 	private transient Long approvalDepartment;
 	private transient Long zoneId;
 	private transient Long wardId;
@@ -207,8 +211,6 @@ public class BpaApplication extends StateAware<Position> {
 	private transient List<ApplicationPermitConditions> additionalPermitConditionsTemp = new ArrayList<>(0);
 	private transient List<ServiceType> applicationAmenityTemp = new ArrayList<>(0);
 
-	@OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	private List<SlotApplication> slotApplications = new ArrayList<>();
 
 	@Override
 	public Long getId() {
@@ -223,7 +225,6 @@ public class BpaApplication extends StateAware<Position> {
 	@Override
 	public String myLinkId() {
 		return applicationNumber != null ? applicationNumber : planPermissionNumber;
-
 	}
 
 	public String getAmenityName() {
@@ -671,6 +672,14 @@ public class BpaApplication extends StateAware<Position> {
 
 	public void setIsEconomicallyWeakerSection(Boolean isEconomicallyWeakerSection) {
 		this.isEconomicallyWeakerSection = isEconomicallyWeakerSection;
+	}
+
+	public Boolean getTownSurveyorInspectionRequire() {
+		return isTownSurveyorInspectionRequire;
+	}
+
+	public void setTownSurveyorInspectionRequire(Boolean townSurveyorInspectionRequire) {
+		isTownSurveyorInspectionRequire = townSurveyorInspectionRequire;
 	}
 
 	public void deleteBuildingDetails(final BuildingDetail buildingDetail) {

@@ -119,7 +119,7 @@
 										code="lbl.lpReplyRemarks" /></label>
 								<div class="col-sm-3 add-margin">
 									<form:textarea path="lpReplyRemarks"
-										class="form-control patternvalidation" data-pattern="string"
+										class="form-control patternvalidation" data-pattern="alphanumericspecialcharacters"
 										rows="5" id="lpDesc" maxlength="1024" />
 									<form:errors path="lpReplyRemarks" cssClass="error-msg" />
 								</div>
@@ -195,7 +195,7 @@
 
 										<div class="col-sm-2 add-margin text-center">
 											<form:textarea class="form-control patternvalidation"
-												data-pattern="string" maxlength="256"
+												data-pattern="alphanumericspecialcharacters" maxlength="256"
 												id="lettertoPartyDocument${status.index}remarks"
 												path="lettertoPartyDocument[${status.index}].remarks" />
 											<form:errors
