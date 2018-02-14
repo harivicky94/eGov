@@ -29,7 +29,9 @@
  */
 package org.egov.bpa.master.entity;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -39,19 +41,22 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 
 import org.egov.bpa.transaction.entity.enums.HolidayType;
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.validator.constraints.Length;
-
 @Entity
-@Table(name = "egbpa_holiday")
+@Table(name = "EGBPA_MSTR_HOLIDAY")
+@Unique(fields = { "holidaydate"}, enableDfltMsg = true)
 @SequenceGenerator(name = Holiday.SEQ_HOLIDAY, sequenceName = Holiday.SEQ_HOLIDAY, allocationSize = 1)
 public class Holiday extends AbstractAuditable {
 
 	private static final long serialVersionUID = 3078684328383202788L;
-	public static final String SEQ_HOLIDAY = "SEQ_EGBPA_HOLIDAY";
+	public static final String SEQ_HOLIDAY = "SEQ_EGBPA_MSTR_HOLIDAY";
 
 	@Id
 	@GeneratedValue(generator = SEQ_HOLIDAY, strategy = GenerationType.SEQUENCE)
@@ -60,21 +65,23 @@ public class Holiday extends AbstractAuditable {
 	@Enumerated(EnumType.STRING)
 	@NotNull
 	private HolidayType holidayType;
-	@NotNull
-	private Date holidayDate;
 
+	@NotNull
+	@Temporal(value = TemporalType.DATE)
+	private Date holidayDate;
+	
 	@Length(min = 1, max = 256)
 	private String description;
-
+	
 	@Length(min = 1, max = 30)
 	private String year;
+	
+	private transient List<Holiday> holidaysTemp = new ArrayList<>();
 
-	@Override
 	public Long getId() {
 		return id;
 	}
 
-	@Override
 	public void setId(Long id) {
 		this.id = id;
 	}
@@ -111,4 +118,11 @@ public class Holiday extends AbstractAuditable {
 		this.year = year;
 	}
 
+	public List<Holiday> getHolidaysTemp() {
+		return holidaysTemp;
+	}
+
+	public void setHolidaysTemp(List<Holiday> holidaysTemp) {
+		this.holidaysTemp = holidaysTemp;
+	}
 }
