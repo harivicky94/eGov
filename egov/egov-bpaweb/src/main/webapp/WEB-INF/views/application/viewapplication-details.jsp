@@ -74,7 +74,7 @@
 
 	<div class="row add-border">
 		<div class="col-sm-3 add-margin">
-			<spring:message code="lbl.service.type" />
+			<spring:message code="lbl.applctn.type" />
 		</div>
 		<div class="col-sm-3 add-margin view-content">
 			<input type="hidden" id="serviceType"
