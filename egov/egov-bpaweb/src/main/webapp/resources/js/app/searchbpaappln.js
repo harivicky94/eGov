@@ -125,7 +125,7 @@ $(document)
 													},
 													{
 														"data" : null,
-														"sClass" : "text-center",
+														"sClass" : "text-left",
 														"render" : function(
 																data, type,
 																row, meta) {
