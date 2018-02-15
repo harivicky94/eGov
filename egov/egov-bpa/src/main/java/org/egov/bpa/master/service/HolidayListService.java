@@ -45,8 +45,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+
 import org.egov.bpa.master.entity.Holiday;
 import org.egov.bpa.master.repository.HolidayListRepository;
 import org.egov.bpa.transaction.entity.dto.SearchHolidayList;
@@ -103,6 +105,7 @@ public class HolidayListService {
 		return buildHolidayListResponse(criteria);
 
 	}
+
 	// search holiday by holiday type and date
 	@SuppressWarnings("unchecked")
 	public List<Holiday> getHolidayTypeListByType(final HolidayType holidayType, final Date holidayDate) {
@@ -111,7 +114,7 @@ public class HolidayListService {
 		criteria.add(Restrictions.eq("holiday.holidayDate", holidayDate));
 		return criteria.list();
 	}
-	
+
 	// search all pre-loaded saturday and sunday
 	@SuppressWarnings("unchecked")
 	public boolean getPreLoadedGeneralHolidays(final String year) {
@@ -136,20 +139,31 @@ public class HolidayListService {
 		criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 		return criteria;
 	}
-	
-	// validating holiday present or not in the system and overriding sunday and saturday
-	public void validateHolidayList(final Holiday holiday, final BindingResult errors) {
+
+	// validating holiday present or not in the system and overriding sunday and
+	// saturday
+	public void validateCreateHolidayList(final Holiday holiday, final BindingResult errors) {
+
+		for (Holiday hlyday : holiday.getHolidaysTemp()) {
+			if (checkIsHolidayAlreadyEnter(hlyday.getHolidayDate())) {
+				errors.rejectValue("holidayDate", "msg.hol.exists");
+			}
+
+			if (!isDateAfterFourdays(hlyday.getHolidayDate())) {
+				errors.rejectValue("holidayDate", "msg.fourdays.gteq");
+			}
+		}
+	}
+
+	public void validateUpdateHolidayList(final Holiday holiday, final BindingResult errors) {
+
 		if (checkIsHolidayAlreadyEnter(holiday.getHolidayDate())) {
 			errors.rejectValue("holidayDate", "msg.hol.exists");
 		}
-		for (Holiday hlyday : holiday.getHolidaysTemp()) {
-			if (isSecondSaturdayOfMonth(hlyday.getHolidayDate())) {
-				hlyday.setDescription("General Holiday");
-			}
 
-			if (isSunday(hlyday.getHolidayDate())) {
-				hlyday.setDescription("General Holiday");
-			}
+		if (!isDateAfterFourdays(holiday.getHolidayDate())) {
+			errors.rejectValue("holidayDate", "msg.fourdays.gteq");
+
 		}
 	}
 
@@ -183,7 +197,7 @@ public class HolidayListService {
 		Calendar now = Calendar.getInstance();
 		return Integer.toString(now.get(Calendar.YEAR));
 	}
-	
+
 	// collecting list of all second saturday r
 	public List<Holiday> listOfSecondSaturday(final Date date) {
 		Holiday h = new Holiday();
@@ -203,7 +217,7 @@ public class HolidayListService {
 		Date toDate = c2.getTime();
 		return secondSaturday(fromDate, toDate);
 	}
-	
+
 	public List<Holiday> secondSaturday(Date fromDate, Date toDate) {
 		List<Holiday> secondSaturdayList = new ArrayList<>();
 		Calendar c1 = Calendar.getInstance();
@@ -236,7 +250,7 @@ public class HolidayListService {
 
 		return secondSaturdayList;
 	}
-	
+
 	// collecting list of all sunday
 	public List<Holiday> listOfSunday(final Date date) {
 		Holiday h = new Holiday();

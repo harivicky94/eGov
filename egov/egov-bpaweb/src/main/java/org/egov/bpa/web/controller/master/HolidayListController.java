@@ -94,7 +94,8 @@ public class HolidayListController {
 	@RequestMapping(value = "/create", method = RequestMethod.POST)
 	public String createHolidayList(@ModelAttribute(HOLIDAY) final Holiday holiday, final Model model,
 			final HttpServletRequest request, final BindingResult errors, final RedirectAttributes redirectAttributes) {
-		holidayListService.validateHolidayList(holiday, errors);
+		holidayListService.validateCreateHolidayList(holiday, errors);
+		
 		if (errors.hasErrors()) {
 			return HOLIDAYLIST_NEW;
 		}
@@ -144,10 +145,7 @@ public class HolidayListController {
 	@RequestMapping(value = "/update", method = RequestMethod.POST)
 	public String updateHolidayList(@ModelAttribute(HOLIDAY) final Holiday holidayList, final Model model,
 			final HttpServletRequest request, final BindingResult errors, final RedirectAttributes redirectAttributes) {
-		if (!holidayListService.isDateAfterFourdays(holidayList.getHolidayDate())) {
-			errors.rejectValue("holidayDate", "msg.fourdays.gteq");
-		}
-		holidayListService.validateHolidayList(holidayList, errors);
+		holidayListService.validateUpdateHolidayList(holidayList, errors);
 		if (errors.hasErrors()) {
 			preapreUpdateModel(holidayList, model);
 			return HOLIDAYLIST_UPDATE;
