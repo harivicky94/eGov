@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 
 public class Measurement {
 
-    private Boolean presentInDxf=true;
+    private Boolean presentInDxf=false;
     private BigDecimal minimumDistance;
 
     private BigDecimal length;

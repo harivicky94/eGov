@@ -56,8 +56,8 @@ public class PlanRuleService {
             criteria.add(Restrictions.eq("planRule.plotArea", planDetail.getPlanInformation().getPlotArea()));
         }
 
-        if (planDetail.getBuildingDetail() != null && planDetail.getBuildingDetail().getBuildingHeight() != null) {
-            criteria.add(Restrictions.eq("planRule.heightofbuilding", planDetail.getBuildingDetail().getBuildingHeight()));
+        if (planDetail.getBuilding() != null && planDetail.getBuilding().getBuildingHeight() != null) {
+            criteria.add(Restrictions.eq("planRule.heightofbuilding", planDetail.getBuilding().getBuildingHeight()));
 
         }
 
@@ -66,8 +66,8 @@ public class PlanRuleService {
                     MatchMode.ANYWHERE));
         }
 
-        if (planDetail.getBuildingDetail()!= null && !planDetail.getBuildingDetail().getFloors().isEmpty()) {
-            criteria.add(Restrictions.eq("planRule.nooffloors", planDetail.getBuildingDetail().getFloors().size()));
+        if (planDetail.getBuilding()!= null && !planDetail.getBuilding().getFloors().isEmpty()) {
+            criteria.add(Restrictions.eq("planRule.nooffloors", planDetail.getBuilding().getFloors().size()));
         }
 
         criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);

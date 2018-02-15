@@ -1,5 +1,6 @@
 package org.egov.edcr.entity;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,18 +15,51 @@ public class PlanDetail {
 
 	private List<Utility> utilities;
 	private PlanInformation planInformation;
-	private Plot landDetail;
-	private Building buildingDetail;
-	private HashMap<String, HashMap<String, Object>> reportOutput;
+	private Plot plot;
+	private Building building;
+	public ReportOutput reportOutput= new ReportOutput();
 	private Boolean edcrPassed=false;
-
+	private ElectricLine electricLine;
 	private List<NonNotifiedRoad> nonNotifiedRoads;
 	private List<NotifiedRoad> notifiedRoads;
 
 	private HashMap<String, String> errors = new HashMap<String, String>();
 	private HashMap<String, String> generalInformation = new HashMap<String, String>();
 
-	public HashMap<String, String> getGeneralInformation() {
+
+    public ElectricLine getElectricLine() {
+        return electricLine;
+    }
+
+    public void setElectricLine(ElectricLine electricLine) {
+        this.electricLine = electricLine;
+    }
+
+    public Boolean getEdcrPassed() {
+        return edcrPassed;
+    }
+
+    public void setEdcrPassed(Boolean edcrPassed) {
+        this.edcrPassed = edcrPassed;
+    }
+
+    public List<NonNotifiedRoad> getNonNotifiedRoads() {
+        return nonNotifiedRoads;
+    }
+
+    public void setNonNotifiedRoads(List<NonNotifiedRoad> nonNotifiedRoads) {
+        this.nonNotifiedRoads = nonNotifiedRoads;
+    }
+
+    public List<NotifiedRoad> getNotifiedRoads() {
+        return notifiedRoads;
+    }
+
+    public void setNotifiedRoads(List<NotifiedRoad> notifiedRoads) {
+        this.notifiedRoads = notifiedRoads;
+    }
+
+    public HashMap<String, String> getGeneralInformation() {
 		return generalInformation;
 	}
 
@@ -40,7 +74,7 @@ public class PlanDetail {
 
 	public void addErrors(Map<String, String> errors) {
 		if (errors != null)
-			getErrors().entrySet().add((Entry<String, String>) errors);
+		getErrors().putAll(errors);
 	}
 
 	public HashMap<String, String> getErrors() {
@@ -59,15 +93,16 @@ public class PlanDetail {
 		this.utilities = utilities;
 	}
 
-	public HashMap<String, HashMap<String, Object>> getReportOutput() {
-		return reportOutput;
-	}
+	
+	public ReportOutput getReportOutput() {
+        return reportOutput;
+    }
 
-	public void setReportOutput(HashMap<String, HashMap<String, Object>> reportOutput) {
-		this.reportOutput = reportOutput;
-	}
+    public void setReportOutput(ReportOutput reportOutput) {
+        this.reportOutput = reportOutput;
+    }
 
-	public PlanInformation getPlanInformation() {
+    public PlanInformation getPlanInformation() {
 		return planInformation;
 	}
 
@@ -75,20 +110,21 @@ public class PlanDetail {
 		this.planInformation = planInformation;
 	}
 
-	public Plot getLandDetail() {
-		return landDetail;
-	}
+    public Plot getPlot() {
+        return plot;
+    }
 
-	public void setLandDetail(Plot landDetail) {
-		this.landDetail = landDetail;
-	}
+    public void setPlot(Plot plot) {
+        this.plot = plot;
+    }
 
-	public Building getBuildingDetail() {
-		return buildingDetail;
-	}
+    public Building getBuilding() {
+        return building;
+    }
 
-	public void setBuildingDetail(Building buildingDetail) {
-		this.buildingDetail = buildingDetail;
-	}
+    public void setBuilding(Building building) {
+        this.building = building;
+    }
+
 
 }

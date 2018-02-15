@@ -1,13 +1,14 @@
 package org.egov.edcr.entity;
 
 import org.egov.edcr.entity.measurement.FrontYard;
+import org.egov.edcr.entity.measurement.Measurement;
 import org.egov.edcr.entity.measurement.NonNotifiedRoad;
 import org.egov.edcr.entity.measurement.NotifiedRoad;
 import org.egov.edcr.entity.measurement.RearYard;
 import org.egov.edcr.entity.measurement.SideYard1;
 import org.egov.edcr.entity.measurement.SideYard2;
 
-public class Plot {
+public class Plot extends Measurement {
     
     private FrontYard frontYard;
     private RearYard rearYard;

@@ -8,6 +8,16 @@ public class PlanInformation {
     private String ownerName;
     private String architectName;
     private String occupancy;
+    private Boolean crzZoneArea=false;
+    
+    
+    public Boolean getCrzZoneArea() {
+        return crzZoneArea;
+    }
+
+    public void setCrzZoneArea(Boolean crzZoneArea) {
+        this.crzZoneArea = crzZoneArea;
+    }
 
     public BigDecimal getPlotArea() {
         return plotArea;
