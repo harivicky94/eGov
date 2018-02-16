@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2018-02-16T16:24:19 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="buildingpermit" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="576a1e58-ecb3-4d56-971a-5d1fe019af29">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="168"/>
+	<property name="ireport.y" value="0"/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<import value="org.egov.infra.reporting.util.*"/>
 	<import value="org.egov.infstr.utils.*"/>
@@ -31,6 +33,7 @@
 	<parameter name="designation" class="java.lang.String"/>
 	<parameter name="permitConditions" class="java.lang.String"/>
 	<parameter name="additionalNotes" class="java.lang.String"/>
+	<parameter name="qrCode" class="java.io.File"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -49,28 +52,28 @@
 	<title>
 		<band height="145" splitType="Stretch">
 			<textField>
-				<reportElement x="64" y="11" width="452" height="20" uuid="0c350090-2eb2-4cb8-a172-f52fdc4324ba"/>
+				<reportElement x="35" y="11" width="452" height="20" uuid="0c350090-2eb2-4cb8-a172-f52fdc4324ba"/>
 				<textElement textAlignment="Center">
 					<font fontName="SansSerif" size="11" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["APPENDIX C"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="64" y="31" width="452" height="20" uuid="860ffd1a-527b-4be5-aeaf-3e6dab016dad"/>
+				<reportElement x="44" y="30" width="452" height="20" uuid="860ffd1a-527b-4be5-aeaf-3e6dab016dad"/>
 				<textElement textAlignment="Center">
 					<font fontName="SansSerif" size="12" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["See Rule 11 (3)"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="64" y="51" width="452" height="20" uuid="13d1ee09-016a-44b3-a70c-eeaa9b66affd"/>
+				<reportElement x="43" y="52" width="452" height="20" uuid="13d1ee09-016a-44b3-a70c-eeaa9b66affd"/>
 				<textElement textAlignment="Center">
 					<font fontName="SansSerif" size="11" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["BUILDING PERMIT"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="0" y="71" width="555" height="20" uuid="5dfe528d-792c-4b15-8716-5ce4671fb539"/>
+				<reportElement x="-8" y="71" width="555" height="20" uuid="5dfe528d-792c-4b15-8716-5ce4671fb539"/>
 				<textElement textAlignment="Center">
 					<font fontName="SansSerif" size="12" isBold="true"/>
 				</textElement>
@@ -111,6 +114,12 @@
 				</textElement>
 				<textFieldExpression><![CDATA["Ref :-  Application Dated "+$P{applicationDate}+" from smt/sri "+$P{applicantName}]]></textFieldExpression>
 			</textField>
+			<image>
+				<reportElement x="0" y="10" width="150" height="70" uuid="8b09590f-cf8d-4a41-ba7d-bce7902173f9">
+					<property name="qrCode" value="$P{qrCode}"/>
+				</reportElement>
+				<imageExpression><![CDATA[$P{qrCode}]]></imageExpression>
+			</image>
 		</band>
 	</title>
 	<detail>

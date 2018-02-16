@@ -46,15 +46,51 @@
  */
 package org.egov.bpa.transaction.service.notice;
 
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_MODULE_TYPE;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CANCELLED;
+import static org.egov.bpa.utils.BpaConstants.BPADEMANDNOTICETITLE;
+import static org.egov.bpa.utils.BpaConstants.BPAREJECTIONFILENAME;
+import static org.egov.bpa.utils.BpaConstants.BPA_ADM_FEE;
+import static org.egov.bpa.utils.BpaConstants.BPA_DEMAND_NOTICE_TYPE;
+import static org.egov.bpa.utils.BpaConstants.BPA_REJECTION_NOTICE_TYPE;
+import static org.egov.bpa.utils.BpaConstants.BUILDINGDEVELOPPERMITFILENAME;
+import static org.egov.bpa.utils.BpaConstants.BUILDINGPERMITFILENAME;
+import static org.egov.bpa.utils.BpaConstants.DEMANDNOCFILENAME;
+import static org.egov.bpa.utils.BpaConstants.PERMIT_ORDER_NOTICE_TYPE;
+import static org.egov.bpa.utils.BpaConstants.ST_CODE_05;
+import static org.egov.bpa.utils.BpaConstants.ST_CODE_08;
+import static org.egov.bpa.utils.BpaConstants.ST_CODE_09;
+import static org.egov.bpa.utils.BpaConstants.ST_CODE_14;
+import static org.egov.bpa.utils.BpaConstants.ST_CODE_15;
+import static org.egov.infra.security.utils.SecureCodeUtils.generatePDF417Code;
+import static org.egov.infra.utils.DateUtils.currentDateToDefaultDateFormat;
+
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.WordUtils;
 import org.egov.bpa.master.entity.ServiceType;
-import org.egov.bpa.transaction.entity.*;
+import org.egov.bpa.transaction.entity.ApplicationPermitConditions;
+import org.egov.bpa.transaction.entity.BpaApplication;
+import org.egov.bpa.transaction.entity.BpaNotice;
+import org.egov.bpa.transaction.entity.BuildingDetail;
+import org.egov.bpa.transaction.entity.Response;
 import org.egov.bpa.transaction.entity.enums.PermitConditionType;
 import org.egov.bpa.transaction.repository.BpaNoticeRepository;
 import org.egov.bpa.transaction.service.ApplicationBpaService;
 import org.egov.bpa.transaction.service.BpaApplicationPermitConditionsService;
+import org.egov.bpa.transaction.workflow.BpaWorkFlowService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.utils.BpaUtils;
 import org.egov.commons.Installment;
@@ -67,6 +103,7 @@ import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.workflow.entity.StateHistory;
+import org.egov.pims.commons.Position;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,17 +111,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.egov.bpa.utils.BpaConstants.*;
-import static org.egov.infra.utils.DateUtils.currentDateToDefaultDateFormat;
 
 @Service
 @Transactional(readOnly = true)
@@ -107,6 +133,8 @@ public class BpaNoticeService {
     private ApplicationBpaService applicationBpaService;
     @Autowired
     private BpaApplicationPermitConditionsService bpaApplicationPermitConditionsService;
+    @Autowired
+    private BpaWorkFlowService bpaWorkFlowService;
 
     public BpaNotice findByApplicationAndNoticeType(final BpaApplication application, final String noticeType) {
         return bpaNoticeRepository.findByApplicationAndNoticeType(application, noticeType);
@@ -281,8 +309,19 @@ public class BpaNoticeService {
                 getValidityDescription(bpaApplication.getServiceType().getCode(), bpaApplication.getPlanPermissionDate()));
         reportParams.put("isBusinessUser", bpaUtils.logedInuseCitizenOrBusinessUser());
         reportParams.put("designation", getApproverDesignation(getAmountRuleByServiceType(bpaApplication)));
+        reportParams.put("qrCode",generatePDF417Code(buildQRCodeDetails(bpaApplication)));
+
         return reportParams;
     }
+
+	private String buildQRCodeDetails(final BpaApplication bpaApplication) {
+		StringBuilder qrCodeValue = new StringBuilder();
+        qrCodeValue.append("permitNumber : ").append(bpaApplication.getPlanPermissionNumber());
+        qrCodeValue.append("designation : ").append(getApproverDesignation(getAmountRuleByServiceType(bpaApplication)));
+        qrCodeValue.append("date of issue of permit : ").append(bpaApplication.getPlanPermissionDate());
+        qrCodeValue.append("name of approver : ").append(getApproverName(bpaApplication));
+		return qrCodeValue.toString();
+	}
 
     private String getValidityDescription(final String serviceTypeCode, final Date planPermissionDate) {
         StringBuilder certificateValidatiy = new StringBuilder();
@@ -355,7 +394,7 @@ public class BpaNoticeService {
         StringBuilder rejectReasons = new StringBuilder();
         int order = buildPredefinedRejectReasons(bpaApplication, rejectReasons);
         int additionalOrder = buildAdditionalPermitConditionsOrRejectionReason(rejectReasons, additionalPermitConditions, order);
-        StateHistory stateHistory = bpaUtils.getRejectionComments(bpaApplication);
+        StateHistory<Position> stateHistory = bpaUtils.getRejectionComments(bpaApplication);
         rejectReasons.append(String.valueOf(additionalOrder) + ") " + (stateHistory != null && StringUtils.isNotBlank(stateHistory.getComments()) ? stateHistory.getComments() : EMPTY) + "\n\n");
         return rejectReasons.toString();
     }
@@ -439,5 +478,12 @@ public class BpaNoticeService {
             designation = "Secretary";
         }
         return designation;
+    }
+    
+    private String getApproverName(final BpaApplication application) {
+    	StateHistory<Position> stateHistory = application.getStateHistory().stream()
+                .filter(history -> history.getOwnerPosition().getDeptDesig().getDesignation().getName().equalsIgnoreCase(getApproverDesignation(getAmountRuleByServiceType(application))))
+                .findAny().orElse(null);
+    	return bpaWorkFlowService.getApproverAssignment(stateHistory.getOwnerPosition()).getEmployee().getName();
     }
 }
