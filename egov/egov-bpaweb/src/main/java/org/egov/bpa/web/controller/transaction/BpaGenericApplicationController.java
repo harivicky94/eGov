@@ -56,7 +56,6 @@ import org.egov.bpa.transaction.service.*;
 import org.egov.bpa.transaction.service.collection.BpaDemandService;
 import org.egov.bpa.transaction.service.messaging.BPASmsAndEmailService;
 import org.egov.bpa.transaction.workflow.BpaWorkFlowService;
-import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.utils.BpaUtils;
 import org.egov.dcb.bean.Receipt;
 import org.egov.demand.model.EgDemandDetails;
@@ -75,7 +74,6 @@ import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.FileStoreUtils;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.pims.commons.Position;
-import org.egov.ptis.constants.PropertyTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.support.ResourceBundleMessageSource;
@@ -87,8 +85,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.ADMIN_HIERARCHY_TYPE;
-import static org.egov.ptis.constants.PropertyTaxConstants.WARD;
+import static org.egov.bpa.utils.BpaConstants.*;
 
 public abstract class BpaGenericApplicationController extends GenericWorkFlowController {
 
@@ -153,8 +150,8 @@ public abstract class BpaGenericApplicationController extends GenericWorkFlowCon
 
     @ModelAttribute("zones")
     public List<Boundary> zones() {
-        return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(BpaConstants.ZONE,
-                PropertyTaxConstants.REVENUE_HIERARCHY_TYPE);
+        return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(ZONE,
+                REVENUE_HIERARCHY_TYPE);
     }
 
     @ModelAttribute("serviceTypeList")
@@ -195,7 +192,7 @@ public abstract class BpaGenericApplicationController extends GenericWorkFlowCon
     @ModelAttribute("electionwards")
     public List<Boundary> wards() {
          List<Boundary> boundaries = boundaryService
-                .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(WARD, ADMIN_HIERARCHY_TYPE);
+                .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(WARD, ADMINISTRATION_HIERARCHY_TYPE);
          sortBoundaryByBndryNumberAsc(boundaries);
          return boundaries;
     }
@@ -203,22 +200,22 @@ public abstract class BpaGenericApplicationController extends GenericWorkFlowCon
     @ModelAttribute("wards")
     public List<Boundary> adminWards() {
         List<Boundary> boundaries =  boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(WARD,
-                BpaConstants.REVENUE_HIERARCHY_TYPE);
+                REVENUE_HIERARCHY_TYPE);
         sortBoundaryByBndryNumberAsc(boundaries);
         return boundaries;
     }
 
     @ModelAttribute("street")
     public List<Boundary> blocks() {
-        return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(BpaConstants.STREET,
-                PropertyTaxConstants.REVENUE_HIERARCHY_TYPE);
+        return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(STREET,
+                REVENUE_HIERARCHY_TYPE);
     }
 
     @ModelAttribute("localitys")
     public List<Boundary> localitys() {
         return boundaryService
-                .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(BpaConstants.LOCALITY,
-                        BpaConstants.LOCATION_HIERARCHY_TYPE);
+                .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(LOCALITY,
+                        LOCATION_HIERARCHY_TYPE);
     }
     
     private void sortBoundaryByBndryNumberAsc(List<Boundary> boundaries) {
@@ -232,7 +229,7 @@ public abstract class BpaGenericApplicationController extends GenericWorkFlowCon
 
     @ModelAttribute("buildingFloorList")
     public List<String> getBuildingFLoorList() {
-        return BpaConstants.getBuildingFloorsList();
+        return getBuildingFloorsList();
     }
 
     @ModelAttribute("uomList")
@@ -279,14 +276,14 @@ public abstract class BpaGenericApplicationController extends GenericWorkFlowCon
         Boolean citizenUser = bpaUtils.logedInuserIsCitizen();
         model.addAttribute("isCitizen", citizenUser);
         List<AppConfigValues> appConfigValueList = appConfigValueService.getConfigValuesByModuleAndKey(
-                BpaConstants.APPLICATION_MODULE_TYPE, BpaConstants.BPA_CITIZENACCEPTANCE_CHECK);
+                APPLICATION_MODULE_TYPE, BPA_CITIZENACCEPTANCE_CHECK);
         String validateCitizenAcceptance = !appConfigValueList.isEmpty() ? appConfigValueList.get(0).getValue() : "";
         model.addAttribute("validateCitizenAcceptance",
                 (validateCitizenAcceptance.equalsIgnoreCase("YES") ? Boolean.TRUE : Boolean.FALSE));
         if (StringUtils.isNotBlank(validateCitizenAcceptance)) {
             model.addAttribute("citizenDisclaimerAccepted", bpaApplication.isCitizenAccepted());
         }
-        String enableOrDisablePayOnline = bpaUtils.getAppconfigValueByKeyName(BpaConstants.ENABLEONLINEPAYMENT);
+        String enableOrDisablePayOnline = bpaUtils.getAppconfigValueByKeyName(ENABLEONLINEPAYMENT);
         model.addAttribute("onlinePaymentEnable",
                 (enableOrDisablePayOnline.equalsIgnoreCase("YES") ? Boolean.TRUE : Boolean.FALSE));
         model.addAttribute("citizenOrBusinessUser", bpaUtils.logedInuseCitizenOrBusinessUser());

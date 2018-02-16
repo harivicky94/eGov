@@ -60,22 +60,23 @@
 	</div>
 </div>
 <div class="panel-body">
-<div class="row view-content header-color hidden-xs">
+	<div class="row view-content header-color hidden-xs">
 		<label class="col-sm-3 ">
-		   <spring:message code="lbl.documentname" />
-		 </label>
-	<label class="col-sm-2 ">
-	<spring:message code="lbl.issubmitted" />
-	</label>
-	<label class="col-sm-3 ">
-		<spring:message code="lbl.remarks" />
+			<spring:message code="lbl.documentname"/>
 		</label>
-	<label class="col-sm-4 ">
-		<spring:message code="lbl.attachdocument" />
-		<br> <small class="error-msg"><spring:message
-				code="lbl.mesg.document" /></small>
-	</label>
-</div>
+		<%--<label class="col-sm-2 ">
+        <spring:message code="lbl.issubmitted" />
+        </label>--%>
+		<label class="col-sm-3 ">
+			<spring:message code="lbl.remarks"/>
+		</label>
+		<label class="col-sm-4 ">
+			<spring:message code="lbl.attachdocument"/>
+			<br>
+			<small class="error-msg"><spring:message
+					code="lbl.mesg.document"/></small>
+		</label>
+	</div>
 <c:choose>
 	<c:when test="${bpaApplication.serviceType ne null}">
 		<c:forEach var="docs" items="${applicationDocumentList}"
@@ -100,11 +101,11 @@
 						value="${docs.checklistDetail.description}" />
 				</div>
 
-				<div class="col-sm-2 add-margin">
+				<%--<div class="col-sm-2 add-margin">
 					<form:checkbox id="applicationDocument${status.index}issubmitted"
 						path="applicationDocument[${status.index}].issubmitted"
 						value="${docs.issubmitted}" />
-				</div>
+				</div>--%>
 
 				<div class="col-sm-3 add-margin">
 

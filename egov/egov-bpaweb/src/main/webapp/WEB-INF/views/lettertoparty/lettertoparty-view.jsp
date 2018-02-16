@@ -128,9 +128,9 @@
 						<div class="col-sm-2 text-center view-content">
 							<spring:message code="lbl.isrequested" />
 						</div>
-						<div class="col-sm-2 text-center view-content">
+						<%--<div class="col-sm-2 text-center view-content">
 							<spring:message code="lbl.issubmitted" />
-						</div>
+						</div>--%>
 						<div class="col-sm-3 text-center view-content">
 							<spring:message code="lbl.remarks" />
 						</div>
@@ -151,10 +151,10 @@
 									<c:out value="${docs.isrequested ? 'Yes' : 'No'}"></c:out>
 
 								</div>
-								<div class="col-sm-2 text-center">
+								<%--<div class="col-sm-2 text-center">
 									<c:out value="${docs.issubmitted ? 'Yes' : 'No'}"></c:out>
 
-								</div>
+								</div>--%>
 								<div class="col-sm-3 text-center">
 									<c:out value="${docs.remarks}" />
 								</div>

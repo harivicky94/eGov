@@ -107,7 +107,7 @@ jQuery(document)
 				    		//$(rowObj).find("span").addClass('display-hide');
 				    	}
 				    });
-                    if ($('#townSurveyorInspectionRequire').not(':checked')) {
+                    if ($('#townSurveyorInspectionRequire:checked').length == 0) {
                         $('#townSurveyorInspectionRequire').val(false);
                     }
                     $("#townSurveyorInspectionRequire").click(function(){
@@ -305,7 +305,13 @@ jQuery(document)
                                                     callback: function (result) {
                                                         if (result) {
                                                             var approvalComent = $('#approvalComent').val();
-                                                            if (($("#approvalDesignation option:selected").text() == 'Town Surveyor' || $('#townSurveyorInspectionRequire').val() == 'true') && approvalComent == "") {
+                                                            if(($("#approvalDesignation option:selected").text() == 'Superintendent' && $('#townSurveyorInspectionRequire').val() == 'true')) {
+                                                                bootbox.alert("Please make sure, Request for town surveyor field inspection is recommended but you are trying to forward the application to Superintendent, please select Town Surveyor as approver designation from below otherwise uncheck Request for town surveyor field inspection if town surveyor field inspection not require,");
+                                                                return true;
+															} else if(($("#approvalDesignation option:selected").text() == 'Town Surveyor' && $('#townSurveyorInspectionRequire').val() == 'false')) {
+                                                                bootbox.alert("Please select checkbox Request for town surveyor field inspection if you want to forward the application to Town Surveyor");
+                                                                return true;
+                                                            }  else if (($("#approvalDesignation option:selected").text() == 'Town Surveyor' || $('#townSurveyorInspectionRequire').val() == 'true') && approvalComent == "") {
                                                                 $('#approvalComent').focus();
                                                                 bootbox.alert("Please enter comments for town surveyor inspection");
                                                                 return true;

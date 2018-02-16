@@ -55,7 +55,7 @@
 	<thead>
 		<tr>
 			<th><spring:message code="lbl.documentname" /></th>
-			<th><spring:message code="lbl.issubmitted" /></th>
+			<%--<th><spring:message code="lbl.issubmitted" /></th>--%>
 			<th><spring:message code="lbl.remarks" /></th>
 			<th><spring:message code="lbl.files" /></th>
 		</tr>
@@ -68,8 +68,8 @@
 					<tr>
 						<td><c:out value="${docs.checklistDetail.description}"
 								default="N/A" /></td>
-						<td><c:out value="${docs.issubmitted ? 'Yes' : 'No'}"
-								default="N/A"></c:out></td>
+						<%--<td><c:out value="${docs.issubmitted ? 'Yes' : 'No'}"
+								default="N/A"></c:out></td>--%>
 						<td><c:out value="${docs.remarks}" default="N/A" /></td>
 						<td><c:set value="false" var="isDocFound"></c:set> <c:forEach
 								var="bpadoc" items="${docs.getOrderedSupportDocs()}" varStatus="loop">

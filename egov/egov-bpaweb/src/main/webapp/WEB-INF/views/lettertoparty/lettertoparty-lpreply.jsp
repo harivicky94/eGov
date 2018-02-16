@@ -142,9 +142,9 @@
 							<div class="col-sm-2  text-center view-content">
 								<spring:message code="lbl.isrequested" />
 							</div>
-							<div class="col-sm-2 text-center view-content">
+							<%--<div class="col-sm-2 text-center view-content">
 								<spring:message code="lbl.issubmitted" />
-							</div>
+							</div>--%>
 							<div class="col-sm-2 text-center view-content">
 								<spring:message code="lbl.remarks" />
 							</div>
@@ -186,12 +186,12 @@
 												value="lettertoPartyDocument${status.index}isrequested"
 												disabled="true" />
 										</div>
-										<div class="col-sm-2 add-margin text-center">
+										<%--<div class="col-sm-2 add-margin text-center">
 											<form:checkbox
 												id="lettertoPartyDocument${status.index}issubmitted"
 												path="lettertoPartyDocument[${status.index}].issubmitted"
 												value="lettertoPartyDocument${status.index}issubmitted" />
-										</div>
+										</div>--%>
 
 										<div class="col-sm-2 add-margin text-center">
 											<form:textarea class="form-control patternvalidation"
