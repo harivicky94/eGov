@@ -316,10 +316,10 @@ public class BpaNoticeService {
 
 	private String buildQRCodeDetails(final BpaApplication bpaApplication) {
 		StringBuilder qrCodeValue = new StringBuilder();
-        qrCodeValue.append("permitNumber : ").append(bpaApplication.getPlanPermissionNumber());
-        qrCodeValue.append("designation : ").append(getApproverDesignation(getAmountRuleByServiceType(bpaApplication)));
-        qrCodeValue.append("date of issue of permit : ").append(bpaApplication.getPlanPermissionDate());
-        qrCodeValue.append("name of approver : ").append(getApproverName(bpaApplication));
+        qrCodeValue.append("Permit number : ").append(bpaApplication.getPlanPermissionNumber()).append("\n");
+        qrCodeValue.append("Approved by : ").append(getApproverDesignation(getAmountRuleByServiceType(bpaApplication))).append("\n");
+        qrCodeValue.append("Date of issue of permit : ").append(bpaApplication.getPlanPermissionDate()).append("\n");
+        qrCodeValue.append("Name of approver : ").append(getApproverName(bpaApplication)).append("\n");
 		return qrCodeValue.toString();
 	}
 
