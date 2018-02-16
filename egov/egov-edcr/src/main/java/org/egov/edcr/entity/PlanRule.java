@@ -21,17 +21,29 @@ public class PlanRule extends AbstractAuditable {
 
     private String service;
 
-    private BigDecimal plotArea;
+    private BigDecimal minPlotArea;
+
+    private BigDecimal maxPlotArea;
 
     private String occupancy;
 
-    private Double noOfFloors;
+    private Double minFloors;
 
-    private BigDecimal heightOfBuilding;
+    private Double maxFloors;
 
-    @ManyToOne
-    @JoinColumn(name = "rule")
-    private Rule rule;
+    private BigDecimal minBuildingHgt;
+
+    private BigDecimal maxBuildingHgt;
+
+    private String rules;
+
+    private String familySize;
+
+    private String abutingRoad;
+
+    private BigDecimal minRoad;
+
+    private BigDecimal maxRoad;
 
     @NotNull
     private Boolean active;
@@ -54,12 +66,20 @@ public class PlanRule extends AbstractAuditable {
         this.service = service;
     }
 
-    public BigDecimal getPlotArea() {
-        return plotArea;
+    public BigDecimal getMinPlotArea() {
+        return minPlotArea;
     }
 
-    public void setPlotArea(BigDecimal plotArea) {
-        this.plotArea = plotArea;
+    public void setMinPlotArea(BigDecimal minPlotArea) {
+        this.minPlotArea = minPlotArea;
+    }
+
+    public BigDecimal getMaxPlotArea() {
+        return maxPlotArea;
+    }
+
+    public void setMaxPlotArea(BigDecimal maxPlotArea) {
+        this.maxPlotArea = maxPlotArea;
     }
 
     public String getOccupancy() {
@@ -70,28 +90,60 @@ public class PlanRule extends AbstractAuditable {
         this.occupancy = occupancy;
     }
 
-    public BigDecimal getHeightOfBuilding() {
-        return heightOfBuilding;
+    public Double getMinFloors() {
+        return minFloors;
     }
 
-    public void setHeightOfBuilding(BigDecimal heightOfBuilding) {
-        this.heightOfBuilding = heightOfBuilding;
+    public void setMinFloors(Double minFloors) {
+        this.minFloors = minFloors;
     }
 
-    public Rule getRule() {
-        return rule;
+    public Double getMaxFloors() {
+        return maxFloors;
     }
 
-    public void setRule(Rule rule) {
-        this.rule = rule;
+    public void setMaxFloors(Double maxFloors) {
+        this.maxFloors = maxFloors;
     }
 
-    public Double getNoOfFloors() {
-        return noOfFloors;
+    public BigDecimal getMinBuildingHgt() {
+        return minBuildingHgt;
     }
 
-    public void setNoOfFloors(Double noOfFloors) {
-        this.noOfFloors = noOfFloors;
+    public void setMinBuildingHgt(BigDecimal minBuildingHgt) {
+        this.minBuildingHgt = minBuildingHgt;
+    }
+
+    public BigDecimal getMaxBuildingHgt() {
+        return maxBuildingHgt;
+    }
+
+    public void setMaxBuildingHgt(BigDecimal maxBuildingHgt) {
+        this.maxBuildingHgt = maxBuildingHgt;
+    }
+
+    public String getRules() {
+        return rules;
+    }
+
+    public void setRules(String rules) {
+        this.rules = rules;
+    }
+
+    public String getFamilySize() {
+        return familySize;
+    }
+
+    public void setFamilySize(String familySize) {
+        this.familySize = familySize;
+    }
+
+    public String getAbutingRoad() {
+        return abutingRoad;
+    }
+
+    public void setAbutingRoad(String abutingRoad) {
+        this.abutingRoad = abutingRoad;
     }
 
     public Boolean getActive() {
@@ -100,5 +152,21 @@ public class PlanRule extends AbstractAuditable {
 
     public void setActive(Boolean active) {
         this.active = active;
+    }
+
+    public BigDecimal getMinRoad() {
+        return minRoad;
+    }
+
+    public void setMinRoad(BigDecimal minRoad) {
+        this.minRoad = minRoad;
+    }
+
+    public BigDecimal getMaxRoad() {
+        return maxRoad;
+    }
+
+    public void setMaxRoad(BigDecimal maxRoad) {
+        this.maxRoad = maxRoad;
     }
 }

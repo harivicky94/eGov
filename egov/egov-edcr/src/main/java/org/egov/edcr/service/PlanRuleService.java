@@ -16,8 +16,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
 
-import static org.springframework.util.StringUtils.isEmpty;
-
 @Service
 @Transactional(readOnly = true)
 public class PlanRuleService {
@@ -53,12 +51,13 @@ public class PlanRuleService {
         final Criteria criteria = getCurrentSession().createCriteria(PlanRule.class, "planRule");
 
         if (planDetail.getPlanInformation() != null && planDetail.getPlanInformation().getPlotArea() != null) {
-            criteria.add(Restrictions.eq("planRule.plotArea", planDetail.getPlanInformation().getPlotArea()));
+            criteria.add(Restrictions.gt("minplotarea", planDetail.getPlanInformation().getPlotArea()));
+            criteria.add(Restrictions.le("maxplotarea", planDetail.getPlanInformation().getPlotArea()));
         }
 
         if (planDetail.getBuilding() != null && planDetail.getBuilding().getBuildingHeight() != null) {
-            criteria.add(Restrictions.eq("planRule.heightofbuilding", planDetail.getBuilding().getBuildingHeight()));
-
+            criteria.add(Restrictions.gt("minbuildinghgt", planDetail.getBuilding().getBuildingHeight()));
+            criteria.add(Restrictions.le("maxbuildinghgt", planDetail.getBuilding().getBuildingHeight()));
         }
 
         if (planDetail.getPlanInformation() != null && planDetail.getPlanInformation().getOccupancy() != null) {
@@ -66,8 +65,9 @@ public class PlanRuleService {
                     MatchMode.ANYWHERE));
         }
 
-        if (planDetail.getBuilding()!= null && !planDetail.getBuilding().getFloors().isEmpty()) {
-            criteria.add(Restrictions.eq("planRule.nooffloors", planDetail.getBuilding().getFloors().size()));
+        if (planDetail.getBuilding() != null && !planDetail.getBuilding().getFloors().isEmpty()) {
+            criteria.add(Restrictions.gt("minfloors", planDetail.getBuilding().getFloors().size()));
+            criteria.add(Restrictions.le("maxfloors", planDetail.getBuilding().getFloors().size()));
         }
 
         criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);

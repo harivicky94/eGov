@@ -1,30 +1,29 @@
 package org.egov.edcr.entity;
 
-import java.math.BigDecimal;
+import org.egov.edcr.entity.measurement.NonNotifiedRoad;
+import org.egov.edcr.entity.measurement.NotifiedRoad;
+import org.egov.edcr.entity.utility.Utility;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.egov.edcr.entity.measurement.NonNotifiedRoad;
-import org.egov.edcr.entity.measurement.NotifiedRoad;
-import org.egov.edcr.entity.utility.Utility;
-
 /*All the details extracted from the plan are referred in this object*/
 public class PlanDetail {
 
-	private List<Utility> utilities;
-	private PlanInformation planInformation;
-	private Plot plot;
-	private Building building;
-	public ReportOutput reportOutput= new ReportOutput();
-	private Boolean edcrPassed=false;
-	private ElectricLine electricLine;
-	private List<NonNotifiedRoad> nonNotifiedRoads;
-	private List<NotifiedRoad> notifiedRoads;
+    private List<Utility> utilities;
+    private PlanInformation planInformation;
+    private Plot plot;
+    private Building building;
+    public ReportOutput reportOutput = new ReportOutput();
+    private Boolean edcrPassed = false;
+    private ElectricLine electricLine;
+    private List<NonNotifiedRoad> nonNotifiedRoads;
+    private List<NotifiedRoad> notifiedRoads;
 
-	private HashMap<String, String> errors = new HashMap<String, String>();
-	private HashMap<String, String> generalInformation = new HashMap<String, String>();
+    private HashMap<String, String> errors = new HashMap<String, String>();
+    private HashMap<String, String> generalInformation = new HashMap<String, String>();
 
 
     public ElectricLine getElectricLine() {
@@ -60,41 +59,41 @@ public class PlanDetail {
     }
 
     public HashMap<String, String> getGeneralInformation() {
-		return generalInformation;
-	}
+        return generalInformation;
+    }
 
-	public void setGeneralInformation(HashMap<String, String> generalInformation) {
-		this.generalInformation = generalInformation;
-	}
+    public void setGeneralInformation(HashMap<String, String> generalInformation) {
+        this.generalInformation = generalInformation;
+    }
 
-	public void addGeneralInformation(Map<String, String> generalInformation) {
-		if (generalInformation != null)
-			getGeneralInformation().entrySet().add((Entry<String, String>) generalInformation);
-	}
+    public void addGeneralInformation(Map<String, String> generalInformation) {
+        if (generalInformation != null)
+            getGeneralInformation().entrySet().add((Entry<String, String>) generalInformation);
+    }
 
-	public void addErrors(Map<String, String> errors) {
-		if (errors != null)
-		getErrors().putAll(errors);
-	}
+    public void addErrors(Map<String, String> errors) {
+        if (errors != null)
+            getErrors().putAll(errors);
+    }
 
-	public HashMap<String, String> getErrors() {
-		return errors;
-	}
+    public HashMap<String, String> getErrors() {
+        return errors;
+    }
 
-	public void setErrors(HashMap<String, String> errors) {
-		this.errors = errors;
-	}
+    public void setErrors(HashMap<String, String> errors) {
+        this.errors = errors;
+    }
 
-	public List<Utility> getUtilities() {
-		return utilities;
-	}
+    public List<Utility> getUtilities() {
+        return utilities;
+    }
 
-	public void setUtilities(List<Utility> utilities) {
-		this.utilities = utilities;
-	}
+    public void setUtilities(List<Utility> utilities) {
+        this.utilities = utilities;
+    }
 
-	
-	public ReportOutput getReportOutput() {
+
+    public ReportOutput getReportOutput() {
         return reportOutput;
     }
 
@@ -103,12 +102,12 @@ public class PlanDetail {
     }
 
     public PlanInformation getPlanInformation() {
-		return planInformation;
-	}
+        return planInformation;
+    }
 
-	public void setPlanInformation(PlanInformation planInformation) {
-		this.planInformation = planInformation;
-	}
+    public void setPlanInformation(PlanInformation planInformation) {
+        this.planInformation = planInformation;
+    }
 
     public Plot getPlot() {
         return plot;
