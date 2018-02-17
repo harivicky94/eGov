@@ -314,14 +314,14 @@ public class BpaNoticeService {
         return reportParams;
     }
 
-	private String buildQRCodeDetails(final BpaApplication bpaApplication) {
-		StringBuilder qrCodeValue = new StringBuilder();
-        qrCodeValue.append("Permit number : ").append(bpaApplication.getPlanPermissionNumber()).append("\n");
-        qrCodeValue.append("Approved by : ").append(getApproverDesignation(getAmountRuleByServiceType(bpaApplication))).append("\n");
-        qrCodeValue.append("Date of issue of permit : ").append(bpaApplication.getPlanPermissionDate()).append("\n");
-        qrCodeValue.append("Name of approver : ").append(getApproverName(bpaApplication)).append("\n");
-		return qrCodeValue.toString();
-	}
+    private String buildQRCodeDetails(final BpaApplication bpaApplication) {
+    	StringBuilder qrCodeValue = new StringBuilder();
+    	qrCodeValue = !StringUtils.isEmpty(bpaApplication.getPlanPermissionNumber()) ? qrCodeValue.append("Permit number : ").append(bpaApplication.getPlanPermissionNumber()).append("\n") : qrCodeValue.append("Permit number : ").append("N/A").append("\n");
+    	qrCodeValue = getAmountRuleByServiceType(bpaApplication) != null ? qrCodeValue.append("Approved by : ").append(getApproverDesignation(getAmountRuleByServiceType(bpaApplication))).append("\n") : qrCodeValue.append("Approved by : ").append("N/A").append("\n");
+    	qrCodeValue = bpaApplication.getPlanPermissionDate() != null ? qrCodeValue.append("Date of issue of permit : ").append(bpaApplication.getPlanPermissionDate()).append("\n") : qrCodeValue.append("Date of issue of permit : ").append("N/A").append("\n");
+    	qrCodeValue = !StringUtils.isEmpty(getApproverName(bpaApplication)) ? qrCodeValue.append("Name of approver : ").append(getApproverName(bpaApplication)).append("\n") : qrCodeValue.append("Name of approver : ").append("N/A").append("\n");
+    	return qrCodeValue.toString();
+    	}
 
     private String getValidityDescription(final String serviceTypeCode, final Date planPermissionDate) {
         StringBuilder certificateValidatiy = new StringBuilder();
@@ -484,6 +484,6 @@ public class BpaNoticeService {
     	StateHistory<Position> stateHistory = application.getStateHistory().stream()
                 .filter(history -> history.getOwnerPosition().getDeptDesig().getDesignation().getName().equalsIgnoreCase(getApproverDesignation(getAmountRuleByServiceType(application))))
                 .findAny().orElse(null);
-    	return bpaWorkFlowService.getApproverAssignment(stateHistory.getOwnerPosition()).getEmployee().getName();
+    	return stateHistory != null ? bpaWorkFlowService.getApproverAssignment(stateHistory.getOwnerPosition()).getEmployee().getName() : null;
     }
 }
