@@ -88,7 +88,7 @@ public class SlotOpeningForAppointmentService {
 
 	@Transactional
 	public void openSlots() {
-		List<SlotMapping> slotZoneList = zoneSlotRepository.findByApplicationType(ApplicationType.ALL_OTHER_SERVICES);
+		List<SlotMapping> slotZoneList = zoneSlotRepository.findByApplType(ApplicationType.ALL_OTHER_SERVICES);
 		List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(MODULE_NAME,
 				APP_CONFIG_KEY);
 		String noOfDays = appConfigValue.get(0).getValue();
