@@ -29,7 +29,7 @@ Insert into eg_roleaction values((select id from eg_role where name='SYSTEM'),(s
 -- for Bpa Administrator
 
 Insert into eg_roleaction values((select id from eg_role where name='Bpa Administrator'),(select id from eg_action where name='Create SlotMapping'));
-Insert into eg_roleaction values((select id from eg_role where name='Bpa Administrator'),(select id from eg_action where name='Search and Update SlotMapping'));
+Insert into eg_roleaction values((select id from eg_role where name='Bpa Administrator'),(select id from eg_action where name='Search and Show SlotMapping'));
 Insert into eg_roleaction values((select id from eg_role where name='Bpa Administrator'),(select id from eg_action where name='View And Edit SlotMapping'));
 Insert into eg_roleaction values((select id from eg_role where name='Bpa Administrator'),(select id from eg_action where name='Search SlotMapping'));
 Insert into eg_roleaction values((select id from eg_role where name='Bpa Administrator'),(select id from eg_action where name='View SlotMapping'));
