@@ -356,4 +356,40 @@
 		<put-attribute name="body"
 			value="/WEB-INF/views/holiday/holiday-search.jsp" />
 	</definition>
+		<definition name="slotmapping-form" extends="base_layout">
+		<put-attribute name="page-title" value="title.slotmapping.create"
+			cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/slotMapping/slotmapping-form.jsp" />
+	</definition>
+		<definition name="slotmapping-result" extends="base_layout">
+		<put-attribute name="page-title" value="title.slotmapping.result"
+			cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/slotMapping/slotmapping-result.jsp" />
+	</definition>
+	<definition name="slotmapping-edit" extends="base_layout">
+		<put-attribute name="page-title" value="title.slotmapping.update"
+			cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/slotMapping/slotmapping-edit.jsp" />
+	</definition>
+		<definition name="slotmapping-update" extends="base_layout">
+		<put-attribute name="page-title" value="title.slotmapping.update"
+			cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/slotMapping/slotmapping-update.jsp" />
+	</definition>
+		<definition name="search-slotmapping-view" extends="base_layout">
+		<put-attribute name="page-title" value="title.slotmapping.view"
+			cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/slotMapping/search-slotmapping-view.jsp" />
+	</definition>
+		<definition name="slotmapping-view" extends="base_layout">
+		<put-attribute name="page-title" value="title.slotmapping.view"
+			cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/slotMapping/slotmapping-view.jsp" />
+	</definition>
 </tiles-definitions>

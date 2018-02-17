@@ -40,6 +40,7 @@
 package org.egov.bpa.master.entity;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -54,6 +55,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import org.egov.bpa.master.entity.enums.ApplicationType;
+import org.egov.bpa.master.entity.enums.WorkingDays;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 
@@ -84,14 +86,23 @@ public class SlotMapping extends AbstractAuditable {
 
 	@NotNull
 	@Enumerated(EnumType.STRING)
-	private ApplicationType applicationType;
-	
-	private String day;
+	@Column(name = "applicationType")
+	private ApplicationType applType;
+
+	public ApplicationType getApplType() {
+		return applType;
+	}
+
+	public void setApplType(ApplicationType applType) {
+		this.applType = applType;
+	}
+
+	@Enumerated(EnumType.STRING)
+	private WorkingDays day;
 
 	@NotNull
 	private Integer maxSlotsAllowed;
 
-	@NotNull
 	private Integer maxRescheduledSlotsAllowed;
 
 
@@ -103,19 +114,11 @@ public class SlotMapping extends AbstractAuditable {
 		this.ward = ward;
 	}
 
-	public ApplicationType getApplicationtype() {
-		return applicationType;
-	}
-
-	public void setApplicationtype(ApplicationType applicationtype) {
-		this.applicationType = applicationtype;
-	}
-
-	public String getDay() {
+	public WorkingDays getDay() {
 		return day;
 	}
 
-	public void setDay(String day) {
+	public void setDay(WorkingDays day) {
 		this.day = day;
 	}
 
