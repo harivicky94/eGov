@@ -44,6 +44,7 @@ public class EdcrApplicationController {
 
     @RequestMapping(value = "/new", method = RequestMethod.GET)
     public String newForm(final Model model) {
+        edcrApplicationService.create(new EdcrApplication());
         prepareNewForm(model);
         model.addAttribute("edcrApplication", new EdcrApplication());
         return EDCRAPPLICATION_NEW;

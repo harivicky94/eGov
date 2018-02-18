@@ -8,7 +8,10 @@ import org.egov.edcr.entity.PlanDetail;
 import org.egov.edcr.entity.Result;
 import org.egov.edcr.utility.DcrConstants;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.stereotype.Service;
+ 
 
+@Service
 public class Rule23 extends GeneralRule {
 
     private static final BigDecimal VERTICAL_DISTANCE_11000 = BigDecimal.valueOf(2.4);
@@ -22,7 +25,7 @@ public class Rule23 extends GeneralRule {
     @Override
     public PlanDetail validate(PlanDetail planDetail) {
         HashMap<String, String> errors = new HashMap<String, String>();
-
+        System.out.println("validate 23");
         if (planDetail != null &&
                 planDetail.getElectricLine() != null && planDetail.getElectricLine().getPresentInDxf()) {
             if (planDetail.getElectricLine().getVoltage() == null) {

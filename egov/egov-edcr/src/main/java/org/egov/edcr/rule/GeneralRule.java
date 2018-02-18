@@ -8,7 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
-
+import org.springframework.stereotype.Service;
+@Service
 public class GeneralRule {
 	
     @Autowired
@@ -16,6 +17,7 @@ public class GeneralRule {
     protected MessageSource edcrMessageSource;
 
     public PlanDetail validate(PlanDetail planDetail){
+        System.out.println("validate Generalrule");
     	return planDetail;
     }
     public PlanDetail process(PlanDetail planDetail){
