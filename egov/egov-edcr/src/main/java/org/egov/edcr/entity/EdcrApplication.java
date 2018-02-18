@@ -4,17 +4,41 @@ import java.io.File;
 import java.util.Date;
 import java.util.List;
 
-public class EdcrApplication {
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.ja.annotation.Ignore;
+import org.ja.annotation.SearchField;
+import org.ja.annotation.SearchResult;
+@Entity
+@Table(name = "edcredcrapplication")
+//@SequenceGenerator(name = PlanRule.SEQ_EDCR_PLANRULE, sequenceName = PlanRule.SEQ_EDCR_PLANRULE, allocationSize = 1)
+public class EdcrApplication extends AbstractAuditable {
     /*
      * Application number and date.Owner name, contact info,email id, address,
      * Architect name, emailid,contract info.
      * 
      */
+    @SearchField
+    @SearchResult
+    @Id
     private String applicationNumber;
+    @SearchField
+    @SearchResult
     private String dcrNumber;
+    @SearchField
+    @SearchResult
     private Date applicationDate;
+    @Transient
     private File dxfFile; //File to be process.
+    @Ignore
+    @Transient
     private List <File> fileHistory;  
+    @Transient
     private PlanInformation planInformation;
     
     
@@ -36,6 +60,33 @@ public class EdcrApplication {
     }
     public void setApplicationDate(Date applicationDate) {
         this.applicationDate = applicationDate;
+    }
+    public File getDxfFile() {
+        return dxfFile;
+    }
+    public void setDxfFile(File dxfFile) {
+        this.dxfFile = dxfFile;
+    }
+    public List<File> getFileHistory() {
+        return fileHistory;
+    }
+    public void setFileHistory(List<File> fileHistory) {
+        this.fileHistory = fileHistory;
+    }
+    public PlanInformation getPlanInformation() {
+        return planInformation;
+    }
+    public void setPlanInformation(PlanInformation planInformation) {
+        this.planInformation = planInformation;
+    }
+    @Override
+    public Long getId() {
+      return null;
+    }
+    @Override
+    protected void setId(Long id) {
+        // TODO Auto-generated method stub
+        
     }
     
 

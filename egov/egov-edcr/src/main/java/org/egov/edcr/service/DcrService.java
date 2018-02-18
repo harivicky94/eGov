@@ -23,6 +23,7 @@ public class DcrService  {
     
     public PlanDetail process(File dxfFile, EdcrApplication dcrApplication) {
       
+        System.out.println("hello ");
         //TODO:
         //BASIC VALIDATION
         // EXTRACT DATA FROM DXFFILE TO planDetail;   

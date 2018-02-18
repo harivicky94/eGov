@@ -1,0 +1,14 @@
+package org.egov.edcr.repository;
+
+
+import org.egov.edcr.entity.EdcrApplication;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+
+
+@Repository 
+public interface EdcrApplicationRepository extends JpaRepository<EdcrApplication,Long>,JpaSpecificationExecutor<EdcrApplication>  {
+
+}
