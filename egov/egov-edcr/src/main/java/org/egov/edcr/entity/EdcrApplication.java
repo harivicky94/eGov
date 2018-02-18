@@ -6,14 +6,11 @@ import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.ja.annotation.Ignore;
-import org.ja.annotation.SearchField;
-import org.ja.annotation.SearchResult;
 @Entity
 @Table(name = "edcredcrapplication")
 //@SequenceGenerator(name = PlanRule.SEQ_EDCR_PLANRULE, sequenceName = PlanRule.SEQ_EDCR_PLANRULE, allocationSize = 1)
@@ -23,15 +20,12 @@ public class EdcrApplication extends AbstractAuditable {
      * Architect name, emailid,contract info.
      * 
      */
-    @SearchField
-    @SearchResult
+ 
     @Id
     private String applicationNumber;
-    @SearchField
-    @SearchResult
+   
     private String dcrNumber;
-    @SearchField
-    @SearchResult
+ 
     private Date applicationDate;
     @Transient
     private File dxfFile; //File to be process.
