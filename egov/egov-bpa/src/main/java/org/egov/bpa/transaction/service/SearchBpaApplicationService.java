@@ -39,14 +39,6 @@
  */
 package org.egov.bpa.transaction.service;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.dto.SearchBpaApplicationForm;
 import org.egov.bpa.transaction.service.collection.BpaDemandService;
@@ -58,6 +50,13 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -152,7 +151,7 @@ public class SearchBpaApplicationService {
     public List<SearchBpaApplicationForm> searchForCollectionPending(final SearchBpaApplicationForm bpaApplicationForm) {
         final Criteria criteria = buildSearchCriteria(bpaApplicationForm);
             criteria.createAlias("bpaApplication.status", "status")
-                    .add(Restrictions.in("status.code", new String[] { "Approved","Registered" }));
+                    .add(Restrictions.in("status.code", "Approved","Registered", "Scheduled For Document Scrutiny", "Rescheduled For Document Scrutiny", "Pending For Rescheduling For Document Scrutiny"));
         return buildApplicationDetailsResponse(criteria);
     }
     public Criteria buildSearchCriteria(final SearchBpaApplicationForm searchBpaApplicationForm) {

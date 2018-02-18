@@ -196,6 +196,7 @@ public class BpaApplication extends StateAware<Position> {
 	private List<ApplicationPermitConditions> rejectionReasons = new ArrayList<>(0);
 	@OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<BpaNotice> bpaNotice = new ArrayList<>(0);
+	@OrderBy("id ASC")
 	@OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<SlotApplication> slotApplications = new ArrayList<>();
 
@@ -729,6 +730,14 @@ public class BpaApplication extends StateAware<Position> {
 
 	public void setRejectionReasons(List<ApplicationPermitConditions> rejectionReasons) {
 		this.rejectionReasons = rejectionReasons;
+	}
+
+	public List<SlotApplication> getSlotApplications() {
+		return slotApplications;
+	}
+
+	public void setSlotApplications(List<SlotApplication> slotApplications) {
+		this.slotApplications = slotApplications;
 	}
 
 	public String getAdditionalRejectionReasons() {

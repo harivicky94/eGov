@@ -49,7 +49,6 @@ package org.egov.bpa.web.controller.transaction;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.bpa.master.service.PermitConditionsService;
 import org.egov.bpa.transaction.entity.BpaApplication;
-import org.egov.bpa.transaction.entity.BpaAppointmentSchedule;
 import org.egov.bpa.transaction.entity.LettertoParty;
 import org.egov.bpa.transaction.entity.enums.AppointmentSchedulePurpose;
 import org.egov.bpa.transaction.entity.enums.PermitConditionType;
@@ -76,7 +75,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -87,8 +85,6 @@ import static org.egov.bpa.utils.BpaConstants.*;
 public class UpdateBpaApplicationController extends BpaGenericApplicationController {
 
     private static final String COLLECT_FEE_VALIDATE = "collectFeeValidate";
-    private static final String DOC_VERIFICATION_PENDING = "Document verification pending";
-    private static final String FWD_TO_AE_FOR_APPROVAL = "Forwarded to Assistant Engineer For Approval";
     private static final String WORK_FLOW_ACTION = "workFlowAction";
     private static final String AMOUNT_RULE = "amountRule";
     private static final String APPRIVALPOSITION = "approvalPosition";
@@ -205,26 +201,20 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
     private void getModeForUpdateApplication(final Model model,  final BpaApplication application) {
         String mode = null;
         AppointmentSchedulePurpose scheduleType = null;
-        List<String> purposeInsList = new ArrayList<>();
-        for (BpaAppointmentSchedule schedule : application.getAppointmentSchedule()) {
-            if (AppointmentSchedulePurpose.INSPECTION.equals(schedule.getPurpose())) {
-                purposeInsList.add(schedule.getPurpose().name());
-            }
-        }
+
 		Assignment approverAssignment = bpaWorkFlowService.getApproverAssignment(application.getCurrentState().getOwnerPosition());
-        if (WF_CREATED_STATE.equalsIgnoreCase(application.getStatus().getCode())) {
+		// To show reschedule scrutiny button to employee
+		if ((APPLICATION_STATUS_SCHEDULED.equals(application.getStatus().getCode()) ||
+			 APPLICATION_STATUS_RESCHEDULED.equals(application.getStatus().getCode()) ||
+			 APPLICATION_STATUS_PENDING_FOR_RESCHEDULING.equals(application.getStatus().getCode())) &&
+			!application.getSlotApplications().isEmpty()) {
+			mode = getModeForRescheduleForScrutiny(application);
+		} else if (WF_CREATED_STATE.equalsIgnoreCase(application.getStatus().getCode())) {
             mode = "view";
         } else if (APPLICATION_STATUS_DOC_VERIFIED.equalsIgnoreCase(application.getStatus().getCode())
                         && FWD_TO_OVRSR_FOR_FIELD_INS
-                                .equalsIgnoreCase(application.getState().getNextAction())
-                        && purposeInsList.isEmpty()) {
+                                .equalsIgnoreCase(application.getState().getNextAction())) {
             mode = "newappointment";
-        } else if (APPLICATION_STATUS_SCHEDULED.equalsIgnoreCase(application.getStatus().getCode())) {
-            mode = "postponeappointment";
-            scheduleType = AppointmentSchedulePurpose.DOCUMENTSCRUTINY;
-        } else if (APPLICATION_STATUS_SCHEDULED.equalsIgnoreCase(application.getStatus().getCode())
-                   || APPLICATION_STATUS_RESCHEDULED.equalsIgnoreCase(application.getStatus().getCode())) {
-            mode = "showScrutiny";
         } else if (FWD_TO_OVRSR_FOR_FIELD_INS.equalsIgnoreCase(application.getState().getNextAction())
                 && APPLICATION_STATUS_DOC_VERIFIED.equalsIgnoreCase(application.getStatus().getCode())
                 && application.getInspections().isEmpty()) {

@@ -39,15 +39,15 @@
  */
 package org.egov.bpa.transaction.repository;
 
-import java.util.Date;
-import java.util.List;
-
 import org.egov.bpa.transaction.entity.SlotDetail;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import java.util.Date;
+import java.util.List;
 
 @Repository
 public interface SlotDetailRepository extends JpaRepository<SlotDetail, Long> {
@@ -68,5 +68,8 @@ public interface SlotDetailRepository extends JpaRepository<SlotDetail, Long> {
 			+ " slotdetail.id")
 	List<SlotDetail> findSlotsByAppointmentDateAndZone(@Param("appointmentDate") Date appointmentDate,
 			@Param("zone") Boundary zone);
+
+	@Query("select detail from SlotDetail detail where detail.slot.appointmentDate = :rescheduleAppointmentDate and detail.slot.zone = :zone")
+	List<SlotDetail> findOneByAppointmentDateAndZoneId(@Param("rescheduleAppointmentDate")Date rescheduleAppointmentDate,@Param("zone")Boundary zone);
 	
 }

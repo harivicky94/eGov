@@ -121,7 +121,8 @@ $(document)
 																data, type,
 																row, meta) {
 															
-															if ((row.status == 'Approved' || row.status == 'Registered') && row.isFeeCollected) {
+															if ((row.status == 'Approved' || row.status == 'Registered' || row.status == 'Scheduled For Document Scrutiny'
+																	|| row.status == 'Rescheduled For Document Scrutiny' || row.status == 'Pending For Rescheduling For Document Scrutiny') && row.isFeeCollected) {
 																return '<button type="button" class="btn btn-xs btn-secondary dropchange" value='
 																+ collecturl
 																+ row.applicationNumber

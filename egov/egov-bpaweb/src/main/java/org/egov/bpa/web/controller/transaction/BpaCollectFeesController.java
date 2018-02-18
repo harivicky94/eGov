@@ -39,18 +39,17 @@
  */
 package org.egov.bpa.web.controller.transaction;
 
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.service.ApplicationBpaService;
 import org.egov.bpa.transaction.service.collection.BpaDemandService;
 import org.egov.bpa.transaction.service.collection.GenericBillGeneratorService;
-import org.egov.bpa.utils.BpaConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @Controller
 @RequestMapping(value = "/application")
@@ -69,8 +68,7 @@ public class BpaCollectFeesController {
     public String showCollectFeeForm(final Model model, @PathVariable final String applicationCode) {
     	BpaApplication application=applicationBpaService.findByApplicationNumber(applicationCode);
     	Boolean bpaDuePresent=bpaDemandService.checkAnyTaxIsPendingToCollect(application);
-    	if(application.getStatus()!=null && (application.getStatus().getCode().equals(BpaConstants.APPLICATION_STATUS_APPROVED) ||
-    			application.getStatus().getCode().equals(BpaConstants.APPLICATION_STATUS_REGISTERED)) && bpaDuePresent){
+    	if(bpaDuePresent){
     	return genericBillGeneratorService.generateBillAndRedirectToCollection(application, model);
     	}
     	else{

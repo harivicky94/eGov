@@ -128,6 +128,8 @@ public class BpaConstants {
     public static final String FWD_TO_AE_AFTER_TS_INSP = "Forwarded to Assistant Engineer";
     public static final String FWD_TO_OVERSEER_AFTER_TS_INSPN = "Forwarded to Overseer";
     public static final String REJECT_BY_CLERK = "Rejection initiated by clerk";
+    public static final String WF_AUTO_RESCHEDULE_PENDING = "Pending For Auto Rescheduling Document Scrutiny";
+    public static final String FWD_TO_AE_FOR_APPROVAL = "Forwarded to Assistant Engineer For Approval";
     // application status constants
     public static final String APPROVED = "Approved";
     public static final String APPLICATION_STATUS_APPROVED = APPROVED;
@@ -237,7 +239,7 @@ public class BpaConstants {
     // button name constants
     public static final String WF_APPROVE_BUTTON = "Approve";
     public static final String WF_REJECT_BUTTON = "REJECT";
-    public static final String WF_CANCELAPPLICATION_BUTTON = "CANCEL APPLICATION";
+    public static final String WF_CANCELAPPLICATION_BUTTON = "Cancel Application";
     public static final String GENERATEPERMITORDER = "Generate Permit Order";
     public static final String GENERATEREJECTNOTICE = "Generate Rejection Notice";
     public static final String WF_LBE_SUBMIT_BUTTON = "Submit";
@@ -246,6 +248,7 @@ public class BpaConstants {
     public static final String WF_SAVE_BUTTON = "Save";
     public static final String WF_RESCHDLE_APPMNT_BUTTON = "Reschedule Appointment";
     public static final String WF_INITIATE_REJECTION_BUTTON = "Initiate Rejection";
+    public static final String WF_AUTO_RESCHDLE_APPMNT_BUTTON = "Auto ReSchedule";
     // building details related constants
     public static final String TOTAL_PLINT_AREA = "totalPlintArea";
     public static final String BUILDINGHEIGHT_GROUND = "buildingheightGround";
@@ -403,4 +406,5 @@ public class BpaConstants {
     public static List<String> getServicesForValidation() {
         return Collections.unmodifiableList(VALIDATIONPUPOSE);
     }
+
 }

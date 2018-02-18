@@ -318,8 +318,8 @@ public class BpaUtils {
         return !appConfigValueList.isEmpty() ? appConfigValueList.get(0).getValue() : "";
     }
 
-    public StateHistory getRejectionComments(BpaApplication bpaApplication) {
-        StateHistory stateHistory = bpaApplication.getStateHistory().stream()
+    public StateHistory<Position> getRejectionComments(BpaApplication bpaApplication) {
+        StateHistory<Position> stateHistory = bpaApplication.getStateHistory().stream()
                                                   .filter(history -> history.getValue().equalsIgnoreCase(APPLICATION_STATUS_REJECTED))
                                                   .findAny().orElse(null);
         if (stateHistory == null)

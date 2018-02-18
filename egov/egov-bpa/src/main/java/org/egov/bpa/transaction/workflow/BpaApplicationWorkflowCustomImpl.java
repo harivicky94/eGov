@@ -250,9 +250,13 @@ public abstract class BpaApplicationWorkflowCustomImpl implements BpaApplication
             Assignment approverAssignment = bpaWorkFlowService.getApproverAssignment(pos);
              if (BpaConstants.WF_REVERT_BUTTON.equalsIgnoreCase(workFlowAction)) {
                  application.setSentToPreviousOwner(true);
-                pos = (Position) application.getCurrentState().getPreviousOwner();
+                pos = application.getCurrentState().getPreviousOwner();
                 wfmatrix = workFlowMatrixService.getWorkFlowObjectbyId(bpaWorkFlowService.getPreviousWfMatrixId(application));
-            } else if (BpaConstants.APPLICATION_STATUS_NOCUPDATED.equalsIgnoreCase(application.getStatus().getCode())) {
+            } else if (BpaConstants.WF_AUTO_RESCHDLE_APPMNT_BUTTON.equalsIgnoreCase(workFlowAction)) {
+                wfmatrix = bpaApplicationWorkflowService.getWfMatrix(application.getStateType(), null,
+                         amountRule, additionalRule,
+                         application.getCurrentState().getValue(), BpaConstants.WF_AUTO_RESCHEDULE_PENDING);
+             } else if (BpaConstants.APPLICATION_STATUS_NOCUPDATED.equalsIgnoreCase(application.getStatus().getCode())) {
                 wfmatrix = bpaApplicationWorkflowService.getWfMatrix(application.getStateType(), null,
                         amountRule, additionalRule,
                         application.getCurrentState().getValue(), application.getState().getNextAction());
@@ -284,10 +288,7 @@ public abstract class BpaApplicationWorkflowCustomImpl implements BpaApplication
             } else if(approverAssignment != null && BpaConstants.DESIGNATION_TOWN_SURVEYOR.equalsIgnoreCase(approverAssignment.getDesignation().getName())) {
                 wfmatrix = bpaApplicationWorkflowService.getWfMatrix(application.getStateType(), null,
                         null, additionalRule, BpaConstants.WF_TS_INSPECTION_INITIATED, BpaConstants.WF_AE_APPROVAL_PENDING);
-            } else if(BpaConstants.WF_RESCHDLE_APPMNT_BUTTON.equalsIgnoreCase(workFlowAction)) {
-                 wfmatrix = bpaApplicationWorkflowService.getWfMatrix(application.getStateType(), null,
-                         null, additionalRule, application.getCurrentState().getValue(), BpaConstants.WF_DOC_SCRTNY_RE_SCHDLE_PENDING);
-             } else if (application.getState() != null
+            } else if (application.getState() != null
                         && application.getState().getValue().equalsIgnoreCase(APPLICATION_STATUS_REGISTERED) ||
                         application.getState().getValue().equalsIgnoreCase(APPLICATION_STATUS_SCHEDULED)
                         || application.getState().getValue().equalsIgnoreCase(APPLICATION_STATUS_RESCHEDULED)) {

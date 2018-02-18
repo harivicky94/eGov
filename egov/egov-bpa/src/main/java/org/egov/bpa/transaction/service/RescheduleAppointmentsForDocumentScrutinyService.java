@@ -39,9 +39,6 @@
  */
 package org.egov.bpa.transaction.service;
 
-import java.util.Date;
-import java.util.List;
-
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.BpaStatus;
 import org.egov.bpa.transaction.entity.SlotApplication;
@@ -54,9 +51,13 @@ import org.egov.bpa.transaction.repository.SlotDetailRepository;
 import org.egov.bpa.transaction.service.messaging.BPASmsAndEmailService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.service.BoundaryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Date;
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -76,6 +77,8 @@ public class RescheduleAppointmentsForDocumentScrutinyService {
 	
 	@Autowired
 	private BPASmsAndEmailService bpaSmsAndEmailService;
+	@Autowired
+	private BoundaryService boundaryService;
 
 	@Transactional
 	public SlotApplication rescheduleAppointmentsForDocumentScrutinyByCitizen(Long applicationId,
@@ -96,14 +99,12 @@ public class RescheduleAppointmentsForDocumentScrutinyService {
 		slotApp.setIsRescheduledByCitizen(true);
 		slotApp.setScheduleAppointmentType(ScheduleAppointmentType.RESCHEDULE);
 		SlotDetail slotDet = slotDetailRepository.findByAppointmentDateTimeAndZone(rescheduleAppointmentDate,
-				appointmentTime, application.getSiteDetail().get(0).getAdminBoundary());
+				appointmentTime, application.getSiteDetail().get(0).getAdminBoundary().getParent());
 		if (slotDet.getMaxRescheduledSlots() - slotDet.getUtilizedRescheduledSlots() > 0)
 			slotDet.setUtilizedRescheduledSlots(slotDet.getUtilizedRescheduledSlots() + 1);
 		else
 			slotDet.setUtilizedScheduledSlots(slotDet.getUtilizedScheduledSlots() + 1);
 		slotApp.setSlotDetail(slotDet);
-		BpaStatus bpaStatus = bpaStatusRepository.findByCode(BpaConstants.APPLICATION_STATUS_RESCHEDULED);
-		application.setStatus(bpaStatus);
 		applicationBpaRepository.save(application);
 		bpaSmsAndEmailService.sendSMSAndEmailForDocumentScrutiny(slotApplication.get(0), application);
 		slotApplicationRepository.save(slotApp);
@@ -130,14 +131,12 @@ public class RescheduleAppointmentsForDocumentScrutinyService {
 		slotApp.setIsRescheduledByEmployee(true);
 		slotApp.setScheduleAppointmentType(ScheduleAppointmentType.RESCHEDULE);
 		SlotDetail slotDet = slotDetailRepository.findByAppointmentDateTimeAndZone(rescheduleAppointmentDate,
-				appointmentTime, bpaApplication.getSiteDetail().get(0).getAdminBoundary());
+				appointmentTime, bpaApplication.getSiteDetail().get(0).getAdminBoundary().getParent());
 		if (slotDet.getMaxRescheduledSlots() - slotDet.getUtilizedRescheduledSlots() > 0)
 			slotDet.setUtilizedRescheduledSlots(slotDet.getUtilizedRescheduledSlots() + 1);
 		else
 			slotDet.setUtilizedScheduledSlots(slotDet.getUtilizedScheduledSlots() + 1);
 		slotApp.setSlotDetail(slotDet);
-		BpaStatus bpaStatus = bpaStatusRepository.findByCode(BpaConstants.APPLICATION_STATUS_RESCHEDULED);
-		bpaApplication.setStatus(bpaStatus);
 		applicationBpaRepository.save(bpaApplication);
 		bpaSmsAndEmailService.sendSMSAndEmailForDocumentScrutiny(slotApplication.get(0), bpaApplication);
 		slotApplicationRepository.save(slotApp);
@@ -146,7 +145,7 @@ public class RescheduleAppointmentsForDocumentScrutinyService {
 
 	public List<SlotDetail> searchAvailableSlotsForReschedule(Long applicationId) {
 		BpaApplication bpaApplication = applicationBpaRepository.findById(applicationId);
-		Boundary zone = bpaApplication.getSiteDetail().get(0).getAdminBoundary();
+		Boundary zone = bpaApplication.getSiteDetail().get(0).getAdminBoundary().getParent();
 		List<SlotApplication> slotApplication = slotApplicationRepository
 				.findByApplicationOrderByIdDesc(bpaApplication);
 		Date appointmentDate = slotApplication.get(0).getSlotDetail().getSlot().getAppointmentDate();
@@ -170,6 +169,10 @@ public class RescheduleAppointmentsForDocumentScrutinyService {
 		bpaApplication.setStatus(bpaStatus);
 		applicationBpaRepository.save(bpaApplication);
 		bpaSmsAndEmailService.sendSMSAndEmailForDocumentScrutiny(slotApplication.get(0), bpaApplication);
+	}
+
+	public List<SlotDetail> getOneSlotDetailsByAppointmentDateAndZoneId(final Date appointmentDate, final Long zoneId) {
+		return slotDetailRepository.findOneByAppointmentDateAndZoneId(appointmentDate, boundaryService.getBoundaryById(zoneId));
 	}
 
 }

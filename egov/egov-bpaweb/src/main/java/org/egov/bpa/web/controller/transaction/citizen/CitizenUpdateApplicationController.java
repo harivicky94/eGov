@@ -96,6 +96,13 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
             final HttpServletRequest request) {
         final BpaApplication application = getBpaApplication(applicationNumber);
         model.addAttribute("mode", "newappointment");
+
+        if ((APPLICATION_STATUS_SCHEDULED.equals(application.getStatus().getCode()) ||
+             APPLICATION_STATUS_RESCHEDULED.equals(application.getStatus().getCode()) ||
+             APPLICATION_STATUS_PENDING_FOR_RESCHEDULING.equals(application.getStatus().getCode())) &&
+            !application.getSlotApplications().isEmpty()) {
+            model.addAttribute("mode", getModeForRescheduleForScrutiny(application));
+        }
         model.addAttribute(APPLICATION_HISTORY, bpaThirdPartyService.getHistory(application));
         prepareCommonModelAttribute(model, application);
         return loadViewdata(model, application);
