@@ -49,6 +49,7 @@ package org.egov.bpa.web.controller.transaction;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.bpa.master.service.PermitConditionsService;
 import org.egov.bpa.transaction.entity.BpaApplication;
+import org.egov.bpa.transaction.entity.BpaAppointmentSchedule;
 import org.egov.bpa.transaction.entity.LettertoParty;
 import org.egov.bpa.transaction.entity.enums.AppointmentSchedulePurpose;
 import org.egov.bpa.transaction.entity.enums.PermitConditionType;
@@ -75,6 +76,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -84,99 +86,99 @@ import static org.egov.bpa.utils.BpaConstants.*;
 @RequestMapping(value = "/application")
 public class UpdateBpaApplicationController extends BpaGenericApplicationController {
 
-    private static final String COLLECT_FEE_VALIDATE = "collectFeeValidate";
-    private static final String WORK_FLOW_ACTION = "workFlowAction";
-    private static final String AMOUNT_RULE = "amountRule";
-    private static final String APPRIVALPOSITION = "approvalPosition";
-    private static final String APPLICATION_HISTORY = "applicationHistory";
-    private static final String ADDITIONALRULE = "additionalRule";
-    private static final String APPROVAL_COMENT = "approvalComent";
+	private static final String COLLECT_FEE_VALIDATE = "collectFeeValidate";
+	private static final String WORK_FLOW_ACTION = "workFlowAction";
+	private static final String AMOUNT_RULE = "amountRule";
+	private static final String APPRIVALPOSITION = "approvalPosition";
+	private static final String APPLICATION_HISTORY = "applicationHistory";
+	private static final String ADDITIONALRULE = "additionalRule";
+	private static final String APPROVAL_COMENT = "approvalComent";
 
-    private static final String MSG_REJECT_FORWARD_REGISTRATION = "msg.reject.forward.registration";
-    private static final String MSG_INITIATE_REJECTION = "msg.initiate.reject";
-    private static final String MSG_UPDATE_FORWARD_REGISTRATION = "msg.update.forward.registration";
-    private static final String MESSAGE = "message";
+	private static final String MSG_REJECT_FORWARD_REGISTRATION = "msg.reject.forward.registration";
+	private static final String MSG_INITIATE_REJECTION = "msg.initiate.reject";
+	private static final String MSG_UPDATE_FORWARD_REGISTRATION = "msg.update.forward.registration";
+	private static final String MESSAGE = "message";
 
-    private static final String APPLICATION_VIEW = "application-view";
-    private static final String CREATEDOCUMENTSCRUTINY_FORM = "createdocumentscrutiny-form";
-    private static final String DOCUMENTSCRUTINY_FORM = "documentscrutiny-form";
-    private static final String BPAAPPLICATION_FORM = "bpaapplication-Form";
-    private static final String BPA_APPLICATION_RESULT = "bpa-application-result";
+	private static final String APPLICATION_VIEW = "application-view";
+	private static final String CREATEDOCUMENTSCRUTINY_FORM = "createdocumentscrutiny-form";
+	private static final String DOCUMENTSCRUTINY_FORM = "documentscrutiny-form";
+	private static final String BPAAPPLICATION_FORM = "bpaapplication-Form";
+	private static final String BPA_APPLICATION_RESULT = "bpa-application-result";
 
 
-    @Autowired
-    private InspectionService inspectionService;
-    @Autowired
-    private PositionMasterService positionMasterService;
-    @Autowired
-    private LettertoPartyService lettertoPartyService;
-    @Autowired
-    private PermitConditionsService permitConditionsService;
-    @Autowired
-    private BpaApplicationPermitConditionsService bpaApplicationPermitConditionsService;
+	@Autowired
+	private InspectionService inspectionService;
+	@Autowired
+	private PositionMasterService positionMasterService;
+	@Autowired
+	private LettertoPartyService lettertoPartyService;
+	@Autowired
+	private PermitConditionsService permitConditionsService;
+	@Autowired
+	private BpaApplicationPermitConditionsService bpaApplicationPermitConditionsService;
 
-    @ModelAttribute
-    public BpaApplication getBpaApplication(@PathVariable final String applicationNumber) {
-        return applicationBpaService.findByApplicationNumber(applicationNumber);
-    }
+	@ModelAttribute
+	public BpaApplication getBpaApplication(@PathVariable final String applicationNumber) {
+		return applicationBpaService.findByApplicationNumber(applicationNumber);
+	}
 
-    @RequestMapping(value = "/update/{applicationNumber}", method = RequestMethod.GET)
-    public String updateApplicationForm(final Model model, @PathVariable final String applicationNumber,
-            final HttpServletRequest request) {
+	@RequestMapping(value = "/update/{applicationNumber}", method = RequestMethod.GET)
+	public String updateApplicationForm(final Model model, @PathVariable final String applicationNumber,
+										final HttpServletRequest request) {
 
-        final BpaApplication application = getBpaApplication(applicationNumber);
-        getModeForUpdateApplication(model, application);
-        model.addAttribute("inspectionList", inspectionService.findByBpaApplicationOrderByIdAsc(application));
-        model.addAttribute("lettertopartylist", lettertoPartyService.findByBpaApplicationOrderByIdDesc(application));
-        if (FWD_TO_AE_FOR_FIELD_ISPECTION.equals(application.getState().getNextAction())
-                || APPLICATION_STATUS_FIELD_INS.equals(application.getStatus().getCode())
-                || APPLICATION_STATUS_NOCUPDATED.equalsIgnoreCase(application.getStatus().getCode())) {
-            model.addAttribute("createlettertoparty", true);
-        }
+		final BpaApplication application = getBpaApplication(applicationNumber);
+		getModeForUpdateApplication(model, application);
+		model.addAttribute("inspectionList", inspectionService.findByBpaApplicationOrderByIdAsc(application));
+		model.addAttribute("lettertopartylist", lettertoPartyService.findByBpaApplicationOrderByIdDesc(application));
+		if (FWD_TO_AE_FOR_FIELD_ISPECTION.equals(application.getState().getNextAction())
+			|| APPLICATION_STATUS_FIELD_INS.equals(application.getStatus().getCode())
+			|| APPLICATION_STATUS_NOCUPDATED.equalsIgnoreCase(application.getStatus().getCode())) {
+			model.addAttribute("createlettertoparty", true);
+		}
 
-        if (APPLICATION_STATUS_APPROVED.equals(application.getStatus().getCode())
-                || APPLICATION_STATUS_DIGI_SIGNED.equalsIgnoreCase(application.getStatus().getCode())) {
-            model.addAttribute("showpermitconditions", true);
-            model.addAttribute("permitConditions", permitConditionsService
-                    .findByConditionTypeOrderByOrderNumberAsc(PermitConditionType.STATIC_PERMITCONDITION.name()));
-            model.addAttribute("modifiablePermitConditions", permitConditionsService
-                    .findByConditionTypeOrderByOrderNumberAsc(PermitConditionType.DYNAMIC_PERMITCONDITION.name()));
-            model.addAttribute("additionalPermitCondition", permitConditionsService
-                    .findByConditionTypeOrderByOrderNumberAsc(PermitConditionType.ADDITIONAL_PERMITCONDITION.name()).get(0));
-            buildApplicationPermitConditions(application);
-        }
+		if (APPLICATION_STATUS_APPROVED.equals(application.getStatus().getCode())
+			|| APPLICATION_STATUS_DIGI_SIGNED.equalsIgnoreCase(application.getStatus().getCode())) {
+			model.addAttribute("showpermitconditions", true);
+			model.addAttribute("permitConditions", permitConditionsService
+					.findByConditionTypeOrderByOrderNumberAsc(PermitConditionType.STATIC_PERMITCONDITION.name()));
+			model.addAttribute("modifiablePermitConditions", permitConditionsService
+					.findByConditionTypeOrderByOrderNumberAsc(PermitConditionType.DYNAMIC_PERMITCONDITION.name()));
+			model.addAttribute("additionalPermitCondition", permitConditionsService
+					.findByConditionTypeOrderByOrderNumberAsc(PermitConditionType.ADDITIONAL_PERMITCONDITION.name()).get(0));
+			buildApplicationPermitConditions(application);
+		}
 		buildRejectionReasons(model, application);
 		model.addAttribute("workFlowByNonEmp", applicationBpaService.applicationinitiatedByNonEmployee(application));
-        model.addAttribute(APPLICATION_HISTORY,
-                bpaThirdPartyService.getHistory(application));
+		model.addAttribute(APPLICATION_HISTORY,
+				bpaThirdPartyService.getHistory(application));
 
-        if (APPLICATION_STATUS_CREATED.equals(application.getStatus().getCode())
-            || APPLICATION_STATUS_REGISTERED.equals(application.getStatus().getCode())
+		if (APPLICATION_STATUS_CREATED.equals(application.getStatus().getCode())
+			|| APPLICATION_STATUS_REGISTERED.equals(application.getStatus().getCode())
 			|| APPLICATION_STATUS_SCHEDULED.equals(application.getStatus().getCode())
 			|| APPLICATION_STATUS_RESCHEDULED.equals(application.getStatus().getCode())) {
-            if (applicationBpaService.applicationinitiatedByNonEmployee(application)
-                && applicationBpaService.checkAnyTaxIsPendingToCollect(application)) {
-                model.addAttribute(COLLECT_FEE_VALIDATE, "Please Collect Application Fees to Process Application");
-            } else
-                model.addAttribute(COLLECT_FEE_VALIDATE, "");
-        }
+			if (applicationBpaService.applicationinitiatedByNonEmployee(application)
+				&& applicationBpaService.checkAnyTaxIsPendingToCollect(application)) {
+				model.addAttribute(COLLECT_FEE_VALIDATE, "Please Collect Application Fees to Process Application");
+			} else
+				model.addAttribute(COLLECT_FEE_VALIDATE, "");
+		}
 
-        if (application != null) {
-            loadViewdata(model, application);
+		if (application != null) {
+			loadViewdata(model, application);
 			if (application.getState() != null
 				&& application.getState().getValue().equalsIgnoreCase(APPLICATION_STATUS_REGISTERED) ||
 				application.getState().getValue().equalsIgnoreCase(APPLICATION_STATUS_SCHEDULED)
 				|| application.getState().getValue().equalsIgnoreCase(APPLICATION_STATUS_RESCHEDULED)) {
 				return DOCUMENTSCRUTINY_FORM;
 			}
-        }
-        return APPLICATION_VIEW;
-    }
+		}
+		return APPLICATION_VIEW;
+	}
 
 	private void buildRejectionReasons(Model model, BpaApplication application) {
 		if (APPLICATION_STATUS_NOCUPDATED.equals(application.getStatus().getCode())
-				|| APPLICATION_STATUS_REJECTED.equalsIgnoreCase(application.getStatus().getCode())
-				|| APPLICATION_STATUS_SCHEDULED.equalsIgnoreCase(application.getStatus().getCode())
+			|| APPLICATION_STATUS_REJECTED.equalsIgnoreCase(application.getStatus().getCode())
+			|| APPLICATION_STATUS_SCHEDULED.equalsIgnoreCase(application.getStatus().getCode())
 			|| APPLICATION_STATUS_RESCHEDULED.equalsIgnoreCase(application.getStatus().getCode())) {
 			model.addAttribute("showRejectionReasons", true);
 			model.addAttribute("additionalPermitCondition", permitConditionsService
@@ -190,18 +192,23 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
 	}
 
 	private void buildApplicationPermitConditions(final BpaApplication application) {
-        application.setDynamicPermitConditionsTemp(bpaApplicationPermitConditionsService
-                .findAllByApplicationAndPermitConditionType(application, PermitConditionType.DYNAMIC_PERMITCONDITION));
-        application.setStaticPermitConditionsTemp(bpaApplicationPermitConditionsService
-                .findAllByApplicationAndPermitConditionType(application, PermitConditionType.STATIC_PERMITCONDITION));
-        application.setAdditionalPermitConditionsTemp(bpaApplicationPermitConditionsService
-                .findAllByApplicationAndPermitConditionType(application, PermitConditionType.ADDITIONAL_PERMITCONDITION));
-    }
+		application.setDynamicPermitConditionsTemp(bpaApplicationPermitConditionsService
+				.findAllByApplicationAndPermitConditionType(application, PermitConditionType.DYNAMIC_PERMITCONDITION));
+		application.setStaticPermitConditionsTemp(bpaApplicationPermitConditionsService
+				.findAllByApplicationAndPermitConditionType(application, PermitConditionType.STATIC_PERMITCONDITION));
+		application.setAdditionalPermitConditionsTemp(bpaApplicationPermitConditionsService
+				.findAllByApplicationAndPermitConditionType(application, PermitConditionType.ADDITIONAL_PERMITCONDITION));
+	}
 
-    private void getModeForUpdateApplication(final Model model,  final BpaApplication application) {
-        String mode = null;
-        AppointmentSchedulePurpose scheduleType = null;
-
+	private void getModeForUpdateApplication(final Model model,  final BpaApplication application) {
+		String mode = null;
+		AppointmentSchedulePurpose scheduleType = null;
+		List<String> purposeInsList = new ArrayList<>();
+		for (BpaAppointmentSchedule schedule : application.getAppointmentSchedule()) {
+			if (AppointmentSchedulePurpose.INSPECTION.equals(schedule.getPurpose())) {
+				purposeInsList.add(schedule.getPurpose().name());
+			}
+		}
 		Assignment approverAssignment = bpaWorkFlowService.getApproverAssignment(application.getCurrentState().getOwnerPosition());
 		// To show reschedule scrutiny button to employee
 		if ((APPLICATION_STATUS_SCHEDULED.equals(application.getStatus().getCode()) ||
@@ -210,40 +217,42 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
 			!application.getSlotApplications().isEmpty()) {
 			mode = getModeForRescheduleForScrutiny(application);
 		} else if (WF_CREATED_STATE.equalsIgnoreCase(application.getStatus().getCode())) {
-            mode = "view";
-        } else if (APPLICATION_STATUS_DOC_VERIFIED.equalsIgnoreCase(application.getStatus().getCode())
-                        && FWD_TO_OVRSR_FOR_FIELD_INS
-                                .equalsIgnoreCase(application.getState().getNextAction())) {
-            mode = "newappointment";
-        } else if (FWD_TO_OVRSR_FOR_FIELD_INS.equalsIgnoreCase(application.getState().getNextAction())
-                && APPLICATION_STATUS_DOC_VERIFIED.equalsIgnoreCase(application.getStatus().getCode())
-                && application.getInspections().isEmpty()) {
-            mode = "captureInspection";
-            scheduleType = AppointmentSchedulePurpose.INSPECTION;
+			mode = "view";
+		} else if (APPLICATION_STATUS_DOC_VERIFIED.equalsIgnoreCase(application.getStatus().getCode())
+				   && FWD_TO_OVRSR_FOR_FIELD_INS
+						   .equalsIgnoreCase(application.getState().getNextAction())
+				   && purposeInsList.isEmpty()) {
+			mode = "newappointment";
+		} else if (FWD_TO_OVRSR_FOR_FIELD_INS.equalsIgnoreCase(application.getState().getNextAction())
+				   && APPLICATION_STATUS_DOC_VERIFIED.equalsIgnoreCase(application.getStatus().getCode())
+				   && application.getInspections().isEmpty()) {
+			mode = "captureInspection";
+			scheduleType = AppointmentSchedulePurpose.INSPECTION;
 		} else if ((FWD_TO_OVRSR_FOR_FIELD_INS.equalsIgnoreCase(application.getState().getNextAction())
 					&& APPLICATION_STATUS_DOC_VERIFIED.equalsIgnoreCase(application.getStatus().getCode()) ||
 					(DESIGNATION_OVERSEER.equals(approverAssignment.getDesignation().getName()) &&
 					 APPLICATION_STATUS_TS_INS.equalsIgnoreCase(application.getStatus().getCode())))
 				   && !application.getInspections().isEmpty()) {
-            mode = "modifyInspection";
-        } else if (FORWARDED_TO_NOC_UPDATE.equalsIgnoreCase(application.getState().getNextAction())
-                && APPLICATION_STATUS_FIELD_INS.equalsIgnoreCase(application.getStatus().getCode())) {
-            model.addAttribute("showUpdateNoc", true);
-        } else if (FWD_TO_AE_FOR_APPROVAL.equalsIgnoreCase(application.getState().getNextAction())
-                && !application.getInspections().isEmpty()) {
-            mode = "initialtedApprove";
-        }
+			mode = "modifyInspection";
+			scheduleType = AppointmentSchedulePurpose.INSPECTION;
+		} else if (FORWARDED_TO_NOC_UPDATE.equalsIgnoreCase(application.getState().getNextAction())
+				   && APPLICATION_STATUS_FIELD_INS.equalsIgnoreCase(application.getStatus().getCode())) {
+			model.addAttribute("showUpdateNoc", true);
+		} else if (FWD_TO_AE_FOR_APPROVAL.equalsIgnoreCase(application.getState().getNextAction())
+				   && !application.getInspections().isEmpty()) {
+			mode = "initialtedApprove";
+		}
 
-        if (mode == null) {
-            mode = "edit";
-        }
-        model.addAttribute("scheduleType", scheduleType);
-        model.addAttribute("mode", mode);
-    }
+		if (mode == null) {
+			mode = "edit";
+		}
+		model.addAttribute("scheduleType", scheduleType);
+		model.addAttribute("mode", mode);
+	}
 
-    @RequestMapping(value = "/documentscrutiny/{applicationNumber}", method = RequestMethod.GET)
-    public String documentScrutinyForm(final Model model, @PathVariable final String applicationNumber,
-            final HttpServletRequest request) {
+	@RequestMapping(value = "/documentscrutiny/{applicationNumber}", method = RequestMethod.GET)
+	public String documentScrutinyForm(final Model model, @PathVariable final String applicationNumber,
+									   final HttpServletRequest request) {
 		final BpaApplication application = getBpaApplication(applicationNumber);
 		buildRejectionReasons(model, application);
 		loadViewdata(model, application);
@@ -252,55 +261,55 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
 				bpaThirdPartyService.getHistory(application));
 		// return to error page if status is not superindent approved.
 		return CREATEDOCUMENTSCRUTINY_FORM;
-    }
+	}
 
-    @RequestMapping(value = "/documentscrutiny/{applicationNumber}", method = RequestMethod.POST)
-    public String documentScrutinyForm(@Valid @ModelAttribute(BPA_APPLICATION) BpaApplication bpaApplication,
-            @PathVariable final String applicationNumber,
-            final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
-            final HttpServletRequest request,
-            @RequestParam final BigDecimal amountRule, final Model model, @RequestParam("files") final MultipartFile[] files) {
-        if (resultBinder.hasErrors()) {
-            loadViewdata(model, bpaApplication);
-            return CREATEDOCUMENTSCRUTINY_FORM;
-        }
-        Long approvalPosition;
-        String approvalComent = request.getParameter(APPROVAL_COMENT);
-        if (request.getParameter(APPRIVALPOSITION) != null) {
-            approvalPosition = Long.valueOf(request.getParameter(APPRIVALPOSITION));
-            Position pos = positionMasterService.getPositionById(approvalPosition);
-            User user = bpaThirdPartyService.getUserPositionByPassingPosition(approvalPosition);
-            String workFlowAction = request.getParameter(WORK_FLOW_ACTION);
-            if (!bpaApplication.getApplicationDocument().isEmpty())
-                applicationBpaService.persistOrUpdateApplicationDocument(bpaApplication);
-            BpaApplication bpaAppln = applicationBpaService.updateApplication(bpaApplication, approvalPosition, workFlowAction,
-                    amountRule);
-            String message;
-            if (WF_INITIATE_REJECTION_BUTTON.equalsIgnoreCase(workFlowAction)) {
+	@RequestMapping(value = "/documentscrutiny/{applicationNumber}", method = RequestMethod.POST)
+	public String documentScrutinyForm(@Valid @ModelAttribute(BPA_APPLICATION) BpaApplication bpaApplication,
+									   @PathVariable final String applicationNumber,
+									   final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
+									   final HttpServletRequest request,
+									   @RequestParam final BigDecimal amountRule, final Model model, @RequestParam("files") final MultipartFile[] files) {
+		if (resultBinder.hasErrors()) {
+			loadViewdata(model, bpaApplication);
+			return CREATEDOCUMENTSCRUTINY_FORM;
+		}
+		Long approvalPosition;
+		String approvalComent = request.getParameter(APPROVAL_COMENT);
+		if (request.getParameter(APPRIVALPOSITION) != null) {
+			approvalPosition = Long.valueOf(request.getParameter(APPRIVALPOSITION));
+			Position pos = positionMasterService.getPositionById(approvalPosition);
+			User user = bpaThirdPartyService.getUserPositionByPassingPosition(approvalPosition);
+			String workFlowAction = request.getParameter(WORK_FLOW_ACTION);
+			if (!bpaApplication.getApplicationDocument().isEmpty())
+				applicationBpaService.persistOrUpdateApplicationDocument(bpaApplication);
+			BpaApplication bpaAppln = applicationBpaService.updateApplication(bpaApplication, approvalPosition, workFlowAction,
+					amountRule);
+			String message;
+			if (WF_INITIATE_REJECTION_BUTTON.equalsIgnoreCase(workFlowAction)) {
 				User userObj = bpaThirdPartyService.getUserPositionByPassingPosition(bpaAppln.getCurrentState().getOwnerPosition().getId());
 				message = messageSource.getMessage(MSG_INITIATE_REJECTION, new String[] {
 						userObj != null ? userObj.getUsername().concat("~")
-										   .concat(getDesinationNameByPosition(bpaAppln.getCurrentState().getOwnerPosition()))
-									 : "",
+												 .concat(getDesinationNameByPosition(bpaAppln.getCurrentState().getOwnerPosition()))
+										: "",
 						bpaAppln.getApplicationNumber(), approvalComent }, LocaleContextHolder.getLocale());
 			} else
-                message = messageSource.getMessage("msg.update.forward.documentscrutiny", new String[] {
-                    user != null ? user.getUsername().concat("~")
-                            .concat(getDesinationNameByPosition(pos))
-                            : "",
-                    bpaAppln.getApplicationNumber() }, LocaleContextHolder.getLocale());
-            model.addAttribute(MESSAGE, message);
-        }
-        return BPA_APPLICATION_RESULT;
-    }
+				message = messageSource.getMessage("msg.update.forward.documentscrutiny", new String[] {
+						user != null ? user.getUsername().concat("~")
+										   .concat(getDesinationNameByPosition(pos))
+									 : "",
+						bpaAppln.getApplicationNumber() }, LocaleContextHolder.getLocale());
+			model.addAttribute(MESSAGE, message);
+		}
+		return BPA_APPLICATION_RESULT;
+	}
 
-    private void loadViewdata(final Model model, final BpaApplication application) {
-        applicationBpaService.buildExistingAndProposedBuildingDetails(application);
-        model.addAttribute("stateType", application.getClass().getSimpleName());
-        final WorkflowContainer workflowContainer = new WorkflowContainer();
-        model.addAttribute(ADDITIONALRULE, CREATE_ADDITIONAL_RULE_CREATE);
-        workflowContainer.setAdditionalRule(CREATE_ADDITIONAL_RULE_CREATE);
-        List<LettertoParty> lettertoParties = lettertoPartyService.findByBpaApplicationOrderByIdDesc(application);
+	private void loadViewdata(final Model model, final BpaApplication application) {
+		applicationBpaService.buildExistingAndProposedBuildingDetails(application);
+		model.addAttribute("stateType", application.getClass().getSimpleName());
+		final WorkflowContainer workflowContainer = new WorkflowContainer();
+		model.addAttribute(ADDITIONALRULE, CREATE_ADDITIONAL_RULE_CREATE);
+		workflowContainer.setAdditionalRule(CREATE_ADDITIONAL_RULE_CREATE);
+		List<LettertoParty> lettertoParties = lettertoPartyService.findByBpaApplicationOrderByIdDesc(application);
 
 		if (application.getState() != null
 			&& application.getState().getValue().equalsIgnoreCase(APPLICATION_STATUS_REGISTERED) ||
@@ -309,15 +318,15 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
 			workflowContainer.setPendingActions(application.getState().getNextAction());
 		}
 
-        // Setting AmountRule to decide no. of level approval cycle
-        if (APPLICATION_STATUS_NOCUPDATED.equals(application.getStatus().getCode())
-                || (!APPLICATION_STATUS_DIGI_SIGNED.equals(application.getStatus().getCode())
-                        && !APPLICATION_STATUS_APPROVED.equals(application.getStatus().getCode()) && !lettertoParties.isEmpty()
-                        && APPLICATION_STATUS_NOCUPDATED
-                                .equals(lettertoParties.get(0).getCurrentApplnStatus().getCode()))) {
-            workflowContainer.setAmountRule(getAmountRuleByServiceType(application));
-            workflowContainer.setPendingActions(application.getState().getNextAction());
-        } /*else if (APPLICATION_STATUS_APPROVED.equals(application.getStatus().getCode())
+		// Setting AmountRule to decide no. of level approval cycle
+		if (APPLICATION_STATUS_NOCUPDATED.equals(application.getStatus().getCode())
+			|| (!APPLICATION_STATUS_DIGI_SIGNED.equals(application.getStatus().getCode())
+				&& !APPLICATION_STATUS_APPROVED.equals(application.getStatus().getCode()) && !lettertoParties.isEmpty()
+				&& APPLICATION_STATUS_NOCUPDATED
+						.equals(lettertoParties.get(0).getCurrentApplnStatus().getCode()))) {
+			workflowContainer.setAmountRule(getAmountRuleByServiceType(application));
+			workflowContainer.setPendingActions(application.getState().getNextAction());
+		} /*else if (APPLICATION_STATUS_APPROVED.equals(application.getStatus().getCode())
                 && !APPLICATION_STATUS_RECORD_APPROVED.equalsIgnoreCase(application.getState().getValue())) {
             workflowContainer.setAmountRule(getAmountRuleByServiceType(application));
         }*/
@@ -332,138 +341,138 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
 			else if (DESIGNATION_OVERSEER.equals(approverAssignment.getDesignation().getName()))
 				workflowContainer.setPendingActions(FWD_TO_OVERSEER_AFTER_TS_INSPN);
 		}
-        workflowContainer.setAdditionalRule(CREATE_ADDITIONAL_RULE_CREATE);
-        application.getOwner().setPermanentAddress((PermanentAddress) application.getOwner().getUser().getAddress().get(0));
-        prepareWorkflow(model, application, workflowContainer);
-        model.addAttribute("pendingActions", workflowContainer.getPendingActions());
-        model.addAttribute(AMOUNT_RULE, workflowContainer.getAmountRule());
-        model.addAttribute("currentState", application.getCurrentState().getValue());
-        model.addAttribute(BPA_APPLICATION, application);
-        model.addAttribute("electionBoundary", application.getSiteDetail().get(0).getElectionBoundary().getId());
-        model.addAttribute("electionBoundaryName", application.getSiteDetail().get(0).getElectionBoundary().getName());
-        model.addAttribute("revenueBoundaryName", application.getSiteDetail().get(0).getAdminBoundary().getName());
-        model.addAttribute("bpaPrimaryDept", bpaUtils.getAppconfigValueByKeyNameForDefaultDept());
-        model.addAttribute("checkListDetailList", checkListDetailService
-                .findActiveCheckListByServiceType(application.getServiceType().getId(), CHECKLIST_TYPE));
-        model.addAttribute("applicationDocumentList", application.getApplicationDocument());
-        model.addAttribute("isFeeCollected", bpaDemandService.checkAnyTaxIsPendingToCollect(application));
-        model.addAttribute("admissionFee", applicationBpaService.setAdmissionFeeAmountForRegistrationWithAmenities(
-                application.getServiceType().getId(), application.getApplicationAmenity()));
-        buildReceiptDetails(application);
-    }
+		workflowContainer.setAdditionalRule(CREATE_ADDITIONAL_RULE_CREATE);
+		application.getOwner().setPermanentAddress((PermanentAddress) application.getOwner().getUser().getAddress().get(0));
+		prepareWorkflow(model, application, workflowContainer);
+		model.addAttribute("pendingActions", workflowContainer.getPendingActions());
+		model.addAttribute(AMOUNT_RULE, workflowContainer.getAmountRule());
+		model.addAttribute("currentState", application.getCurrentState().getValue());
+		model.addAttribute(BPA_APPLICATION, application);
+		model.addAttribute("electionBoundary", application.getSiteDetail().get(0).getElectionBoundary().getId());
+		model.addAttribute("electionBoundaryName", application.getSiteDetail().get(0).getElectionBoundary().getName());
+		model.addAttribute("revenueBoundaryName", application.getSiteDetail().get(0).getAdminBoundary().getName());
+		model.addAttribute("bpaPrimaryDept", bpaUtils.getAppconfigValueByKeyNameForDefaultDept());
+		model.addAttribute("checkListDetailList", checkListDetailService
+				.findActiveCheckListByServiceType(application.getServiceType().getId(), CHECKLIST_TYPE));
+		model.addAttribute("applicationDocumentList", application.getApplicationDocument());
+		model.addAttribute("isFeeCollected", bpaDemandService.checkAnyTaxIsPendingToCollect(application));
+		model.addAttribute("admissionFee", applicationBpaService.setAdmissionFeeAmountForRegistrationWithAmenities(
+				application.getServiceType().getId(), application.getApplicationAmenity()));
+		buildReceiptDetails(application);
+	}
 
-    private BigDecimal getAmountRuleByServiceType(final BpaApplication application) {
-        BigDecimal amountRule = BigDecimal.ONE;
-        if (ST_CODE_14.equalsIgnoreCase(application.getServiceType().getCode())
-                || ST_CODE_15.equalsIgnoreCase(application.getServiceType().getCode())) {
-            amountRule = new BigDecimal(11000);
-        } else if (ST_CODE_05.equalsIgnoreCase(application.getServiceType().getCode())) {
-            amountRule = application.getDocumentScrutiny().get(0).getExtentinsqmts();
-        } else if (ST_CODE_08.equalsIgnoreCase(application.getServiceType().getCode())
-                || ST_CODE_09.equalsIgnoreCase(application.getServiceType().getCode())) {
-            amountRule = BigDecimal.ONE;
-        } else if (!application.getBuildingDetail().isEmpty()
-                && application.getBuildingDetail().get(0).getTotalPlintArea() != null) {
-            if (!application.getExistingBuildingDetails().isEmpty()
-                    && application.getExistingBuildingDetails().get(0).getTotalPlintArea() != null)
-                amountRule = application.getBuildingDetail().get(0).getTotalPlintArea()
-                        .add(application.getExistingBuildingDetails().get(0).getTotalPlintArea());
-            else
-                amountRule = application.getBuildingDetail().get(0).getTotalPlintArea();
-        }
-        return amountRule;
-    }
+	private BigDecimal getAmountRuleByServiceType(final BpaApplication application) {
+		BigDecimal amountRule = BigDecimal.ONE;
+		if (ST_CODE_14.equalsIgnoreCase(application.getServiceType().getCode())
+			|| ST_CODE_15.equalsIgnoreCase(application.getServiceType().getCode())) {
+			amountRule = new BigDecimal(11000);
+		} else if (ST_CODE_05.equalsIgnoreCase(application.getServiceType().getCode())) {
+			amountRule = application.getDocumentScrutiny().get(0).getExtentinsqmts();
+		} else if (ST_CODE_08.equalsIgnoreCase(application.getServiceType().getCode())
+				   || ST_CODE_09.equalsIgnoreCase(application.getServiceType().getCode())) {
+			amountRule = BigDecimal.ONE;
+		} else if (!application.getBuildingDetail().isEmpty()
+				   && application.getBuildingDetail().get(0).getTotalPlintArea() != null) {
+			if (!application.getExistingBuildingDetails().isEmpty()
+				&& application.getExistingBuildingDetails().get(0).getTotalPlintArea() != null)
+				amountRule = application.getBuildingDetail().get(0).getTotalPlintArea()
+										.add(application.getExistingBuildingDetails().get(0).getTotalPlintArea());
+			else
+				amountRule = application.getBuildingDetail().get(0).getTotalPlintArea();
+		}
+		return amountRule;
+	}
 
-    @RequestMapping(value = "/update/{applicationNumber}", method = RequestMethod.POST)
-    public String updateApplication(@Valid @ModelAttribute(BPA_APPLICATION) BpaApplication bpaApplication,
-            @PathVariable final String applicationNumber,
-            final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
-            final HttpServletRequest request, final Model model,
-            @RequestParam final BigDecimal amountRule, @RequestParam("files") final MultipartFile[] files) {
-        proposedBuildingFloorDetailsService.removeDuplicateProposedBuildFloorDetails(bpaApplication);
-        existingBuildingFloorDetailsService.removeDuplicateExistingBuildFloorDetails(bpaApplication);
-        if (resultBinder.hasErrors()) {
-            loadViewdata(model, bpaApplication);
-            return BPAAPPLICATION_FORM;
-        }
+	@RequestMapping(value = "/update/{applicationNumber}", method = RequestMethod.POST)
+	public String updateApplication(@Valid @ModelAttribute(BPA_APPLICATION) BpaApplication bpaApplication,
+									@PathVariable final String applicationNumber,
+									final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
+									final HttpServletRequest request, final Model model,
+									@RequestParam final BigDecimal amountRule, @RequestParam("files") final MultipartFile[] files) {
+		proposedBuildingFloorDetailsService.removeDuplicateProposedBuildFloorDetails(bpaApplication);
+		existingBuildingFloorDetailsService.removeDuplicateExistingBuildFloorDetails(bpaApplication);
+		if (resultBinder.hasErrors()) {
+			loadViewdata(model, bpaApplication);
+			return BPAAPPLICATION_FORM;
+		}
 
-        if (bpaApplicationValidationService.validateBuildingDetails(bpaApplication, model)) {
-            loadViewdata(model, bpaApplication);
-            return BPAAPPLICATION_FORM;
-        }
+		if (bpaApplicationValidationService.validateBuildingDetails(bpaApplication, model)) {
+			loadViewdata(model, bpaApplication);
+			return BPAAPPLICATION_FORM;
+		}
 
-        String workFlowAction = request.getParameter(WORK_FLOW_ACTION);
-        String approvalComent = request.getParameter(APPROVAL_COMENT);
-        if (WF_CANCELAPPLICATION_BUTTON.equalsIgnoreCase(workFlowAction)) {
-            StateHistory stateHistory = bpaApplication.getStateHistory().stream()
-                    .filter(history -> history.getValue().equalsIgnoreCase(APPLICATION_STATUS_REJECTED))
-                    .findAny().orElse(null);
-            if (stateHistory != null)
-                approvalComent = stateHistory.getComments();
-        }
+		String workFlowAction = request.getParameter(WORK_FLOW_ACTION);
+		String approvalComent = request.getParameter(APPROVAL_COMENT);
+		if (WF_CANCELAPPLICATION_BUTTON.equalsIgnoreCase(workFlowAction)) {
+			StateHistory stateHistory = bpaApplication.getStateHistory().stream()
+													  .filter(history -> history.getValue().equalsIgnoreCase(APPLICATION_STATUS_REJECTED))
+													  .findAny().orElse(null);
+			if (stateHistory != null)
+				approvalComent = stateHistory.getComments();
+		}
 
-        String message;
-        Long approvalPosition = null;
-        Position pos = null;
-        if (BpaConstants.WF_TS_INSPECTION_INITIATED.equalsIgnoreCase(bpaApplication.getStatus().getCode())) {
-            pos = positionMasterService.getPositionById(bpaWorkFlowService.getTownSurveyorInspnInitiator(bpaApplication));
-            approvalPosition = positionMasterService.getPositionById(bpaWorkFlowService.getTownSurveyorInspnInitiator(bpaApplication)).getId();
-        } else if (WF_REVERT_BUTTON.equalsIgnoreCase(workFlowAction)) {
-            pos = bpaApplication.getCurrentState().getPreviousOwner();
-            approvalPosition = bpaApplication.getCurrentState().getPreviousOwner().getId();
-        } else if (FWDINGTOLPINITIATORPENDING.equalsIgnoreCase(bpaApplication.getState().getNextAction())) {
-            List<LettertoParty> lettertoParties = lettertoPartyService.findByBpaApplicationOrderByIdDesc(bpaApplication);
-            StateHistory stateHistory = bpaWorkFlowService.getStateHistoryToGetLPInitiator(bpaApplication, lettertoParties);
-            approvalPosition = stateHistory.getOwnerPosition().getId();
-        } else if (StringUtils.isNotBlank(request.getParameter(APPRIVALPOSITION))
-                   && !WF_REJECT_BUTTON.equalsIgnoreCase(workFlowAction)
-                   && !GENERATEREJECTNOTICE.equalsIgnoreCase(workFlowAction)) {
-            approvalPosition = Long.valueOf(request.getParameter(APPRIVALPOSITION));
-        } else if (WF_REJECT_BUTTON.equalsIgnoreCase(workFlowAction)) {
-            pos = bpaWorkFlowService.getApproverPositionOnReject(bpaApplication, WF_REJECT_STATE);
-            approvalPosition = pos.getId();
-        }
-        buildReceiptDetails(bpaApplication);
-        if (!bpaApplication.getApplicationDocument().isEmpty())
-            applicationBpaService.persistOrUpdateApplicationDocument(bpaApplication);
-        if (bpaApplication.getCurrentState().getValue().equals(WF_NEW_STATE)) {
-            return applicationBpaService.redirectToCollectionOnForward(bpaApplication, model);
-        }
-        BpaApplication bpaAppln = applicationBpaService.updateApplication(bpaApplication, approvalPosition, workFlowAction,
-                amountRule);
-        bpaUtils.updatePortalUserinbox(bpaAppln, null);
-        if (null != approvalPosition) {
-            pos = positionMasterService.getPositionById(approvalPosition);
-        }
-        if (null == approvalPosition) {
-            pos = positionMasterService.getPositionById(bpaAppln.getCurrentState().getOwnerPosition().getId());
-        }
-        User user = bpaThirdPartyService.getUserPositionByPassingPosition(approvalPosition);
-        if (WF_REJECT_BUTTON.equalsIgnoreCase(workFlowAction)) {
-            message = messageSource.getMessage(MSG_REJECT_FORWARD_REGISTRATION, new String[] {
+		String message;
+		Long approvalPosition = null;
+		Position pos = null;
+		if (BpaConstants.WF_TS_INSPECTION_INITIATED.equalsIgnoreCase(bpaApplication.getStatus().getCode())) {
+			pos = positionMasterService.getPositionById(bpaWorkFlowService.getTownSurveyorInspnInitiator(bpaApplication));
+			approvalPosition = positionMasterService.getPositionById(bpaWorkFlowService.getTownSurveyorInspnInitiator(bpaApplication)).getId();
+		} else if (WF_REVERT_BUTTON.equalsIgnoreCase(workFlowAction)) {
+			pos = bpaApplication.getCurrentState().getPreviousOwner();
+			approvalPosition = bpaApplication.getCurrentState().getPreviousOwner().getId();
+		} else if (FWDINGTOLPINITIATORPENDING.equalsIgnoreCase(bpaApplication.getState().getNextAction())) {
+			List<LettertoParty> lettertoParties = lettertoPartyService.findByBpaApplicationOrderByIdDesc(bpaApplication);
+			StateHistory stateHistory = bpaWorkFlowService.getStateHistoryToGetLPInitiator(bpaApplication, lettertoParties);
+			approvalPosition = stateHistory.getOwnerPosition().getId();
+		} else if (StringUtils.isNotBlank(request.getParameter(APPRIVALPOSITION))
+				   && !WF_REJECT_BUTTON.equalsIgnoreCase(workFlowAction)
+				   && !GENERATEREJECTNOTICE.equalsIgnoreCase(workFlowAction)) {
+			approvalPosition = Long.valueOf(request.getParameter(APPRIVALPOSITION));
+		} else if (WF_REJECT_BUTTON.equalsIgnoreCase(workFlowAction)) {
+			pos = bpaWorkFlowService.getApproverPositionOnReject(bpaApplication, WF_REJECT_STATE);
+			approvalPosition = pos.getId();
+		}
+		buildReceiptDetails(bpaApplication);
+		if (!bpaApplication.getApplicationDocument().isEmpty())
+			applicationBpaService.persistOrUpdateApplicationDocument(bpaApplication);
+		if (bpaApplication.getCurrentState().getValue().equals(WF_NEW_STATE)) {
+			return applicationBpaService.redirectToCollectionOnForward(bpaApplication, model);
+		}
+		BpaApplication bpaAppln = applicationBpaService.updateApplication(bpaApplication, approvalPosition, workFlowAction,
+				amountRule);
+		bpaUtils.updatePortalUserinbox(bpaAppln, null);
+		if (null != approvalPosition) {
+			pos = positionMasterService.getPositionById(approvalPosition);
+		}
+		if (null == approvalPosition) {
+			pos = positionMasterService.getPositionById(bpaAppln.getCurrentState().getOwnerPosition().getId());
+		}
+		User user = bpaThirdPartyService.getUserPositionByPassingPosition(approvalPosition);
+		if (WF_REJECT_BUTTON.equalsIgnoreCase(workFlowAction)) {
+			message = messageSource.getMessage(MSG_REJECT_FORWARD_REGISTRATION, new String[] {
 					user != null ? user.getUsername().concat("~")
-                            .concat(getDesinationNameByPosition(pos))
-                            : "",
-                    bpaAppln.getApplicationNumber(), approvalComent }, LocaleContextHolder.getLocale());
-        } else if (WF_SAVE_BUTTON.equalsIgnoreCase(workFlowAction)) {
-            message = messageSource.getMessage("msg.noc.update.success", new String[] {}, LocaleContextHolder.getLocale());
-        } else {
-            message = messageSource.getMessage(MSG_UPDATE_FORWARD_REGISTRATION, new String[] {
-                    user != null ? user.getUsername().concat("~")
-                            .concat(getDesinationNameByPosition(pos))
-                            : "",
-                    bpaAppln.getApplicationNumber() }, LocaleContextHolder.getLocale());
-        }
-        model.addAttribute(MESSAGE, message);
-        if (APPLICATION_STATUS_CANCELLED.equalsIgnoreCase(bpaApplication.getStatus().getCode())) {
-            bpaSmsAndEmailService.sendSMSAndEmail(bpaAppln);
-        }
-        if (isNotBlank(workFlowAction) && GENERATEPERMITORDER.equalsIgnoreCase(workFlowAction)) {
-            return "redirect:/application/generatepermitorder/" + bpaAppln.getApplicationNumber();
-        } else if (isNotBlank(workFlowAction) && GENERATEREJECTNOTICE.equalsIgnoreCase(workFlowAction)) {
-            return "redirect:/application/rejectionnotice/" + bpaAppln.getApplicationNumber();
-        }
-        return BPA_APPLICATION_RESULT;
-    }
+									   .concat(getDesinationNameByPosition(pos))
+								 : "",
+					bpaAppln.getApplicationNumber(), approvalComent }, LocaleContextHolder.getLocale());
+		} else if (WF_SAVE_BUTTON.equalsIgnoreCase(workFlowAction)) {
+			message = messageSource.getMessage("msg.noc.update.success", new String[] {}, LocaleContextHolder.getLocale());
+		} else {
+			message = messageSource.getMessage(MSG_UPDATE_FORWARD_REGISTRATION, new String[] {
+					user != null ? user.getUsername().concat("~")
+									   .concat(getDesinationNameByPosition(pos))
+								 : "",
+					bpaAppln.getApplicationNumber() }, LocaleContextHolder.getLocale());
+		}
+		model.addAttribute(MESSAGE, message);
+		if (APPLICATION_STATUS_CANCELLED.equalsIgnoreCase(bpaApplication.getStatus().getCode())) {
+			bpaSmsAndEmailService.sendSMSAndEmail(bpaAppln);
+		}
+		if (isNotBlank(workFlowAction) && GENERATEPERMITORDER.equalsIgnoreCase(workFlowAction)) {
+			return "redirect:/application/generatepermitorder/" + bpaAppln.getApplicationNumber();
+		} else if (isNotBlank(workFlowAction) && GENERATEREJECTNOTICE.equalsIgnoreCase(workFlowAction)) {
+			return "redirect:/application/rejectionnotice/" + bpaAppln.getApplicationNumber();
+		}
+		return BPA_APPLICATION_RESULT;
+	}
 
 }

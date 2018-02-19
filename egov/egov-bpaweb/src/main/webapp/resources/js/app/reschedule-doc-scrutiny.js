@@ -130,7 +130,7 @@ $(document).ready(function() {
                             $('.loader-class').modal('show', {
                                 backdrop : 'static'
                             });
-                            if ($('$form').valid()) {
+                            if ($('#scrutinyReScheduleForm').valid()) {
                                 document.forms[0].submit();
                             } else {
                                 e.stopPropagation();
@@ -148,37 +148,37 @@ $(document).ready(function() {
     });
 
     $('#appointmentDate').change(function (event) {
-            $.ajax({
-                url : "/bpa/application/scrutiny/slotdetails",
-                type : "GET",
-                data : {
-                    appointmentDate : $('#appointmentDate').val(),
-                    zoneId : $('#zoneId').val()
-                },
-                async: false,
-                cache : false,
-                dataType : "json",
-                success : function(response) {
-                    if(response.length == 0) {
-                        $('#appointmentTime').html("");
-                        $('#appointmentTime').append("<option value=''>Select</option>");
-                        bootbox.alert("No slots available on selected date, please select different date.");
-                        $('#appointmentDate').val('');
-                    } else {
-                        $('#appointmentTime').html("");
-                        $('#appointmentTime').append("<option value=''>Select</option>");
-                        $.each(response, function(index, value) {
-                            $('#appointmentTime').append(
-                                $('<option>').text(value.appointmentTime).attr(
-                                    'value', value.appointmentTime));
-                        });
-                    }
-                },
-                error : function(response) {
+        $.ajax({
+            url : "/bpa/application/scrutiny/slotdetails",
+            type : "GET",
+            data : {
+                appointmentDate : $('#appointmentDate').val(),
+                zoneId : $('#zoneId').val()
+            },
+            async: false,
+            cache : false,
+            dataType : "json",
+            success : function(response) {
+                if(response.length == 0) {
                     $('#appointmentTime').html("");
                     $('#appointmentTime').append("<option value=''>Select</option>");
+                    bootbox.alert("No slots available on selected date, please select different date.");
+                    $('#appointmentDate').val('');
+                } else {
+                    $('#appointmentTime').html("");
+                    $('#appointmentTime').append("<option value=''>Select</option>");
+                    $.each(response, function(index, value) {
+                        $('#appointmentTime').append(
+                            $('<option>').text(value.appointmentTime).attr(
+                                'value', value.appointmentTime));
+                    });
                 }
-            });
+            },
+            error : function(response) {
+                $('#appointmentTime').html("");
+                $('#appointmentTime').append("<option value=''>Select</option>");
+            }
         });
+    });
 
 });
