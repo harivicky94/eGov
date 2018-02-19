@@ -40,10 +40,14 @@
 package org.egov.bpa.transaction.repository;
 
 import org.egov.bpa.transaction.entity.Slot;
+import org.egov.infra.admin.master.entity.Boundary;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
+import java.util.Date;
 
 @Repository
 public interface SlotRepository extends JpaRepository<Slot, Long> {
 
+	Slot findByZoneAndAppointmentDate(Boundary zone, Date appointmentDate);
 }
