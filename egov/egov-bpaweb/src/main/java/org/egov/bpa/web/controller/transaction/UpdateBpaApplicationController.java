@@ -317,10 +317,10 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
                                 .equals(lettertoParties.get(0).getCurrentApplnStatus().getCode()))) {
             workflowContainer.setAmountRule(getAmountRuleByServiceType(application));
             workflowContainer.setPendingActions(application.getState().getNextAction());
-        } else if (APPLICATION_STATUS_APPROVED.equals(application.getStatus().getCode())
+        } /*else if (APPLICATION_STATUS_APPROVED.equals(application.getStatus().getCode())
                 && !APPLICATION_STATUS_RECORD_APPROVED.equalsIgnoreCase(application.getState().getValue())) {
             workflowContainer.setAmountRule(getAmountRuleByServiceType(application));
-        }
+        }*/
 		// Town surveyor workflow
 		if (WF_TS_INSPECTION_INITIATED.equalsIgnoreCase(application.getStatus().getCode())) {
 			workflowContainer.setPendingActions(WF_TS_APPROVAL_PENDING);

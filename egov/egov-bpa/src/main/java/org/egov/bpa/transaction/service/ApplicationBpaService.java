@@ -309,8 +309,7 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
             bpaDemandService.generateDemandUsingSanctionFeeList(applicationFeeService
                     .saveApplicationFee(applicationBpaFeeCalculationService.calculateBpaSanctionFees(application)));
         }
-        if (APPLICATION_STATUS_APPROVED.equalsIgnoreCase(application.getStatus().getCode())
-                && FORWARDED_DIGI_SIGN.equalsIgnoreCase(application.getState().getNextAction())) {
+        if (WF_APPROVE_BUTTON.equals(workFlowAction)) {
             application.setPlanPermissionNumber(generatePlanPermissionNumber(application));
             application.setPlanPermissionDate(new Date());
         }

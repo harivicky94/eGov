@@ -325,6 +325,32 @@ jQuery(document)
                                                     }
                                                 });
                                             return false;
+                                        } else if (action == 'Generate Permit Order') {
+                                            $('#Generate Permit Order').attr('formnovalidate', 'true');
+
+                                            bootbox
+                                                .confirm({
+                                                    message : 'Please make sure, you added all required permit conditions and going to generate permit order.',
+                                                    buttons : {
+                                                        'cancel' : {
+                                                            label : 'No',
+                                                            className : 'btn-danger'
+                                                        },
+                                                        'confirm' : {
+                                                            label : 'Yes',
+                                                            className : 'btn-primary'
+                                                        }
+                                                    },
+                                                    callback : function(result) {
+                                                        if (result) {
+                                                            validateOnApproveAndForward(validator, action);
+                                                        } else {
+                                                            e.stopPropagation();
+                                                            e.preventDefault();
+                                                        }
+                                                    }
+                                                });
+                                            return false;
                                         } else {
                                             validateOnApproveAndForward(validator, action);
 										}

@@ -163,6 +163,21 @@
 			<div class="buttonbottom" align="center">
 				<table>
 					<tr>
+						<c:if test="${ mode eq 'showRescheduleToCitizen' || mode eq 'showReschedule'}">
+							<td> <a
+									href="/bpa/application/scrutiny/reschedule/${bpaApplication.applicationNumber}"
+									class="btn btn-primary"> Reschedule Appointment </a>
+							</td>
+						</c:if>
+						<c:if test="${ bpaApplication.status.code eq 'Scheduled For Document Scrutiny'
+								|| bpaApplication.status.code eq 'Pending For Rescheduling For Document Scrutiny'
+								|| bpaApplication.status.code eq 'Rescheduled For Document Scrutiny'}">
+							<td> <a
+									href="/bpa/application/scrutiny/view/${bpaApplication.applicationNumber}"
+									class="btn btn-primary"> View Scheduled Appointment Details </a>
+							</td>
+						</c:if>
+
 						<c:if test="${bpaApplication.status.code eq  'Letter To Party Created' }">
 							<td> <a	href="/bpa/lettertoparty/lettertopartyreply/${lettertopartylist.get(0).id}" class="btn btn-primary">
 										 Reply Letter To Party
@@ -182,7 +197,7 @@
 							</td> 
 						</c:if>
 						
-						<c:if test="${bpaApplication.status.code eq 'Cancelled' && bpaApplication.state ne null}">
+						<c:if test="${bpaApplication.status.code eq 'Cancelled' && bpaApplication.state ne null && bpaApplication.state.comments ne 'Application cancelled by citizen'}">
 							<td> <a	href="/bpa/application/rejectionnotice/${bpaApplication.applicationNumber}" class="btn btn-primary">
 										 Print Rejection Notice
 								    </a>
