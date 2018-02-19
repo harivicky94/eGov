@@ -39,6 +39,7 @@
  */
 package org.egov.bpa.transaction.service;
 
+import org.apache.log4j.Logger;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.SlotApplication;
 import org.egov.bpa.transaction.entity.SlotDetail;
@@ -60,6 +61,7 @@ import java.util.List;
 @Service
 @Transactional(readOnly = true)
 public class ScheduleAppointmentForDocumentScrutinyService {
+	private static final Logger LOGGER = Logger.getLogger(ScheduleAppointmentForDocumentScrutinyService.class);
 	@Autowired
 	private BpaStatusRepository bpaStatusRepository;
 
@@ -122,15 +124,31 @@ public class ScheduleAppointmentForDocumentScrutinyService {
 				}
 				if (slotApplication.getSlotDetail() != null) {
 					slotApplicationList.add(slotApplication);
+					if (LOGGER.isInfoEnabled())
+						LOGGER.info("**************Scheduled Document Scrutiny Zone***************"+slotApplication.getApplication().getSiteDetail().get(0).getAdminBoundary().getParent().getName());
+					if (LOGGER.isInfoEnabled())
+						LOGGER.info("**************Scheduled Document Scrutiny Application Number***************"+slotApplication.getApplication().getApplicationNumber());
 					if (slotApplication.getScheduleAppointmentType().name()
 									   .equals(ScheduleAppointmentType.SCHEDULE.name())) {
+						if (LOGGER.isInfoEnabled())
+							LOGGER.info("**************Schedule Workflow Start***************"+bpaUtils);
+						if (LOGGER.isInfoEnabled())
+							LOGGER.info("************** Schedule Workflow Current State***************"+application.getCurrentState());
 						bpaUtils.redirectToBpaWorkFlow(application.getCurrentState().getOwnerPosition().getId(), application, null, BpaConstants.APPLICATION_STATUS_SCHEDULED, "Forward", null);
+						if (LOGGER.isInfoEnabled())
+							LOGGER.info("**************Schedule Workflow end***************");
 						applicationBpaRepository.save(application);
 						bpaSmsAndEmailService.sendSMSAndEmailForDocumentScrutiny(slotApplication,
 								application);
 					} else if (slotApplication.getScheduleAppointmentType().name()
 											  .equals(ScheduleAppointmentType.RESCHEDULE.name())) {
+						if (LOGGER.isInfoEnabled())
+							LOGGER.info("**************Re-Schedule Workflow Start***************"+bpaUtils);
+						if (LOGGER.isInfoEnabled())
+							LOGGER.info("**************Re-Schedule Workflow Current State***************"+application.getCurrentState());
 						bpaUtils.redirectToBpaWorkFlow(application.getCurrentState().getOwnerPosition().getId(), application, null, "document scrutiny re-scheduled", BpaConstants.WF_RESCHDLE_APPMNT_BUTTON, null);
+						if (LOGGER.isInfoEnabled())
+							LOGGER.info("**************Re-Schedule Workflow end***************");
 						applicationBpaRepository.save(application);
 						bpaSmsAndEmailService.sendSMSAndEmailForDocumentScrutiny(slotApplication,
 								application);

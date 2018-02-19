@@ -39,13 +39,6 @@
  */
 package org.egov.bpa.conf;
 
-import static org.quartz.CronTrigger.MISFIRE_INSTRUCTION_DO_NOTHING;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.sql.DataSource;
-
 import org.egov.bpa.scheduler.CancelAppointmentJob;
 import org.egov.bpa.scheduler.OpenSlotsJob;
 import org.egov.bpa.scheduler.ScheduleAppointmentJob;
@@ -57,6 +50,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.quartz.CronTriggerFactoryBean;
 import org.springframework.scheduling.quartz.JobDetailFactoryBean;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
+
+import javax.sql.DataSource;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.quartz.CronTrigger.MISFIRE_INSTRUCTION_DO_NOTHING;
 
 @Configuration
 @Conditional(SchedulerConfigCondition.class)
@@ -101,7 +100,7 @@ public class BpaSchedulerConfiguration extends QuartzSchedulerConfiguration {
 		demandActivationCron.setJobDetail(cancelAppointmentJobDetail().getObject());
 		demandActivationCron.setGroup("BPA_TRIGGER_GROUP");
 		demandActivationCron.setName("BPA_CANCEL_APPOINTMENT_TRIGGER");
-		demandActivationCron.setCronExpression("0 */6 * * * ?");
+		demandActivationCron.setCronExpression("0 */60 * * * ?");
 		demandActivationCron.setMisfireInstruction(MISFIRE_INSTRUCTION_DO_NOTHING);
 		return demandActivationCron;
 	}
