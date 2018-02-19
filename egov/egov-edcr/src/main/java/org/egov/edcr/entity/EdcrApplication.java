@@ -1,16 +1,14 @@
 package org.egov.edcr.entity;
 
-import java.io.File;
-import java.util.Date;
-import java.util.List;
+import org.egov.infra.persistence.entity.AbstractAuditable;
 
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.ja.annotation.Ignore;
+import java.io.File;
+import java.util.Date;
+import java.util.List;
 @Entity
 @Table(name = "edcredcrapplication")
 //@SequenceGenerator(name = PlanRule.SEQ_EDCR_PLANRULE, sequenceName = PlanRule.SEQ_EDCR_PLANRULE, allocationSize = 1)
@@ -29,7 +27,6 @@ public class EdcrApplication extends AbstractAuditable {
     private Date applicationDate;
     @Transient
     private File dxfFile; //File to be process.
-    @Ignore
     @Transient
     private List <File> fileHistory;  
     @Transient
