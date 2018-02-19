@@ -100,7 +100,7 @@ public class BpaSchedulerConfiguration extends QuartzSchedulerConfiguration {
 		demandActivationCron.setJobDetail(cancelAppointmentJobDetail().getObject());
 		demandActivationCron.setGroup("BPA_TRIGGER_GROUP");
 		demandActivationCron.setName("BPA_CANCEL_APPOINTMENT_TRIGGER");
-		demandActivationCron.setCronExpression("0 */60 * * * ?");
+		demandActivationCron.setCronExpression("0 */59 * * * ?");
 		demandActivationCron.setMisfireInstruction(MISFIRE_INSTRUCTION_DO_NOTHING);
 		return demandActivationCron;
 	}
