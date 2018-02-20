@@ -327,11 +327,11 @@ public class BillServiceTest extends AbstractContextControllerTest<BillService> 
     @Test
     public void shouldGiveErrorsIfBillDatesNotProper() {
         billRegister.setBillDate(DateUtils.getDate("20-02-2011", "dd-MM-yyyy"));
-        billRegister.setPartyBillDate(DateUtils.getDate("20-02-2018", "dd-MM-yyyy"));
+        billRegister.setPartyBillDate(DateUtils.getDate("20-02-2099", "dd-MM-yyyy"));
         when(financialYearHibernateDAO.getFinancialYearByDate(Matchers.any()))
                 .thenThrow(new ApplicationRuntimeException("Financial Year is not active For Posting."));
         errors = billService.validateBillRegister(billRegister);
-        assertEquals(1, errors.size());
+        assertEquals(2, errors.size());
     }
 
     @Test
