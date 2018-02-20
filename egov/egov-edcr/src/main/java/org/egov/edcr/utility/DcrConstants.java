@@ -33,7 +33,9 @@ public class DcrConstants {
     public static final String WASTEDISPOSAL_NOTDEFINED_VALUE="Waste disposal not defined in the plan.";
     public static final String LESSTHANOREQUAL = "Less than or equal to ";
     public static final String IN_METER = "(MTR)";
-    
-    
+
+    public static final String FILESTORE_MODULECODE = "EDCR";
+    public static final String SEQ_ECDR_APPLICATIONNO = "SEQ_ECDR_APPLICATIONNO";
+    public static final String APPLICATION_MODULE_TYPE = "EDCR";
     
 }

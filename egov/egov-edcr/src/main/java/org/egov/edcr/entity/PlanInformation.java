@@ -1,16 +1,40 @@
 package org.egov.edcr.entity;
 
+import org.egov.infra.persistence.entity.AbstractAuditable;
+
+import javax.persistence.*;
 import java.math.BigDecimal;
 
-public class PlanInformation {
+@Entity
+@Table(name = "EDCR_PLANINFO")
+@SequenceGenerator(name = PlanInformation.SEQ_EDCR_PLANINFO, sequenceName = PlanInformation.SEQ_EDCR_PLANINFO, allocationSize = 1)
+public class PlanInformation extends AbstractAuditable{
+
+    public static final String SEQ_EDCR_PLANINFO = "SEQ_EDCR_PLANINFO";
+    private static final long serialVersionUID = -8471202461472480934L;
+
+    @Id
+    @GeneratedValue(generator = SEQ_EDCR_PLANINFO, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
     private BigDecimal plotArea;
+
     private String ownerName;
+
     private String architectName;
+
     private String occupancy;
+
     private Boolean crzZoneArea=false;
-    
-    
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public Boolean getCrzZoneArea() {
         return crzZoneArea;
     }
@@ -50,4 +74,5 @@ public class PlanInformation {
     public void setOccupancy(String occupancy) {
         this.occupancy = occupancy;
     }
+
 }
