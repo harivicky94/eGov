@@ -370,11 +370,11 @@
 							<artifactId>egov-bpaweb</artifactId>
 							<contextRoot>/bpa</contextRoot>
 						</webModule>
-						<webModule>
+						<!--<webModule>
 							<groupId>org.egov</groupId>
 							<artifactId>egov-edcrweb</artifactId>
 							<contextRoot>/edcr</contextRoot>
-						</webModule>
+						</webModule>-->
 						<webModule>
 							<groupId>org.egov</groupId>
 							<artifactId>egov-pgrweb</artifactId>
