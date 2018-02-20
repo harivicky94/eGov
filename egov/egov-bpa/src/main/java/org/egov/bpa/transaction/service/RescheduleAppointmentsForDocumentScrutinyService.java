@@ -84,6 +84,7 @@ public class RescheduleAppointmentsForDocumentScrutinyService {
 	public SlotApplication rescheduleAppointmentsForDocumentScrutinyByCitizen(Long applicationId,
 			Date rescheduleAppointmentDate, String appointmentTime) {
 		BpaApplication application = applicationBpaRepository.findById(applicationId);
+		application.setIsRescheduledByCitizen(true);
 		List<SlotApplication> slotApplication = slotApplicationRepository.findByApplicationOrderByIdDesc(application);
 		// free up previous slot
 		SlotDetail slotDetail = slotApplication.get(0).getSlotDetail();
@@ -96,7 +97,6 @@ public class RescheduleAppointmentsForDocumentScrutinyService {
 		// build new slot application and reschedule appointment
 		SlotApplication slotApp = new SlotApplication();
 		slotApp.setApplication(application);
-		slotApp.setIsRescheduledByCitizen(true);
 		slotApp.setScheduleAppointmentType(ScheduleAppointmentType.RESCHEDULE);
 		SlotDetail slotDet = slotDetailRepository.findByAppointmentDateTimeAndZone(rescheduleAppointmentDate,
 				appointmentTime, application.getSiteDetail().get(0).getAdminBoundary().getParent());
@@ -115,6 +115,7 @@ public class RescheduleAppointmentsForDocumentScrutinyService {
 	public SlotApplication rescheduleAppointmentsForDocumentScrutinyByEmployee(Long applicationId,
 			Date rescheduleAppointmentDate, String appointmentTime) {
 		BpaApplication bpaApplication = applicationBpaRepository.findById(applicationId);
+		bpaApplication.setIsRescheduledByEmployee(true);
 		List<SlotApplication> slotApplication = slotApplicationRepository
 				.findByApplicationOrderByIdDesc(bpaApplication);
 		// free up previous slot
@@ -128,7 +129,6 @@ public class RescheduleAppointmentsForDocumentScrutinyService {
 		// build new slot application and reschedule appointment
 		SlotApplication slotApp = new SlotApplication();
 		slotApp.setApplication(bpaApplication);
-		slotApp.setIsRescheduledByEmployee(true);
 		slotApp.setScheduleAppointmentType(ScheduleAppointmentType.RESCHEDULE);
 		SlotDetail slotDet = slotDetailRepository.findByAppointmentDateTimeAndZone(rescheduleAppointmentDate,
 				appointmentTime, bpaApplication.getSiteDetail().get(0).getAdminBoundary().getParent());
@@ -154,8 +154,13 @@ public class RescheduleAppointmentsForDocumentScrutinyService {
 	}
 
 	@Transactional
-	public void rescheduleAppointmentWhenSlotsNotAvailable(Long id) {
+	public void rescheduleAppointmentWhenSlotsNotAvailable(Long id, String scheduleBy) {
 		BpaApplication bpaApplication = applicationBpaRepository.findById(id);
+		if("EMPLOYEE".equals(scheduleBy)) {
+			bpaApplication.setIsRescheduledByEmployee(true);
+		} else if("CITIZENPORTAL".equals(scheduleBy)) {
+			bpaApplication.setIsRescheduledByCitizen(true);
+		}
 		List<SlotApplication> slotApplication = slotApplicationRepository
 				.findByApplicationOrderByIdDesc(bpaApplication);
 		SlotDetail slotDetail = slotApplication.get(0).getSlotDetail();

@@ -181,4 +181,25 @@ $(document).ready(function() {
         });
     });
 
+    $('#appointmentTime').change(function (event) {
+        if($('#appointmentDate') && $('#appointmentTime')) {
+           var previousAppointmentDate = moment($('#previousAppointmentDate').val(),[ "YYYYY-MM-DD" ]);
+            var selectedAppointmentDate = moment($('#appointmentDate').val(),[ "DD/MM/YYYY" ]);
+            var previousAppointmentTime = getAppointmentTime($('#previousAppointmentTime').val());
+            var selectedAppointmentTime = getAppointmentTime($(this).val());
+            if(previousAppointmentDate >= selectedAppointmentDate && previousAppointmentTime >= selectedAppointmentTime) {
+                $(this).val('');
+                bootbox.alert('Re-Schedule Date and Time should be greater than the ealier scheduled Date and Time');
+            }
+        }
+    });
+
+    function getAppointmentTime(appointmentTime) {
+        var session;
+        if(appointmentTime == 'Morning')
+            session = 0;
+        else if(appointmentTime == 'Evening')
+            session = 1;
+        return session;
+    }
 });

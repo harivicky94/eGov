@@ -163,7 +163,7 @@
 			<div class="buttonbottom" align="center">
 				<table>
 					<tr>
-						<c:if test="${ mode eq 'showRescheduleToCitizen' || mode eq 'showReschedule'}">
+						<c:if test="${ mode eq 'showRescheduleToCitizen'}">
 							<td> <a
 									href="/bpa/application/scrutiny/reschedule/${bpaApplication.applicationNumber}"
 									class="btn btn-primary"> Reschedule Appointment </a>

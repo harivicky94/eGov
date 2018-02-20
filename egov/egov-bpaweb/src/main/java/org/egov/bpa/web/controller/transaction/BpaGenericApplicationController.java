@@ -51,7 +51,6 @@ import org.egov.bpa.master.entity.*;
 import org.egov.bpa.master.service.*;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.BpaStatus;
-import org.egov.bpa.transaction.entity.SlotApplication;
 import org.egov.bpa.transaction.entity.enums.*;
 import org.egov.bpa.transaction.service.*;
 import org.egov.bpa.transaction.service.collection.BpaDemandService;
@@ -81,7 +80,10 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.egov.bpa.utils.BpaConstants.*;
 
@@ -316,28 +318,6 @@ public abstract class BpaGenericApplicationController extends GenericWorkFlowCon
     protected String getDesinationNameByPosition(Position pos) {
         return pos.getDeptDesig() != null && pos.getDeptDesig().getDesignation() != null
                 ? pos.getDeptDesig().getDesignation().getName() : "";
-    }
-
-    protected String getModeForRescheduleForScrutiny(final BpaApplication application) {
-        String mode = StringUtils.EMPTY;
-            Map<String, Boolean> scheduledBy = new HashMap<>();
-            scheduledBy.put("isScheduleByEmployee", false);
-            scheduledBy.put("isScheduleByCitizen", false);
-            for (SlotApplication slotAppln : application.getSlotApplications()) {
-                if (slotAppln != null && slotAppln.getScheduleAppointmentType().equals(ScheduleAppointmentType.RESCHEDULE) && slotAppln.getIsRescheduledByEmployee()) {
-                    scheduledBy.put("isScheduleByEmployee", true);
-                } else if (slotAppln != null && slotAppln.getScheduleAppointmentType().equals(ScheduleAppointmentType.RESCHEDULE) && slotAppln.getIsRescheduledByCitizen()) {
-                    scheduledBy.put("isScheduleByCitizen", true);
-                }
-            }
-            if (application.getSlotApplications().size() == 1) {
-                mode = "showReschedule";
-            } else if (!scheduledBy.get("isScheduleByEmployee")) {
-                mode = "showRescheduleToEmployee";
-            } else if (!scheduledBy.get("isScheduleByCitizen")) {
-                mode = "showRescheduleToCitizen";
-            }
-        return mode;
     }
 
 }

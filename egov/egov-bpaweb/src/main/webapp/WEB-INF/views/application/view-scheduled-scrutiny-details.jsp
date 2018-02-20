@@ -61,15 +61,12 @@
 		   varStatus="counter">
 	<div class="panel-heading custom_form_panel_heading">
 		<div class="panel-title">
-			<c:if test="${appoimnt.scheduleAppointmentType eq 'SCHEDULE' && !appoimnt.isRescheduledByCitizen && !appoimnt.isRescheduledByEmployee}">
+			<c:if test="${appoimnt.scheduleAppointmentType eq 'SCHEDULE'}">
 				System Scheduled Appointment Details
 			</c:if>
-			<c:if test="${appoimnt.scheduleAppointmentType eq 'RESCHEDULE' && appoimnt.isRescheduledByEmployee}">
-				ReScheduled by Employee Appointment Details
-			</c:if>
-			<c:if test="${appoimnt.scheduleAppointmentType eq 'RESCHEDULE' && appoimnt.isRescheduledByCitizen}">
-				ReScheduled by Citizen Appointment Details
-			</c:if>
+            <c:if test="${appoimnt.scheduleAppointmentType eq 'RESCHEDULE'}">
+                ReScheduled Appointment Details ${counter.index}
+            </c:if>
 		</div>
 	</div>
 	<div class="row add-border">

@@ -99,9 +99,9 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
 
         if ((APPLICATION_STATUS_SCHEDULED.equals(application.getStatus().getCode()) ||
              APPLICATION_STATUS_RESCHEDULED.equals(application.getStatus().getCode()) ||
-             APPLICATION_STATUS_PENDING_FOR_RESCHEDULING.equals(application.getStatus().getCode())) &&
-            !application.getSlotApplications().isEmpty()) {
-            model.addAttribute("mode", getModeForRescheduleForScrutiny(application));
+             APPLICATION_STATUS_PENDING_FOR_RESCHEDULING.equals(application.getStatus().getCode()))
+            && !application.getIsRescheduledByCitizen()) {
+            model.addAttribute("mode", "showRescheduleToCitizen");
         }
         model.addAttribute(APPLICATION_HISTORY, bpaThirdPartyService.getHistory(application));
         prepareCommonModelAttribute(model, application);

@@ -60,6 +60,16 @@
 			<div class="panel panel-primary" data-collapsed="0">
 				<jsp:include page="view-scheduled-scrutiny-details.jsp"></jsp:include>
 			</div>
+			<c:forEach items="${bpaApplication.slotApplications}" var="slotAppln"
+					   varStatus="counter">
+				<c:if test="${counter.last}">
+					<input type="hidden" id="previousAppointmentDate"
+						   value="${slotAppln.slotDetail.slot.appointmentDate}" />
+					<input type="hidden" id="previousAppointmentTime"
+						   value="${slotAppln.slotDetail.appointmentTime}" />
+				</c:if>
+			</c:forEach>
+
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading custom_form_panel_heading">
 					<div class="panel-title">
@@ -122,5 +132,7 @@
 
 <script
 		src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
+<script
+		src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/moment.min.js' context='/egi'/>"></script>
 <script
 		src="<cdn:url value='/resources/js/app/reschedule-doc-scrutiny.js?rnd=${app_release_no}'/>"></script>

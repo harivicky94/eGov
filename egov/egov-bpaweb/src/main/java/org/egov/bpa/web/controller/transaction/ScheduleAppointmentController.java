@@ -40,6 +40,7 @@
 package org.egov.bpa.web.controller.transaction;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.egov.bpa.master.service.AppointmentLocationsService;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.BpaAppointmentSchedule;
@@ -244,7 +245,13 @@ public class ScheduleAppointmentController extends BpaGenericApplicationControll
             model.addAttribute("bpaApplication", bpaApplication);
         } else if ("Auto Re-Schedule".equals(reScheduleAction)) {
             bpaUtils.redirectToBpaWorkFlow(bpaApplication.getCurrentState().getOwnerPosition().getId(), bpaApplication, null, BpaConstants.APPLICATION_STATUS_PENDING_FOR_RESCHEDULING, BpaConstants.WF_AUTO_RESCHDLE_APPMNT_BUTTON, null);
-            rescheduleAppnmtsForDocScrutinyService.rescheduleAppointmentWhenSlotsNotAvailable(bpaApplication.getId());
+            String scheduleBy = StringUtils.EMPTY;
+            if (Source.SYSTEM.name().equals(scheduleScrutiny.getReScheduledBy())) {
+                scheduleBy = "EMPLOYEE";
+            } else if (Source.CITIZENPORTAL.name().equals(scheduleScrutiny.getReScheduledBy())) {
+                scheduleBy = "CITIZENPORTAL";
+            }
+            rescheduleAppnmtsForDocScrutinyService.rescheduleAppointmentWhenSlotsNotAvailable(bpaApplication.getId(), scheduleBy);
             model.addAttribute("message", messageSource.getMessage("msg.auto.schedule", new String[]{bpaApplication.getApplicationNumber()}, null));
             return CITIZEN_SUCEESS;
         } else if ("Cancel Application".equals(reScheduleAction)) {

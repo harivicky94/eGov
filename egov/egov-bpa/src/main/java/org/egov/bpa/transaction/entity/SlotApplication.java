@@ -64,10 +64,6 @@ public class SlotApplication extends AbstractAuditable {
 	@NotNull
 	private ScheduleAppointmentType scheduleAppointmentType;
 
-	private Boolean isRescheduledByCitizen = false;
-
-	private Boolean isRescheduledByEmployee = false;
-
 	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "slotdetailid", nullable = false)
 	private SlotDetail slotDetail;
@@ -96,22 +92,6 @@ public class SlotApplication extends AbstractAuditable {
 
 	public void setScheduleAppointmentType(ScheduleAppointmentType scheduleAppointmentType) {
 		this.scheduleAppointmentType = scheduleAppointmentType;
-	}
-
-	public Boolean getIsRescheduledByCitizen() {
-		return isRescheduledByCitizen;
-	}
-
-	public void setIsRescheduledByCitizen(Boolean isRescheduledByCitizen) {
-		this.isRescheduledByCitizen = isRescheduledByCitizen;
-	}
-
-	public Boolean getIsRescheduledByEmployee() {
-		return isRescheduledByEmployee;
-	}
-
-	public void setIsRescheduledByEmployee(Boolean isRescheduledByEmployee) {
-		this.isRescheduledByEmployee = isRescheduledByEmployee;
 	}
 
 	public SlotDetail getSlotDetail() {

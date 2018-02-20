@@ -149,6 +149,8 @@ public class BpaApplication extends StateAware<Position> {
 	@Length(min = 1, max = 5000)
 	private String townSurveyorRemarks;
 	private Boolean isTownSurveyorInspectionRequire = false;
+	private Boolean isRescheduledByCitizen = false;
+	private Boolean isRescheduledByEmployee = false;
 
 	@OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<SiteDetail> siteDetail = new ArrayList<>(0);
@@ -681,6 +683,22 @@ public class BpaApplication extends StateAware<Position> {
 
 	public void setTownSurveyorInspectionRequire(Boolean townSurveyorInspectionRequire) {
 		isTownSurveyorInspectionRequire = townSurveyorInspectionRequire;
+	}
+
+	public Boolean getIsRescheduledByCitizen() {
+		return isRescheduledByCitizen;
+	}
+
+	public void setIsRescheduledByCitizen(Boolean isRescheduledByCitizen) {
+		this.isRescheduledByCitizen = isRescheduledByCitizen;
+	}
+
+	public Boolean getIsRescheduledByEmployee() {
+		return isRescheduledByEmployee;
+	}
+
+	public void setIsRescheduledByEmployee(Boolean isRescheduledByEmployee) {
+		this.isRescheduledByEmployee = isRescheduledByEmployee;
 	}
 
 	public void deleteBuildingDetails(final BuildingDetail buildingDetail) {

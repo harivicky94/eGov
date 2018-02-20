@@ -213,10 +213,10 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
 		// To show reschedule scrutiny button to employee
 		if ((APPLICATION_STATUS_SCHEDULED.equals(application.getStatus().getCode()) ||
 			 APPLICATION_STATUS_RESCHEDULED.equals(application.getStatus().getCode()) ||
-			 APPLICATION_STATUS_PENDING_FOR_RESCHEDULING.equals(application.getStatus().getCode())) &&
-			!application.getSlotApplications().isEmpty()) {
-			mode = getModeForRescheduleForScrutiny(application);
-		} else if (WF_CREATED_STATE.equalsIgnoreCase(application.getStatus().getCode())) {
+			 APPLICATION_STATUS_PENDING_FOR_RESCHEDULING.equals(application.getStatus().getCode()))
+			&& !application.getIsRescheduledByEmployee()) {
+			mode = "showRescheduleToEmployee"
+;		} else if (WF_CREATED_STATE.equalsIgnoreCase(application.getStatus().getCode())) {
 			mode = "view";
 		} else if (APPLICATION_STATUS_DOC_VERIFIED.equalsIgnoreCase(application.getStatus().getCode())
 				   && FWD_TO_OVRSR_FOR_FIELD_INS
