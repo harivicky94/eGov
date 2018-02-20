@@ -9,13 +9,13 @@ import org.egov.edcr.entity.PlanInformation;
 import org.egov.edcr.entity.Plot;
 import org.egov.edcr.entity.RuleOutput;
 import org.egov.edcr.entity.SubRuleOutput;
-import org.egov.edcr.entity.measurement.FrontYard;
 import org.egov.edcr.entity.measurement.NonNotifiedRoad;
 import org.egov.edcr.entity.measurement.NotifiedRoad;
 import org.egov.edcr.entity.measurement.RearYard;
 import org.egov.edcr.entity.measurement.SideYard1;
 import org.egov.edcr.entity.measurement.SideYard2;
 import org.egov.edcr.entity.measurement.WasteDisposal;
+import org.egov.edcr.entity.measurement.Yard;
 import org.egov.edcr.rule.Rule62;
 
 public class Rule26Test {
@@ -37,26 +37,26 @@ public class Rule26Test {
         landDetail.setArea(BigDecimal.valueOf(33000));
         WasteDisposal wasteDisposal= new WasteDisposal();
         
-         FrontYard frontYard = new FrontYard();
+         Yard frontYard = new Yard();
          frontYard.setPresentInDxf(true);
          frontYard.setMean(BigDecimal.valueOf(1.8));
          frontYard.setMinimumDistance(BigDecimal.valueOf(1.2));
          landDetail.setFrontYard(frontYard);
          
-         RearYard rearYard= new RearYard();
+         Yard rearYard= new Yard();
  
          rearYard.setPresentInDxf(true);
          rearYard.setMean(BigDecimal.valueOf(1));
          rearYard.setMinimumDistance(BigDecimal.valueOf(0.5));
          landDetail.setRearYard(rearYard);
          
-         SideYard1 sideYard1= new SideYard1();
+         Yard sideYard1= new Yard();
          sideYard1.setPresentInDxf(true);
          sideYard1.setMean(BigDecimal.valueOf(0.9));
          sideYard1.setMinimumDistance(BigDecimal.valueOf(0.8));
          landDetail.setSideYard1(sideYard1);
 
-         SideYard2 sideYard2= new SideYard2();
+         Yard sideYard2= new Yard();
          sideYard2.setPresentInDxf(true);
          sideYard2.setMean(BigDecimal.valueOf(0.9));
          sideYard2.setMinimumDistance(BigDecimal.valueOf(0.9));

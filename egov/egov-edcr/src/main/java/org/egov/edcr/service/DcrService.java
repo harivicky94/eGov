@@ -9,6 +9,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.util.List;
 
 /*General rule class contains validations which are required for all types of building plans*/
@@ -19,7 +20,12 @@ public class DcrService {
 
     @Autowired
     private GeneralRule generalRule;
-
+ 
+    @Autowired
+    private DXFExtractService extractService;
+    
+    
+ 
     @Autowired
     private ApplicationContext applicationContext;
 
@@ -36,40 +42,74 @@ public class DcrService {
     }
 
 
-    public PlanDetail process(MultipartFile dxfFile, EdcrApplication dcrApplication) {
+    public PlanDetail process(MultipartFile dxf1File, EdcrApplication dcrApplication) {
 
         System.out.println("hello ");
         //TODO:
         //BASIC VALIDATION
+        
+        File dxfFile=new File("/home/mani/Desktop/BPA/kozhi/SAMPLE 3.dxf");
+       
+ 
         generalRule.validate(planDetail);
-        planDetail = extract(dxfFile, dcrApplication);
 
+       // dxfFile.getf
         // EXTRACT DATA FROM DXFFILE TO planDetail;   
+ 
+      //  planDetail=    generalRule.validate(planDetail);
+     // EXTRACT DATA FROM DXFFILE TO planDetail;   
+        planDetail=extractService.extract(dxfFile,dcrApplication);
+        
+       
+     // USING PLANDETAIL OBJECT, FINDOUT RULES.
+        // ITERATE EACH RULE.CHECK CONDITIONS.
+ 
         List<PlanRule> planRules = planRuleService.findRulesByPlanDetail(planDetail);
-        for (PlanRule pl : planRules) {
+ 
+        for(PlanRule pl:planRules)
+        {
             String rules = pl.getRules();
             String[] ruleSet = rules.split(",");
-            for (String s : ruleSet) {
-                String ruleName = "rule" + s;
-
-                GeneralRule bean = (GeneralRule) applicationContext.getBean(ruleName);
-                planDetail = bean.validate(planDetail);
-
+            for(String s:ruleSet)
+            {
+                String ruleName="rule"+s;
+                System.out.println(s);
+                GeneralRule bean =(GeneralRule) applicationContext.getBean(ruleName);
+                planDetail=   bean.validate(planDetail);
+                
+                
             }
         }
-        // USING PLANDETAIL OBJECT, FINDOUT RULES.
-        // ITERATE EACH RULE.CHECK CONDITIONS.
+        
+        for(PlanRule pl:planRules)
+        {
+ 
+            String rules = pl.getRules();
+            String[] ruleSet = rules.split(",");
+ 
+            for(String s:ruleSet)
+            {
+                String ruleName="rule"+s;
+                
+                GeneralRule bean =(GeneralRule) applicationContext.getBean(ruleName);
+                planDetail=   bean.process(planDetail);
+ 
+            }
+        }
+        
+        System.err.println(planDetail.getErrors());
+        System.err.println(planDetail.getReportOutput());
+        
+        
         // GENERATE OUTPUT USING PLANDETAIL.
 
 
         return null;
     }
 
+ 
 
-    private PlanDetail extract(MultipartFile dxfFile, EdcrApplication dcrApplication) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+    
 
     public byte[] generatePlanScrutinyReport(PlanDetail planDetail) {
         // TODO Auto-generated method stub

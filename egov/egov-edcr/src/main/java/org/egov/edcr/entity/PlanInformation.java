@@ -4,6 +4,11 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
+import java.util.Map;
+
+import org.kabeja.dxf.DXFDocument;
+import org.egov.edcr.utility.DcrConstants;
+import org.egov.edcr.utility.Util;
 
 @Entity
 @Table(name = "EDCR_PLANINFO")
@@ -75,4 +80,5 @@ public class PlanInformation extends AbstractAuditable{
         this.occupancy = occupancy;
     }
 
+ 
 }

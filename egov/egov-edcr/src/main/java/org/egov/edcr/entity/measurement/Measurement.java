@@ -2,21 +2,24 @@ package org.egov.edcr.entity.measurement;
 
 import java.math.BigDecimal;
 
+import org.kabeja.dxf.DXFLWPolyline;
+
 public class Measurement {
 
-    private Boolean presentInDxf=false;
-    private BigDecimal minimumDistance;
+    protected Boolean presentInDxf=false;
+    protected BigDecimal minimumDistance;
 
-    private BigDecimal length;
+    protected BigDecimal length;
 
-    private BigDecimal width;
+    protected BigDecimal width;
 
-    private BigDecimal height;
+    protected BigDecimal height;
 
-    private BigDecimal mean;
+    protected BigDecimal mean;
 
-    private BigDecimal area;
-    //DXFpolyline
+    protected BigDecimal area;
+  
+    protected DXFLWPolyline polyLine;
     
     
     public void setMinimumDistance(BigDecimal minimumDistance) {
@@ -73,6 +76,14 @@ public class Measurement {
 
     public BigDecimal getMinimumDistance() {
         return minimumDistance;
+    }
+
+    public DXFLWPolyline getPolyLine() {
+        return polyLine;
+    }
+
+    public void setPolyLine(DXFLWPolyline polyLine) {
+        this.polyLine = polyLine;
     }
 
 }

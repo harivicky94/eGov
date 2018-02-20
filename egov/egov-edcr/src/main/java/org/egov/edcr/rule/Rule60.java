@@ -7,7 +7,8 @@ import org.egov.edcr.entity.PlanDetail;
 import org.egov.edcr.entity.Result;
 import org.egov.edcr.utility.DcrConstants;
 import org.springframework.context.i18n.LocaleContextHolder;
-
+import org.springframework.stereotype.Service;
+@Service
 public class Rule60  extends GeneralRule {
 
     private static final BigDecimal _EXPECTED_PLOT_AREA = BigDecimal.valueOf(125);

@@ -33,9 +33,30 @@ public class DcrConstants {
     public static final String WASTEDISPOSAL_NOTDEFINED_VALUE="Waste disposal not defined in the plan.";
     public static final String LESSTHANOREQUAL = "Less than or equal to ";
     public static final String IN_METER = "(MTR)";
+ 
 
     public static final String FILESTORE_MODULECODE = "EDCR";
     public static final String SEQ_ECDR_APPLICATIONNO = "SEQ_ECDR_APPLICATIONNO";
     public static final String APPLICATION_MODULE_TYPE = "EDCR";
+ 
+    
+    //----- names
+    public static final String VERT_CLEAR_OHE = "VERT_CLEAR_OHE";
+    public static final String REAR_YARD = "REAR_YARD";
+    public static final String BUILDING_FOOT_PRINT = "BUILDING_FOOTPRINT";
+    public static final String SIDE_YARD_2 = "SIDE_YARD_2";
+    public static final String SIDE_YARD_1 = "SIDE_YARD_1";
+    public static final String FRONT_YARD = "FRONT_YARD";
+    public static final String NOTIFIED_ROADS = "NOTIFIED_ROADS";
+    public static final String NON_NOTIFIED_ROAD = "NON_NOTIFIED_ROAD";
+    public static final String HORIZ_CLEAR_OHE2 = "HORIZ_CLEAR_OHE";
+    public static final String PLOT_BOUNDARY = "PLOT_BOUNDARY";
+    public static Integer FLOOR_COLOUR_CODE = 10;
+    public static String LAYER_NAME_WASTE_DISPOSAL = "WASTE_DISPOSAL";
+    public static String CRZ_ZONE = "CRZ_ZONE";
+    public static final int DECIMALDIGITS = 10;
+    public static final int DECIMALDIGITS_MEASUREMENTS = 3;
+    public static final Object ARCHITECTNAME = "ARCHITECT_NAME";
+    
     
 }

@@ -9,7 +9,8 @@ import org.egov.edcr.entity.measurement.NonNotifiedRoad;
 import org.egov.edcr.entity.measurement.NotifiedRoad;
 import org.egov.edcr.utility.DcrConstants;
 import org.springframework.context.i18n.LocaleContextHolder;
-
+import org.springframework.stereotype.Service;
+@Service
 public class Rule62 extends GeneralRule {
     private static final BigDecimal _NOTIFIEDROADDISTINCE = BigDecimal.valueOf(3);
     private static final BigDecimal _NONNOTIFIEDROADDISTINCE = BigDecimal.valueOf(2);

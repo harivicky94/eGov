@@ -1,13 +1,19 @@
 package org.egov.edcr.entity;
 
-import org.egov.edcr.entity.measurement.NonNotifiedRoad;
-import org.egov.edcr.entity.measurement.NotifiedRoad;
-import org.egov.edcr.entity.utility.Utility;
-
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import org.egov.edcr.entity.measurement.NonNotifiedRoad;
+import org.egov.edcr.entity.measurement.NotifiedRoad;
+import org.egov.edcr.entity.utility.Utility;
+import org.kabeja.dxf.DXFDocument;
+import org.kabeja.parser.DXFParser;
+import org.kabeja.parser.ParseException;
+import org.kabeja.parser.Parser;
+import org.kabeja.parser.ParserBuilder;
 
 /*All the details extracted from the plan are referred in this object*/
 public class PlanDetail {
@@ -75,6 +81,12 @@ public class PlanDetail {
         if (errors != null)
             getErrors().putAll(errors);
     }
+    
+    public void addError(String key, String value) {
+        
+        if (errors != null)
+            getErrors().put(key,value);
+    }
 
     public HashMap<String, String> getErrors() {
         return errors;
@@ -124,6 +136,5 @@ public class PlanDetail {
     public void setBuilding(Building building) {
         this.building = building;
     }
-
-
+ 
 }
