@@ -331,7 +331,7 @@ public class BillServiceTest extends AbstractContextControllerTest<BillService> 
         when(financialYearHibernateDAO.getFinancialYearByDate(Matchers.any()))
                 .thenThrow(new ApplicationRuntimeException("Financial Year is not active For Posting."));
         errors = billService.validateBillRegister(billRegister);
-        assertEquals(2, errors.size());
+        assertEquals(1, errors.size());
     }
 
     @Test
