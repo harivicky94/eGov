@@ -51,6 +51,7 @@ import org.egov.bpa.master.entity.ServiceType;
 import org.egov.bpa.transaction.entity.dto.BpaStateInfo;
 import org.egov.bpa.transaction.entity.enums.ApplicantMode;
 import org.egov.bpa.transaction.entity.enums.GovernmentType;
+import org.egov.bpa.transaction.entity.enums.OneDayPermitLandType;
 import org.egov.commons.entity.Source;
 import org.egov.dcb.bean.Receipt;
 import org.egov.demand.model.EgDemand;
@@ -151,6 +152,10 @@ public class BpaApplication extends StateAware<Position> {
 	private Boolean isTownSurveyorInspectionRequire = false;
 	private Boolean isRescheduledByCitizen = false;
 	private Boolean isRescheduledByEmployee = false;
+	private Boolean isOneDayPermitApplication = false;
+	@Enumerated(EnumType.STRING)
+    @Column(name = "typeOfLand")
+    private OneDayPermitLandType typeOfLand;// Garden Land or Wet Land
 
 	@OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<SiteDetail> siteDetail = new ArrayList<>(0);
@@ -832,6 +837,22 @@ public class BpaApplication extends StateAware<Position> {
 
 	public BpaStateInfo extraInfo() {
 		return super.extraInfoAs(BpaStateInfo.class);
+	}
+	
+	public Boolean getIsOneDayPermitApplication() {
+		return isOneDayPermitApplication;
+	}
+
+	public void setIsOneDayPermitApplication(Boolean isOneDayPermitApplication) {
+		this.isOneDayPermitApplication = isOneDayPermitApplication;
+	}
+
+	public OneDayPermitLandType getTypeOfLand() {
+		return typeOfLand;
+	}
+
+	public void setTypeOfLand(OneDayPermitLandType typeOfLand) {
+		this.typeOfLand = typeOfLand;
 	}
 
 }
