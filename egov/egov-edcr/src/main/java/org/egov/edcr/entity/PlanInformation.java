@@ -27,6 +27,8 @@ public class PlanInformation extends AbstractAuditable {
 
     private Boolean crzZoneArea = false;
 
+    private Boolean securityZone = false;
+
     public Long getId() {
         return id;
     }
@@ -73,6 +75,14 @@ public class PlanInformation extends AbstractAuditable {
 
     public void setOccupancy(String occupancy) {
         this.occupancy = occupancy;
+    }
+
+    public Boolean getSecurityZone() {
+        return securityZone;
+    }
+
+    public void setSecurityZone(Boolean securityZone) {
+        this.securityZone = securityZone;
     }
 
 

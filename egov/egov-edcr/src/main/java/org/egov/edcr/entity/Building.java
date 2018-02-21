@@ -9,10 +9,13 @@ import org.egov.edcr.entity.measurement.WasteDisposal;
 public class Building extends Measurement {
 
     private BigDecimal buildingHeight;
+
+    private BigDecimal buildingTopMostHeight;
+
     /*
      * Maximum number of floors
      */
-    private BigDecimal maxFloor; 
+    private BigDecimal maxFloor;
     /*
      * Total number of floors including celler
      */
@@ -59,6 +62,14 @@ public class Building extends Measurement {
 
     public void setMaxFloor(BigDecimal maxFloor) {
         this.maxFloor = maxFloor;
+    }
+
+    public BigDecimal getBuildingTopMostHeight() {
+        return buildingTopMostHeight;
+    }
+
+    public void setBuildingTopMostHeight(BigDecimal buildingHeightTopMost) {
+        this.buildingTopMostHeight = buildingHeightTopMost;
     }
 
 }

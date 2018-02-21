@@ -62,7 +62,9 @@ public class DcrConstants {
     public static final String BUILDING_EXTERIOR_WALL = "BUILDING_EXTERIOR_WALL";
     public static final String OCCUPANCY = "Occupancy";
     public static final String BUILDING_HEIGHT = "BUILDING_HEIGHT";
+    public static final String BUILDING_TOP_MOST_HEIGHT = "BUILDING_TOP_MOST_HEIGHT";
     public static final String MAX_HEIGHT_CAL = "MAX_HEIGHT_CAL";
+    public static final String SECURITY_ZONE="SECURITY Zone";
     
     
 }
