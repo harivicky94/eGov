@@ -39,124 +39,195 @@
  */
 package org.egov.bpa.transaction.service;
 
-import org.apache.log4j.Logger;
+import org.egov.bpa.master.entity.enums.ApplicationType;
+import org.egov.bpa.master.service.SlotMappingService;
+
 import org.egov.bpa.transaction.entity.BpaApplication;
+import org.egov.bpa.transaction.entity.BpaStatus;
+import org.egov.bpa.transaction.entity.Slot;
 import org.egov.bpa.transaction.entity.SlotApplication;
 import org.egov.bpa.transaction.entity.SlotDetail;
 import org.egov.bpa.transaction.entity.enums.ScheduleAppointmentType;
-import org.egov.bpa.transaction.repository.ApplicationBpaRepository;
 import org.egov.bpa.transaction.repository.BpaStatusRepository;
-import org.egov.bpa.transaction.repository.SlotApplicationRepository;
 import org.egov.bpa.transaction.repository.SlotDetailRepository;
+import org.egov.bpa.transaction.repository.SlotRepository;
 import org.egov.bpa.transaction.service.messaging.BPASmsAndEmailService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.utils.BpaUtils;
+import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.validation.exception.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
 public class ScheduleAppointmentForDocumentScrutinyService {
-	private static final Logger LOGGER = Logger.getLogger(ScheduleAppointmentForDocumentScrutinyService.class);
+
+	@Autowired
+	private SlotMappingService slotMappingService;
+
 	@Autowired
 	private BpaStatusRepository bpaStatusRepository;
 
 	@Autowired
-	private ApplicationBpaRepository applicationBpaRepository;
+	private ApplicationBpaService applicationBpaService;
+
+	@Autowired
+	private SlotRepository slotRepository;
+
+	@Autowired
+	private SlotApplicationService slotApplicationService;
 
 	@Autowired
 	private SlotDetailRepository slotDetailRepository;
 
 	@Autowired
-	private SlotApplicationRepository slotApplicationRepository;
-	
-	@Autowired
 	private BPASmsAndEmailService bpaSmsAndEmailService;
 
 	@Autowired
+	private BoundaryService boundaryService;
+	@Autowired
 	private BpaUtils bpaUtils;
 
-	@Transactional
+	@Autowired
+	private TransactionTemplate transactionTemplate;
+
 	public void scheduleAppointmentsForDocumentScrutiny() {
-		List<BpaApplication> bpaApplicationList = applicationBpaRepository.findByStatusOrderByCreatedDateAsc(
-				bpaStatusRepository.findByCode(BpaConstants.APPLICATION_STATUS_PENDING_FOR_RESCHEDULING));
-		List<BpaApplication> bpaApplications = applicationBpaRepository.findByStatusOrderByCreatedDateAsc(
-				bpaStatusRepository.findByCode(BpaConstants.APPLICATION_STATUS_REGISTERED));
-		bpaApplicationList.addAll(bpaApplications);
-		List<SlotDetail> slotDetailList = slotDetailRepository.findSlotDetailOrderByAppointmentDate();
-		List<SlotApplication> slotApplicationList = new ArrayList<>();
-		if(!bpaApplicationList.isEmpty()) {
-			for (BpaApplication application : bpaApplicationList) {
-				Long applnZoneId = application.getSiteDetail().get(0).getAdminBoundary().getParent().getId();
-				SlotApplication slotApplication = new SlotApplication();
-				slotApplication.setApplication(application);
-				if (application.getStatus().getCode()
-							   .equals(BpaConstants.APPLICATION_STATUS_PENDING_FOR_RESCHEDULING))
-					slotApplication.setScheduleAppointmentType(ScheduleAppointmentType.RESCHEDULE);
-				else
-					slotApplication.setScheduleAppointmentType(ScheduleAppointmentType.SCHEDULE);
-				for (SlotDetail slotDetail : slotDetailList) {
-					if (slotDetail.getSlot().getZone().getId().equals(applnZoneId)) {
-						if (application.getStatus().getCode()
-									   .equals(BpaConstants.APPLICATION_STATUS_PENDING_FOR_RESCHEDULING)) {
-							if (slotDetail.getMaxRescheduledSlots() - slotDetail.getUtilizedRescheduledSlots() > 0) {
-								slotDetail.setUtilizedRescheduledSlots(slotDetail.getUtilizedRescheduledSlots() + 1);
-								slotApplication.setSlotDetail(slotDetail);
-								break;
-							} else if (slotDetail.getMaxScheduledSlots() - slotDetail.getUtilizedScheduledSlots() > 0) {
-								slotDetail.setUtilizedScheduledSlots(slotDetail.getUtilizedScheduledSlots() + 1);
-								slotApplication.setSlotDetail(slotDetail);
-								break;
-							} else
-								break;
-						} else {
-							if (slotDetail.getMaxScheduledSlots() - slotDetail.getUtilizedScheduledSlots() > 0) {
-								slotDetail.setUtilizedScheduledSlots(slotDetail.getUtilizedScheduledSlots() + 1);
-								slotApplication.setSlotDetail(slotDetail);
-								break;
+		Calendar calendar = Calendar.getInstance();
+		calendar.add(Calendar.DAY_OF_YEAR, 2);
+		List<Boundary> zonesList = slotMappingService.slotfindZoneByApplType(ApplicationType.ALL_OTHER_SERVICES);
+		for (Boundary bndry : zonesList) {
+			List<Slot> slotList = slotRepository.findByZoneAndApplicationDate(bndry, calendar.getTime());
+			if (slotList.size() > 0) {
+				for (Slot slot : slotList) {
+					List<SlotDetail> slotDetailList = slotDetailRepository.findBySlot(slot);
+					slot.setSlotDetail(slotDetailList);
+					if (slot.getSlotDetail().size() > 0) {
+						Integer totalAvailableSlots = 0;
+						for (SlotDetail slotDetail : slot.getSlotDetail()) {
+							Integer diffScheduledSlots = 0;
+							Integer diffRescheduledSlots = 0;
+							if (slotDetail.getMaxScheduledSlots() > slotDetail.getUtilizedScheduledSlots())
+								diffScheduledSlots = slotDetail.getMaxScheduledSlots()
+										- slotDetail.getUtilizedScheduledSlots();
+							if (slotDetail.getMaxRescheduledSlots() > slotDetail.getUtilizedRescheduledSlots())
+								diffRescheduledSlots = slotDetail.getMaxRescheduledSlots()
+										- slotDetail.getUtilizedRescheduledSlots();
+							totalAvailableSlots = totalAvailableSlots + diffScheduledSlots + diffRescheduledSlots;
+						}
+						BpaStatus bpaStatusPendingForRescheduling = bpaStatusRepository
+								.findByCode(BpaConstants.APPLICATION_STATUS_PENDING_FOR_RESCHEDULING);
+						BpaStatus bpaStatusRegistered = bpaStatusRepository
+								.findByCode(BpaConstants.APPLICATION_STATUS_REGISTERED);
+						List<BpaStatus> bpaStatusList = new ArrayList<>();
+						bpaStatusList.add(bpaStatusRegistered);
+						bpaStatusList.add(bpaStatusPendingForRescheduling);
+						List<Boundary> boundaryList = boundaryService.findBoundariesByParent(slot.getZone());
+						List<BpaApplication> bpaApplications = applicationBpaService
+								.getBpaApplicationsByCriteria(bpaStatusList, boundaryList, totalAvailableSlots);
+						if (bpaApplications.size() > 0) {
+							for (BpaApplication bpaApp : bpaApplications) {
+								try {
+									TransactionTemplate template = new TransactionTemplate(
+											transactionTemplate.getTransactionManager());
+									template.execute(result -> {
+										for (SlotDetail slotDetail : slot.getSlotDetail()) {
+											if (bpaApp.getStatus().getCode().toString()
+													.equals(BpaConstants.APPLICATION_STATUS_PENDING_FOR_RESCHEDULING)) {
+												if (slotDetail.getMaxRescheduledSlots()
+														- slotDetail.getUtilizedRescheduledSlots() > 0) {
+													slotDetail.setUtilizedRescheduledSlots(
+															slotDetail.getUtilizedRescheduledSlots() + 1);
+													SlotApplication slotApplication = buildSlotApplicationObject(bpaApp,
+															slotDetail);
+													createSlotApplicationAndUpdateStatus(slotDetail, bpaApp,
+															slotApplication);
+													break;
+												} else if (slotDetail.getMaxScheduledSlots()
+														- slotDetail.getUtilizedScheduledSlots() > 0) {
+													slotDetail.setUtilizedScheduledSlots(
+															slotDetail.getUtilizedScheduledSlots() + 1);
+													SlotApplication slotApplication = buildSlotApplicationObject(bpaApp,
+															slotDetail);
+													createSlotApplicationAndUpdateStatus(slotDetail, bpaApp,
+															slotApplication);
+													break;
+												}
+											} else {
+												if (slotDetail.getMaxScheduledSlots()
+														- slotDetail.getUtilizedScheduledSlots() > 0) {
+													slotDetail.setUtilizedScheduledSlots(
+															slotDetail.getUtilizedScheduledSlots() + 1);
+													SlotApplication slotApplication = buildSlotApplicationObject(bpaApp,
+															slotDetail);
+													createSlotApplicationAndUpdateStatus(slotDetail, bpaApp,
+															slotApplication);
+													break;
+												}
+											}
+
+										}
+										return true;
+									});
+								} catch (Exception e) {
+									getErrorMessage(e);
+								}
+
 							}
 						}
 					}
 				}
-				if (slotApplication.getSlotDetail() != null) {
-					slotApplicationList.add(slotApplication);
-					if (LOGGER.isInfoEnabled())
-						LOGGER.info("**************Scheduled Document Scrutiny Zone***************"+slotApplication.getApplication().getSiteDetail().get(0).getAdminBoundary().getParent().getName());
-					if (LOGGER.isInfoEnabled())
-						LOGGER.info("**************Scheduled Document Scrutiny Application Number***************"+slotApplication.getApplication().getApplicationNumber());
-					if (slotApplication.getScheduleAppointmentType().name()
-									   .equals(ScheduleAppointmentType.SCHEDULE.name())) {
-						if (LOGGER.isInfoEnabled())
-							LOGGER.info("**************Schedule Workflow Start***************"+bpaUtils);
-						if (LOGGER.isInfoEnabled())
-							LOGGER.info("************** Schedule Workflow Current State***************"+application.getCurrentState());
-						bpaUtils.redirectToBpaWorkFlow(application.getCurrentState().getOwnerPosition().getId(), application, null, BpaConstants.APPLICATION_STATUS_SCHEDULED, "Forward", null);
-						if (LOGGER.isInfoEnabled())
-							LOGGER.info("**************Schedule Workflow end***************");
-						applicationBpaRepository.save(application);
-						bpaSmsAndEmailService.sendSMSAndEmailForDocumentScrutiny(slotApplication,
-								application);
-					} else if (slotApplication.getScheduleAppointmentType().name()
-											  .equals(ScheduleAppointmentType.RESCHEDULE.name())) {
-						if (LOGGER.isInfoEnabled())
-							LOGGER.info("**************Re-Schedule Workflow Start***************"+bpaUtils);
-						if (LOGGER.isInfoEnabled())
-							LOGGER.info("**************Re-Schedule Workflow Current State***************"+application.getCurrentState());
-						bpaUtils.redirectToBpaWorkFlow(application.getCurrentState().getOwnerPosition().getId(), application, null, "document scrutiny re-scheduled", BpaConstants.WF_RESCHDLE_APPMNT_BUTTON, null);
-						if (LOGGER.isInfoEnabled())
-							LOGGER.info("**************Re-Schedule Workflow end***************");
-						applicationBpaRepository.save(application);
-						bpaSmsAndEmailService.sendSMSAndEmailForDocumentScrutiny(slotApplication,
-								application);
-					}
-
-				}
 			}
-			slotApplicationRepository.save(slotApplicationList);
 		}
 	}
+
+	private SlotApplication buildSlotApplicationObject(BpaApplication bpaApp, SlotDetail slotDetail) {
+		SlotApplication slotApplication = new SlotApplication();
+		slotApplication.setApplication(bpaApp);
+		slotApplication.setSlotDetail(slotDetail);
+		if (bpaApp.getStatus().getCode().toString().equals(BpaConstants.APPLICATION_STATUS_PENDING_FOR_RESCHEDULING)) {
+			slotApplication.setScheduleAppointmentType(ScheduleAppointmentType.RESCHEDULE);
+			bpaApp.setStatus(bpaStatusRepository.findByCode(BpaConstants.APPLICATION_STATUS_RESCHEDULED));
+			return slotApplication;
+		} else {
+			slotApplication.setScheduleAppointmentType(ScheduleAppointmentType.SCHEDULE);
+			bpaApp.setStatus(bpaStatusRepository.findByCode(BpaConstants.APPLICATION_STATUS_SCHEDULED));
+			return slotApplication;
+		}
+
+	}
+
+	private void createSlotApplicationAndUpdateStatus(SlotDetail slotDetail, BpaApplication bpaApp,
+			SlotApplication slotApplication) {
+		slotApplicationService.save(slotApplication);
+		applicationBpaService.saveBpaApplication(bpaApp);
+		bpaSmsAndEmailService.sendSMSAndEmailForDocumentScrutiny(slotApplication, bpaApp);
+		if (slotApplication.getScheduleAppointmentType().toString()
+				.equals(ScheduleAppointmentType.RESCHEDULE.toString())) {
+			bpaUtils.redirectToBpaWorkFlow(bpaApp.getCurrentState().getOwnerPosition().getId(), bpaApp, null,
+					"document scrutiny re-scheduled", BpaConstants.WF_RESCHDLE_APPMNT_BUTTON, null);
+		} else if (slotApplication.getScheduleAppointmentType().toString()
+				.equals(ScheduleAppointmentType.SCHEDULE.toString())) {
+			bpaUtils.redirectToBpaWorkFlow(
+					slotApplication.getApplication().getCurrentState().getOwnerPosition().getId(),
+					slotApplication.getApplication(), null, BpaConstants.APPLICATION_STATUS_SCHEDULED, "Forward", null);
+		}
+	}
+
+	private String getErrorMessage(final Exception exception) {
+		String error;
+		if (exception instanceof ValidationException)
+			error = ((ValidationException) exception).getErrors().get(0).getMessage();
+		else
+			error = "Error : " + exception;
+		return error;
+	}
+
 }

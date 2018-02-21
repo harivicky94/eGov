@@ -124,4 +124,9 @@ public class SlotMappingService {
 		return noOfApplicationsRepository.findByApplTypeAndZone(applType,zone);
 	}
 
+	public List<Boundary> slotfindZoneByApplType(ApplicationType applType) {
+		return noOfApplicationsRepository.findZoneByApplType(applType);
+
+	}
+
 }

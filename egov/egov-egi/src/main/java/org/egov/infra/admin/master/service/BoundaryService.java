@@ -299,4 +299,8 @@ public class BoundaryService {
 
         return Optional.empty();
     }
+
+	public List<Boundary> findBoundariesByParent(Boundary zone) {
+		return boundaryRepository.findByParent(zone);
+	}
 }

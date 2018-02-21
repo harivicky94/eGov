@@ -39,15 +39,22 @@
  */
 package org.egov.bpa.transaction.repository;
 
+import java.util.Date;
+import java.util.List;
+
 import org.egov.bpa.transaction.entity.Slot;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.Date;
 
 @Repository
 public interface SlotRepository extends JpaRepository<Slot, Long> {
+	
+	@Query("select slot from Slot slot where slot.zone = :zone and slot.appointmentDate >= :slotDate order by slot.appointmentDate asc")
+	List<Slot> findByZoneAndApplicationDate(@Param("zone") Boundary zone, @Param("slotDate") Date slotDate);
 
 	Slot findByZoneAndAppointmentDate(Boundary zone, Date appointmentDate);
 }

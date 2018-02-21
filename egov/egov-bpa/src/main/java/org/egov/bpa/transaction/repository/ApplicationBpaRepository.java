@@ -55,11 +55,11 @@ public interface ApplicationBpaRepository extends JpaRepository<BpaApplication, 
     @Query("select app from BpaApplication app where app.demand=:demand")
 	BpaApplication findByDemand(@Param("demand") EgDemand demand);
 
-    BpaApplication findByApplicationNumber(String applicationNumber);
-    
-    @Query("select app from BpaApplication app where app.status= :status order by createddate asc")
-    List<BpaApplication> findByStatusOrderByCreatedDateAsc(@Param("status") BpaStatus status);
-    
+	BpaApplication findByApplicationNumber(String applicationNumber);
+
 	BpaApplication findById(Long id);
+
+	@Query("select app from BpaApplication app where app.status in :status order by createddate asc")
+	List<BpaApplication> findByStatusListOrderByCreatedDateAsc(@Param("status") List<BpaStatus> listOfBpaStatus);
 
 }

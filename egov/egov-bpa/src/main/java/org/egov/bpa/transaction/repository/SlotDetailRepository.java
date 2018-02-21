@@ -39,6 +39,7 @@
  */
 package org.egov.bpa.transaction.repository;
 
+import org.egov.bpa.transaction.entity.Slot;
 import org.egov.bpa.transaction.entity.SlotDetail;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -71,5 +72,14 @@ public interface SlotDetailRepository extends JpaRepository<SlotDetail, Long> {
 
 	@Query("select detail from SlotDetail detail where detail.slot.appointmentDate = :rescheduleAppointmentDate and detail.slot.zone = :zone")
 	List<SlotDetail> findOneByAppointmentDateAndZoneId(@Param("rescheduleAppointmentDate")Date rescheduleAppointmentDate,@Param("zone")Boundary zone);
+
+	@Query("select slotdetail from SlotDetail slotdetail where slotdetail.slot =:slot and (slotdetail.maxScheduledSlots"
+			+ " - slotdetail.utilizedScheduledSlots >0 or slotdetail.maxRescheduledSlots -"
+			+ " slotdetail.utilizedRescheduledSlots >0 or (slotdetail.maxScheduledSlots -"
+			+ " slotdetail.utilizedScheduledSlots >0 and slotdetail.maxRescheduledSlots -"
+			+ " slotdetail.utilizedRescheduledSlots >0)) order by slotdetail.id asc")
+	List<SlotDetail> findBySlot(@Param("slot") Slot slot);
+
+	
 	
 }

@@ -74,6 +74,8 @@ import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
@@ -85,6 +87,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
@@ -499,5 +502,29 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         applicantUser.addAddress(bpaApplication.getOwner().getPermanentAddress());
         return userService.createUser(applicantUser);
     }
+
+    @Transactional
+	public void saveBpaApplication(BpaApplication bpaApp) {
+       applicationBpaRepository.save(bpaApp);		
+	}
+
+	public List<BpaApplication> findByStatusListOrderByCreatedDate(List<BpaStatus> listOfBpaStatus) {
+		return applicationBpaRepository.findByStatusListOrderByCreatedDateAsc(listOfBpaStatus);
+	}
+
+	public List<BpaApplication> getBpaApplicationsByCriteria(List<BpaStatus> bpaStatusList, List<Boundary> boundaryList,
+			Integer totalAvailableSlots) {
+		final Criteria criteria = entityManager.unwrap(Session.class)
+				.createCriteria(BpaApplication.class, "application")
+				.createAlias("application.siteDetail", "siteDetail");
+		criteria.add(Restrictions.in("application.status", bpaStatusList));
+		criteria.add(Restrictions.in("siteDetail.adminBoundary", boundaryList));
+		criteria.addOrder(Order.desc("application.status"));
+		criteria.addOrder(Order.asc("application.applicationDate"));
+		criteria.addOrder(Order.asc("application.createdDate"));
+		criteria.setMaxResults(totalAvailableSlots);
+		return criteria.list();
+
+	}
 
 }

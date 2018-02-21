@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2017>  eGovernments Foundation
+ *     Copyright (C) <2015>  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -39,69 +39,23 @@
  */
 package org.egov.bpa.transaction.service;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-
-import org.egov.bpa.transaction.entity.BpaApplication;
-import org.egov.bpa.transaction.entity.BpaStatus;
 import org.egov.bpa.transaction.entity.SlotApplication;
-import org.egov.bpa.transaction.repository.BpaStatusRepository;
 import org.egov.bpa.transaction.repository.SlotApplicationRepository;
-import org.egov.bpa.transaction.service.messaging.BPASmsAndEmailService;
-import org.egov.bpa.utils.BpaConstants;
-import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
-public class BpaApplicationCancellationService {
-	@Autowired
-	private ApplicationBpaService applicationBpaService;
-
-	@Autowired
-	private BpaStatusRepository bpaStatusRepository;
+public class SlotApplicationService {
 
 	@Autowired
 	private SlotApplicationRepository slotApplicationRepository;
 
-	@Autowired
-	private BPASmsAndEmailService bpaSmsAndEmailService;
-
 	@Transactional
-	public void cancelNonverifiedApplications() {
-		Calendar calender = Calendar.getInstance();
-		Date todayDate = calender.getTime();
-		BpaStatus bpaStatusScheduled = bpaStatusRepository.findByCode(BpaConstants.APPLICATION_STATUS_SCHEDULED);
-		BpaStatus bpaStatusRescheduled = bpaStatusRepository.findByCode(BpaConstants.APPLICATION_STATUS_RESCHEDULED);
-		List<BpaStatus> listOfBpaStatus = new ArrayList<>();
-		listOfBpaStatus.add(bpaStatusScheduled);
-		listOfBpaStatus.add(bpaStatusRescheduled);
-		List<BpaApplication> bpaApplicationList = applicationBpaService
-				.findByStatusListOrderByCreatedDate(listOfBpaStatus);
-		for (BpaApplication bpaApplication : bpaApplicationList) {
-			List<SlotApplication> slotApplicationList = slotApplicationRepository
-					.findByApplicationOrderByIdDesc(bpaApplication);
-			if (slotApplicationList.size() > 0) {
-				Date appointmentDate = slotApplicationList.get(0).getSlotDetail().getSlot().getAppointmentDate();
-				if (todayDate.compareTo(appointmentDate) > 0) {
-					BpaStatus status = bpaStatusRepository
-							.findByCodeAndModuleType(BpaConstants.APPLICATION_STATUS_CANCELLED, "REGISTRATION");
-					bpaApplication.setStatus(status);
-					applicationBpaService.saveBpaApplication(bpaApplication);
-					bpaSmsAndEmailService.sendSMSAndEmailForDocumentScrutiny(slotApplicationList.get(0),
-							bpaApplication);
-				}
-			}
-		}
+	public void save(SlotApplication slotApplication) {
+		slotApplicationRepository.save(slotApplication);
+
 	}
 
-	LocalDate convertToLocalDate(Date date) {
-		if (date == null)
-			return null;
-		return new LocalDate(date);
-	}
 }

@@ -45,6 +45,8 @@ import org.egov.bpa.master.entity.SlotMapping;
 import org.egov.bpa.master.entity.enums.ApplicationType;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -53,5 +55,8 @@ public interface SlotMappingRepository extends JpaRepository<SlotMapping, Long> 
 	List<SlotMapping> findByApplType(ApplicationType applType);
 
 	List<SlotMapping> findByApplTypeAndZone(ApplicationType applType, Boundary zone);
+
+	@Query("select distinct sm.zone from SlotMapping sm where sm.applType = :applType")
+	List<Boundary> findZoneByApplType(@Param("applType")ApplicationType applType);
 
 }
