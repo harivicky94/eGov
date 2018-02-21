@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 public class Rule60  extends GeneralRule {
 
     private static final BigDecimal _EXPECTED_PLOT_AREA = BigDecimal.valueOf(125);
+    private static final String SUB_RULE_60_DESCRIPTION = "SUB_RULE_60_DESCRIPTION";
 
     @Override
     public PlanDetail validate(PlanDetail planDetail) {
@@ -35,16 +36,20 @@ public class Rule60  extends GeneralRule {
                 planDetail.getPlot() != null && planDetail.getPlot().getArea() != null) {
             if (planDetail.getPlot().getArea().compareTo(_EXPECTED_PLOT_AREA) <= 0) {
                 planDetail.reportOutput
-                        .add(buildRuleOutput(DcrConstants.RULE60, DcrConstants.PLOT_AREA,
-                                DcrConstants.LESSTHANOREQUAL + _EXPECTED_PLOT_AREA.toString() + DcrConstants.IN_METER,
-                                planDetail.getPlot().getArea().toString() + DcrConstants.IN_METER, Result.Accepted,
-                                DcrConstants.EXPECTEDRESULT));
+                        .add(buildRuleOutputWithSubRule(DcrConstants.RULE23, DcrConstants.RULE23, SUB_RULE_60_DESCRIPTION,
+                                DcrConstants.PLOT_AREA,
+                                _EXPECTED_PLOT_AREA.toString() + DcrConstants.IN_METER,
+                                planDetail.getPlot().getArea().toString()
+                                        + DcrConstants.IN_METER,
+                                Result.Accepted, null));
+
             } else {
                 planDetail.reportOutput
-                        .add(buildRuleOutput(DcrConstants.RULE60, DcrConstants.PLOT_AREA,
-                                DcrConstants.LESSTHANOREQUAL + _EXPECTED_PLOT_AREA.toString() + DcrConstants.IN_METER,
-                                planDetail.getPlot().getArea().toString() + DcrConstants.IN_METER, Result.Not_Accepted,
-                                DcrConstants.EXPECTEDRESULT));
+                .add(buildRuleOutputWithSubRule(DcrConstants.RULE23,DcrConstants.RULE23,SUB_RULE_60_DESCRIPTION, DcrConstants.PLOT_AREA,
+                        _EXPECTED_PLOT_AREA.toString() + DcrConstants.IN_METER,
+                        planDetail.getPlot().getArea().toString()
+                                + DcrConstants.IN_METER,
+                        Result.Not_Accepted,null));
 
             }
         }

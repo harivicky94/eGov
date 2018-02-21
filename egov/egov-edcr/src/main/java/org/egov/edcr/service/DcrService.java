@@ -59,7 +59,7 @@ public class DcrService {
         //BASIC VALIDATION
         
         File dxfFile=new File("/home/mani/Desktop/BPA/kozhi/SAMPLE 3.dxf");
-       
+     
  
         generalRule.validate(planDetail);
 
@@ -106,7 +106,7 @@ public class DcrService {
  
             }
         }
-        
+        generateDCRReport(planDetail) ;
         System.err.println(planDetail.getErrors());
         System.err.println(planDetail.getReportOutput());
         
@@ -118,14 +118,12 @@ public class DcrService {
     }
 
     public ReportOutput generateDCRReport(PlanDetail planDetail) {
-    	Map<String, Object> params = new HashMap<>();
-    	Rule23 rule23 = new Rule23();
-    	params.put("rule23" ,rule23.generateReport(planDetail));
+        Map<String, Object> params = new HashMap<>();
         final ReportRequest reportInput = new ReportRequest("edcr_report", planDetail,
-        		params);
+                params);
         final ReportOutput reportOutput = reportService.createReport(reportInput);
         return reportOutput;
-      
+
     }
  
     public byte[] generatePlanScrutinyReport(PlanDetail planDetail) {

@@ -14,7 +14,8 @@ import org.springframework.stereotype.Service;
 public class Rule26 extends GeneralRule {
     private static final BigDecimal _NOTIFIEDROADDISTINCE = BigDecimal.valueOf(3);
     private static final BigDecimal _NONNOTIFIEDROADDISTINCE = BigDecimal.valueOf(1.8);
-
+    private static final String SUB_RULE_26_DESCRIPTION = "SUB_RULE__DESCRIPTION";
+    private static final String SUB_RULE_26 = "Sub Rule 26";
    
 
     @Override
@@ -91,8 +92,8 @@ public class Rule26 extends GeneralRule {
         if (planDetail.getNotifiedRoads() != null &&
                 !(planDetail.getNotifiedRoads().size() > 0 ||
                         planDetail.getNonNotifiedRoads().size() > 0)) {
-            planDetail.reportOutput.add(buildRuleOutput(DcrConstants.RULE26, DcrConstants.ROAD, Result.Not_Accepted,
-                    DcrConstants.OBJECTNOTDEFINED));
+            planDetail.reportOutput.add(buildRuleOutputWithMainRule(DcrConstants.RULE26, DcrConstants.ROAD, Result.Not_Accepted,
+                    DcrConstants.ROAD+ DcrConstants.OBJECTNOTDEFINED));
         } else if (planDetail.getNotifiedRoads() != null &&
                 planDetail.getNotifiedRoads().size() > 0) { // If notified road present then check 3 mts distance should maintain
 
@@ -101,16 +102,19 @@ public class Rule26 extends GeneralRule {
                         notifiedRoad.getShortestDistanceToRoad().compareTo(BigDecimal.ZERO) > 0)
                     if (notifiedRoad.getShortestDistanceToRoad().compareTo(_NOTIFIEDROADDISTINCE) >= 0) {// TDDO CHECK
                         planDetail.reportOutput
-                                .add(buildRuleOutput(DcrConstants.RULE26, DcrConstants.NOTIFIED_SHORTESTDISTINCTTOROAD,
-                                        _NOTIFIEDROADDISTINCE.toString()+DcrConstants.IN_METER,
-                                        notifiedRoad.getShortestDistanceToRoad().toString()+DcrConstants.IN_METER, Result.Accepted,
-                                        DcrConstants.EXPECTEDRESULT));
+                        .add(buildRuleOutputWithSubRule(DcrConstants.RULE26,SUB_RULE_26,SUB_RULE_26_DESCRIPTION, DcrConstants.NOTIFIED_SHORTESTDISTINCTTOROAD,
+                                _NOTIFIEDROADDISTINCE.toString() + DcrConstants.IN_METER,
+                                notifiedRoad.getShortestDistanceToRoad().toString()
+                                        + DcrConstants.IN_METER,
+                                Result.Accepted,null));   
                     } else {
+                       
                         planDetail.reportOutput
-                                .add(buildRuleOutput(DcrConstants.RULE26, DcrConstants.NOTIFIED_SHORTESTDISTINCTTOROAD,
-                                        _NOTIFIEDROADDISTINCE.toString()+DcrConstants.IN_METER,
-                                        notifiedRoad.getShortestDistanceToRoad().toString()+DcrConstants.IN_METER, Result.Not_Accepted,
-                                        DcrConstants.EXPECTEDRESULT));
+                        .add(buildRuleOutputWithSubRule(DcrConstants.RULE26,SUB_RULE_26,SUB_RULE_26_DESCRIPTION, DcrConstants.NOTIFIED_SHORTESTDISTINCTTOROAD,
+                                _NOTIFIEDROADDISTINCE.toString() + DcrConstants.IN_METER,
+                                notifiedRoad.getShortestDistanceToRoad().toString()
+                                        + DcrConstants.IN_METER,
+                                Result.Not_Accepted,null));  
                     }
             }
         }
@@ -122,16 +126,18 @@ public class Rule26 extends GeneralRule {
                         nonNotifiedRoad.getShortestDistanceToRoad().compareTo(BigDecimal.ZERO) > 0)
                     if (nonNotifiedRoad.getShortestDistanceToRoad().compareTo(_NONNOTIFIEDROADDISTINCE) >= 0) {// TDDO CHECK
                         planDetail.reportOutput
-                                .add(buildRuleOutput(DcrConstants.RULE26, DcrConstants.NONNOTIFIED_SHORTESTDISTINCTTOROAD,
-                                        _NONNOTIFIEDROADDISTINCE.toString()+DcrConstants.IN_METER,
-                                        nonNotifiedRoad.getShortestDistanceToRoad().toString()+DcrConstants.IN_METER, Result.Accepted,
-                                        DcrConstants.EXPECTEDRESULT));
+                        .add(buildRuleOutputWithSubRule(DcrConstants.RULE26,SUB_RULE_26,SUB_RULE_26_DESCRIPTION, DcrConstants.NONNOTIFIED_SHORTESTDISTINCTTOROAD,
+                                _NONNOTIFIEDROADDISTINCE.toString() + DcrConstants.IN_METER,
+                                nonNotifiedRoad.getShortestDistanceToRoad().toString()
+                                        + DcrConstants.IN_METER,
+                                Result.Accepted,null)); 
                     } else {
                         planDetail.reportOutput
-                                .add(buildRuleOutput(DcrConstants.RULE26, DcrConstants.NONNOTIFIED_SHORTESTDISTINCTTOROAD,
-                                        _NONNOTIFIEDROADDISTINCE.toString()+DcrConstants.IN_METER,
-                                        nonNotifiedRoad.getShortestDistanceToRoad().toString()+DcrConstants.IN_METER, Result.Not_Accepted,
-                                        DcrConstants.EXPECTEDRESULT));
+                        .add(buildRuleOutputWithSubRule(DcrConstants.RULE26,SUB_RULE_26,SUB_RULE_26_DESCRIPTION, DcrConstants.NONNOTIFIED_SHORTESTDISTINCTTOROAD,
+                                _NONNOTIFIEDROADDISTINCE.toString() + DcrConstants.IN_METER,
+                                nonNotifiedRoad.getShortestDistanceToRoad().toString()
+                                        + DcrConstants.IN_METER,
+                                Result.Not_Accepted,null)); 
                     }
             }
         }
@@ -141,11 +147,11 @@ public class Rule26 extends GeneralRule {
         if (planDetail.getBuilding().getWasteDisposal() != null &&
                 planDetail.getBuilding().getWasteDisposal().getPresentInDxf()) {
 
-            planDetail.reportOutput.add(buildRuleOutput(DcrConstants.RULE26, DcrConstants.WASTEDISPOSAL, Result.Accepted,
-                    DcrConstants.OBJECTDEFINED));
+            planDetail.reportOutput.add(buildRuleOutputWithMainRule(DcrConstants.RULE26, DcrConstants.WASTEDISPOSAL, Result.Accepted,
+                    DcrConstants.WASTEDISPOSAL+ DcrConstants.OBJECTDEFINED));
         } else
-            planDetail.reportOutput.add(buildRuleOutput(DcrConstants.RULE26, DcrConstants.WASTEDISPOSAL, Result.Not_Accepted,
-                    DcrConstants.OBJECTNOTDEFINED));
+            planDetail.reportOutput.add(buildRuleOutputWithMainRule(DcrConstants.RULE26, DcrConstants.WASTEDISPOSAL, Result.Not_Accepted,
+                    DcrConstants.WASTEDISPOSAL+ DcrConstants.OBJECTNOTDEFINED));
     }
 
    

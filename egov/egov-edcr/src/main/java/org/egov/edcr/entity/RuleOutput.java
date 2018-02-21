@@ -9,7 +9,7 @@ public class RuleOutput {
     public List<SubRuleOutput> subRuleOutputs = new ArrayList<>();
     public String message;
     public Result result;
-    
+    public String ruleDescription;
     
     public void add(SubRuleOutput subruleOut) {
         if (subRuleOutputs == null) {

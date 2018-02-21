@@ -2,7 +2,7 @@ package org.egov.edcr.entity.utility;
 
 public class RuleReportOutput {
 	
-	public String ruleKey;
+	//public String ruleKey;
 	
 	public String fieldVerified;
 	
@@ -12,14 +12,14 @@ public class RuleReportOutput {
 	
 	public String status;
 
-	public String getRuleKey() {
+/*	public String getRuleKey() {
 		return ruleKey;
 	}
 
 	public void setRuleKey(String ruleKey) {
 		this.ruleKey = ruleKey;
 	}
-
+*/
 	public String getFieldVerified() {
 		return fieldVerified;
 	}

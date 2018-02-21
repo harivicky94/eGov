@@ -13,6 +13,11 @@ import java.util.List;
 
 public class Rule32 extends GeneralRule {
 
+    private static final String SUB_RULE_32_1A = "SUB_RULE_32_1A";
+    private static final String SUB_RULE_32_1A_DESCRIPTION = "SUB_RULE_32_1A";
+    private static final String SUB_RULE_32_3 = "SUB_RULE_32_3";;
+    private static final String SUB_RULE_32_3_DESCRIPTION = "SUB_RULE_32_3";;
+
     @Override
     public PlanDetail validate(PlanDetail planDetail) {
         HashMap<String, String> errors = new HashMap<String, String>();
@@ -22,14 +27,14 @@ public class Rule32 extends GeneralRule {
             if (planDetail.getBuilding().getBuildingHeight() == null) {
                 errors.put(DcrConstants.BUILDING_HEIGHT,
                         edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
-                                new String[]{DcrConstants.BUILDING_HEIGHT}, LocaleContextHolder.getLocale()));
+                                new String[] { DcrConstants.BUILDING_HEIGHT }, LocaleContextHolder.getLocale()));
                 planDetail.addErrors(errors);
             }
 
             if (planDetail.getMaxHeightCal() != null && planDetail.getMaxHeightCal().compareTo(BigDecimal.ZERO) < 0) {
                 errors.put(DcrConstants.BUILDING_HEIGHT,
                         edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
-                                new String[]{DcrConstants.BUILDING_HEIGHT}, LocaleContextHolder.getLocale()));
+                                new String[] { DcrConstants.BUILDING_HEIGHT }, LocaleContextHolder.getLocale()));
                 planDetail.addErrors(errors);
             }
 
@@ -37,7 +42,7 @@ public class Rule32 extends GeneralRule {
                     && planDetail.getBuilding().getBuildingTopMostHeight().compareTo(BigDecimal.ZERO) < 0) {
                 errors.put(DcrConstants.BUILDING_TOP_MOST_HEIGHT,
                         edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
-                                new String[]{DcrConstants.BUILDING_TOP_MOST_HEIGHT}, LocaleContextHolder.getLocale()));
+                                new String[] { DcrConstants.BUILDING_TOP_MOST_HEIGHT }, LocaleContextHolder.getLocale()));
                 planDetail.addErrors(errors);
             }
 
@@ -45,7 +50,6 @@ public class Rule32 extends GeneralRule {
 
         return planDetail;
     }
-
 
     public List<RuleReportOutput> generateReport(PlanDetail planDetail) {
         List<RuleReportOutput> ruleReportOutputs = new ArrayList<>();
@@ -55,24 +59,26 @@ public class Rule32 extends GeneralRule {
     }
 
     private List<RuleReportOutput> rule32_1a(PlanDetail planDetail, List<RuleReportOutput> ruleReportOutputs) {
-        RuleReportOutput ruleReportOutput = new RuleReportOutput();
         BigDecimal max = new BigDecimal("12");
         BigDecimal constant = new BigDecimal("2");
         if ((constant.multiply(planDetail.getMaxHeightCal())).compareTo(max) == -1) {
 
-            ruleReportOutput.setRuleKey(DcrConstants.RULE32);
-            ruleReportOutput.setFieldVerified(DcrConstants.BUILDING_HEIGHT);
-            ruleReportOutput.setActualResult(Result.Accepted.toString());
-            ruleReportOutput.setExpectedResult(DcrConstants.EXPECTEDRESULT);
-            ruleReportOutputs.add(ruleReportOutput);
+            planDetail.reportOutput
+                    .add(buildRuleOutputWithSubRule(DcrConstants.RULE32, SUB_RULE_32_1A, SUB_RULE_32_1A_DESCRIPTION,
+                            DcrConstants.BUILDING_HEIGHT,
+                            max.toString(),
+                            constant.multiply(planDetail.getMaxHeightCal())
+                                    + DcrConstants.IN_METER,
+                            Result.Accepted, null));
 
         } else {
-            ruleReportOutput = new RuleReportOutput();
-            ruleReportOutput.setRuleKey(DcrConstants.RULE32);
-            ruleReportOutput.setFieldVerified(DcrConstants.BUILDING_HEIGHT);
-            ruleReportOutput.setActualResult(Result.Not_Accepted.toString());
-            ruleReportOutput.setExpectedResult(DcrConstants.EXPECTEDRESULT);
-            ruleReportOutputs.add(ruleReportOutput);
+            planDetail.reportOutput
+                    .add(buildRuleOutputWithSubRule(DcrConstants.RULE32, SUB_RULE_32_1A, SUB_RULE_32_1A_DESCRIPTION,
+                            DcrConstants.BUILDING_HEIGHT,
+                            max.toString(),
+                            constant.multiply(planDetail.getMaxHeightCal())
+                                    + DcrConstants.IN_METER,
+                            Result.Not_Accepted, null));
 
         }
         return ruleReportOutputs;
@@ -81,24 +87,26 @@ public class Rule32 extends GeneralRule {
 
     private List<RuleReportOutput> rule32_3(PlanDetail planDetail, List<RuleReportOutput> ruleReportOutputs) {
 
-        RuleReportOutput ruleReportOutput = new RuleReportOutput();
         BigDecimal max = new BigDecimal("10");
         if (planDetail.getPlanInformation().getSecurityZone() == true) {
             if ((planDetail.getBuilding().getBuildingTopMostHeight()).compareTo(max) == -1) {
 
-                ruleReportOutput.setRuleKey(DcrConstants.RULE32);
-                ruleReportOutput.setFieldVerified(DcrConstants.BUILDING_TOP_MOST_HEIGHT);
-                ruleReportOutput.setActualResult(Result.Accepted.toString());
-                ruleReportOutput.setExpectedResult(DcrConstants.EXPECTEDRESULT);
-                ruleReportOutputs.add(ruleReportOutput);
+                planDetail.reportOutput
+                        .add(buildRuleOutputWithSubRule(DcrConstants.RULE32, SUB_RULE_32_3, SUB_RULE_32_3_DESCRIPTION,
+                                DcrConstants.BUILDING_TOP_MOST_HEIGHT,
+                                max.toString(),
+                                planDetail.getBuilding().getBuildingTopMostHeight()
+                                        + DcrConstants.IN_METER,
+                                Result.Accepted, null));
 
             } else {
-                ruleReportOutput = new RuleReportOutput();
-                ruleReportOutput.setRuleKey(DcrConstants.RULE32);
-                ruleReportOutput.setFieldVerified(DcrConstants.BUILDING_TOP_MOST_HEIGHT);
-                ruleReportOutput.setActualResult(Result.Not_Accepted.toString());
-                ruleReportOutput.setExpectedResult(DcrConstants.EXPECTEDRESULT);
-                ruleReportOutputs.add(ruleReportOutput);
+                planDetail.reportOutput
+                        .add(buildRuleOutputWithSubRule(DcrConstants.RULE32, SUB_RULE_32_3, SUB_RULE_32_3_DESCRIPTION,
+                                DcrConstants.BUILDING_TOP_MOST_HEIGHT,
+                                max.toString(),
+                                planDetail.getBuilding().getBuildingTopMostHeight()
+                                        + DcrConstants.IN_METER,
+                                Result.Not_Accepted, null));
 
             }
         }
