@@ -295,8 +295,8 @@
         <module>egov-mrs</module>
         <module>egov-mrsweb</module>
         <module>egov-services</module>
-        <module>egov-edcr</module>
-	    <module>egov-edcrweb</module>
+        <!--<module>egov-edcr</module>
+	    <module>egov-edcrweb</module>-->
         
     </modules>
 
