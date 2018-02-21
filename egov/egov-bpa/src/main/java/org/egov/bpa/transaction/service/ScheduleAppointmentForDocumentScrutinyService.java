@@ -55,6 +55,7 @@ import org.egov.bpa.transaction.service.messaging.BPASmsAndEmailService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.utils.BpaUtils;
 import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.repository.BoundaryRepository;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.validation.exception.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -92,7 +93,7 @@ public class ScheduleAppointmentForDocumentScrutinyService {
 	private BPASmsAndEmailService bpaSmsAndEmailService;
 
 	@Autowired
-	private BoundaryService boundaryService;
+	private BoundaryRepository boundaryRepository;
 	@Autowired
 	private BpaUtils bpaUtils;
 
@@ -129,7 +130,7 @@ public class ScheduleAppointmentForDocumentScrutinyService {
 						List<BpaStatus> bpaStatusList = new ArrayList<>();
 						bpaStatusList.add(bpaStatusRegistered);
 						bpaStatusList.add(bpaStatusPendingForRescheduling);
-						List<Boundary> boundaryList = boundaryService.findBoundariesByParent(slot.getZone());
+						List<Boundary> boundaryList = boundaryRepository.findActiveImmediateChildrenWithOutParent(slot.getZone().getId());
 						List<BpaApplication> bpaApplications = applicationBpaService
 								.getBpaApplicationsByCriteria(bpaStatusList, boundaryList, totalAvailableSlots);
 						if (bpaApplications.size() > 0) {

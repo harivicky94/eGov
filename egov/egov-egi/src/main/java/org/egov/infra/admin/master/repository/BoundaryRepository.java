@@ -158,6 +158,4 @@ public interface BoundaryRepository extends JpaRepository<Boundary, Long> {
     List<Boundary> findAllParents();
 
     List<Boundary> findByBoundaryTypeOrderByBoundaryNumAsc(BoundaryType boundaryType);
-
-	List<Boundary> findByParent(Boundary zone);
 }
