@@ -48,11 +48,11 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @Entity
-@Table(name = "EDCR_DXF_DOCUMENT")
+@Table(name = "EDCR_DOCUMENT")
 @SequenceGenerator(name = DxfDocument.SEQ_DXF_DOCUMENT, sequenceName = DxfDocument.SEQ_DXF_DOCUMENT, allocationSize = 1)
 public class DxfDocument extends AbstractAuditable {
 
-    public static final String SEQ_DXF_DOCUMENT = "SEQ_EDCR_DXF_DOCUMENT";
+    public static final String SEQ_DXF_DOCUMENT = "SEQ_EDCR_DOCUMENT";
     private static final long serialVersionUID = 2590259455834176449L;
 
     @Id
@@ -60,8 +60,12 @@ public class DxfDocument extends AbstractAuditable {
     private Long id;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "filestoreid")
-    private FileStoreMapper fileStoreId;
+    @JoinColumn(name = "dxffileid")
+    private FileStoreMapper dxfFileId;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "reportoutputid")
+    private FileStoreMapper reportOutputId;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "application")
@@ -81,19 +85,27 @@ public class DxfDocument extends AbstractAuditable {
         return serialVersionUID;
     }
 
-    public FileStoreMapper getFileStoreId() {
-        return fileStoreId;
-    }
-
-    public void setFileStoreId(FileStoreMapper fileStoreId) {
-        this.fileStoreId = fileStoreId;
-    }
-
     public EdcrApplication getApplication() {
         return application;
     }
 
     public void setApplication(EdcrApplication application) {
         this.application = application;
+    }
+
+    public FileStoreMapper getDxfFileId() {
+        return dxfFileId;
+    }
+
+    public void setDxfFileId(FileStoreMapper dxfFileId) {
+        this.dxfFileId = dxfFileId;
+    }
+
+    public FileStoreMapper getReportOutputId() {
+        return reportOutputId;
+    }
+
+    public void setReportOutputId(FileStoreMapper reportOutputId) {
+        this.reportOutputId = reportOutputId;
     }
 }

@@ -54,4 +54,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface EdcrApplicationRepository extends JpaRepository<EdcrApplication, Long> {
 
+    public EdcrApplication findByApplicationNumber(String applicationNumber);
 }

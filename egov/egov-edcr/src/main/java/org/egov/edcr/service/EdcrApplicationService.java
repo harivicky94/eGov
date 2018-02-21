@@ -66,6 +66,10 @@ public class EdcrApplicationService {
         return edcrApplicationRepository.findOne(id);
     }
 
+    public EdcrApplication findByApplicationNo(String appNo){
+        return edcrApplicationRepository.findByApplicationNumber(appNo);
+    }
+
     public List<EdcrApplication> search(EdcrApplication edcrApplication) {
         return edcrApplicationRepository.findAll();
     }

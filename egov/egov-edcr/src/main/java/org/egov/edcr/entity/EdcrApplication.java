@@ -38,7 +38,7 @@ public class EdcrApplication extends AbstractAuditable {
     @Transient
     private MultipartFile dxfFile; //File to be process.
 
-    @OneToMany(mappedBy = "application" , fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "application" , fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = false)
     private List<DxfDocument> dxfDocuments;
 
     @ManyToOne
