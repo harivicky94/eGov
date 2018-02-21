@@ -1,6 +1,6 @@
 package org.egov.edcr.service;
 
-import org.egov.edcr.entity.DxfDocument;
+import org.egov.edcr.entity.DcrDocument;
 import org.egov.edcr.entity.EdcrApplication;
 import org.egov.edcr.utility.DcrConstants;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -37,7 +37,7 @@ public class ApplicationService {
     private DcrService dcrService;
 
     @Autowired
-    private DxfDocumentService dxfDocumentService;
+    private DcrDocumentService dcrDocumentService;
 
     public void saveDcrApplication(EdcrApplication edcrApplication) {
         saveDXF(edcrApplication);
@@ -53,7 +53,7 @@ public class ApplicationService {
 
         edcrApplication.setApplicationNumber(applicationNumberGenerator.generate());
 
-        dxfDocumentService.saveAll(edcrApplication.getDxfDocuments());
+        dcrDocumentService.saveAll(edcrApplication.getDcrDocuments());
     }
 
 
@@ -69,26 +69,26 @@ public class ApplicationService {
 
         buildDocuments(edcrApplication, null, fileStoreMapper);
 
-        dxfDocumentService.saveAll(edcrApplication.getDxfDocuments());
+        dcrDocumentService.saveAll(edcrApplication.getDcrDocuments());
     }
 
     private void buildDocuments(EdcrApplication edcrApplication, FileStoreMapper dxfFile, FileStoreMapper reportOutput) {
-        DxfDocument dxfDocument = new DxfDocument();
+        DcrDocument dcrDocument = new DcrDocument();
 
         if (dxfFile != null) {
-            dxfDocument.setDxfFileId(dxfFile);
+            dcrDocument.setDxfFileId(dxfFile);
         }
 
         if (reportOutput != null) {
-            dxfDocument.setReportOutputId(reportOutput);
+            dcrDocument.setReportOutputId(reportOutput);
         }
 
-        dxfDocument.setApplication(edcrApplication);
+        dcrDocument.setApplication(edcrApplication);
 
-        List<DxfDocument> dxfDocuments = new ArrayList<>();
-        dxfDocuments.add(dxfDocument);
+        List<DcrDocument> dcrDocuments = new ArrayList<>();
+        dcrDocuments.add(dcrDocument);
 
-        edcrApplication.setDxfDocuments(dxfDocuments);
+        edcrApplication.setDcrDocuments(dcrDocuments);
     }
 
     private FileStoreMapper addToFileStore(final MultipartFile file) {

@@ -26,7 +26,7 @@ public class EdcrApplicationService {
 
 
     @Autowired
-    private DxfDocumentService dxfDocumentService;
+    private DcrDocumentService dcrDocumentService;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -48,7 +48,7 @@ public class EdcrApplicationService {
 
         edcrApplicationRepository.save(edcrApplication);
 
-        dxfDocumentService.saveAll(edcrApplication.getDxfDocuments());
+        dcrDocumentService.saveAll(edcrApplication.getDcrDocuments());
 
         return edcrApplication;
     }

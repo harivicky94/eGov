@@ -47,11 +47,11 @@
 
 package org.egov.edcr.repository;
 
-import org.egov.edcr.entity.DxfDocument;
+import org.egov.edcr.entity.DcrDocument;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface DxfDocumentRepository extends JpaRepository<DxfDocument, Long> {
+public interface DcrDocumentRepository extends JpaRepository<DcrDocument, Long> {
 
 }

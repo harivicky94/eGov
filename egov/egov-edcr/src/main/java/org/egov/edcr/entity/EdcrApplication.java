@@ -38,10 +38,10 @@ public class EdcrApplication extends AbstractAuditable {
     @Transient
     private MultipartFile dxfFile; //File to be process.
 
-    @OneToMany(mappedBy = "application" , fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = false)
-    private List<DxfDocument> dxfDocuments;
+    @OneToMany(mappedBy = "application", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<DcrDocument> dcrDocuments;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "planinfoid")
     private PlanInformation planInformation;
 
@@ -87,12 +87,12 @@ public class EdcrApplication extends AbstractAuditable {
         this.dxfFile = dxfFile;
     }
 
-    public List<DxfDocument> getDxfDocuments() {
-        return dxfDocuments;
+    public List<DcrDocument> getDcrDocuments() {
+        return dcrDocuments;
     }
 
-    public void setDxfDocuments(List<DxfDocument> dxfDocuments) {
-        this.dxfDocuments = dxfDocuments;
+    public void setDcrDocuments(List<DcrDocument> dcrDocuments) {
+        this.dcrDocuments = dcrDocuments;
     }
 
     public PlanInformation getPlanInformation() {

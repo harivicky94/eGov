@@ -4,16 +4,11 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
-import java.util.Map;
-
-import org.kabeja.dxf.DXFDocument;
-import org.egov.edcr.utility.DcrConstants;
-import org.egov.edcr.utility.Util;
 
 @Entity
 @Table(name = "EDCR_PLANINFO")
 @SequenceGenerator(name = PlanInformation.SEQ_EDCR_PLANINFO, sequenceName = PlanInformation.SEQ_EDCR_PLANINFO, allocationSize = 1)
-public class PlanInformation extends AbstractAuditable{
+public class PlanInformation extends AbstractAuditable {
 
     public static final String SEQ_EDCR_PLANINFO = "SEQ_EDCR_PLANINFO";
     private static final long serialVersionUID = -8471202461472480934L;
@@ -30,7 +25,7 @@ public class PlanInformation extends AbstractAuditable{
 
     private String occupancy;
 
-    private Boolean crzZoneArea=false;
+    private Boolean crzZoneArea = false;
 
     public Long getId() {
         return id;
@@ -80,5 +75,5 @@ public class PlanInformation extends AbstractAuditable{
         this.occupancy = occupancy;
     }
 
- 
+
 }

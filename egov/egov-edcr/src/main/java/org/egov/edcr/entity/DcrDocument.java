@@ -43,14 +43,11 @@ import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 
 import javax.persistence.*;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import java.util.List;
 
 @Entity
 @Table(name = "EDCR_DOCUMENT")
-@SequenceGenerator(name = DxfDocument.SEQ_DXF_DOCUMENT, sequenceName = DxfDocument.SEQ_DXF_DOCUMENT, allocationSize = 1)
-public class DxfDocument extends AbstractAuditable {
+@SequenceGenerator(name = DcrDocument.SEQ_DXF_DOCUMENT, sequenceName = DcrDocument.SEQ_DXF_DOCUMENT, allocationSize = 1)
+public class DcrDocument extends AbstractAuditable {
 
     public static final String SEQ_DXF_DOCUMENT = "SEQ_EDCR_DOCUMENT";
     private static final long serialVersionUID = 2590259455834176449L;
