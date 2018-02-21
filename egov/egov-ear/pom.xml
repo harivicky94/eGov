@@ -384,6 +384,11 @@
 						</webModule>
 						<webModule>
 							<groupId>org.egov</groupId>
+							<artifactId>egov-edcrweb</artifactId>
+							<contextRoot>/edcr</contextRoot>
+						</webModule>
+						<webModule>
+							<groupId>org.egov</groupId>
 							<artifactId>egov-pgrweb</artifactId>
 							<contextRoot>/pgr</contextRoot>
 						</webModule>
