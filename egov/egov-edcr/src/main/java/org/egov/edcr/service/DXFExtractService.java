@@ -1,17 +1,6 @@
 package org.egov.edcr.service;
 
-import java.io.File;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import org.egov.edcr.entity.Building;
-import org.egov.edcr.entity.EdcrApplication;
-import org.egov.edcr.entity.PlanDetail;
-import org.egov.edcr.entity.PlanInformation;
-import org.egov.edcr.entity.Plot;
+import org.egov.edcr.entity.*;
 import org.egov.edcr.entity.measurement.NotifiedRoad;
 import org.egov.edcr.entity.measurement.Yard;
 import org.egov.edcr.utility.DcrConstants;
@@ -27,6 +16,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
+
+import java.io.File;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 @Service
 public class DXFExtractService {
 
@@ -129,7 +125,7 @@ public class DXFExtractService {
     {
         PlanInformation pi=new PlanInformation();
         Map<String, String> planInfoProperties = Util.getPlanInfoProperties(doc);
-        pi.setArchitectName(planInfoProperties.get(DcrConstants.ARCHITECTNAME));
+        pi.setArchitectInformation(planInfoProperties.get(DcrConstants.ARCHITECTNAME));
         return pi;
     }
     

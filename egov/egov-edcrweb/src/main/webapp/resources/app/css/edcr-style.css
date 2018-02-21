@@ -37,13 +37,34 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.edcr.autonumber;
 
+html body .container-fluid .right-content .main-content ul.ntaccordion .ntcontent .fileSection {
+    padding: 20px;
+    border: 1px solid #ddd; }
+html body .container-fluid .right-content .main-content ul.ntaccordion .ntcontent .fileSection #fileName {
+    color: #444343;
+    font-family: light; }
+html body .container-fluid .right-content .main-content ul.ntaccordion .ntcontent .fileSection .upload-msg {
+    padding-top: 10px; }
 
-import org.egov.edcr.entity.EdcrApplication;
+/* amenities multiple select tick box start */
 
-@FunctionalInterface
-public interface DcrApplicationNumberGenerator {
-
-    String generateEDcrApplicationNumber(EdcrApplication edcrApplication);
+select.tick-indicator option:before{
+    font-family: FontAwesome;
+    content:"\f096";
+    padding-right:5px;
 }
+
+select.tick-indicator option:checked:before{
+    font-family: FontAwesome;
+    content:"\f046";
+}
+
+
+select.tick-indicator[multiple] option:checked {
+    color:black;
+    font-weight:bold;
+    background: white linear-gradient(0deg, grey 0%, grey 100%);
+}
+
+/* amenities multiple select tick box end */

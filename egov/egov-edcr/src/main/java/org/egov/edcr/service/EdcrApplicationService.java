@@ -1,61 +1,134 @@
 package org.egov.edcr.service;
 
- 
-import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
+import org.egov.edcr.autonumber.DcrApplicationNumberGenerator;
+import org.egov.edcr.entity.DcrDocument;
 import org.egov.edcr.entity.EdcrApplication;
-import org.egov.edcr.entity.PlanInformation;
 import org.egov.edcr.repository.EdcrApplicationRepository;
+import org.egov.edcr.utility.DcrConstants;
+import org.egov.edcr.utility.PortalInetgrationService;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.infra.reporting.engine.ReportOutput;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
+import static org.egov.edcr.utility.DcrConstants.FILESTORE_MODULECODE;
 
 @Service
 @Transactional(readOnly = true)
 public class EdcrApplicationService {
 
     @Autowired
+    protected SecurityUtils securityUtils;
+    @Autowired
     private EdcrApplicationRepository edcrApplicationRepository;
-
     @Autowired
     private PlaninfoService planinfoService;
-
-
     @Autowired
     private DcrDocumentService dcrDocumentService;
-
-    @PersistenceContext
-    private EntityManager entityManager;
-
     @Autowired
     private DcrService dcrService;
+    @PersistenceContext
+    private EntityManager entityManager;
+    @Autowired
+    private DcrApplicationNumberGenerator dcrApplicationNumberGenerator;
+    @Autowired
+    private FileStoreService fileStoreService;
+    @Autowired
+    private PortalInetgrationService portalInetgrationService;
+
+    @Transactional
+    public EdcrApplication create(final EdcrApplication edcrApplication) {
+
+
+        edcrApplication.setApplicationDate(new Date());
+        edcrApplication.setApplicationNumber(dcrApplicationNumberGenerator.generateEDcrApplicationNumber(edcrApplication));
+        saveDXF(edcrApplication);
+        edcrApplication.setPlanInformation(edcrApplication.getPlanInformation());
+        edcrApplicationRepository.save(edcrApplication);
+        dcrService.process(edcrApplication.getDxfFile(), edcrApplication);
+        portalInetgrationService.createPortalUserinbox(edcrApplication, Arrays.asList(securityUtils.getCurrentUser()));
+        return edcrApplication;
+    }
+
+    public void saveDcrApplication(EdcrApplication edcrApplication) {
+        saveDXF(edcrApplication);
+
+        dcrService.process(edcrApplication.getDxfFile(), edcrApplication);
+    }
+
+    private void saveDXF(EdcrApplication edcrApplication) {
+        FileStoreMapper fileStoreMapper = addToFileStore(edcrApplication.getDxfFile());
+        buildDocuments(edcrApplication, fileStoreMapper, null);
+        edcrApplication.setDcrDocuments(edcrApplication.getDcrDocuments());
+    }
 
 
     @Transactional
- 
-    public EdcrApplication create(final EdcrApplication edcrApplication) {
-     
- 
-        dcrService.process(edcrApplication.getDxfFile(), edcrApplication);
+    public void saveOutputReport(EdcrApplication edcrApplication, ReportOutput reportOutput) {
 
-        PlanInformation savePlanIfo = planinfoService.save(edcrApplication.getPlanInformation());
-        edcrApplication.setPlanInformation(savePlanIfo);
+        ByteArrayInputStream fileStream = new ByteArrayInputStream(reportOutput.getReportOutputData());
 
+        final String fileName = edcrApplication.getApplicationNumber() + ".pdf";
 
-        edcrApplicationRepository.save(edcrApplication);
+        final FileStoreMapper fileStoreMapper = fileStoreService.store(fileStream, fileName, "application/pdf",
+                DcrConstants.FILESTORE_MODULECODE);
+
+        buildDocuments(edcrApplication, null, fileStoreMapper);
 
         dcrDocumentService.saveAll(edcrApplication.getDcrDocuments());
+    }
 
-        return edcrApplication;
+    private void buildDocuments(EdcrApplication edcrApplication, FileStoreMapper dxfFile, FileStoreMapper reportOutput) {
+        DcrDocument dcrDocument = new DcrDocument();
+
+        if (dxfFile != null) {
+            dcrDocument.setDxfFileId(dxfFile);
+        }
+
+        if (reportOutput != null) {
+            dcrDocument.setReportOutputId(reportOutput);
+        }
+
+        dcrDocument.setApplication(edcrApplication);
+
+        List<DcrDocument> dcrDocuments = new ArrayList<>();
+        dcrDocuments.add(dcrDocument);
+
+        edcrApplication.setDcrDocuments(dcrDocuments);
+    }
+
+    private FileStoreMapper addToFileStore(final MultipartFile file) {
+        FileStoreMapper fileStoreMapper;
+        try {
+            fileStoreMapper = fileStoreService.store(file.getInputStream(), file.getOriginalFilename(),
+                    file.getContentType(), FILESTORE_MODULECODE);
+        } catch (final IOException e) {
+            throw new ApplicationRuntimeException("Error occurred while getting inputstream", e);
+        }
+        return fileStoreMapper;
     }
 
     @Transactional
     public EdcrApplication update(final EdcrApplication edcrApplication) {
-        return edcrApplicationRepository.save(edcrApplication);
+        EdcrApplication applicationRes = edcrApplicationRepository.save(edcrApplication);
+        portalInetgrationService.updatePortalUserinbox(applicationRes, securityUtils.getCurrentUser());
+        return applicationRes;
     }
 
     public List<EdcrApplication> findAll() {

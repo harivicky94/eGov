@@ -66,7 +66,7 @@ public class DcrApplicationNumberGeneratorImpl implements DcrApplicationNumberGe
     private GenericSequenceNumberGenerator genericSequenceNumberGenerator;
 
     @Override
-    public String generatePlanPermissionNumber(final EdcrApplication edcrApplication) {
+    public String generateEDcrApplicationNumber(final EdcrApplication edcrApplication) {
         final String sequenceName = DcrConstants.SEQ_ECDR_APPLICATIONNO;
         return String.format(
                 "%s%06d", new StringBuilder().append(APPLICATION_MODULE_TYPE)

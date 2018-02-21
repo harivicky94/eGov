@@ -21,9 +21,12 @@ public class PlanInformation extends AbstractAuditable {
 
     private String ownerName;
 
-    private String architectName;
-
     private String occupancy;
+
+    private String serviceType;
+    private String amenities;
+    private String architectInformation;
+    private Long acchitectId;
 
     private Boolean crzZoneArea = false;
 
@@ -61,12 +64,36 @@ public class PlanInformation extends AbstractAuditable {
         this.ownerName = ownerName;
     }
 
-    public String getArchitectName() {
-        return architectName;
+    public String getServiceType() {
+        return serviceType;
     }
 
-    public void setArchitectName(String architectName) {
-        this.architectName = architectName;
+    public void setServiceType(String serviceType) {
+        this.serviceType = serviceType;
+    }
+
+    public String getAmenities() {
+        return amenities;
+    }
+
+    public void setAmenities(String amenities) {
+        this.amenities = amenities;
+    }
+
+    public String getArchitectInformation() {
+        return architectInformation;
+    }
+
+    public void setArchitectInformation(String architectInformation) {
+        this.architectInformation = architectInformation;
+    }
+
+    public Long getAcchitectId() {
+        return acchitectId;
+    }
+
+    public void setAcchitectId(Long acchitectId) {
+        this.acchitectId = acchitectId;
     }
 
     public String getOccupancy() {

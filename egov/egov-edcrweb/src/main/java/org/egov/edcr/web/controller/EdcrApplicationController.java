@@ -1,26 +1,23 @@
 package org.egov.edcr.web.controller;
 
-import java.util.List;
-
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import org.egov.bpa.master.service.OccupancyService;
+import org.egov.bpa.master.service.ServiceTypeService;
 import org.egov.edcr.entity.EdcrApplication;
-import org.egov.edcr.web.adaptor.EdcrApplicationJsonAdaptor;
-import org.egov.edcr.service.DcrService;
 import org.egov.edcr.service.EdcrApplicationService;
+import org.egov.edcr.web.adaptor.EdcrApplicationJsonAdaptor;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import java.util.List;
 
 @Controller
 @RequestMapping("/edcrapplication")
@@ -35,16 +32,24 @@ public class EdcrApplicationController {
    
     @Autowired
     private MessageSource messageSource;
+    @Autowired
+    private OccupancyService occupancyService;
+    @Autowired
+    private ServiceTypeService serviceTypeService;
+    @Autowired
+    private SecurityUtils securityUtils;
   /*  @Autowired
   //  private PlanInformationService planInformationService;
 */
     private void prepareNewForm(Model model) {
        // model.addAttribute("planInformations", planInformationService.findAll());
+        model.addAttribute("serviceTypeList", serviceTypeService.getAllActiveMainServiceTypes());
+        model.addAttribute("amenityTypeList", serviceTypeService.getAllActiveAmenities());
+        model.addAttribute("occupancyList", occupancyService.findAllOrderByOrderNumber());
     }
 
     @RequestMapping(value = "/new", method = RequestMethod.GET)
     public String newForm(final Model model) {
-        edcrApplicationService.create(new EdcrApplication());
         prepareNewForm(model);
         model.addAttribute("edcrApplication", new EdcrApplication());
         return EDCRAPPLICATION_NEW;
@@ -63,9 +68,9 @@ public class EdcrApplicationController {
         return "redirect:/edcrapplication/result/" + edcrApplication.getApplicationNumber();
     }
 
-    @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
-    public String edit(@PathVariable("id") final Long id, Model model) {
-        EdcrApplication edcrApplication = edcrApplicationService.findOne(id);
+    @RequestMapping(value = "/edit/{applicationNumber}", method = RequestMethod.GET)
+    public String edit(@PathVariable("id") final String applicationNumber, Model model) {
+        EdcrApplication edcrApplication = edcrApplicationService.findByApplicationNo(applicationNumber);
         prepareNewForm(model);
         model.addAttribute("edcrApplication", edcrApplication);
         return EDCRAPPLICATION_EDIT;
@@ -83,18 +88,18 @@ public class EdcrApplicationController {
         return "redirect:/edcrapplication/result/" + edcrApplication.getApplicationNumber();
     }
 
-    @RequestMapping(value = "/view/{id}", method = RequestMethod.GET)
-    public String view(@PathVariable("id") final Long id, Model model) {
-        EdcrApplication edcrApplication = edcrApplicationService.findOne(id);
+    @RequestMapping(value = "/view/{applicationNumber}", method = RequestMethod.GET)
+    public String view(@PathVariable final String applicationNumber, Model model) {
+        EdcrApplication edcrApplication = edcrApplicationService.findByApplicationNo(applicationNumber);
         prepareNewForm(model);
         model.addAttribute("edcrApplication", edcrApplication);
         return EDCRAPPLICATION_VIEW;
     }
 
-    @RequestMapping(value = "/result/{id}", method = RequestMethod.GET)
-    public String result(@PathVariable("id") final Long id, Model model) {
-        EdcrApplication edcrApplication = edcrApplicationService.findOne(id);
-        model.addAttribute("edcrApplication", edcrApplication);
+    @RequestMapping(value = "/result/{applicationNumber}", method = RequestMethod.GET)
+    public String result(@PathVariable final String applicationNumber, Model model) {
+        //EdcrApplication edcrApplication = edcrApplicationService.findByApplicationNo(applicationNumber);
+        //model.addAttribute("edcrApplication", edcrApplication);
         return EDCRAPPLICATION_RESULT;
     }
 
@@ -121,4 +126,5 @@ public class EdcrApplicationController {
         final String json = gson.toJson(object);
         return json;
     }
+
 }
