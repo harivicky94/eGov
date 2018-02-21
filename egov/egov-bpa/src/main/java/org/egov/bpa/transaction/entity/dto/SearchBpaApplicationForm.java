@@ -72,8 +72,17 @@ public class SearchBpaApplicationForm {
     private String address;
     private String locality;
     private String reSurveyNumber;
+    private String serviceTypeEnum;
 
-    public Long getId() {
+    public String getServiceTypeEnum() {
+		return serviceTypeEnum;
+	}
+
+	public void setServiceTypeEnum(String serviceTypeEnum) {
+		this.serviceTypeEnum = serviceTypeEnum;
+	}
+
+	public Long getId() {
         return id;
     }
 

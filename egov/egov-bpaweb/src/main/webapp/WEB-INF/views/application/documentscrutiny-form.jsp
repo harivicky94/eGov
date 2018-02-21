@@ -131,11 +131,11 @@
 								href="/bpa/application/scrutiny/view/${bpaApplication.applicationNumber}"
 								class="btn btn-primary"> View Scheduled Appointment Details </a>
 					</c:if>
-					<c:if test="${ bpaApplication.status.code eq 'Scheduled For Document Scrutiny' || bpaApplication.status.code eq 'Rescheduled For Document Scrutiny'}">
+				<%-- 	<c:if test="${ bpaApplication.status.code eq 'Scheduled For Document Scrutiny' || bpaApplication.status.code eq 'Rescheduled For Document Scrutiny'}">
 						<a
 								href="/bpa/application/documentscrutiny/${bpaApplication.applicationNumber}"
 								class="btn btn-primary"> Document Scrutiny </a>
-					</c:if>
+					</c:if> --%>   
 				</c:if>
 				<input
 						type="button" name="button2" id="button2" value="Close"

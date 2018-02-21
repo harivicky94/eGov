@@ -48,6 +48,7 @@ package org.egov.bpa.web.controller.transaction;
 
 import org.apache.commons.lang.StringUtils;
 import org.egov.bpa.master.entity.*;
+import org.egov.bpa.master.entity.enums.ApplicationType;
 import org.egov.bpa.master.service.*;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.BpaStatus;
@@ -318,6 +319,11 @@ public abstract class BpaGenericApplicationController extends GenericWorkFlowCon
     protected String getDesinationNameByPosition(Position pos) {
         return pos.getDeptDesig() != null && pos.getDeptDesig().getDesignation() != null
                 ? pos.getDeptDesig().getDesignation().getName() : "";
+    }
+   
+    @ModelAttribute("serviceTypeEnumList") 
+    public List<ApplicationType>  showSearchApprovedforFee() {
+		return Arrays.asList(ApplicationType.values());
     }
 
 }

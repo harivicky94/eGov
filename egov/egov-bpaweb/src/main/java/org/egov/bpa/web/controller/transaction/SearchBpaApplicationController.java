@@ -137,4 +137,23 @@ public class SearchBpaApplicationController extends BpaGenericApplicationControl
                 .append("}")
                 .toString();
     }
+    
+    @RequestMapping(value = "/bpadocumentscrutiny", method = RequestMethod.GET)
+    public String showDocumentScrutinyPendingRecords(final Model model) {
+        model.addAttribute("searchBpaApplicationForm", new SearchBpaApplicationForm());
+        return "search-document-scrutiny";
+    }
+    
+    @RequestMapping(value = "/bpadocumentscrutiny", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    @ResponseBody
+    public String searchDocumentScrutinyPendingRecords(final Model model,
+            @ModelAttribute final SearchBpaApplicationForm searchBpaApplicationForm) {
+        final List<SearchBpaApplicationForm> searchResultList = searchBpaApplicationService
+                .searchForDocumentScrutinyPending(searchBpaApplicationForm);
+        return new StringBuilder(DATA)
+                .append(toJSON(searchResultList, SearchBpaApplicationForm.class, SearchBpaApplicationFormAdaptor.class))
+                .append("}")
+                .toString();
+    }
+    
 }
