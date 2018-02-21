@@ -15,4 +15,14 @@ public class ReportOutput {
             ruleOutPuts.add(ruleOut);
 
     }
+
+	public List<RuleOutput> getRuleOutPuts() {
+		return ruleOutPuts;
+	}
+
+	public void setRuleOutPuts(List<RuleOutput> ruleOutPuts) {
+		this.ruleOutPuts = ruleOutPuts;
+	}
+    
+    
 }

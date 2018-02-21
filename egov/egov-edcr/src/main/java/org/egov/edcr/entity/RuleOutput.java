@@ -24,4 +24,38 @@ public class RuleOutput {
     public String toString() {
         return "RuleOutput [key=" + key + ", subRuleOutputs=" + subRuleOutputs + ", message=" + message + "]";
     }
+
+	public String getKey() {
+		return key;
+	}
+
+	public void setKey(String key) {
+		this.key = key;
+	}
+
+	public List<SubRuleOutput> getSubRuleOutputs() {
+		return subRuleOutputs;
+	}
+
+	public void setSubRuleOutputs(List<SubRuleOutput> subRuleOutputs) {
+		this.subRuleOutputs = subRuleOutputs;
+	}
+
+	public String getMessage() {
+		return message;
+	}
+
+	public void setMessage(String message) {
+		this.message = message;
+	}
+
+	public Result getResult() {
+		return result;
+	}
+
+	public void setResult(Result result) {
+		this.result = result;
+	}
+    
+    
 }
