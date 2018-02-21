@@ -11,6 +11,7 @@ public class DcrConstants {
     public static final String RULE60 = "RULE60";
     public static final String RULE61 = "RULE61";
     public static final String RULE62 = "RULE62";
+    public static final String RULE30 = "RULE30";
     public static final String OBJECTDEFINED="msg.object.defined";
     public static final String WASTEDISPOSAL_DEFINED_KEY="WASTEDISPOSAL_DEFINED";
     public static final String OBJECTNOTDEFINED="msg.error.not.defined";
@@ -57,6 +58,8 @@ public class DcrConstants {
     public static final int DECIMALDIGITS = 10;
     public static final int DECIMALDIGITS_MEASUREMENTS = 3;
     public static final Object ARCHITECTNAME = "ARCHITECT_NAME";
+    public static final String BUILDING_EXTERIOR_WALL = "BUILDING_EXTERIOR_WALL";
+    public static final String OCCUPANCY = "Occupancy";
     
     
 }
