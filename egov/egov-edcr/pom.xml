@@ -90,15 +90,13 @@
 			<groupId>org.jsoup</groupId>
 			<artifactId>jsoup</artifactId>
 		</dependency>
-		
+
 		<dependency>
-        <groupId>kabeja</groupId>
-        <artifactId>kabeja</artifactId>
-        <version>0.4</version>
-        <type>jar</type>
-        <scope>system</scope>
-        <systemPath>${basedir}/lib/kabeja-0.4.jar</systemPath>
-    </dependency>
+			<groupId>org.kabeja</groupId>
+			<artifactId>kabeja</artifactId>
+			<version>0.4</version>
+		</dependency>
+
 	</dependencies>
 	<build>
 		<resources>
