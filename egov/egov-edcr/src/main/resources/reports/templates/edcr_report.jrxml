@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
+<!-- 2018-02-21T18:01:48 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="edcr_report" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="ccdee1e7-8a6e-4168-a80a-d10d6f4f913c">
+	<import value="org.egov.infra.reporting.util.*"/>
+	<import value="org.egov.infstr.utils.*"/>
+	<import value="net.sf.jasperreports.engine.data.*"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["/work/edcr/reports/templates/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="rule23" class="java.util.List"/>
+	<field name="planInformation" class="org.egov.edcr.entity.PlanInformation">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="plot" class="org.egov.edcr.entity.Plot"/>
+	<field name="building" class="org.egov.edcr.entity.Building"/>
+	<field name="electricLine" class="org.egov.edcr.entity.ElectricLine"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="50" splitType="Stretch">
+			<staticText>
+				<reportElement x="130" y="20" width="230" height="20" uuid="8a112e59-5ebc-4b5b-ac94-947d91b2912e"/>
+				<box>
+					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="16" isBold="true"/>
+				</textElement>
+				<text><![CDATA[EDCR Report]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="250" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+			<staticText>
+				<reportElement x="20" y="10" width="90" height="20" uuid="2fa2c41d-894f-4f64-bce5-9a21cf885ab1"/>
+				<textElement>
+					<font size="10" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Owner name :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="281" y="10" width="90" height="20" uuid="c98c0611-16b5-4a2c-ad07-937836d42f07"/>
+				<textElement>
+					<font size="10" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Architect Name :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="22" y="34" width="90" height="20" uuid="7cb2ea94-a258-445e-b78c-0dd7550597da"/>
+				<textElement>
+					<font size="10" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Occupancy :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="281" y="34" width="90" height="20" uuid="253141d9-7512-46d6-a814-2cb63b9ddf66"/>
+				<textElement>
+					<font size="10" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Plat area :]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="107" y="9" width="153" height="21" uuid="5db90155-f805-4fdf-be60-0f7731972704"/>
+				<textFieldExpression><![CDATA[$F{planInformation}.getOwnerName()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="108" y="33" width="152" height="21" uuid="4f0a1be5-bc52-4090-b87d-2f2a76a86c08"/>
+				<textFieldExpression><![CDATA[$F{planInformation}.getOccupancy()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="370" y="9" width="150" height="21" uuid="b2a1219f-f101-4d1f-9f9f-9945cea4455f"/>
+				<textFieldExpression><![CDATA[$F{planInformation}.getArchitectName()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="372" y="34" width="149" height="21" uuid="ed1355d7-1bd8-443d-ae8b-8e7812b3a53d"/>
+				<textFieldExpression><![CDATA[$F{planInformation}.getPlotArea()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="21" y="90" width="90" height="20" uuid="55ee1832-e703-4fca-83cd-923cf43ae722"/>
+				<textElement>
+					<font size="10" isBold="false"/>
+				</textElement>
+				<text><![CDATA[sideYard1 :]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="107" y="89" width="152" height="21" uuid="973b4aa2-e9fe-41f4-89b4-9122802c90a1"/>
+				<textFieldExpression><![CDATA[$F{plot}.getSideYard1()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="284" y="88" width="90" height="20" uuid="01071ba2-9e4c-48ab-a946-b813d01d760a"/>
+				<textElement>
+					<font size="10" isBold="false"/>
+				</textElement>
+				<text><![CDATA[sideYard2 :]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="370" y="87" width="152" height="21" uuid="2b9a47e2-b192-4a57-a921-7bc5b42846f2"/>
+				<textFieldExpression><![CDATA[$F{plot}.getSideYard2()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="22" y="60" width="98" height="20" uuid="da0c1b90-5a1d-4fe9-8252-effdfd865944"/>
+				<textElement textAlignment="Left">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Plot Details]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="284" y="113" width="90" height="20" uuid="dca1435f-bc04-47a1-a8ae-9c128a57c185"/>
+				<textElement>
+					<font size="10" isBold="false"/>
+				</textElement>
+				<text><![CDATA[width :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="21" y="115" width="90" height="20" uuid="ae65ee14-13b2-478a-928d-010e749da2a2"/>
+				<textElement>
+					<font size="10" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Length :]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="370" y="112" width="152" height="21" uuid="25d9ebfb-bf4f-4978-a9e5-7d44a676d43f"/>
+				<textFieldExpression><![CDATA[$F{plot}.getWidth()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="107" y="114" width="152" height="21" uuid="eb844c62-2d2b-4a5e-9d38-c6c5aa00b614"/>
+				<textFieldExpression><![CDATA[$F{plot}.getLength()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="22" y="185" width="138" height="20" uuid="39727034-7359-4cf0-b2ae-ad6cdab0e5c8"/>
+				<textElement textAlignment="Left">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Building Details]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="373" y="205" width="152" height="21" uuid="3731ce84-2554-44b3-ba8d-02e2ab2f5576"/>
+				<textFieldExpression><![CDATA[$F{building}.getMaxFloor()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="287" y="206" width="90" height="20" uuid="05a1ffa7-be05-40b8-89f4-e72781ea83a7"/>
+				<textElement>
+					<font size="10" isBold="false"/>
+				</textElement>
+				<text><![CDATA[maxFloor :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="24" y="208" width="90" height="20" uuid="8d8188e8-3f3f-442f-8bba-a4c9b56074e2"/>
+				<textElement>
+					<font size="10" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Height :]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="110" y="207" width="152" height="21" uuid="966ea76d-1efe-42c8-88ec-e1d34693406e"/>
+				<textFieldExpression><![CDATA[$F{building}.getBuildingHeight()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="22" y="138" width="90" height="20" uuid="b2623912-d703-4610-ac9a-7ff5cc4eb9c5"/>
+				<textElement>
+					<font size="10" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Height :]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="108" y="137" width="152" height="21" uuid="8792d090-9fa2-4f12-9bd0-38fcf6837a7e"/>
+				<textFieldExpression><![CDATA[$F{plot}.getHeight()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="285" y="136" width="90" height="20" uuid="a2531338-1f9b-435e-be94-ade9b6c6abab"/>
+				<textElement>
+					<font size="10" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Mean :]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="371" y="135" width="152" height="21" uuid="0e22911c-0837-4f81-b4b7-5521ef11baf3"/>
+				<textFieldExpression><![CDATA[$F{plot}.getMean()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="24" y="158" width="90" height="20" uuid="7d24b872-9245-477f-9a41-91c120caf5e4"/>
+				<textElement>
+					<font size="10" isBold="false"/>
+				</textElement>
+				<text><![CDATA[Area :]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="110" y="157" width="152" height="21" uuid="b93759a6-700d-4eb5-b5bc-a5d6e71f4013"/>
+				<textFieldExpression><![CDATA[$F{plot}.getArea()]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="30">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+			<subreport>
+				<reportElement x="21" y="1" width="499" height="24" uuid="51b4c4c6-0a05-401a-a575-c23f26a4247c"/>
+				<subreportParameter name="noticeNo">
+					<subreportParameterExpression><![CDATA[$P{rule23}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{rule23}, false)]]></dataSourceExpression>
+				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("rule23_subreport.jasper")]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="45" splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+</jasperReport>

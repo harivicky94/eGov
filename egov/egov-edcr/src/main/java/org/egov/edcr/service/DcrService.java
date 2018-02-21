@@ -1,16 +1,24 @@
 package org.egov.edcr.service;
 
+import java.io.File;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.egov.edcr.entity.EdcrApplication;
 import org.egov.edcr.entity.PlanDetail;
 import org.egov.edcr.entity.PlanRule;
 import org.egov.edcr.rule.GeneralRule;
+import org.egov.edcr.rule.Rule23;
+import org.egov.infra.reporting.engine.ReportOutput;
+import org.egov.infra.reporting.engine.ReportRequest;
+import org.egov.infra.reporting.engine.ReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.util.List;
+import net.sf.jasperreports.engine.JasperPrint;
 
 /*General rule class contains validations which are required for all types of building plans*/
 @Service
@@ -24,7 +32,6 @@ public class DcrService {
     @Autowired
     private DXFExtractService extractService;
     
-    
  
     @Autowired
     private ApplicationContext applicationContext;
@@ -32,6 +39,9 @@ public class DcrService {
 
     @Autowired
     private PlanRuleService planRuleService;
+    
+    @Autowired
+    private ReportService reportService;
 
     public PlanDetail getPlanDetail() {
         return planDetail;
@@ -107,10 +117,17 @@ public class DcrService {
         return null;
     }
 
+    public ReportOutput generateDCRReport(PlanDetail planDetail) {
+    	Map<String, Object> params = new HashMap<>();
+    	Rule23 rule23 = new Rule23();
+    	params.put("rule23" ,rule23.generateReport(planDetail));
+        final ReportRequest reportInput = new ReportRequest("edcr_report", planDetail,
+        		params);
+        final ReportOutput reportOutput = reportService.createReport(reportInput);
+        return reportOutput;
+      
+    }
  
-
-    
-
     public byte[] generatePlanScrutinyReport(PlanDetail planDetail) {
         // TODO Auto-generated method stub
         return null;
