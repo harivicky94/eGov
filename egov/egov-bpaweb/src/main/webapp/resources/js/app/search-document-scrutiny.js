@@ -140,12 +140,12 @@ $(document)
 																data, type,
 																row, meta) {
 																if(row.isFeeCollected){
+																	return '<button type="button" class="btn btn-xs btn-secondary dropchange" value="feePending"><span class="glyphicon glyphicon-view"></span>&nbsp;Document Scrutiny</button>';
+																}else{
 																	return '<button type="button" class="btn btn-xs btn-secondary dropchange" value='
 																	+ documentscrutinyurl
 																	+ row.applicationNumber
 																	+ '><span class="glyphicon glyphicon-view"></span>&nbsp;Document Scrutiny</button>';
-																}else{
-																	return '<button type="button" class="btn btn-xs btn-secondary dropchange" value="feePending"><span class="glyphicon glyphicon-view"></span>&nbsp;Document Scrutiny</button>';
 																} 
 														}
 													} ]

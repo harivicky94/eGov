@@ -56,7 +56,10 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
+import org.hibernate.transform.ResultTransformer;
+import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -233,8 +236,9 @@ public class SearchBpaApplicationService {
 	public Criteria buildDocumentScrutinySearchCriteria(final SearchBpaApplicationForm searchBpaApplicationForm) {
 		final Criteria criteria = getCurrentSession().createCriteria(SlotApplication.class, "slotApplication");
 		criteria.createAlias("slotApplication.application", "bpaApplication");
-		criteria.createAlias("slotApplication.slotDetail.slot", "slot");
-
+		criteria.createAlias("slotApplication.slotDetail", "slotDetail");
+		criteria.createAlias("slotDetail.slot", "slot");
+		
 		if (searchBpaApplicationForm.getServiceTypeEnum() != null
 				&& !searchBpaApplicationForm.getServiceTypeEnum().isEmpty()) {
 			if (searchBpaApplicationForm.getServiceTypeEnum()
@@ -243,7 +247,7 @@ public class SearchBpaApplicationService {
 				searchBpaApplicationForm.setToDate(new Date());
 			} else if (searchBpaApplicationForm.getServiceTypeEnum()
 					.equalsIgnoreCase(ApplicationType.ONE_DAY_PERMIT.toString()))
-				criteria.add(Restrictions.eq("bpaApplication.isOneDayPermitApplication", true));
+				criteria.add(Restrictions.eq("bpaApplication.isOneDayPermitApplication", true)); 
 		}
 		if (searchBpaApplicationForm.getToDate() != null)
 			criteria.add(Restrictions.eq("slot.appointmentDate",
@@ -271,7 +275,9 @@ public class SearchBpaApplicationService {
 			criteria.createAlias("adminBoundary.parent", "parent")
 					.add(Restrictions.eq("parent.name", searchBpaApplicationForm.getZone()));
 		}
-		criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+		criteria.setResultTransformer((ResultTransformer) CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+		criteria.setProjection(Projections.distinct(Projections.projectionList()
+			    .add(Projections.property("application"), "application") )).setResultTransformer(Transformers.aliasToBean(SlotApplication.class)); 
 		return criteria;
 	}
 
