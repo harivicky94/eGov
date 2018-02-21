@@ -8,6 +8,7 @@ public class DcrConstants {
 
     public static final String RULE23 = "RULE23";
     public static final String RULE26 = "RULE26";
+    public static final String RULE32 = "RULE32";
     public static final String RULE60 = "RULE60";
     public static final String RULE61 = "RULE61";
     public static final String RULE62 = "RULE62";
@@ -60,6 +61,8 @@ public class DcrConstants {
     public static final Object ARCHITECTNAME = "ARCHITECT_NAME";
     public static final String BUILDING_EXTERIOR_WALL = "BUILDING_EXTERIOR_WALL";
     public static final String OCCUPANCY = "Occupancy";
+    public static final String BUILDING_HEIGHT = "BUILDING_HEIGHT";
+    public static final String MAX_HEIGHT_CAL = "MAX_HEIGHT_CAL";
     
     
 }

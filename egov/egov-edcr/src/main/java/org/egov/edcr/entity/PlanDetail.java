@@ -1,6 +1,7 @@
 package org.egov.edcr.entity;
 
 import java.io.File;
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +28,8 @@ public class PlanDetail {
     private ElectricLine electricLine;
     private List<NonNotifiedRoad> nonNotifiedRoads;
     private List<NotifiedRoad> notifiedRoads;
+    private BigDecimal maxHeightCal ;
+
 
     private HashMap<String, String> errors = new HashMap<String, String>();
     private HashMap<String, String> generalInformation = new HashMap<String, String>();
@@ -135,6 +138,13 @@ public class PlanDetail {
 
     public void setBuilding(Building building) {
         this.building = building;
+    }
+    public BigDecimal getMaxHeightCal() {
+        return maxHeightCal;
+    }
+
+    public void setMaxHeightCal(BigDecimal maxHeightCal) {
+        this.maxHeightCal = maxHeightCal;
     }
  
 }
