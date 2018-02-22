@@ -23,6 +23,8 @@ public class Rule23 extends GeneralRule {
     private static final int VOLTAGE_11000 = 11000;
     private static final int VOLTAGE_33000 = 33000;
     private static final BigDecimal HORIZONTAL_DISTANCE_11000 = BigDecimal.valueOf(1.2);
+    private static final String SUB_RULE_23_4 = "23(4)";
+    private static final String SUB_RULE_23_4_DESCRIPTION = "CRZ Zone";
 
     @Override
     public PlanDetail validate(PlanDetail planDetail) {
@@ -59,9 +61,12 @@ public class Rule23 extends GeneralRule {
 
     private void rule23_4(PlanDetail planDetail) {
         if (planDetail.getPlanInformation() != null && planDetail.getPlanInformation().getCrzZoneArea())
-            planDetail.reportOutput
-                    .add(buildRuleOutputWithMainRule(DcrConstants.RULE23, DcrConstants.CRZZONE,
-                            Result.Verify, DcrConstants.CRZZONE + DcrConstants.OBJECTDEFINED_DESC));
+        planDetail.reportOutput
+        .add(buildRuleOutputWithSubRule(DcrConstants.RULE23, SUB_RULE_23_4, SUB_RULE_23_4_DESCRIPTION,
+                DcrConstants.CRZZONE,
+                null,
+                null,
+                Result.Verify, DcrConstants.CRZZONE + DcrConstants.OBJECTDEFINED_DESC)); 
     }
 
     private void rule23_5(PlanDetail planDetail) {

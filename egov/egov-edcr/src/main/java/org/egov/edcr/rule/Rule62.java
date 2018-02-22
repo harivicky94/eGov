@@ -24,7 +24,7 @@ public class Rule62 extends GeneralRule {
     private static final BigDecimal SIDE2MINIMUM_DISTANCE = BigDecimal.valueOf(0.6);
     private static final String SUB_RULE_62_2 = "SUB_RULE_62_2";
     private static final String SUB_RULE_62_2DESCRIPTION = "SUB_RULE_62_2";
-    private static final String SUB_RULE_62_1 = "SUB_RULE_62_1";
+    private static final String SUB_RULE_62_1 = "62(1)";
     private static final String SUB_RULE_62_1DESCRIPTION = "SUB_RULE_62_1";
     private static final String SUB_RULE_62_1A = "SUB_RULE_62_1A";
     private static final String SUB_RULE_62_1A_DESCRIPTION = "SUB_RULE_62_1A";
@@ -208,9 +208,13 @@ public class Rule62 extends GeneralRule {
         if (planDetail.getNotifiedRoads() != null &&
                 !(planDetail.getNotifiedRoads().size() > 0 ||
                         planDetail.getNonNotifiedRoads().size() > 0))
-            planDetail.reportOutput
-                    .add(buildRuleOutputWithMainRule(DcrConstants.RULE62, DcrConstants.ROAD,
-                            Result.Verify, DcrConstants.ROAD + DcrConstants.OBJECTNOTDEFINED_DESC));
+        planDetail.reportOutput
+        .add(buildRuleOutputWithSubRule(DcrConstants.RULE62, SUB_RULE_62_1, SUB_RULE_62_1DESCRIPTION,
+                DcrConstants.ROAD,
+               null,
+                null,
+                Result.Verify,  DcrConstants.ROAD + DcrConstants.OBJECTNOTDEFINED_DESC)); 
+        
         else if (planDetail.getNotifiedRoads() != null &&
                 planDetail.getNotifiedRoads().size() > 0)
             for (NotifiedRoad notifiedRoad : planDetail.getNotifiedRoads())

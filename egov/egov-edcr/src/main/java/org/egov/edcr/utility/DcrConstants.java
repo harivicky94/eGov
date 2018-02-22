@@ -14,9 +14,9 @@ public class DcrConstants {
     public static final String RULE60 = "RULE60";
     public static final String RULE61 = "RULE61";
     public static final String RULE62 = "RULE62";
-    public static final String OBJECTDEFINED_DESC = "Defined in the plan.";
+    public static final String OBJECTDEFINED_DESC = " Defined in the plan.";
     public static final String WASTEDISPOSAL_DEFINED_KEY = "WASTEDISPOSAL_DEFINED";
-    public static final String OBJECTNOTDEFINED_DESC = "Not defined in the plan.";
+    public static final String OBJECTNOTDEFINED_DESC = " Not defined in the plan.";
     public static final String EXPECTEDRESULT = "msg.result.expected.actual";
     
     public static final String OBJECTDEFINED="msg.object.defined";

@@ -16,7 +16,9 @@ public class Rule26 extends GeneralRule {
     private static final BigDecimal _NOTIFIEDROADDISTINCE = BigDecimal.valueOf(3);
     private static final BigDecimal _NONNOTIFIEDROADDISTINCE = BigDecimal.valueOf(1.8);
     private static final String SUB_RULE_26_DESCRIPTION = "SUB_RULE__DESCRIPTION";
-    private static final String SUB_RULE_26 = "Sub Rule 26";
+    private static final String SUB_RULE_26 = "Rule 26";
+    private static final String SUB_RULE_26A = "26A";
+    private static final String SUB_RULE_26A_DESCRIPTION = "Water Disposal";
 
     @Override
     public PlanDetail validate(PlanDetail planDetail) {
@@ -86,8 +88,13 @@ public class Rule26 extends GeneralRule {
         if (planDetail.getNotifiedRoads() != null &&
                 !(planDetail.getNotifiedRoads().size() > 0 ||
                         planDetail.getNonNotifiedRoads().size() > 0))
-            planDetail.reportOutput.add(buildRuleOutputWithMainRule(DcrConstants.RULE26, DcrConstants.ROAD, Result.Not_Accepted,
-                    DcrConstants.ROAD + DcrConstants.OBJECTNOTDEFINED_DESC));
+            planDetail.reportOutput
+                    .add(buildRuleOutputWithSubRule(DcrConstants.RULE26, SUB_RULE_26, SUB_RULE_26_DESCRIPTION,
+                            DcrConstants.ROAD,
+                            null,
+                            null,
+                            Result.Not_Accepted, DcrConstants.ROAD + DcrConstants.OBJECTNOTDEFINED_DESC));
+        
         else if (planDetail.getNotifiedRoads() != null &&
                 planDetail.getNotifiedRoads().size() > 0)
             for (NotifiedRoad notifiedRoad : planDetail.getNotifiedRoads())
@@ -136,13 +143,21 @@ public class Rule26 extends GeneralRule {
     private void rule26A(PlanDetail planDetail) {
         if (planDetail.getBuilding().getWasteDisposal() != null &&
                 planDetail.getBuilding().getWasteDisposal().getPresentInDxf())
+
             planDetail.reportOutput
-                    .add(buildRuleOutputWithMainRule(DcrConstants.RULE26, DcrConstants.WASTEDISPOSAL, Result.Accepted,
-                            DcrConstants.WASTEDISPOSAL + DcrConstants.OBJECTDEFINED_DESC));
+                    .add(buildRuleOutputWithSubRule(DcrConstants.RULE26, SUB_RULE_26A, SUB_RULE_26A_DESCRIPTION,
+                            DcrConstants.WASTEDISPOSAL,
+                            null,
+                            null,
+                            Result.Accepted, DcrConstants.WASTEDISPOSAL + DcrConstants.OBJECTDEFINED_DESC));
+
         else
-            planDetail.reportOutput
-                    .add(buildRuleOutputWithMainRule(DcrConstants.RULE26, DcrConstants.WASTEDISPOSAL, Result.Not_Accepted,
-                            DcrConstants.WASTEDISPOSAL + DcrConstants.OBJECTNOTDEFINED_DESC));
+            planDetail.reportOutput.add(buildRuleOutputWithSubRule(DcrConstants.RULE26, SUB_RULE_26A, SUB_RULE_26A_DESCRIPTION,
+                    DcrConstants.WASTEDISPOSAL,
+                    null,
+                    null,
+                    Result.Not_Accepted, DcrConstants.WASTEDISPOSAL + DcrConstants.OBJECTNOTDEFINED_DESC));
+
     }
 
 }
