@@ -12,6 +12,8 @@ public class Building extends Measurement {
 
     private BigDecimal buildingTopMostHeight;
 
+    private BigDecimal totalFloorArea;
+
     /*
      * Maximum number of floors
      */
@@ -71,5 +73,11 @@ public class Building extends Measurement {
     public void setBuildingTopMostHeight(BigDecimal buildingHeightTopMost) {
         buildingTopMostHeight = buildingHeightTopMost;
     }
+    public BigDecimal getTotalFloorArea() {
+        return totalFloorArea;
+    }
 
+    public void setTotalFloorArea(BigDecimal totalFloorArea) {
+        this.totalFloorArea = totalFloorArea;
+    }
 }

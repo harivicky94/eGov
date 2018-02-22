@@ -33,6 +33,9 @@ public class PlanInformation extends AbstractAuditable {
     @Transient
     private Boolean securityZone = false;
 
+    @Transient
+    private BigDecimal accessWidth;
+
     @Override
     public Long getId() {
         return id;
@@ -115,4 +118,11 @@ public class PlanInformation extends AbstractAuditable {
         this.securityZone = securityZone;
     }
 
+    public BigDecimal getAccessWidth() {
+        return accessWidth;
+    }
+
+    public void setAccessWidth(BigDecimal accessWidth) {
+        this.accessWidth = accessWidth;
+    }
 }

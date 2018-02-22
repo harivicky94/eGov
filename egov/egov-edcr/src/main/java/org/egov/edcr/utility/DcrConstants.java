@@ -8,11 +8,12 @@ public class DcrConstants {
 
     public static final String RULE23 = "RULE23";
     public static final String RULE26 = "RULE26";
+    public static final String RULE30 = "RULE30";
     public static final String RULE32 = "RULE32";
+    public static final String RULE33 = "RULE33";
     public static final String RULE60 = "RULE60";
     public static final String RULE61 = "RULE61";
     public static final String RULE62 = "RULE62";
-    public static final String RULE30 = "RULE30";
     public static final String OBJECTDEFINED_DESC = "Defined in the plan.";
     public static final String WASTEDISPOSAL_DEFINED_KEY = "WASTEDISPOSAL_DEFINED";
     public static final String OBJECTNOTDEFINED_DESC = "Not defined in the plan.";
@@ -20,9 +21,6 @@ public class DcrConstants {
     
     public static final String OBJECTDEFINED="msg.object.defined";
     public static final String OBJECTNOTDEFINED="msg.error.not.defined";
-    
-    
-
     public static final String WASTEDISPOSAL = "Waste disposal";
     public static final String CRZZONE = "CRZ Zone";
     public static final String ROAD = "Road";
@@ -35,16 +33,13 @@ public class DcrConstants {
     public static final String ELECTRICLINE_DISTANCE = "Horizontal/Vertical line distance from electric line ";
     public static final String HORIZONTAL_ELECTRICLINE_DISTANCE = "Horizontal line distance from electric line ";
     public static final String VERTICAL_ELECTRICLINE_DISTANCE = "Vertical line distance from electric line ";
-
     public static final String MAXIMUM_NUMBEROF_FLOOR = "Maximum Number of floor ";
     public static final String WASTEDISPOSAL_NOTDEFINED_VALUE = "Waste disposal not defined in the plan.";
     public static final String LESSTHANOREQUAL = "Less than or equal to ";
     public static final String IN_METER = "(MTR)";
-
     public static final String FILESTORE_MODULECODE = "EDCR";
     public static final String SEQ_ECDR_APPLICATIONNO = "SEQ_ECDR_APPLICATIONNO";
     public static final String APPLICATION_MODULE_TYPE = "EDCR";
-
     // ----- names
     public static final String VERT_CLEAR_OHE = "VERT_CLEAR_OHE";
     public static final String REAR_YARD = "REAR_YARD";
@@ -69,5 +64,9 @@ public class DcrConstants {
     public static final String MAX_HEIGHT_CAL = "MAX_HEIGHT_CAL";
     public static final String SECURITY_ZONE = "SECURITY Zone";
     public static final String SHORTEST_DISTANCE_TO_ROAD = "SHORTEST_DISTANCE_TO_ROAD";
+    public static final String ACCESS_WIDTH = "ACCESS_WIDTH";
+    public static final String IN_METER_SQR = "(MTRSQ)";
+    public static final String RESIDENTIAL = "RESIDENTIAL";
+    public static final String TOTAL_FLOOR_AREA = "TOTAL_FLOOR_AREA";
 
 }
