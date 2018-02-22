@@ -6,7 +6,6 @@ import org.egov.edcr.entity.measurement.Yard;
 public class Plot extends Measurement {
 
     public static final String PLOT_BOUNDARY = "PLOT_BOUNDARY";
-    private static final String BUILDING_FOOT_PRINT = "BUILDING_FOOT_PRINT";
     private Yard frontYard;
     private Yard rearYard;
     private Yard sideYard1;

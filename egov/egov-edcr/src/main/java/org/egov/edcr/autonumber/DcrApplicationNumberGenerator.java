@@ -39,7 +39,6 @@
  */
 package org.egov.edcr.autonumber;
 
-
 import org.egov.edcr.entity.EdcrApplication;
 
 @FunctionalInterface

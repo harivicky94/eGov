@@ -10,7 +10,7 @@ public class RuleOutput {
     public String message;
     public Result result;
     public String ruleDescription;
-    
+
     public void add(SubRuleOutput subruleOut) {
         if (subRuleOutputs == null) {
             subRuleOutputs = new ArrayList<>();
@@ -25,37 +25,36 @@ public class RuleOutput {
         return "RuleOutput [key=" + key + ", subRuleOutputs=" + subRuleOutputs + ", message=" + message + "]";
     }
 
-	public String getKey() {
-		return key;
-	}
+    public String getKey() {
+        return key;
+    }
 
-	public void setKey(String key) {
-		this.key = key;
-	}
+    public void setKey(String key) {
+        this.key = key;
+    }
 
-	public List<SubRuleOutput> getSubRuleOutputs() {
-		return subRuleOutputs;
-	}
+    public List<SubRuleOutput> getSubRuleOutputs() {
+        return subRuleOutputs;
+    }
 
-	public void setSubRuleOutputs(List<SubRuleOutput> subRuleOutputs) {
-		this.subRuleOutputs = subRuleOutputs;
-	}
+    public void setSubRuleOutputs(List<SubRuleOutput> subRuleOutputs) {
+        this.subRuleOutputs = subRuleOutputs;
+    }
 
-	public String getMessage() {
-		return message;
-	}
+    public String getMessage() {
+        return message;
+    }
 
-	public void setMessage(String message) {
-		this.message = message;
-	}
+    public void setMessage(String message) {
+        this.message = message;
+    }
 
-	public Result getResult() {
-		return result;
-	}
+    public Result getResult() {
+        return result;
+    }
 
-	public void setResult(Result result) {
-		this.result = result;
-	}
-    
-    
+    public void setResult(Result result) {
+        this.result = result;
+    }
+
 }

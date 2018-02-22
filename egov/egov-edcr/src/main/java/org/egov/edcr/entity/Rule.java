@@ -1,10 +1,19 @@
 package org.egov.edcr.entity;
 
-import org.egov.infra.persistence.entity.AbstractAuditable;
-
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.util.List;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+
+import org.egov.infra.persistence.entity.AbstractAuditable;
 
 @Entity
 @Table(name = "EDCR_RULE")
@@ -55,7 +64,6 @@ public class Rule extends AbstractAuditable {
     public void setClause(String clause) {
         this.clause = clause;
     }
-
 
     public Boolean getActive() {
         return active;

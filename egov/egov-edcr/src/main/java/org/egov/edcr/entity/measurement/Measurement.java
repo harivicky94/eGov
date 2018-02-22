@@ -6,7 +6,8 @@ import org.kabeja.dxf.DXFLWPolyline;
 
 public class Measurement {
 
-    protected Boolean presentInDxf=false;
+    protected Boolean presentInDxf = false;
+
     protected BigDecimal minimumDistance;
 
     protected BigDecimal length;
@@ -18,10 +19,9 @@ public class Measurement {
     protected BigDecimal mean;
 
     protected BigDecimal area;
-  
+
     protected DXFLWPolyline polyLine;
-    
-    
+
     public void setMinimumDistance(BigDecimal minimumDistance) {
         this.minimumDistance = minimumDistance;
     }
@@ -31,7 +31,7 @@ public class Measurement {
     }
 
     public void setPresentInDxf(Boolean present) {
-        this.presentInDxf = present;
+        presentInDxf = present;
     }
 
     public BigDecimal getLength() {

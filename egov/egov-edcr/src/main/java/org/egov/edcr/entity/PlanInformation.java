@@ -1,9 +1,15 @@
 package org.egov.edcr.entity;
 
-import org.egov.infra.persistence.entity.AbstractAuditable;
-
-import javax.persistence.*;
 import java.math.BigDecimal;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+
+import org.egov.infra.persistence.entity.AbstractAuditable;
 
 @Entity
 @Table(name = "EDCR_PLANINFO")
@@ -32,10 +38,12 @@ public class PlanInformation extends AbstractAuditable {
 
     private Boolean securityZone = false;
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
@@ -111,6 +119,5 @@ public class PlanInformation extends AbstractAuditable {
     public void setSecurityZone(Boolean securityZone) {
         this.securityZone = securityZone;
     }
-
 
 }

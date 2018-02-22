@@ -1,5 +1,16 @@
 package org.egov.edcr.service;
 
+import static org.egov.edcr.utility.DcrConstants.FILESTORE_MODULECODE;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.egov.edcr.autonumber.DcrApplicationNumberGenerator;
 import org.egov.edcr.entity.DcrDocument;
@@ -18,17 +29,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
-import static org.egov.edcr.utility.DcrConstants.FILESTORE_MODULECODE;
-
 @Service
 @Transactional(readOnly = true)
 public class EdcrApplicationService {
@@ -37,8 +37,6 @@ public class EdcrApplicationService {
     protected SecurityUtils securityUtils;
     @Autowired
     private EdcrApplicationRepository edcrApplicationRepository;
-    @Autowired
-    private PlaninfoService planinfoService;
     @Autowired
     private DcrDocumentService dcrDocumentService;
     @Autowired
@@ -54,7 +52,6 @@ public class EdcrApplicationService {
 
     @Transactional
     public EdcrApplication create(final EdcrApplication edcrApplication) {
-
 
         edcrApplication.setApplicationDate(new Date());
         edcrApplication.setApplicationNumber(dcrApplicationNumberGenerator.generateEDcrApplicationNumber(edcrApplication));
@@ -78,7 +75,6 @@ public class EdcrApplicationService {
         edcrApplication.setDcrDocuments(edcrApplication.getDcrDocuments());
     }
 
-
     @Transactional
     public void saveOutputReport(EdcrApplication edcrApplication, ReportOutput reportOutput) {
 
@@ -97,13 +93,11 @@ public class EdcrApplicationService {
     private void buildDocuments(EdcrApplication edcrApplication, FileStoreMapper dxfFile, FileStoreMapper reportOutput) {
         DcrDocument dcrDocument = new DcrDocument();
 
-        if (dxfFile != null) {
+        if (dxfFile != null)
             dcrDocument.setDxfFileId(dxfFile);
-        }
 
-        if (reportOutput != null) {
+        if (reportOutput != null)
             dcrDocument.setReportOutputId(reportOutput);
-        }
 
         dcrDocument.setApplication(edcrApplication);
 
@@ -139,7 +133,7 @@ public class EdcrApplicationService {
         return edcrApplicationRepository.findOne(id);
     }
 
-    public EdcrApplication findByApplicationNo(String appNo){
+    public EdcrApplication findByApplicationNo(String appNo) {
         return edcrApplicationRepository.findByApplicationNumber(appNo);
     }
 

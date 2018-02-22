@@ -16,13 +16,17 @@ public class ReportOutput {
 
     }
 
-	public List<RuleOutput> getRuleOutPuts() {
-		return ruleOutPuts;
-	}
+    public List<RuleOutput> getRuleOutPuts() {
+        return ruleOutPuts;
+    }
 
-	public void setRuleOutPuts(List<RuleOutput> ruleOutPuts) {
-		this.ruleOutPuts = ruleOutPuts;
-	}
-    
-    
+    public void setRuleOutPuts(List<RuleOutput> ruleOutPuts) {
+        this.ruleOutPuts = ruleOutPuts;
+    }
+
+    @Override
+    public String toString() {
+        return "ReportOutput [ruleOutPuts=" + ruleOutPuts + ", getRuleOutPuts()=" + getRuleOutPuts() + "]";
+    }
+
 }

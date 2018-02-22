@@ -9,71 +9,70 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
+
 @Service
 public class GeneralRule {
-	
+
     @Autowired
     @Qualifier("parentMessageSource")
     protected MessageSource edcrMessageSource;
 
-    public PlanDetail validate(PlanDetail planDetail){
+    public PlanDetail validate(PlanDetail planDetail) {
         System.out.println("validate Generalrule");
-    	return planDetail;
+        return planDetail;
     }
-    public PlanDetail process(PlanDetail planDetail){
-    	return planDetail;
-    	
+
+    public PlanDetail process(PlanDetail planDetail) {
+        return planDetail;
+
     }
 
     protected RuleOutput buildRuleOutputWithSubRule(String mainRule, String subRule, String ruleDescription, String fieldVerified,
             String expectedResult,
-            String actualResult, Result status,String message) {
+            String actualResult, Result status, String message) {
         RuleOutput ruleOutput = new RuleOutput();
 
-       if(mainRule!=null){
-        ruleOutput.key = mainRule;
-        ruleOutput.result = status;
+        if (mainRule != null) {
+            ruleOutput.key = mainRule;
+            ruleOutput.result = status;
 
-        if (subRule != null || fieldVerified!=null) {
-            SubRuleOutput subRuleOutput = new SubRuleOutput();
-            subRuleOutput.key = (subRule!=null?subRule:fieldVerified);
-            subRuleOutput.result = status;
-            subRuleOutput.message = message;
-            subRuleOutput.ruleDescription=ruleDescription;
+            if (subRule != null || fieldVerified != null) {
+                SubRuleOutput subRuleOutput = new SubRuleOutput();
+                subRuleOutput.key = subRule != null ? subRule : fieldVerified;
+                subRuleOutput.result = status;
+                subRuleOutput.message = message;
+                subRuleOutput.ruleDescription = ruleDescription;
 
-            if (expectedResult != null) {
-                RuleReportOutput ruleReportOutput = new RuleReportOutput();
-                ruleReportOutput.setActualResult(actualResult);
-                ruleReportOutput.setExpectedResult(expectedResult);
-                ruleReportOutput.setFieldVerified(fieldVerified);
-                ruleReportOutput.setStatus(status.toString());
-                subRuleOutput.add(ruleReportOutput);
+                if (expectedResult != null) {
+                    RuleReportOutput ruleReportOutput = new RuleReportOutput();
+                    ruleReportOutput.setActualResult(actualResult);
+                    ruleReportOutput.setExpectedResult(expectedResult);
+                    ruleReportOutput.setFieldVerified(fieldVerified);
+                    ruleReportOutput.setStatus(status.toString());
+                    subRuleOutput.add(ruleReportOutput);
+                }
+                ruleOutput.subRuleOutputs.add(subRuleOutput);
             }
-            ruleOutput.subRuleOutputs.add(subRuleOutput);
         }
-       }
 
         return ruleOutput;
     }
-    protected RuleOutput buildRuleOutputWithMainRule(String mainRule,String ruleDescription, Result status,String message) {
+
+    protected RuleOutput buildRuleOutputWithMainRule(String mainRule, String ruleDescription, Result status, String message) {
         RuleOutput ruleOutput = new RuleOutput();
         ruleOutput.key = mainRule;
         ruleOutput.result = status;
         ruleOutput.setMessage(message);
-        ruleOutput.ruleDescription=ruleDescription;
+        ruleOutput.ruleDescription = ruleDescription;
 
         return ruleOutput;
     }
-    
-  /*  protected RuleOutput buildRuleOutput(String ruleName, String fieldVerified, Result result, String messageKey) {
-        RuleOutput ruleOutput = new RuleOutput();
-        SubRuleOutput subRuleOutput = new SubRuleOutput();
-        ruleOutput.key = ruleName;
-        subRuleOutput.message = edcrMessageSource.getMessage(messageKey,
-                new String[] { fieldVerified }, LocaleContextHolder.getLocale());
-                messageKey +" "+fieldVerified;
-        subRuleOutput.result = result;
-        ruleOutput.subRuleOutputs.add(subRuleOutput);
-        return ruleOutput;
-    }*/
+
+    /*
+     * protected RuleOutput buildRuleOutput(String ruleName, String fieldVerified, Result result, String messageKey) { RuleOutput
+     * ruleOutput = new RuleOutput(); SubRuleOutput subRuleOutput = new SubRuleOutput(); ruleOutput.key = ruleName;
+     * subRuleOutput.message = edcrMessageSource.getMessage(messageKey, new String[] { fieldVerified },
+     * LocaleContextHolder.getLocale()); messageKey +" "+fieldVerified; subRuleOutput.result = result;
+     * ruleOutput.subRuleOutputs.add(subRuleOutput); return ruleOutput; }
+     */
 }

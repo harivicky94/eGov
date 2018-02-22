@@ -1,10 +1,16 @@
 package org.egov.edcr.entity;
 
-import org.egov.infra.persistence.entity.AbstractAuditable;
-
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+
+import org.egov.infra.persistence.entity.AbstractAuditable;
 
 /*Used to determine the rules to be validated for a building plan*/
 @Entity

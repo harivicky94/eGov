@@ -2,7 +2,9 @@ package org.egov.edcr.entity.utility;
 
 import java.math.BigDecimal;
 
-public class Utility {
+import org.egov.edcr.entity.measurement.Measurement;
+
+public class Utility extends Measurement {
 
     private String name;
 
@@ -18,10 +20,12 @@ public class Utility {
         this.name = name;
     }
 
+    @Override
     public BigDecimal getArea() {
         return area;
     }
 
+    @Override
     public void setArea(BigDecimal area) {
         this.area = area;
     }

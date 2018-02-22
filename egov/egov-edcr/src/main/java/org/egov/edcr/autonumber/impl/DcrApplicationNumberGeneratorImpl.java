@@ -46,6 +46,10 @@
  */
 package org.egov.edcr.autonumber.impl;
 
+import static org.egov.edcr.utility.DcrConstants.APPLICATION_MODULE_TYPE;
+
+import java.time.LocalDateTime;
+
 import org.egov.edcr.autonumber.DcrApplicationNumberGenerator;
 import org.egov.edcr.entity.EdcrApplication;
 import org.egov.edcr.utility.DcrConstants;
@@ -53,11 +57,6 @@ import org.egov.infra.persistence.utils.GenericSequenceNumberGenerator;
 import org.egov.infra.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
-
-import static org.egov.edcr.utility.DcrConstants.APPLICATION_MODULE_TYPE;
-
 
 @Service
 public class DcrApplicationNumberGeneratorImpl implements DcrApplicationNumberGenerator {

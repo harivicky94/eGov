@@ -1,13 +1,13 @@
 package org.egov.edcr.rule;
 
+import java.util.HashMap;
+
 import org.egov.edcr.entity.PlanDetail;
 import org.egov.edcr.entity.Result;
 import org.egov.edcr.utility.DcrConstants;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-
-import java.util.HashMap;
 
 @Service
 public class Rule30 extends GeneralRule {
@@ -36,12 +36,10 @@ public class Rule30 extends GeneralRule {
 
     private void rule30(PlanDetail planDetail) {
         if (planDetail != null && planDetail.getPlanInformation() != null
-                && !StringUtils.isEmpty(planDetail.getPlanInformation().getOccupancy())) {
+                && !StringUtils.isEmpty(planDetail.getPlanInformation().getOccupancy()))
             planDetail.reportOutput
                     .add(buildRuleOutputWithMainRule(DcrConstants.RULE30, DcrConstants.OCCUPANCY,
                             Result.Verify, DcrConstants.OCCUPANCY + DcrConstants.OBJECTDEFINED));
-
-        }
     }
 
 }

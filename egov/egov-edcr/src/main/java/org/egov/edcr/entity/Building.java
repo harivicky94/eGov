@@ -69,7 +69,7 @@ public class Building extends Measurement {
     }
 
     public void setBuildingTopMostHeight(BigDecimal buildingHeightTopMost) {
-        this.buildingTopMostHeight = buildingHeightTopMost;
+        buildingTopMostHeight = buildingHeightTopMost;
     }
 
 }

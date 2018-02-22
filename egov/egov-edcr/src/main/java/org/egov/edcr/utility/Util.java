@@ -8,8 +8,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.egov.edcr.entity.Plot;
-import org.egov.edcr.utility.math.RayCast;
 import org.kabeja.dxf.DXFConstants;
 import org.kabeja.dxf.DXFDocument;
 import org.kabeja.dxf.DXFLWPolyline;
@@ -37,16 +35,14 @@ public class Util {
 
             List dxfPolyLineEntities = dxfLayer.getDXFEntities(DXFConstants.ENTITY_TYPE_LWPOLYLINE);
 
-            if (null != dxfPolyLineEntities) {
+            if (null != dxfPolyLineEntities)
                 for (Object dxfEntity : dxfPolyLineEntities) {
 
                     DXFLWPolyline dxflwPolyline = (DXFLWPolyline) dxfEntity;
 
-                    if (colorCode == dxflwPolyline.getColor()) {
+                    if (colorCode == dxflwPolyline.getColor())
                         dxflwPolylines.add(dxflwPolyline);
-                    }
                 }
-            }
         }
 
         return dxflwPolylines;
@@ -64,23 +60,21 @@ public class Util {
 
             List dxfPolyLineEntities = dxfLayer.getDXFEntities(DXFConstants.ENTITY_TYPE_LINE);
 
-            if (null != dxfPolyLineEntities) {
+            if (null != dxfPolyLineEntities)
                 for (Object dxfEntity : dxfPolyLineEntities) {
 
                     DXFLine line = (DXFLine) dxfEntity;
 
-                    if (color == line.getColor()) {
+                    if (color == line.getColor())
                         lines.add(line);
-                    }
 
                 }
-            }
         }
 
         return lines;
     }
 
-    public List<DXFLine> getLinesByLayer(DXFDocument dxfDocument, String name) {
+    public static List<DXFLine> getLinesByLayer(DXFDocument dxfDocument, String name) {
 
         List<DXFLine> lines = new ArrayList<>();
 
@@ -92,17 +86,15 @@ public class Util {
 
             List dxfPolyLineEntities = dxfLayer.getDXFEntities(DXFConstants.ENTITY_TYPE_LINE);
 
-            if (null != dxfPolyLineEntities) {
+            if (null != dxfPolyLineEntities)
                 for (Object dxfEntity : dxfPolyLineEntities) {
 
                     DXFLine line = (DXFLine) dxfEntity;
 
-                    if (name == line.getLayerName()) {
+                    if (name == line.getLayerName())
                         lines.add(line);
-                    }
 
                 }
-            }
         }
 
         return lines;
@@ -110,9 +102,9 @@ public class Util {
 
     public static DXFLine getSingleLineByLayer(DXFDocument dxfDocument, String name) {
 
-        if(dxfDocument==null)
+        if (dxfDocument == null)
             return null;
-        if(name==null)
+        if (name == null)
             return null;
 
         List<DXFLine> lines = new ArrayList<>();
@@ -125,21 +117,19 @@ public class Util {
 
             List dxfLineEntities = dxfLayer.getDXFEntities(DXFConstants.ENTITY_TYPE_LINE);
 
-            if (null != dxfLineEntities) {
+            if (null != dxfLineEntities)
                 for (Object dxfEntity : dxfLineEntities) {
 
                     DXFLine line = (DXFLine) dxfEntity;
 
-                    if (name.equalsIgnoreCase(line.getLayerName())) {
+                    if (name.equalsIgnoreCase(line.getLayerName()))
                         lines.add(line);
-                    }
 
                 }
-            }
         }
-        if (lines.size() == 1) {
+        if (lines.size() == 1)
             return lines.get(0);
-        } else
+        else
             return null;
 
     }
@@ -156,18 +146,15 @@ public class Util {
 
             List dxfPolyLineEntities = dxfLayer.getDXFEntities(DXFConstants.ENTITY_TYPE_LWPOLYLINE);
 
-            if (null != dxfPolyLineEntities) {
+            if (null != dxfPolyLineEntities)
                 for (Object dxfEntity : dxfPolyLineEntities) {
 
                     DXFLWPolyline dxflwPolyline = (DXFLWPolyline) dxfEntity;
 
-                    for (int colorCode : colorCodes) {
-                        if (colorCode == dxflwPolyline.getColor()) {
+                    for (int colorCode : colorCodes)
+                        if (colorCode == dxflwPolyline.getColor())
                             dxflwPolylines.add(dxflwPolyline);
-                        }
-                    }
                 }
-            }
         }
 
         return dxflwPolylines;
@@ -185,17 +172,14 @@ public class Util {
 
             List dxfPolyLineEntities = dxfLayer.getDXFEntities(DXFConstants.ENTITY_TYPE_LWPOLYLINE);
 
-            if (null != dxfPolyLineEntities) {
+            if (null != dxfPolyLineEntities)
                 for (Object dxfEntity : dxfPolyLineEntities) {
 
                     DXFLWPolyline dxflwPolyline = (DXFLWPolyline) dxfEntity;
 
-                    if (name.equalsIgnoreCase(dxflwPolyline.getLayerName())) {
+                    if (name.equalsIgnoreCase(dxflwPolyline.getLayerName()))
                         dxflwPolylines.add(dxflwPolyline);
-
-                    }
                 }
-            }
         }
 
         return dxflwPolylines;
@@ -241,70 +225,60 @@ public class Util {
 
     }
 
-    public static	String	getMtextByLayerName(DXFDocument doc, String layerName)
-    {
+    public static String getMtextByLayerName(DXFDocument doc, String layerName) {
         DXFLayer planInfoLayer = doc.getDXFLayer(layerName);
         List texts = planInfoLayer.getDXFEntities(DXFConstants.ENTITY_TYPE_MTEXT);
-        String param="";
-        DXFText	text=null;
+        String param = "";
+        DXFText text = null;
         Iterator iterator = texts.iterator();
 
-        while(iterator.hasNext())
-        {
-            text= (DXFText)iterator.next();
-            if(text!=null && text.getText()!=null ){
-                param=text.getText();
-                /*if(new Float(param).isNaN())	
-				{
-					throw  new RuntimeException("Texts in the layer" + layerName +"Does not follow standard ");
-				}*/
+        while (iterator.hasNext()) {
+            text = (DXFText) iterator.next();
+            if (text != null && text.getText() != null) {
+                param = text.getText();
+                /*
+                 * if(new Float(param).isNaN()) { throw new RuntimeException("Texts in the layer" + layerName
+                 * +"Does not follow standard "); }
+                 */
 
-                param=param.replace("VOLTS", "").trim();
+                param = param.replace("VOLTS", "").trim();
             }
         }
         return param;
     }
 
-    public static	Map<String,String>	getPlanInfoProperties(DXFDocument doc)
-    {
+    public static Map<String, String> getPlanInfoProperties(DXFDocument doc) {
 
         DXFLayer planInfoLayer = doc.getDXFLayer("Plan info");
         List texts = planInfoLayer.getDXFEntities(DXFConstants.ENTITY_TYPE_MTEXT);
-        String param="";
-        DXFText	text=null;
-        Map<String,String> planInfoProperties=new HashMap<>();
+        String param = "";
+        DXFText text = null;
+        Map<String, String> planInfoProperties = new HashMap<>();
         Iterator iterator = texts.iterator();
         String[] split;
-        String s="\\";
-        while(iterator.hasNext())
-        {
-            text= (DXFText)iterator.next();
+        String s = "\\";
+        while (iterator.hasNext()) {
+            text = (DXFText) iterator.next();
 
-            param=text.getText();
-            param=param.replace(s, "#");
-            //	System.out.println(param);
-            if(param.contains("#P"))
-            {
-                //	System.out.println("inside");
+            param = text.getText();
+            param = param.replace(s, "#");
+            // System.out.println(param);
+            if (param.contains("#P"))
+                // System.out.println("inside");
                 split = param.split("#P");
-            }
-            else
-            {
-                split=new String [1];
-                split[0]=param;
+            else {
+                split = new String[1];
+                split[0] = param;
             }
 
-            for (int j=0;j<split.length;j++)
-            {
+            for (String element : split) {
 
-                String[] data = split[j].split("=");
-                if(data.length==2)
-                {
-                    //	System.out.println(data[0]+"---"+data[1]);
+                String[] data = element.split("=");
+                if (data.length == 2)
+                    // System.out.println(data[0]+"---"+data[1]);
                     planInfoProperties.put(data[0], data[1]);
-                }else
-                {
-                    //throw new RuntimeException("Plan info sheet data not following standard '=' for " +param);
+                else {
+                    // throw new RuntimeException("Plan info sheet data not following standard '=' for " +param);
                 }
             }
         }
@@ -320,10 +294,9 @@ public class Util {
 
             DXFLayer dxfLayer = (DXFLayer) dxfLayerIterator.next();
 
-            if ((colorCode != null && dxfLayer.getColor() == colorCode)
-                    || dxfLayer.getName().startsWith(FLOOR_NAME_PREFIX)) {
+            if (colorCode != null && dxfLayer.getColor() == colorCode
+                    || dxfLayer.getName().startsWith(FLOOR_NAME_PREFIX))
                 i++;
-            }
 
         }
 
@@ -337,17 +310,16 @@ public class Util {
 
             DXFLayer dxfLayer = (DXFLayer) dxfLayerIterator.next();
 
-            if ((colorCode != null && dxfLayer.getColor() == colorCode)
-                    || dxfLayer.getName().startsWith(FLOOR_NAME_PREFIX)) {
+            if (colorCode != null && dxfLayer.getColor() == colorCode
+                    || dxfLayer.getName().startsWith(FLOOR_NAME_PREFIX))
                 try {
 
-                    if (colorCode != null && dxfLayer.getColor() == colorCode) {
+                    if (colorCode != null && dxfLayer.getColor() == colorCode)
                         i++;
-                    } else {
+                    else {
                         String[] floorName = dxfLayer.getName().split(FLOOR_NAME_PREFIX);
-                        if (floorName.length > 0 && floorName[1] != null && Integer.parseInt(floorName[1]) >= 0) {
+                        if (floorName.length > 0 && floorName[1] != null && Integer.parseInt(floorName[1]) >= 0)
                             i++;
-                        }
                     }
 
                 } catch (Exception e) {
@@ -356,163 +328,25 @@ public class Util {
                     // //TODO: HANDLE THIS LATER
                 }
 
-            }
-
         }
 
         return i;
     }
 
     public boolean pointsEquals(Point point1, Point point) {
-        BigDecimal px=BigDecimal.valueOf(point.getX()).setScale(DECIMALDIGITS, BigDecimal.ROUND_DOWN);
-        BigDecimal py=BigDecimal.valueOf(point.getY()).setScale(DECIMALDIGITS, BigDecimal.ROUND_DOWN);
-        BigDecimal p1x=BigDecimal.valueOf(point1.getX()).setScale(DECIMALDIGITS, BigDecimal.ROUND_DOWN);
-        BigDecimal p1y=BigDecimal.valueOf(point1.getY()).setScale(DECIMALDIGITS, BigDecimal.ROUND_DOWN);
-        if(px.compareTo(p1x)==0 && py.compareTo(p1y)==0)
+        BigDecimal px = BigDecimal.valueOf(point.getX()).setScale(DECIMALDIGITS, BigDecimal.ROUND_DOWN);
+        BigDecimal py = BigDecimal.valueOf(point.getY()).setScale(DECIMALDIGITS, BigDecimal.ROUND_DOWN);
+        BigDecimal p1x = BigDecimal.valueOf(point1.getX()).setScale(DECIMALDIGITS, BigDecimal.ROUND_DOWN);
+        BigDecimal p1y = BigDecimal.valueOf(point1.getY()).setScale(DECIMALDIGITS, BigDecimal.ROUND_DOWN);
+        if (px.compareTo(p1x) == 0 && py.compareTo(p1y) == 0)
             return true;
-        else 
+        else
             return false;
     }
 
-
-    private static Double getYardMinDistance(DXFDocument doc, String name) {
-        Util util = new Util();
-        List<DXFLWPolyline> polyLinesByLayer = util.getPolyLinesByLayer(doc, DcrConstants.PLOT_BOUNDARY);
-        DXFLWPolyline plotBoundary = polyLinesByLayer.get(0);
-
-        List<DXFLWPolyline> polyLinesByLayer1 = util.getPolyLinesByLayer(doc, DcrConstants.BUILDING_FOOT_PRINT);
-        DXFLWPolyline buildFoorPrint = polyLinesByLayer1.get(0);
-        // DXFLWPolyline buildFoorPrint1 = polyLinesByLayer1.get(1);
-        int rows = buildFoorPrint.getRows();
-
-        List<DXFLWPolyline> polyLinesByLayer2 = util.getPolyLinesByLayer(doc, name);
-        DXFLWPolyline yard = polyLinesByLayer2.get(0);
-       
-
-        Iterator vertexIterator = yard.getVertexIterator();
-        List<Point> yardOutSidePoints = new ArrayList<>();
-        List<Point> yardInSidePoints = new ArrayList<>();
-        List<Double> distanceList = new ArrayList<>();
-        int i = 0;
-        Iterator plotBIterator1 = plotBoundary.getVertexIterator();
-        int count=      plotBoundary.getVertexCount();
-        double[][] shape = pointsOnPolygon(i, plotBoundary, count);
-
-        while (vertexIterator.hasNext()) {
-            DXFVertex next = (DXFVertex) vertexIterator.next();
-            Point point = next.getPoint();
-            // System.out.println("yard Point :"+point.getX()+","+point.getY());
-
-            Iterator plotBIterator = plotBoundary.getVertexIterator();
-
-            // Vertex and coordinates of Polyline
-            outside: while (plotBIterator.hasNext()) {
-
-                DXFVertex dxfVertex = (DXFVertex) plotBIterator.next();
-                Point point1 = dxfVertex.getPoint();
-
-                // System.out.println("Outside                           :"+point1.getX()+","+point1.getY());
-                if (util.pointsEquals(point1,point)) {
-                    //System.out.println(name+" adding on points on a plot boundary Point ---"+point.getX()+","+point.getY());
-                    yardOutSidePoints.add(point);
-
-                    break outside;
-                }
-            }
-          
-           
-
-                if (RayCast.contains(shape, new double[] { point.getX(), point.getY() }) == true) {
-
-                    // System.out.println(yardOutSidePoints+"---"+!yardOutSidePoints.contains(point));
-
-                    if (!yardOutSidePoints.contains(point)) {
-                        //System.out.println(name+" adding point on a   plot Boundary line using raycast---"+point.getX()+","+point.getY());
-                        yardOutSidePoints.add(point);
-                    }
-                }
-            
-
-            Iterator footPrintIterator = buildFoorPrint.getVertexIterator();
-
-            // Vertex and coordinates of Polyline
-            inside: while (footPrintIterator.hasNext()) {
-
-                DXFVertex dxfVertex = (DXFVertex) footPrintIterator.next();
-                Point point1 = dxfVertex.getPoint();
-                // System.out.println("Foot Print  :"+point1.getX()+","+point1.getY());
-                if (util.pointsEquals(point1,point)) {
-                    yardInSidePoints.add(point);
-                    // System.out.println("Inside    :"+point.getX()+","+point.getY());
-                    break inside;
-                }
-            }
-
-        }
-      
-        List<Point> toremove=new ArrayList<>();
-
-        //System.out.println(name+"   Outside Points-------------");
-        for(Point p:yardOutSidePoints)
-        {
-            for(Point p1:yardInSidePoints)
-            {
-                if(util.pointsEquals(p1,p))
-                {
-                    toremove.add(p);
-                }
-            }
-            //System.out.println(p.getX()+","+p.getY());
-        }
-        //System.out.println(name+"   Outside Points-------------");
-        for(Point p:toremove)
-        {
-            yardOutSidePoints.remove(p);
-            //System.out.println(name+"   remove Points-------------"+p.getX()+",,,,"+p.getY());    
-        }
-
-
-        for(Point p:yardOutSidePoints)
-        {
-
-            //System.out.println(p.getX()+","+p.getY());
-        }
-
-        //System.out.println(name+"   Inside Points-------------");
-
-        for(Point p:yardInSidePoints)
-        {
-            //System.out.println(p.getX()+","+p.getY());
-        }
-
-        List<Point> outsidePoints = findPointsOnPolylines(yardOutSidePoints);
-        //System.out.println(outsidePoints.size());
-        List<Point> insidePoints = findPointsOnPolylines(yardInSidePoints);
-        //System.out.println(insidePoints.size());
-
-        for (Point in : insidePoints) {
-            //System.out.println("Inside : "+in.getX()+","+in.getY());
-            for (Point out : outsidePoints) {
-                // System.out.println("Outside : "+out.getX()+","+out.getY());
-                double distance = MathUtils.distance(in, out);
-                //       System.out.println("Distance : "+distance);
-                distanceList.add(distance);
-
-            }
-        }
-
-        //System.out.println(distanceList);
-        java.util.Collections.sort(distanceList);
-        //System.out.println("the shortest Distance is " + distanceList.get(0));
-        if (distanceList.size()>0)
-            return distanceList.get(0);
-        else return 0.0;
-
-    }
-
     private static double[][] pointsOnPolygon(int i, DXFLWPolyline plotBoundary, int count) {
-        double[][] shape = new double[count+1][2];
-        Iterator    plotBIterator1   =  plotBoundary.getVertexIterator();
+        double[][] shape = new double[count + 1][2];
+        Iterator plotBIterator1 = plotBoundary.getVertexIterator();
         while (plotBIterator1.hasNext()) {
 
             DXFVertex dxfVertex = (DXFVertex) plotBIterator1.next();
@@ -521,50 +355,43 @@ public class Util {
             shape[i][0] = point1.getX();
             shape[i][1] = point1.getY();
 
-            //System.out.println(name+"===Shape=="+shape[i][0]+"--"+shape[i][1]);
+            // System.out.println(name+"===Shape=="+shape[i][0]+"--"+shape[i][1]);
             i++;
 
         }
-        shape[i]=shape[0];
+        shape[i] = shape[0];
         return shape;
     }
+
     private static List<Point> findPointsOnPolylines(List<Point> yardInSidePoints) {
-        Point old=null;
-        Point first=null;
-        Point point1=new Point();
-        List<Point> myPoints=new ArrayList<>();
+        Point old = null;
+        Point first = null;
+        Point point1 = new Point();
+        List<Point> myPoints = new ArrayList<>();
 
         for (Point in : yardInSidePoints) {
-            {
-                if(old==null)
-                {
-                    old=in;
-                    first=in;
-                    continue;
-                }
-                if(first.equals(in))
-                {
-                    continue;
-                }
+            if (old == null) {
+                old = in;
+                first = in;
+                continue;
+            }
+            if (first.equals(in))
+                continue;
 
-                //System.out.println("Points for line "+old.getX()+","+old.getY() +" And"+ in.getX()+","+in.getY());
-                double distance = MathUtils.distance(old, in);
-                //System.out.println("Distance"+distance);
+            // System.out.println("Points for line "+old.getX()+","+old.getY() +" And"+ in.getX()+","+in.getY());
+            double distance = MathUtils.distance(old, in);
+            // System.out.println("Distance"+distance);
 
-                for(double j=.01;j<distance;j=j+.01)
-                {
-                    point1=new Point();
-                    double t=j/distance;
-                    point1.setX((1-t)*old.getX()+t*in.getX());
-                    point1.setY((1-t)*old.getY()+t*in.getY());
-                    myPoints.add(point1);
-                    //System.out.println(point1.getX()+"---"+point1.getY());
-                }
-
-
-                old=in;
+            for (double j = .01; j < distance; j = j + .01) {
+                point1 = new Point();
+                double t = j / distance;
+                point1.setX((1 - t) * old.getX() + t * in.getX());
+                point1.setY((1 - t) * old.getY() + t * in.getY());
+                myPoints.add(point1);
+                // System.out.println(point1.getX()+"---"+point1.getY());
             }
 
+            old = in;
         }
         return myPoints;
     }

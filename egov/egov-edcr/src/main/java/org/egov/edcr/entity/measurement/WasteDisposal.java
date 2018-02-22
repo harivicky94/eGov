@@ -1,5 +1,5 @@
 package org.egov.edcr.entity.measurement;
 
-public class WasteDisposal  extends Measurement{
+public class WasteDisposal extends Measurement {
 
 }
