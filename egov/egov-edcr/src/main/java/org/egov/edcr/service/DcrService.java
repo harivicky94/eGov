@@ -1,5 +1,6 @@
 package org.egov.edcr.service;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
@@ -9,7 +10,11 @@ import org.apache.log4j.Logger;
 import org.egov.edcr.entity.EdcrApplication;
 import org.egov.edcr.entity.PlanDetail;
 import org.egov.edcr.entity.PlanRule;
+import org.egov.edcr.entity.RuleOutput;
 import org.egov.edcr.rule.GeneralRule;
+import org.egov.edcr.utility.DcrConstants;
+import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
@@ -38,6 +43,9 @@ public class DcrService {
 
     @Autowired
     private ReportService reportService;
+    
+    @Autowired
+    private FileStoreService fileStoreService;
 
     public PlanDetail getPlanDetail() {
         return planDetail;
@@ -106,10 +114,19 @@ public class DcrService {
     }
 
     public ReportOutput generateDCRReport(PlanDetail planDetail) {
+    	
         Map<String, Object> params = new HashMap<>();
+        org.egov.edcr.entity.ReportOutput planReportOutput =  planDetail.getReportOutput();
+        List<RuleOutput> rules = planReportOutput.getRuleOutPuts();
+        for(RuleOutput ruleOutput : rules) {
+        	if(ruleOutput.getKey().equalsIgnoreCase(DcrConstants.RULE23)) {
+        		params.put(ruleOutput.getKey(), ruleOutput);
+        	}
+        }
         final ReportRequest reportInput = new ReportRequest("edcr_report", planDetail,
                 params);
         final ReportOutput reportOutput = reportService.createReport(reportInput);
+        FileStoreMapper fileStoreId = fileStoreService.store(new ByteArrayInputStream(reportOutput.getReportOutputData()), "EDCR", "application/pdf","PTIS");
         return reportOutput;
 
     }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
-<!-- 2018-02-21T18:01:48 -->
+<!-- 2018-02-22T18:58:19 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="edcr_report" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="ccdee1e7-8a6e-4168-a80a-d10d6f4f913c">
 	<import value="org.egov.infra.reporting.util.*"/>
 	<import value="org.egov.infstr.utils.*"/>
@@ -8,7 +8,7 @@
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["/work/edcr/reports/templates/"]]></defaultValueExpression>
 	</parameter>
-	<parameter name="rule23" class="java.util.List"/>
+	<parameter name="RULE23" class="org.egov.edcr.entity.RuleOutput"/>
 	<field name="planInformation" class="org.egov.edcr.entity.PlanInformation">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
@@ -76,7 +76,7 @@
 			</textField>
 			<textField>
 				<reportElement x="370" y="9" width="150" height="21" uuid="b2a1219f-f101-4d1f-9f9f-9945cea4455f"/>
-				<textFieldExpression><![CDATA[$F{planInformation}.getArchitectName()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{planInformation}.getArchitectInformation()]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="372" y="34" width="149" height="21" uuid="ed1355d7-1bd8-443d-ae8b-8e7812b3a53d"/>
@@ -195,25 +195,22 @@
 				<reportElement x="110" y="157" width="152" height="21" uuid="b93759a6-700d-4eb5-b5bc-a5d6e71f4013"/>
 				<textFieldExpression><![CDATA[$F{plot}.getArea()]]></textFieldExpression>
 			</textField>
+			<textField>
+				<reportElement x="281" y="160" width="152" height="21" uuid="3edfefb3-67ac-42ed-a0c6-4a792a390436"/>
+				<textFieldExpression><![CDATA[$P{RULE23}.getKey() + "-" + $P{RULE23}.getMessage()]]></textFieldExpression>
+			</textField>
 		</band>
 	</pageHeader>
 	<detail>
 		<band height="30">
 			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 			<subreport>
-				<reportElement x="21" y="1" width="499" height="24" uuid="51b4c4c6-0a05-401a-a575-c23f26a4247c"/>
-				<subreportParameter name="noticeNo">
-					<subreportParameterExpression><![CDATA[$P{rule23}]]></subreportParameterExpression>
+				<reportElement isPrintRepeatedValues="false" x="21" y="1" width="499" height="24" uuid="51b4c4c6-0a05-401a-a575-c23f26a4247c"/>
+				<subreportParameter name="RULE23">
+					<subreportParameterExpression><![CDATA[$P{RULE23}]]></subreportParameterExpression>
 				</subreportParameter>
-				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{rule23}, false)]]></dataSourceExpression>
-				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("rule23_subreport.jasper")]]></subreportExpression>
+				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("rule23_report.jasper")]]></subreportExpression>
 			</subreport>
 		</band>
 	</detail>
-	<columnFooter>
-		<band height="45" splitType="Stretch"/>
-	</columnFooter>
-	<pageFooter>
-		<band height="54" splitType="Stretch"/>
-	</pageFooter>
 </jasperReport>

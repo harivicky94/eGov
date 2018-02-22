@@ -90,4 +90,14 @@ public class RuleOutput {
         this.result = result;
     }
 
+	public String getRuleDescription() {
+		return ruleDescription;
+	}
+
+	public void setRuleDescription(String ruleDescription) {
+		this.ruleDescription = ruleDescription;
+	}
+    
+    
+
 }
