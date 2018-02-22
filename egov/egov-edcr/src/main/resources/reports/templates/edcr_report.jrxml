@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
-<!-- 2018-02-22T18:58:19 -->
+<!-- 2018-02-23T00:01:02 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="edcr_report" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="ccdee1e7-8a6e-4168-a80a-d10d6f4f913c">
 	<import value="org.egov.infra.reporting.util.*"/>
 	<import value="org.egov.infstr.utils.*"/>
@@ -9,6 +9,9 @@
 		<defaultValueExpression><![CDATA["/work/edcr/reports/templates/"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="RULE23" class="org.egov.edcr.entity.RuleOutput"/>
+	<parameter name="RULE26" class="org.egov.edcr.entity.RuleOutput"/>
+	<parameter name="RULE30" class="org.egov.edcr.entity.RuleOutput"/>
+	<parameter name="RULE32" class="org.egov.edcr.entity.RuleOutput"/>
 	<field name="planInformation" class="org.egov.edcr.entity.PlanInformation">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
@@ -197,7 +200,7 @@
 			</textField>
 			<textField>
 				<reportElement x="281" y="160" width="152" height="21" uuid="3edfefb3-67ac-42ed-a0c6-4a792a390436"/>
-				<textFieldExpression><![CDATA[$P{RULE23}.getKey() + "-" + $P{RULE23}.getMessage()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{RULE26}.getKey() + "-" + $P{RULE26}.getMessage()]]></textFieldExpression>
 			</textField>
 		</band>
 	</pageHeader>
@@ -210,6 +213,36 @@
 					<subreportParameterExpression><![CDATA[$P{RULE23}]]></subreportParameterExpression>
 				</subreportParameter>
 				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("rule23_report.jasper")]]></subreportExpression>
+			</subreport>
+		</band>
+		<band height="30">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+			<subreport>
+				<reportElement x="21" y="3" width="489" height="27" uuid="1700e20e-4221-4f73-a330-d98afe331a0b"/>
+				<subreportParameter name="RULE26">
+					<subreportParameterExpression><![CDATA[$P{RULE26}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("rule26_report.jasper")]]></subreportExpression>
+			</subreport>
+		</band>
+		<band height="30">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+			<subreport>
+				<reportElement x="24" y="2" width="496" height="28" uuid="669d5874-961b-4ebf-b630-3ee5ea7a550e"/>
+				<subreportParameter name="RULE30">
+					<subreportParameterExpression><![CDATA[$P{RULE30}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("rule30_report.jasper")]]></subreportExpression>
+			</subreport>
+		</band>
+		<band height="30">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+			<subreport>
+				<reportElement x="24" y="5" width="504" height="25" uuid="06513511-a7fa-402a-9892-937896eb546a"/>
+				<subreportParameter name="RULE32">
+					<subreportParameterExpression><![CDATA[$P{RULE32}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("rule32_report.jasper")]]></subreportExpression>
 			</subreport>
 		</band>
 	</detail>

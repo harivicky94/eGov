@@ -121,6 +121,15 @@ public class DcrService {
         	if(ruleOutput.getKey().equalsIgnoreCase(DcrConstants.RULE23)) {
         		params.put(ruleOutput.getKey(), ruleOutput);
         	}
+        	if(ruleOutput.getKey().equalsIgnoreCase(DcrConstants.RULE26)) {
+        		params.put(ruleOutput.getKey(), ruleOutput);
+        	}
+        	if(ruleOutput.getKey().equalsIgnoreCase(DcrConstants.RULE30)) {
+        		params.put(ruleOutput.getKey(), ruleOutput);
+        	}
+        	if(ruleOutput.getKey().equalsIgnoreCase(DcrConstants.RULE32)) {
+        		params.put(ruleOutput.getKey(), ruleOutput);
+        	}
         }
         final ReportRequest reportInput = new ReportRequest("edcr_report", planDetail,
                 params);
