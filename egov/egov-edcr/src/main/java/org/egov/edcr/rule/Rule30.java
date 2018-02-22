@@ -39,7 +39,7 @@ public class Rule30 extends GeneralRule {
                 && !StringUtils.isEmpty(planDetail.getPlanInformation().getOccupancy()))
             planDetail.reportOutput
                     .add(buildRuleOutputWithMainRule(DcrConstants.RULE30, DcrConstants.OCCUPANCY,
-                            Result.Verify, DcrConstants.OCCUPANCY + DcrConstants.OBJECTDEFINED));
+                            Result.Verify, DcrConstants.OCCUPANCY + DcrConstants.OBJECTDEFINED_DESC));
     }
 
 }

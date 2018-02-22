@@ -210,7 +210,7 @@ public class Rule62 extends GeneralRule {
                         planDetail.getNonNotifiedRoads().size() > 0))
             planDetail.reportOutput
                     .add(buildRuleOutputWithMainRule(DcrConstants.RULE62, DcrConstants.ROAD,
-                            Result.Verify, DcrConstants.ROAD + DcrConstants.OBJECTNOTDEFINED));
+                            Result.Verify, DcrConstants.ROAD + DcrConstants.OBJECTNOTDEFINED_DESC));
         else if (planDetail.getNotifiedRoads() != null &&
                 planDetail.getNotifiedRoads().size() > 0)
             for (NotifiedRoad notifiedRoad : planDetail.getNotifiedRoads())

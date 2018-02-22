@@ -87,7 +87,7 @@ public class Rule26 extends GeneralRule {
                 !(planDetail.getNotifiedRoads().size() > 0 ||
                         planDetail.getNonNotifiedRoads().size() > 0))
             planDetail.reportOutput.add(buildRuleOutputWithMainRule(DcrConstants.RULE26, DcrConstants.ROAD, Result.Not_Accepted,
-                    DcrConstants.ROAD + DcrConstants.OBJECTNOTDEFINED));
+                    DcrConstants.ROAD + DcrConstants.OBJECTNOTDEFINED_DESC));
         else if (planDetail.getNotifiedRoads() != null &&
                 planDetail.getNotifiedRoads().size() > 0)
             for (NotifiedRoad notifiedRoad : planDetail.getNotifiedRoads())
@@ -138,11 +138,11 @@ public class Rule26 extends GeneralRule {
                 planDetail.getBuilding().getWasteDisposal().getPresentInDxf())
             planDetail.reportOutput
                     .add(buildRuleOutputWithMainRule(DcrConstants.RULE26, DcrConstants.WASTEDISPOSAL, Result.Accepted,
-                            DcrConstants.WASTEDISPOSAL + DcrConstants.OBJECTDEFINED));
+                            DcrConstants.WASTEDISPOSAL + DcrConstants.OBJECTDEFINED_DESC));
         else
             planDetail.reportOutput
                     .add(buildRuleOutputWithMainRule(DcrConstants.RULE26, DcrConstants.WASTEDISPOSAL, Result.Not_Accepted,
-                            DcrConstants.WASTEDISPOSAL + DcrConstants.OBJECTNOTDEFINED));
+                            DcrConstants.WASTEDISPOSAL + DcrConstants.OBJECTNOTDEFINED_DESC));
     }
 
 }

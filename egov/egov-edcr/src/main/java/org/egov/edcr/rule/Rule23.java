@@ -61,7 +61,7 @@ public class Rule23 extends GeneralRule {
         if (planDetail.getPlanInformation() != null && planDetail.getPlanInformation().getCrzZoneArea())
             planDetail.reportOutput
                     .add(buildRuleOutputWithMainRule(DcrConstants.RULE23, DcrConstants.CRZZONE,
-                            Result.Verify, DcrConstants.CRZZONE + DcrConstants.OBJECTDEFINED));
+                            Result.Verify, DcrConstants.CRZZONE + DcrConstants.OBJECTDEFINED_DESC));
     }
 
     private void rule23_5(PlanDetail planDetail) {

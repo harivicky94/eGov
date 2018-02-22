@@ -13,10 +13,15 @@ public class DcrConstants {
     public static final String RULE61 = "RULE61";
     public static final String RULE62 = "RULE62";
     public static final String RULE30 = "RULE30";
-    public static final String OBJECTDEFINED = "Defined in the plan.";
+    public static final String OBJECTDEFINED_DESC = "Defined in the plan.";
     public static final String WASTEDISPOSAL_DEFINED_KEY = "WASTEDISPOSAL_DEFINED";
-    public static final String OBJECTNOTDEFINED = "Not defined in the plan.";
+    public static final String OBJECTNOTDEFINED_DESC = "Not defined in the plan.";
     public static final String EXPECTEDRESULT = "msg.result.expected.actual";
+    
+    public static final String OBJECTDEFINED="msg.object.defined";
+    public static final String OBJECTNOTDEFINED="msg.error.not.defined";
+    
+    
 
     public static final String WASTEDISPOSAL = "Waste disposal";
     public static final String CRZZONE = "CRZ Zone";
