@@ -1,5 +1,6 @@
 package org.egov.edcr.entity;
 
+import java.io.File;
 import java.util.Date;
 import java.util.List;
 
@@ -49,6 +50,17 @@ public class EdcrApplication extends AbstractAuditable {
 
     @Transient
     private MultipartFile dxfFile; // File to be process.
+    
+    @Transient
+    private File savedDxfFile;
+
+    public File getSavedDxfFile() {
+        return savedDxfFile;
+    }
+
+    public void setSavedDxfFile(File savedDxfFile) {
+        this.savedDxfFile = savedDxfFile;
+    }
 
     @OneToMany(mappedBy = "application", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<DcrDocument> dcrDocuments;

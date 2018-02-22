@@ -3,6 +3,7 @@ package org.egov.edcr.service;
 import static org.egov.edcr.utility.DcrConstants.FILESTORE_MODULECODE;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -55,24 +56,29 @@ public class EdcrApplicationService {
 
         edcrApplication.setApplicationDate(new Date());
         edcrApplication.setApplicationNumber(dcrApplicationNumberGenerator.generateEDcrApplicationNumber(edcrApplication));
-        saveDXF(edcrApplication);
+        File dxfFile= saveDXF(edcrApplication);
+        
+        edcrApplication.setSavedDxfFile(dxfFile);
         edcrApplication.setPlanInformation(edcrApplication.getPlanInformation());
         edcrApplicationRepository.save(edcrApplication);
-        dcrService.process(edcrApplication.getDxfFile(), edcrApplication);
+        dcrService.process(dxfFile, edcrApplication);
         portalInetgrationService.createPortalUserinbox(edcrApplication, Arrays.asList(securityUtils.getCurrentUser()));
         return edcrApplication;
     }
 
-    public void saveDcrApplication(EdcrApplication edcrApplication) {
+    /*public void saveDcrApplication(EdcrApplication edcrApplication) {
         saveDXF(edcrApplication);
 
-        dcrService.process(edcrApplication.getDxfFile(), edcrApplication);
+        dcrService.process(edcrApplication.getSavedDxfFile(), edcrApplication);
     }
-
-    private void saveDXF(EdcrApplication edcrApplication) {
+*/
+    private File saveDXF(EdcrApplication edcrApplication) {
         FileStoreMapper fileStoreMapper = addToFileStore(edcrApplication.getDxfFile());
+        File dxfFile= fileStoreService.fetch(fileStoreMapper.getFileStoreId(), FILESTORE_MODULECODE) ;
         buildDocuments(edcrApplication, fileStoreMapper, null);
         edcrApplication.setDcrDocuments(edcrApplication.getDcrDocuments());
+        return dxfFile;
+        
     }
 
     @Transactional

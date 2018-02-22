@@ -16,7 +16,6 @@ import org.egov.infra.reporting.engine.ReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 /*General rule class contains validations which are required for all types of building plans*/
 @Service
@@ -48,13 +47,13 @@ public class DcrService {
         this.planDetail = planDetail;
     }
 
-    public PlanDetail process(MultipartFile dxf1File, EdcrApplication dcrApplication) {
+    public PlanDetail process(File dxf1File, EdcrApplication dcrApplication) {
 
         LOG.info("hello ");
         // TODO:
         // BASIC VALIDATION
 
-        File dxfFile = new File("/home/mani/Desktop/BPA/kozhi/SAMPLE 4.dxf");
+       // File dxfFile = new File("/home/mani/Desktop/BPA/kozhi/SAMPLE 4.dxf");
 
         generalRule.validate(planDetail);
 
@@ -63,7 +62,7 @@ public class DcrService {
 
         // planDetail= generalRule.validate(planDetail);
         // EXTRACT DATA FROM DXFFILE TO planDetail;
-        planDetail = extractService.extract(dxfFile, dcrApplication);
+        planDetail = extractService.extract(dxf1File, dcrApplication);
 
         // USING PLANDETAIL OBJECT, FINDOUT RULES.
         // ITERATE EACH RULE.CHECK CONDITIONS.
