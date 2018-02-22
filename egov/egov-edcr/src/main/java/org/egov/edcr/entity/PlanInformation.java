@@ -2,12 +2,7 @@ package org.egov.edcr.entity;
 
 import java.math.BigDecimal;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 
@@ -35,7 +30,7 @@ public class PlanInformation extends AbstractAuditable {
     private Long acchitectId;
 
     private Boolean crzZoneArea = false;
-
+    @Transient
     private Boolean securityZone = false;
 
     @Override
