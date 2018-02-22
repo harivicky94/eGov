@@ -22,9 +22,9 @@ public class MinDistance {
         Util util = new Util();
 
         DXFLWPolyline plotBoundary = pl.getPlot().getPolyLine();
-
+        Util.print(plotBoundary,"Plot Boundary");
         DXFLWPolyline buildFoorPrint = pl.getBuilding().getPolyLine();
-
+        Util.print(buildFoorPrint,"buildFoorPrint");
         buildFoorPrint.getRows();
         DXFLWPolyline yard = null;
         if (name.equals(DcrConstants.FRONT_YARD))
@@ -37,6 +37,7 @@ public class MinDistance {
             yard = pl.getPlot().getSideYard2().getPolyLine();
 
         Iterator vertexIterator = yard.getVertexIterator();
+        Util.print(yard,name);
         List<Point> yardOutSidePoints = new ArrayList<>();
         List<Point> yardInSidePoints = new ArrayList<>();
         List<Double> distanceList = new ArrayList<>();
@@ -47,7 +48,7 @@ public class MinDistance {
         while (vertexIterator.hasNext()) {
             DXFVertex next = (DXFVertex) vertexIterator.next();
             Point point = next.getPoint();
-            // System.out.println("yard Point :"+point.getX()+","+point.getY());
+            System.out.println("yard Point :"+point.getX()+","+point.getY());
 
             Iterator plotBIterator = plotBoundary.getVertexIterator();
 
@@ -57,9 +58,9 @@ public class MinDistance {
                 DXFVertex dxfVertex = (DXFVertex) plotBIterator.next();
                 Point point1 = dxfVertex.getPoint();
 
-                // System.out.println("Outside :"+point1.getX()+","+point1.getY());
+                 System.out.println("plotBIterator :"+point1.getX()+","+point1.getY());
                 if (util.pointsEquals(point1, point)) {
-                    // System.out.println(name+" adding on points on a plot boundary Point ---"+point.getX()+","+point.getY());
+                     System.out.println(name+" adding on points on a plot boundary Point ---"+point.getX()+","+point.getY());
                     yardOutSidePoints.add(point);
 
                     break outside;
@@ -68,8 +69,7 @@ public class MinDistance {
 
             if (RayCast.contains(shape, new double[] { point.getX(), point.getY() }) == true)
                 if (!yardOutSidePoints.contains(point))
-                    // System.out.println(name+" adding point on a plot Boundary line using
-                    // raycast---"+point.getX()+","+point.getY());
+                     System.out.println(name+" adding point on a plot Boundary line using raycast---"+point.getX()+","+point.getY());
                     yardOutSidePoints.add(point);
 
             Iterator footPrintIterator = buildFoorPrint.getVertexIterator();
@@ -79,10 +79,10 @@ public class MinDistance {
 
                 DXFVertex dxfVertex = (DXFVertex) footPrintIterator.next();
                 Point point1 = dxfVertex.getPoint();
-                // System.out.println("Foot Print :"+point1.getX()+","+point1.getY());
+                 System.out.println("Foot Print :"+point1.getX()+","+point1.getY());
                 if (util.pointsEquals(point1, point)) {
                     yardInSidePoints.add(point);
-                    // System.out.println("Inside :"+point.getX()+","+point.getY());
+                     System.out.println("Inside :"+point.getX()+","+point.getY());
                     break inside;
                 }
             }
@@ -90,7 +90,12 @@ public class MinDistance {
         }
 
         List<Point> toremove = new ArrayList<>();
-
+         
+        if(yardInSidePoints.isEmpty())
+        {
+            pl.getErrors().put("Set back calculation Error", "Points of "+name+" not on "+DcrConstants.BUILDING_FOOT_PRINT);
+        }  
+        
         // System.out.println(name+" Outside Points-------------");
         for (Point p : yardOutSidePoints)
             for (Point p1 : yardInSidePoints)
@@ -100,23 +105,28 @@ public class MinDistance {
         for (Point p : toremove)
             yardOutSidePoints.remove(p);
         // System.out.println(name+" remove Points-------------"+p.getX()+",,,,"+p.getY());
-
+        System.out.println(name+" Outside Points-------------");
         for (Point p : yardOutSidePoints) {
 
-            // System.out.println(p.getX()+","+p.getY());
+             System.out.println(p.getX()+","+p.getY());
         }
 
-        // System.out.println(name+" Inside Points-------------");
+         System.out.println(name+" Inside Points-------------");
 
         for (Point p : yardInSidePoints) {
-            // System.out.println(p.getX()+","+p.getY());
+            System.out.println(p.getX()+","+p.getY());
         }
 
         List<Point> outsidePoints = findPointsOnPolylines(yardOutSidePoints);
         // System.out.println(outsidePoints.size());
         List<Point> insidePoints = findPointsOnPolylines(yardInSidePoints);
         // System.out.println(insidePoints.size());
-
+        
+        if(insidePoints.isEmpty())
+        {
+            pl.getErrors().put("Set back calculation Error", "Points of "+name+" not properly on "+DcrConstants.BUILDING_FOOT_PRINT);
+        }  
+        
         for (Point in : insidePoints)
             // System.out.println("Inside : "+in.getX()+","+in.getY());
             for (Point out : outsidePoints) {

@@ -13,6 +13,7 @@ import org.egov.edcr.entity.PlanRule;
 import org.egov.edcr.entity.RuleOutput;
 import org.egov.edcr.rule.GeneralRule;
 import org.egov.edcr.utility.DcrConstants;
+import org.egov.edcr.utility.Util;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.reporting.engine.ReportOutput;
@@ -102,15 +103,13 @@ public class DcrService {
 
             }
         }
-        generateDCRReport(planDetail);
+        //generateDCRReport(planDetail);
 
-        LOG.info(planDetail.getErrors());
-        LOG.info(planDetail.getReportOutput());
-        LOG.info(planDetail.getGeneralInformation());
-
-        // GENERATE OUTPUT USING PLANDETAIL.
-
-        return null;
+        Util.print(planDetail);
+        Util.print(planDetail.getErrors());
+        Util.print(planDetail.getGeneralInformation()) ;
+        Util.print(planDetail.getReportOutput());
+        return planDetail;
     }
 
     public ReportOutput generateDCRReport(PlanDetail planDetail) {

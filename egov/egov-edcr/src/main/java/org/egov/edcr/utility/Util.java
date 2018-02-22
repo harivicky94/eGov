@@ -7,7 +7,14 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
+import org.apache.log4j.Logger;
+import org.egov.edcr.entity.PlanDetail;
+import org.egov.edcr.entity.ReportOutput;
+import org.egov.edcr.entity.RuleOutput;
+import org.egov.edcr.entity.SubRuleOutput;
+import org.egov.edcr.entity.utility.RuleReportOutput;
 import org.kabeja.dxf.DXFConstants;
 import org.kabeja.dxf.DXFDocument;
 import org.kabeja.dxf.DXFLWPolyline;
@@ -22,6 +29,8 @@ import org.kabeja.math.MathUtils;
 public class Util {
     private static String FLOOR_NAME_PREFIX = "FLOOR_";
     private static final int DECIMALDIGITS = 10;
+    private static Logger LOG = Logger.getLogger(Util.class);
+
 
     public List<DXFLWPolyline> getPolyLinesByColor(DXFDocument dxfDocument, Integer colorCode) {
 
@@ -394,6 +403,66 @@ public class Util {
             old = in;
         }
         return myPoints;
+    }
+
+    public static void print(DXFLWPolyline yard,String name) {
+        if(yard!=null)
+        {
+        Iterator vertexIterator = yard.getVertexIterator();
+        LOG.info("Points on the "+name);
+        while (vertexIterator.hasNext()) {
+            DXFVertex next = (DXFVertex) vertexIterator.next();
+            LOG.info(next.getPoint().getX()+","+next.getPoint().getY());
+            LOG.info(next.getX()+","+next.getY());
+        }
+        }
+        
+    }
+    
+    public static void print(HashMap<String,String> errors)
+    {
+        LOG.info(errors.getClass().getName());
+        Iterator<Entry<String, String>> iterator = errors.entrySet().iterator();
+        while (iterator.hasNext())
+        {
+            Entry<String, String> next = iterator.next();
+            LOG.info(next.getKey()+"---"+next.getValue());
+        }
+    }
+    
+    
+    public static void print(ReportOutput ro)
+    {
+        LOG.info("ReportOutput");
+        for( RuleOutput rp:  ro.getRuleOutPuts())
+        {
+            LOG.info(rp.key +" -- "+rp.getMessage()+" -- "+rp.getResult().toString());
+            for(SubRuleOutput so:rp.getSubRuleOutputs())
+            {
+                LOG.info(so.key+" , "+so.message+" , "+so.ruleDescription);
+                List<RuleReportOutput> ruleReportOutputs = so.ruleReportOutputs;
+                for(RuleReportOutput rro:ruleReportOutputs)
+                {
+                    LOG.info("Actual: "+rro.actualResult );
+                    LOG.info("Expected: "+rro.expectedResult);
+                    LOG.info("Filed Verified: "+rro.fieldVerified );
+                    LOG.info("Status: "+rro.status);
+                    
+                }
+            }
+                
+        }
+         
+    }
+    
+    public static void print(PlanDetail pl)
+    {
+        LOG.info("Set Backs");
+        LOG.info("Front Yard \n "+ pl.getPlot().getFrontYard());
+        LOG.info("Side Yard1 \n "+ pl.getPlot().getSideYard1());
+        LOG.info("Side Yard2 \n "+ pl.getPlot().getSideYard2());
+        LOG.info("Rear Yard \n "+ pl.getPlot().getRearYard());
+        LOG.info("Set Backs");
     }
 
 }

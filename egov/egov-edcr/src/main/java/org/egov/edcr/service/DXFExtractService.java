@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.egov.edcr.entity.Building;
 import org.egov.edcr.entity.EdcrApplication;
 import org.egov.edcr.entity.ElectricLine;
@@ -18,6 +19,7 @@ import org.egov.edcr.entity.measurement.WasteDisposal;
 import org.egov.edcr.entity.measurement.Yard;
 import org.egov.edcr.utility.DcrConstants;
 import org.egov.edcr.utility.Util;
+import org.jfree.util.Log;
 import org.kabeja.dxf.DXFDocument;
 import org.kabeja.dxf.DXFLWPolyline;
 import org.kabeja.dxf.DXFLine;
@@ -32,6 +34,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class DXFExtractService {
+    private static Logger LOG = Logger.getLogger(DcrService.class);
 
     @Autowired
     @Qualifier("parentMessageSource")
@@ -71,9 +74,9 @@ public class DXFExtractService {
             pl.getPlot().setSideYard2(getYard(pl, doc, DcrConstants.SIDE_YARD_2));
 
             pl.getPlot().getFrontYard().setMinimumDistance(MinDistance.getYardMinDistance(pl, DcrConstants.FRONT_YARD));
-            pl.getPlot().getFrontYard().setMinimumDistance(MinDistance.getYardMinDistance(pl, DcrConstants.SIDE_YARD_1));
-            pl.getPlot().getFrontYard().setMinimumDistance(MinDistance.getYardMinDistance(pl, DcrConstants.SIDE_YARD_2));
-            pl.getPlot().getFrontYard().setMinimumDistance(MinDistance.getYardMinDistance(pl, DcrConstants.REAR_YARD));
+            pl.getPlot().getSideYard1().setMinimumDistance(MinDistance.getYardMinDistance(pl, DcrConstants.SIDE_YARD_1));
+            pl.getPlot().getSideYard2().setMinimumDistance(MinDistance.getYardMinDistance(pl, DcrConstants.SIDE_YARD_2));
+            pl.getPlot().getRearYard().setMinimumDistance(MinDistance.getYardMinDistance(pl, DcrConstants.REAR_YARD));
 
             pl = extractRoadDetails(doc, pl);
             pl.setNotifiedRoads(new ArrayList<>());
@@ -97,6 +100,7 @@ public class DXFExtractService {
             yard.setArea(Util.getPolyLineArea(yard.getPolyLine()));
             yard.setMean(yard.getArea().divide(BigDecimal.valueOf(yard.getPolyLine().getBounds().getWidth()), 5,
                     RoundingMode.HALF_UP));
+            LOG.info(yardName+" Mean "+yard.getMean());
             yard.setPresentInDxf(true);
 
         } else
