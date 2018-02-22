@@ -70,3 +70,4 @@
 </div>
 
 <script type="text/javascript" src="<c:url value='/resources/app/js/edcrApplicationHelper.js'/>"></script>
+<script type="text/javascript" src="<c:url value='/resources/app/js/edcr-upload-helper.js'/>"></script>

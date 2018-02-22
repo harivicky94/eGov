@@ -58,12 +58,10 @@ public class EdcrApplicationService {
 
         edcrApplication.setApplicationDate(new Date());
         edcrApplication.setApplicationNumber(applicationNumberGenerator.generate());
-        File dxfFile = saveDXF(edcrApplication);
-
-        edcrApplication.setSavedDxfFile(dxfFile);
+        edcrApplication.setSavedDxfFile(saveDXF(edcrApplication));
         edcrApplication.setPlanInformation(edcrApplication.getPlanInformation());
         edcrApplicationRepository.save(edcrApplication);
-        dcrService.process(dxfFile, edcrApplication);
+        //dcrService.process(dxfFile, edcrApplication);
         portalInetgrationService.createPortalUserinbox(edcrApplication, Arrays.asList(securityUtils.getCurrentUser()));
         return edcrApplication;
     }
@@ -128,6 +126,7 @@ public class EdcrApplicationService {
 
     @Transactional
     public EdcrApplication update(final EdcrApplication edcrApplication) {
+        edcrApplication.setSavedDxfFile(saveDXF(edcrApplication));
         EdcrApplication applicationRes = edcrApplicationRepository.save(edcrApplication);
         portalInetgrationService.updatePortalUserinbox(applicationRes, securityUtils.getCurrentUser());
         return applicationRes;

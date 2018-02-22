@@ -1,10 +1,5 @@
 package org.egov.edcr.utility;
 
-import static org.egov.edcr.utility.DcrConstants.APPLICATION_MODULE_TYPE;
-
-import java.util.Date;
-import java.util.List;
-
 import org.egov.edcr.entity.EdcrApplication;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
@@ -15,6 +10,11 @@ import org.egov.portal.service.PortalInboxService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Date;
+import java.util.List;
+
+import static org.egov.edcr.utility.DcrConstants.APPLICATION_MODULE_TYPE;
 
 @Service
 @Transactional(readOnly = true)
@@ -30,7 +30,7 @@ public class PortalInetgrationService {
         String url = "/edcr/edcrapplication/view/" + application.getApplicationNumber();
         if (application != null)
             portalInboxService.updateInboxMessage(application.getApplicationNumber(), module.getId(),
-                    "Approved", true, new Date(), null,
+                    "Re-submitted", false, new Date(), null,
                     additionalPortalInboxUser, application.getDcrNumber(), url);
     }
 

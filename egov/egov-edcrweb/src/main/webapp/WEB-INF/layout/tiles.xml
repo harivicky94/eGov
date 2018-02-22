@@ -75,4 +75,9 @@
         <put-attribute name="body" value="/WEB-INF/views/edcrapplication/edcrapplication-search.jsp"/>
     </definition>
 
+    <definition name="edcr-reupload-form" extends="base_layout">
+        <put-attribute name="page-title" value="title.edr.reupload" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/edcrapplication/edcr-reupload-form.jsp"/>
+    </definition>
+
 </tiles-definitions>

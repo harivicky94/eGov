@@ -59,52 +59,32 @@
 </div>
 <div class="panel-body">
     <div class="form-group">
-        <label class="col-sm-3 control-label text-right"><spring:message code="lbl.occupancy" /> <span
+        <label class="col-sm-3 control-label text-right"><spring:message code="lbl.applicationnumber" /> <span
                 class="mandatory"></span></label>
         <div class="col-sm-3 add-margin">
-            <form:select path="planInformation.occupancy" data-first-option="false"
-                         id="occupancy" cssClass="form-control" readonly="true" required="required">
-                <form:option value="">
-                    <spring:message code="lbl.select" />
-                </form:option>
-                <form:options items="${occupancyList}" itemValue="description"
-                              itemLabel="description" />
-            </form:select>
-            <form:errors path="planInformation.occupancy" cssClass="add-margin error-msg" />
+            <input type="hidden" name="id" id="edcrApplnId" value="${edcrApplication.id}">
+            <input type="hidden" name="edcrApplication" id="edcrApplication" value="${edcrApplication.id}">
+            <input type="text" class="form-control resetValues" name="applicationNumber" id="applicationNumber" value="${edcrApplication.applicationNumber}" required="required">
         </div>
-        <label class="col-sm-2 control-label text-right"><spring:message code="lbl.service.type" /> <span class="mandatory"></span>
+        <label class="col-sm-2 control-label text-right"><spring:message code="lbl.occupancy" /></label>
+        <div class="col-sm-3 add-margin">
+            <input type="text" name="planInformation.occupancy" class="form-control resetValues" id="occupancy" value="${edcrApplication.planInformation.occupancy}" readonly="readonly">
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-3 control-label text-right"><spring:message code="lbl.service.type" />
         </label>
         <div class="col-sm-3 add-margin">
-            <form:select path="planInformation.serviceType" data-first-option="false"
-                         id="serviceType" cssClass="form-control serviceType" readonly="true"
-                         required="required">
-                <form:option value="">
-                    <spring:message code="lbl.select" />
-                </form:option>
-                <form:options items="${serviceTypeList}" itemValue="description"
-                              itemLabel="description" />
-            </form:select>
-            <form:errors path="planInformation.serviceType" cssClass="add-margin error-msg" />
+            <input type="text" name="planInformation.serviceType" class="form-control resetValues" id="serviceType" value="${edcrApplication.planInformation.serviceType}" readonly="readonly">
         </div>
-    </div>
-    <div class="form-group">
-            <label class="col-sm-3 control-label text-right"><spring:message code="lbl.amenity.type" />
+            <label class="col-sm-2 control-label text-right"><spring:message code="lbl.amenity.type" />
             </label>
         <div class="col-sm-3 add-margin">
-            <form:hidden path="planInformation.amenities" id="amenities"></form:hidden>
-            <select name="" multiple id="applicationAmenity"
-                    class="form-control applicationAmenity tick-indicator">
-                <c:forEach items="${amenityTypeList}" var="amenity">
-                    <option value="${amenity.description}" title="${amenity.description}" >${amenity.description}</option>
-                </c:forEach>
-            </select>
-
-            <form:errors path="planInformation.amenities"
-                         cssClass="add-margin error-msg" />
+            <textarea name="planInformation.amenities" class="form-control resetValues" id="amenities" value="${edcrApplication.planInformation.amenities}" readonly="readonly"></textarea>
         </div>
     </div>
     <div class="form-group">
-        <label class="col-sm-3 control-label text-right">E-Dcr Upload<span class="mandatory"></span></label>
+        <label class="col-sm-3 control-label text-right">Re-Upload E-Dcr<span class="mandatory"></span></label>
         <div class="col-sm-4 add-margin">
             <div class="fileSection col-md77-4">
                 <input type="file" required="required" name="dxfFile" id="myfile" style="display:none;">
