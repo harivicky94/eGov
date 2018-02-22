@@ -11,8 +11,13 @@ public class ReportOutput {
         if (ruleOutPuts == null) {
             ruleOutPuts = new ArrayList<>();
             ruleOutPuts.add(ruleOut);
-        } else
+        } else{
+            if(ruleOutPuts.contains(ruleOut)) 
+            {
+                ruleOutPuts.get(ruleOutPuts.indexOf(ruleOut)).addAll(ruleOut.getSubRuleOutputs());
+            }else            
             ruleOutPuts.add(ruleOut);
+        }
 
     }
 
@@ -26,7 +31,9 @@ public class ReportOutput {
 
     @Override
     public String toString() {
-        return "ReportOutput [ruleOutPuts=" + ruleOutPuts + ", getRuleOutPuts()=" + getRuleOutPuts() + "]";
+        return "ReportOutput [ruleOutPuts=" + ruleOutPuts + "]";
     }
+
+
 
 }

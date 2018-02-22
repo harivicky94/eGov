@@ -12,10 +12,15 @@ public class SubRuleOutput {
     public Result result;
     public String ruleDescription;
 
+   
+
     @Override
     public String toString() {
-        return "SubRuleOutput [message=" + message + "RuleReportOutput" + ruleReportOutputs + "]";
+        return "SubRuleOutput [key=" + key + ", ruleReportOutputs=" + ruleReportOutputs + ", message=" + message + ", result="
+                + result + ", ruleDescription=" + ruleDescription + "]";
     }
+
+
 
     public void add(RuleReportOutput ruleReportOutput) {
         if (ruleReportOutputs == null) {

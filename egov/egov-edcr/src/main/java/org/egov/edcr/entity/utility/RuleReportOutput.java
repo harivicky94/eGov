@@ -49,8 +49,10 @@ public class RuleReportOutput {
 
     @Override
     public String toString() {
-        return "RuleReportOutput [ruleKey=" + "" + ", fieldVerified=" + fieldVerified + ", expectedResult=" + expectedResult
-                + ", actualResult=" + actualResult + ", status=" + status + "]";
+        return "RuleReportOutput [fieldVerified=" + fieldVerified + ", expectedResult=" + expectedResult + ", actualResult="
+                + actualResult + ", status=" + status + "]";
     }
+
+   
 
 }

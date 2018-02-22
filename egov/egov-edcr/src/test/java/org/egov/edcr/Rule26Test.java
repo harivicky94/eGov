@@ -7,13 +7,8 @@ import org.egov.edcr.entity.ElectricLine;
 import org.egov.edcr.entity.PlanDetail;
 import org.egov.edcr.entity.PlanInformation;
 import org.egov.edcr.entity.Plot;
-import org.egov.edcr.entity.RuleOutput;
-import org.egov.edcr.entity.SubRuleOutput;
 import org.egov.edcr.entity.measurement.NonNotifiedRoad;
 import org.egov.edcr.entity.measurement.NotifiedRoad;
-import org.egov.edcr.entity.measurement.RearYard;
-import org.egov.edcr.entity.measurement.SideYard1;
-import org.egov.edcr.entity.measurement.SideYard2;
 import org.egov.edcr.entity.measurement.WasteDisposal;
 import org.egov.edcr.entity.measurement.Yard;
 import org.egov.edcr.rule.Rule62;
@@ -82,16 +77,16 @@ public class Rule26Test {
         
         planDetail=rule23.validate(planDetail);
         planDetail=rule23.process(planDetail);
-        System.out.println("Errors : " +  planDetail.getErrors());
+        System.out.println("Errors : " +  planDetail.getErrors() + "\n  Report output: "+ planDetail.reportOutput);
         
-      for(RuleOutput ruleout: planDetail.reportOutput.ruleOutPuts)
+     /* for(RuleOutput ruleout: planDetail.reportOutput.ruleOutPuts)
       {
-          System.out.println( ruleout.key);
+          System.out.println( ruleout);
          for (SubRuleOutput subruleout: ruleout.subRuleOutputs)
-         { System.out.println( subruleout.message);
-         System.out.println( subruleout.result);
+         { System.out.println( subruleout.);
+       //  System.out.println( subruleout.result);
          }
-      }
+      }*/
         
         
         
