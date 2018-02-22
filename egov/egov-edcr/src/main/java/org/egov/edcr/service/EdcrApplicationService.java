@@ -1,18 +1,5 @@
 package org.egov.edcr.service;
 
-import static org.egov.edcr.utility.DcrConstants.FILESTORE_MODULECODE;
-
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.egov.edcr.autonumber.DcrApplicationNumberGenerator;
 import org.egov.edcr.entity.DcrDocument;
 import org.egov.edcr.entity.EdcrApplication;
@@ -24,11 +11,24 @@ import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
+import static org.egov.edcr.utility.DcrConstants.FILESTORE_MODULECODE;
 
 @Service
 @Transactional(readOnly = true)
@@ -50,14 +50,16 @@ public class EdcrApplicationService {
     private FileStoreService fileStoreService;
     @Autowired
     private PortalInetgrationService portalInetgrationService;
+    @Autowired
+    private ApplicationNumberGenerator applicationNumberGenerator;
 
     @Transactional
     public EdcrApplication create(final EdcrApplication edcrApplication) {
 
         edcrApplication.setApplicationDate(new Date());
-        edcrApplication.setApplicationNumber(dcrApplicationNumberGenerator.generateEDcrApplicationNumber(edcrApplication));
-        File dxfFile= saveDXF(edcrApplication);
-        
+        edcrApplication.setApplicationNumber(applicationNumberGenerator.generate());
+        File dxfFile = saveDXF(edcrApplication);
+
         edcrApplication.setSavedDxfFile(dxfFile);
         edcrApplication.setPlanInformation(edcrApplication.getPlanInformation());
         edcrApplicationRepository.save(edcrApplication);
@@ -74,11 +76,11 @@ public class EdcrApplicationService {
 */
     private File saveDXF(EdcrApplication edcrApplication) {
         FileStoreMapper fileStoreMapper = addToFileStore(edcrApplication.getDxfFile());
-        File dxfFile= fileStoreService.fetch(fileStoreMapper.getFileStoreId(), FILESTORE_MODULECODE) ;
+        File dxfFile = fileStoreService.fetch(fileStoreMapper.getFileStoreId(), FILESTORE_MODULECODE);
         buildDocuments(edcrApplication, fileStoreMapper, null);
         edcrApplication.setDcrDocuments(edcrApplication.getDcrDocuments());
         return dxfFile;
-        
+
     }
 
     @Transactional
