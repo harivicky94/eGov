@@ -4,9 +4,12 @@ import org.egov.edcr.entity.PlanDetail;
 import org.egov.edcr.entity.Result;
 import org.egov.edcr.utility.DcrConstants;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.stereotype.Service;
+
 import java.math.BigDecimal;
 import java.util.HashMap;
 
+@Service
 public class Rule33 extends GeneralRule {
 
     private static final String SUB_RULE_33_1 = "SUB_RULE_33_1";

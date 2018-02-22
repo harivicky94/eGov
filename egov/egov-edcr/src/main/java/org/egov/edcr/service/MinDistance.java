@@ -1,6 +1,7 @@
 package org.egov.edcr.service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -25,7 +26,7 @@ public class MinDistance {
         Util.print(plotBoundary,"Plot Boundary");
         DXFLWPolyline buildFoorPrint = pl.getBuilding().getPolyLine();
         Util.print(buildFoorPrint,"buildFoorPrint");
-        buildFoorPrint.getRows();
+        
         DXFLWPolyline yard = null;
         if (name.equals(DcrConstants.FRONT_YARD))
             yard = pl.getPlot().getFrontYard().getPolyLine();
@@ -35,7 +36,12 @@ public class MinDistance {
             yard = pl.getPlot().getSideYard1().getPolyLine();
         if (name.equals(DcrConstants.SIDE_YARD_2))
             yard = pl.getPlot().getSideYard2().getPolyLine();
-
+        if(plotBoundary==null || buildFoorPrint==null ||yard==null )
+        {
+            pl.getErrors().put("Set back calculation Error", "Either" + DcrConstants.BUILDING_FOOT_PRINT +","+DcrConstants.PLOT_BOUNDARY
+                    +" or "+name +" is not found" );
+            return BigDecimal.ZERO.setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS);
+        }
         Iterator vertexIterator = yard.getVertexIterator();
         Util.print(yard,name);
         List<Point> yardOutSidePoints = new ArrayList<>();
@@ -122,7 +128,7 @@ public class MinDistance {
         List<Point> insidePoints = findPointsOnPolylines(yardInSidePoints);
         // System.out.println(insidePoints.size());
         
-        if(insidePoints.isEmpty())
+        if(yardInSidePoints.isEmpty())
         {
             pl.getErrors().put("Set back calculation Error", "Points of "+name+" not properly on "+DcrConstants.BUILDING_FOOT_PRINT);
         }  
@@ -141,7 +147,7 @@ public class MinDistance {
         java.util.Collections.sort(distanceList);
         // System.out.println("the shortest Distance is " + distanceList.get(0));
         if (distanceList.size() > 0)
-            return BigDecimal.valueOf(distanceList.get(0)).setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS);
+            return BigDecimal.valueOf(distanceList.get(0)).setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS,RoundingMode.HALF_UP);
         else
             return BigDecimal.ZERO.setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS);
 
@@ -162,7 +168,7 @@ public class MinDistance {
             i++;
 
         }
-        shape[i] = shape[0];
+       // shape[i] = shape[0];
         return shape;
     }
 

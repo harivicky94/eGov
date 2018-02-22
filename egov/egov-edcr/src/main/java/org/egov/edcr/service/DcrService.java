@@ -84,8 +84,18 @@ public class DcrService {
             for (String s : ruleSet) {
                 String ruleName = "rule" + s;
                 LOG.info(s);
+                if(applicationContext.getBean(ruleName)!=null)
+                {
                 GeneralRule bean = (GeneralRule) applicationContext.getBean(ruleName);
-                planDetail = bean.validate(planDetail);
+                if(bean!=null)
+                {
+                    planDetail = bean.validate(planDetail);
+                }
+                }else
+                {
+                    LOG.error("Skipping rule "+ruleName+ "Since rule cannot be injected");
+                }
+              
 
             }
         }
@@ -97,9 +107,17 @@ public class DcrService {
 
             for (String s : ruleSet) {
                 String ruleName = "rule" + s;
-
+                if(applicationContext.getBean(ruleName)!=null)
+                {
+                        
                 GeneralRule bean = (GeneralRule) applicationContext.getBean(ruleName);
+                if(bean!=null){
                 planDetail = bean.process(planDetail);
+                }
+                }else
+                {
+                    LOG.error("Skipping rule "+ruleName+ "Since rule cannot be injected");
+                } 
 
             }
         }

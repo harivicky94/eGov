@@ -433,24 +433,32 @@ public class Util {
     
     public static void print(ReportOutput ro)
     {
-        LOG.info("ReportOutput");
-        for( RuleOutput rp:  ro.getRuleOutPuts())
-        {
-            LOG.info(rp.key +" -- "+rp.getMessage()+" -- "+rp.getResult().toString());
-            for(SubRuleOutput so:rp.getSubRuleOutputs())
+        try {
+            LOG.info("ReportOutput");
+            if(ro.getRuleOutPuts()!=null)
+            for( RuleOutput rp:  ro.getRuleOutPuts())
             {
-                LOG.info(so.key+" , "+so.message+" , "+so.ruleDescription);
-                List<RuleReportOutput> ruleReportOutputs = so.ruleReportOutputs;
-                for(RuleReportOutput rro:ruleReportOutputs)
+                LOG.info(rp.key +" -- "+rp.getMessage()+" -- "+rp.getResult());
+                if(rp.getSubRuleOutputs()!=null)
+                for(SubRuleOutput so:rp.getSubRuleOutputs())
                 {
-                    LOG.info("Actual: "+rro.actualResult );
-                    LOG.info("Expected: "+rro.expectedResult);
-                    LOG.info("Filed Verified: "+rro.fieldVerified );
-                    LOG.info("Status: "+rro.status);
-                    
+                    LOG.info(so.key+" , "+so.message+" , "+so.ruleDescription);
+                    List<RuleReportOutput> ruleReportOutputs = so.ruleReportOutputs;
+                    if(ruleReportOutputs!=null)
+                    for(RuleReportOutput rro:ruleReportOutputs)
+                    {
+                        LOG.info("Actual: "+rro.actualResult );
+                        LOG.info("Expected: "+rro.expectedResult);
+                        LOG.info("Filed Verified: "+rro.fieldVerified );
+                        LOG.info("Status: "+rro.status);
+                        
+                    }
                 }
+                    
             }
-                
+        } catch (Exception e) {
+            
+          LOG.error("Ignoring since it is logging error",e);
         }
          
     }

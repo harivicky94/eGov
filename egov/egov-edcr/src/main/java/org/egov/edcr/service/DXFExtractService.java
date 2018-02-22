@@ -53,16 +53,23 @@ public class DXFExtractService {
             pl.setPlanInformation(extractPlanInfo(doc));
 
             Plot plot = new Plot();
-            polyLinesByLayer = Util.getPolyLinesByLayer(doc, Plot.PLOT_BOUNDARY);
-            if (polyLinesByLayer.size() > 0)
+            polyLinesByLayer = Util.getPolyLinesByLayer(doc, DcrConstants.PLOT_BOUNDARY);
+            if (polyLinesByLayer.size() > 0){
                 plot.setPolyLine(polyLinesByLayer.get(0));
+                plot.setPresentInDxf(true);
+            }
             else
                 pl.addError("", edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
                         new String[] { DcrConstants.PLOT_BOUNDARY }, null));
             pl.setPlot(plot);
             Building building = new Building();
+            polyLinesByLayer = Util.getPolyLinesByLayer(doc, DcrConstants.BUILDING_FOOT_PRINT);
+            
             if (polyLinesByLayer.size() > 0)
+            {
                 building.setPolyLine(polyLinesByLayer.get(0));
+                building.setPresentInDxf(true);
+            }
             else
                 pl.addError("", edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
                         new String[] { DcrConstants.BUILDING_FOOT_PRINT }, null));

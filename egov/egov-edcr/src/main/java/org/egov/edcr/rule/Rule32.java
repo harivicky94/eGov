@@ -7,7 +7,9 @@ import org.egov.edcr.entity.PlanDetail;
 import org.egov.edcr.entity.Result;
 import org.egov.edcr.utility.DcrConstants;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.stereotype.Service;
 
+@Service
 public class Rule32 extends GeneralRule {
 
     private static final String SUB_RULE_32_1A = "SUB_RULE_32_1A";
