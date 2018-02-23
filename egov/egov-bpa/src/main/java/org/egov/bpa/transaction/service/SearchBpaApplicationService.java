@@ -273,7 +273,7 @@ public class SearchBpaApplicationService {
 			criteria.createAlias("adminBoundary.parent", "parent")
 					.add(Restrictions.eq("parent.name", searchBpaApplicationForm.getZone()));
 		}
-		criteria.add(Restrictions.eq("slotApplication.active", true));
+		criteria.add(Restrictions.eq("slotApplication.isActive", true));
 		criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 		criteria.setProjection(Projections.distinct(Projections.projectionList()
 			    .add(Projections.property("application"), "application") )).setResultTransformer(Transformers.aliasToBean(SlotApplication.class)); 
