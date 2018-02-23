@@ -155,6 +155,9 @@
                                  <resource>
                                     <directory>../egov-bpa/src/main/resources/db/migration</directory>
                                 </resource>
+                                <resource>
+                                    <directory>../egov-edcr/src/main/resources/db/migration</directory>
+                                </resource>
                             </resources>
                         </configuration>
                     </execution>
