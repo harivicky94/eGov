@@ -36,6 +36,12 @@ public class PlanInformation extends AbstractAuditable {
     @Transient
     private BigDecimal accessWidth;
 
+    @Transient
+    private Boolean nocPresent;
+
+    @Transient
+    private Boolean openingPresent;
+
     @Override
     public Long getId() {
         return id;
@@ -124,5 +130,21 @@ public class PlanInformation extends AbstractAuditable {
 
     public void setAccessWidth(BigDecimal accessWidth) {
         this.accessWidth = accessWidth;
+    }
+
+    public Boolean getNocPresent() {
+        return nocPresent;
+    }
+
+    public void setNocPresent(Boolean nocPresent) {
+        this.nocPresent = nocPresent;
+    }
+
+    public Boolean getOpeningPresent() {
+        return openingPresent;
+    }
+
+    public void setOpeningPresent(Boolean openingPresent) {
+        this.openingPresent = openingPresent;
     }
 }
