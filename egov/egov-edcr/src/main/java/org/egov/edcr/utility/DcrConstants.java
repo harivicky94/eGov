@@ -9,6 +9,7 @@ public class DcrConstants {
     public static final String RULE23 = "RULE23";
     public static final String RULE26 = "RULE26";
     public static final String RULE30 = "RULE30";
+    public static final String RULE31 = "RULE31";
     public static final String RULE32 = "RULE32";
     public static final String RULE33 = "RULE33";
     public static final String RULE60 = "RULE60";
@@ -71,5 +72,9 @@ public class DcrConstants {
     public static final String TOTAL_FLOOR_AREA = "TOTAL_FLOOR_AREA";
     public static final String NOC = "NOC";
     public static final String PLOT_AREA_PLAN_INFO = "PLOT_AREA";
+    public static final String FAR_DEDUCT ="FAR_DEDUCT";
+    public static final String FLOOR_AREA ="FLOOR_AREA";
+    public static final String FAR ="F.A.R";
+    public static final String COVERAGE ="COVERAGE";
 
 }
