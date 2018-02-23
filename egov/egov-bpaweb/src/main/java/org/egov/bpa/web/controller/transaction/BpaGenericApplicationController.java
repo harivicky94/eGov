@@ -325,5 +325,10 @@ public abstract class BpaGenericApplicationController extends GenericWorkFlowCon
     public List<ApplicationType>  showSearchApprovedforFee() {
 		return Arrays.asList(ApplicationType.values());
     }
+    
+    @ModelAttribute("oneDayPermitLandTypeList") 
+    public List<OneDayPermitLandType> getOneDayPermitLandType() {
+        return Arrays.asList(OneDayPermitLandType.values());
+    }
 
 }

@@ -578,6 +578,35 @@ $(document).ready(function() {
 	$( "#constStages" ).trigger( "change" );
 	$( ".serviceType" ).trigger( "change" );
 	$( ".applicationAmenity" ).trigger( "change" );
+	
+	$('#oneDayPermitSec').hide(); 
+	var seviceTypeName = $( "#serviceType option:selected" ).text();
+	if('Addition or Extension' == seviceTypeName || 'Alteration' == seviceTypeName || 'New Construction' == seviceTypeName
+			|| 'Amenities' == seviceTypeName) {
+		$('#occupancyapplnlevel').on('change', function() {
+			if($("#occupancyapplnlevel option:selected" ).text() == 'Residential'){
+				$('#oneDayPermitSec').show(); 
+				$('#isOneDayPermitApplication').prop('checked', false); 
+				$('#oneDayPermitTypeOfLandSec').hide(); 
+				  $('#isOneDayPermitApplication').click(function() {
+				        if (!$(this).is(':checked')) {
+				        	$( "#typeOfLand" ).val('')
+				        	$('#oneDayPermitTypeOfLandSec').hide(); 
+				        	$('#isOneDayPermitApplication').prop('checked', false);
+				        	$('#typeOfLand').removeAttr('required');
+				        } else{
+				        	$('#typeOfLand').prop('required', true); 
+				        	$('#oneDayPermitTypeOfLandSec').show();
+				        }
+				  });
+			} else {
+				$('#typeOfLand').removeAttr('required');
+				$('#isOneDayPermitApplication').prop('checked', false); 
+	    		$( "#typeOfLand" ).val('')
+				$('#oneDayPermitSec').hide();
+			}
+		}); 
+	}
 });
 
 

@@ -189,7 +189,9 @@ public abstract class BpaApplicationWorkflowCustomImpl implements BpaApplication
                        .withNatureOfTask(BpaConstants.NATURE_OF_WORK);
 
         } else if (BpaConstants.WF_INITIATE_REJECTION_BUTTON.equalsIgnoreCase(workFlowAction)) {
-            pos = bpaWorkFlowService.getApproverPositionOnReject(application, BpaConstants.REJECT_BY_CLERK);
+        	//For one day permit, position need not be set 
+        	if(!application.getIsOneDayPermitApplication()) 
+        		pos = bpaWorkFlowService.getApproverPositionOnReject(application, BpaConstants.REJECT_BY_CLERK);
             wfmatrix = bpaApplicationWorkflowService.getWfMatrix(application.getStateType(), null,
                     null, additionalRule, BpaConstants.REJECT_BY_CLERK, null);
             application.setStatus(getStatusByPassingCode(BpaConstants.WF_REJECT_STATE));

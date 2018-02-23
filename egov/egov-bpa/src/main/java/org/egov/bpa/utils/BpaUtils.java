@@ -136,7 +136,11 @@ public class BpaUtils {
     }
 
     public WorkFlowMatrix getWfMatrixByCurrentState(final BpaApplication application, final String currentState) {
-        return bpaApplicationWorkflowService.getWfMatrix(application.getStateType(), null, null,
+    	if(application.getIsOneDayPermitApplication()){
+    		return bpaApplicationWorkflowService.getWfMatrix(application.getStateType(), null, null,
+                    CREATE_ADDITIONAL_RULE_CREATE_ONEDAYPERMIT, currentState, null);
+    	}else
+    		return bpaApplicationWorkflowService.getWfMatrix(application.getStateType(), null, null,
                 CREATE_ADDITIONAL_RULE_CREATE, currentState, null);
     }
 
@@ -289,12 +293,22 @@ public class BpaUtils {
         else if (LPREPLIED.equals(currentState))
             applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(application, approvalPositionId, remarks,
                     CREATE_ADDITIONAL_RULE_CREATE, LPREPLYRECEIVED, amountRule);
-        else if (WF_PERMIT_FEE_COLL_PENDING.equals(currentState))
+        else if (WF_PERMIT_FEE_COLL_PENDING.equals(currentState)){
+        	if(application.getIsOneDayPermitApplication()){
+        		 applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(application, approvalPositionId, remarks,
+                         CREATE_ADDITIONAL_RULE_CREATE_ONEDAYPERMIT, WF_PERMIT_FEE_COLL_PENDING, amountRule);
+        	}else
             applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(application, approvalPositionId, remarks,
                     CREATE_ADDITIONAL_RULE_CREATE, WF_PERMIT_FEE_COLL_PENDING, amountRule);
-        else
-            applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(application, approvalPositionId, remarks,
+        }
+        else{
+        	if(application.getIsOneDayPermitApplication()){
+        		applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(application, approvalPositionId, remarks,
+                        CREATE_ADDITIONAL_RULE_CREATE_ONEDAYPERMIT, workFlowAction, amountRule);
+        	}else
+        		applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(application, approvalPositionId, remarks,
                     CREATE_ADDITIONAL_RULE_CREATE, workFlowAction, amountRule);
+        }
     }
 
     public void sendSmsEmailOnCitizenSubmit(BpaApplication bpaApplication) {

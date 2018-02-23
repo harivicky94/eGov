@@ -207,7 +207,7 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
                             .concat(getDesinationNameByPosition(pos))
                             : "",
                     bpaApplication.getApplicationNumber() }, LocaleContextHolder.getLocale());
-            model.addAttribute(MESSAGE, message.concat(DISCLIMER_MESSAGE_ONSAVE));
+            model.addAttribute(MESSAGE, message.concat(bpaApplication.getIsOneDayPermitApplication()?DISCLIMER_MESSAGE_ONEDAYPERMIT_ONSAVE:DISCLIMER_MESSAGE_ONSAVE));
         } else if (workFlowAction != null && workFlowAction.equals(WF_CANCELAPPLICATION_BUTTON)) {
             model.addAttribute(MESSAGE,
                     bpaApplication.getApplicationNumber() + " Application Cancelled Successfully.");

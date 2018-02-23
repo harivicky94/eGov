@@ -79,6 +79,10 @@ public class Slot extends AbstractAuditable {
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "zone")
 	private Boundary zone;
+	
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JoinColumn(name = "electionward")
+	private Boundary electionWard;
 
 	@Temporal(value = TemporalType.DATE)
 	@NotNull
@@ -119,6 +123,14 @@ public class Slot extends AbstractAuditable {
 
 	public void setAppointmentDate(Date appointmentDate) {
 		this.appointmentDate = appointmentDate;
+	}
+	
+	public Boundary getElectionWard() {
+		return electionWard;
+	}
+
+	public void setElectionWard(Boundary electionWard) {
+		this.electionWard = electionWard;
 	}
 
 }

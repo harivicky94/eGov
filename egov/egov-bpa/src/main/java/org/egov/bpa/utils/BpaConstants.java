@@ -116,6 +116,7 @@ public class BpaConstants {
     public static final String WF_REJECT_STATE = "Rejected";
     public static final String WF_END_STATE = "END";
     public static final String CREATE_ADDITIONAL_RULE_CREATE = "CREATEBPAAPPLICATION";
+    public static final String CREATE_ADDITIONAL_RULE_CREATE_ONEDAYPERMIT = "CREATEBPAAPPLICATION-ONEDAYPERMIT";
     public static final String FIELD_INSPECTION_COMPLETED = "Field Inspection completed";
     public static final String WF_TS_INSPECTION_INITIATED = "Town Surveyor Inspection Initiated";
     public static final String WF_AE_APPROVAL_PENDING = "AE Approval Pending";
@@ -258,6 +259,7 @@ public class BpaConstants {
     public static final String ENABLEONLINEPAYMENT = "BPA_ONLINE_PAY";
     public static final String BPA_CITIZENACCEPTANCE_CHECK = "BPA_CITIZENACCEPTANCE_CHECK";
     public static final String DISCLIMER_MESSAGE_ONSAVE = "\n   Acceptance of building permit application in the system and DCR checking process does not confer a claim for building permit approval.";
+    public static final String DISCLIMER_MESSAGE_ONEDAYPERMIT_ONSAVE = "\n   Acceptance of one day building permit application in the system and DCR checking process does not confer a claim for building permit approval.";
     // configuration value constants
     public static final String YES = "YES";
     public static final String NO = "NO";

@@ -110,7 +110,7 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
     @RequestMapping(value = "/newconstruction-form", method = GET)
     public String showNewApplicationForm(@ModelAttribute final BpaApplication bpaApplication, final Model model,
             final HttpServletRequest request) {
-        setCityName(model, request);
+        setCityName(model, request);  
         return loadNewForm(bpaApplication, model, BpaConstants.ST_CODE_01);
     }
 
@@ -227,8 +227,8 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
             final BindingResult resultBinder,
             final HttpServletRequest request, final Model model,
             final BindingResult errors) {
-
-        if (bpaApplicationValidationService.validateBuildingDetails(bpaApplication, model)) {
+    	
+    	if (bpaApplicationValidationService.validateBuildingDetails(bpaApplication, model)) {
             applicationBpaService.buildExistingAndProposedBuildingDetails(bpaApplication);
             prepareCommonModelAttribute(model, bpaApplication);
             return loadNewForm(bpaApplication, model, bpaApplication.getServiceType().getCode());
@@ -299,7 +299,7 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
             buildOwnerDetails(bpaApplication);
         }
         BpaApplication bpaApplicationRes = applicationBpaService.createNewApplication(bpaApplication, workFlowAction);
-        if (citizenOrBusinessUser) {
+        if (citizenOrBusinessUser) { 
             if (isCitizen)
                 bpaUtils.createPortalUserinbox(bpaApplicationRes, Arrays.asList(bpaApplicationRes.getOwner().getUser(),
                         bpaApplicationRes.getStakeHolder().get(0).getStakeHolder()), workFlowAction);
@@ -317,12 +317,12 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
                                 .concat(getDesinationNameByPosition(pos))
                                 : "",
                         bpaApplicationRes.getApplicationNumber() }, LocaleContextHolder.getLocale());
-                model.addAttribute(MESSAGE, message.concat(DISCLIMER_MESSAGE_ONSAVE));
+                model.addAttribute(MESSAGE, message.concat(bpaApplicationRes.getIsOneDayPermitApplication()?DISCLIMER_MESSAGE_ONEDAYPERMIT_ONSAVE:DISCLIMER_MESSAGE_ONSAVE));
             } else {
                 model.addAttribute(MESSAGE,
                         "Sucessfully saved with ApplicationNumber " + bpaApplicationRes.getApplicationNumber() + ".");
             }
-            bpaUtils.sendSmsEmailOnCitizenSubmit(bpaApplication);
+            bpaUtils.sendSmsEmailOnCitizenSubmit(bpaApplication);  
         }
         return BPAAPPLICATION_CITIZEN;
     }

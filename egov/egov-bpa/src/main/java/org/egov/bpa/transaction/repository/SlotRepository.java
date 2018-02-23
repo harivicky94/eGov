@@ -57,4 +57,6 @@ public interface SlotRepository extends JpaRepository<Slot, Long> {
 	List<Slot> findByZoneAndApplicationDate(@Param("zone") Boundary zone, @Param("slotDate") Date slotDate);
 
 	Slot findByZoneAndAppointmentDate(Boundary zone, Date appointmentDate);
+	
+	Slot findByZoneAndElectionWardAndAppointmentDate(Boundary zone, Boundary electionWard, Date appointmentDate);
 }

@@ -51,6 +51,7 @@ import org.egov.bpa.transaction.entity.ApplicationDocument;
 import org.egov.bpa.transaction.entity.ApplicationNocDocument;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.BpaStatus;
+import org.egov.bpa.transaction.entity.SlotDetail;
 import org.egov.bpa.transaction.repository.ApplicationBpaRepository;
 import org.egov.bpa.transaction.service.collection.ApplicationBpaBillService;
 import org.egov.bpa.transaction.service.collection.BpaDemandService;
@@ -154,6 +155,10 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
     private ExistingBuildingFloorDetailsService existingBuildingFloorDetailsService;
     @Autowired
     private BpaApplicationPermitConditionsService bpaApplicationPermitConditionsService;
+    @Autowired
+    private SlotOpeningForAppointmentService slotOpeningForAppointmentService;
+    @Autowired
+    private ScheduleAppointmentForDocumentScrutinyService scheduleAppointmentForDocumentScrutinyService;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -207,8 +212,13 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
                         application.getSiteDetail().get(0) != null
                                 && application.getSiteDetail().get(0).getElectionBoundary() != null
                                         ? application.getSiteDetail().get(0).getElectionBoundary().getId() : null);
-            bpaUtils.redirectToBpaWorkFlow(approvalPosition, application, WF_NEW_STATE,
+          bpaUtils.redirectToBpaWorkFlow(approvalPosition, application, WF_NEW_STATE,
                     application.getApprovalComent(), null, null);
+        }
+        if(application.getIsOneDayPermitApplication() && application.getStatus().getCode().equalsIgnoreCase(BpaConstants.APPLICATION_STATUS_REGISTERED)) {
+        	SlotDetail slotDetail = slotOpeningForAppointmentService.openSlotsForDocumentScrutiny(application.getSiteDetail().get(0).getAdminBoundary().getParent(),
+        			application.getSiteDetail().get(0).getElectionBoundary());
+        	scheduleAppointmentForDocumentScrutinyService.scheduleOneDayPermitApplicationsForDocumentScrutiny(application, slotDetail);
         }
         return applicationBpaRepository.save(application);
     }
@@ -299,14 +309,21 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
     }
 
     @Transactional
-    public BpaApplication updateApplication(final BpaApplication application, final Long approvalPosition,
-            String workFlowAction, BigDecimal amountRule) {
+    public BpaApplication updateApplication(final BpaApplication application, Long approvalPosition,
+            String workFlowAction, BigDecimal amountRule) { 
         application.setSource(Source.SYSTEM);
         application.setSentToPreviousOwner(false);
         persistBpaNocDocuments(application);
         buildExistingAndProposedBuildingDetails(application);
         persistPostalAddress(application);
         buildSchemeLandUsage(application);
+        //For one day permit
+        if (application.getIsOneDayPermitApplication() && !WF_SAVE_BUTTON.equalsIgnoreCase(workFlowAction) && 
+        		!WF_REVERT_BUTTON.equalsIgnoreCase(workFlowAction) && !WF_REJECT_BUTTON.equalsIgnoreCase(workFlowAction) &&
+        		APPLICATION_STATUS_FIELD_INS.equalsIgnoreCase(application.getStatus().getCode())) {
+            bpaDemandService.generateDemandUsingSanctionFeeList(applicationFeeService
+                    .saveApplicationFee(applicationBpaFeeCalculationService.calculateBpaSanctionFees(application)));
+        }
         if (!WF_SAVE_BUTTON.equalsIgnoreCase(workFlowAction) && APPLICATION_STATUS_FIELD_INS.equalsIgnoreCase(application.getStatus().getCode())
                 && NOC_UPDATION_IN_PROGRESS.equalsIgnoreCase(application.getState().getValue())) {
             bpaDemandService.generateDemandUsingSanctionFeeList(applicationFeeService

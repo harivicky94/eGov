@@ -39,9 +39,17 @@
  */
 package org.egov.bpa.transaction.service;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+
 import org.egov.bpa.master.entity.enums.ApplicationType;
 import org.egov.bpa.master.service.SlotMappingService;
-import org.egov.bpa.transaction.entity.*;
+import org.egov.bpa.transaction.entity.BpaApplication;
+import org.egov.bpa.transaction.entity.BpaStatus;
+import org.egov.bpa.transaction.entity.Slot;
+import org.egov.bpa.transaction.entity.SlotApplication;
+import org.egov.bpa.transaction.entity.SlotDetail;
 import org.egov.bpa.transaction.entity.enums.ScheduleAppointmentType;
 import org.egov.bpa.transaction.repository.BpaStatusRepository;
 import org.egov.bpa.transaction.repository.SlotApplicationRepository;
@@ -57,10 +65,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
-
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -221,6 +225,15 @@ public class ScheduleAppointmentForDocumentScrutinyService {
 		else
 			error = "Error : " + exception;
 		return error;
+	}
+	
+	public void scheduleOneDayPermitApplicationsForDocumentScrutiny(BpaApplication bpaApplication,SlotDetail slotDetail) {
+		SlotApplication slotApplication = buildSlotApplicationObject(bpaApplication, slotDetail);
+		slotDetail.setUtilizedScheduledSlots(
+				slotDetail.getUtilizedScheduledSlots() + 1);
+		slotApplicationService.save(slotApplication);
+		applicationBpaService.saveBpaApplication(bpaApplication);
+		bpaSmsAndEmailService.sendSMSAndEmailForDocumentScrutiny(slotApplication, bpaApplication);
 	}
 
 }

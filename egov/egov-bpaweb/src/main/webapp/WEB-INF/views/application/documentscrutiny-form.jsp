@@ -119,7 +119,8 @@
 								href="/bpa/application/scrutiny/schedule/${bpaApplication.applicationNumber}"
 								class="btn btn-primary"> New Appointment </a>
 					</c:if>--%>
-					<c:if test="${ mode eq 'showRescheduleToEmployee'}">
+					<!-- Reschedule appointment not supported for one day permit application -->
+					<c:if test="${ mode eq 'showRescheduleToEmployee' && !bpaApplication.isOneDayPermitApplication}">
 						<a
 								href="/bpa/application/scrutiny/reschedule/${bpaApplication.applicationNumber}"
 								class="btn btn-primary"> Reschedule Appointment </a>
