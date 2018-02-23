@@ -37,7 +37,7 @@ public class Rule60 extends GeneralRule {
                 planDetail.getPlot() != null && planDetail.getPlot().getArea() != null)
             if (planDetail.getPlot().getArea().compareTo(_EXPECTED_PLOT_AREA) <= 0)
                 planDetail.reportOutput
-                        .add(buildRuleOutputWithSubRule(DcrConstants.RULE23, DcrConstants.RULE23, SUB_RULE_60_DESCRIPTION,
+                        .add(buildRuleOutputWithSubRule(DcrConstants.RULE60, DcrConstants.RULE60, SUB_RULE_60_DESCRIPTION,
                                 DcrConstants.PLOT_AREA,
                                 _EXPECTED_PLOT_AREA.toString() + DcrConstants.IN_METER,
                                 planDetail.getPlot().getArea().toString()
@@ -45,7 +45,7 @@ public class Rule60 extends GeneralRule {
                                 Result.Accepted, null));
             else
                 planDetail.reportOutput
-                        .add(buildRuleOutputWithSubRule(DcrConstants.RULE23, DcrConstants.RULE23, SUB_RULE_60_DESCRIPTION,
+                        .add(buildRuleOutputWithSubRule(DcrConstants.RULE60, DcrConstants.RULE60, SUB_RULE_60_DESCRIPTION,
                                 DcrConstants.PLOT_AREA,
                                 _EXPECTED_PLOT_AREA.toString() + DcrConstants.IN_METER,
                                 planDetail.getPlot().getArea().toString()

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
-<!-- 2018-02-23T00:01:02 -->
+<!-- 2018-02-23T12:04:18 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="edcr_report" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="ccdee1e7-8a6e-4168-a80a-d10d6f4f913c">
 	<import value="org.egov.infra.reporting.util.*"/>
 	<import value="org.egov.infstr.utils.*"/>
@@ -12,6 +12,8 @@
 	<parameter name="RULE26" class="org.egov.edcr.entity.RuleOutput"/>
 	<parameter name="RULE30" class="org.egov.edcr.entity.RuleOutput"/>
 	<parameter name="RULE32" class="org.egov.edcr.entity.RuleOutput"/>
+	<parameter name="RULE60" class="org.egov.edcr.entity.RuleOutput"/>
+	<parameter name="RULE61" class="org.egov.edcr.entity.RuleOutput"/>
 	<field name="planInformation" class="org.egov.edcr.entity.PlanInformation">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
@@ -243,6 +245,26 @@
 					<subreportParameterExpression><![CDATA[$P{RULE32}]]></subreportParameterExpression>
 				</subreportParameter>
 				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("rule32_report.jasper")]]></subreportExpression>
+			</subreport>
+		</band>
+		<band height="30">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+			<subreport>
+				<reportElement x="24" y="5" width="489" height="25" uuid="9d6288ef-3274-46ed-b2f7-0a8f8bdc1f74"/>
+				<subreportParameter name="RULE32">
+					<subreportParameterExpression><![CDATA[$P{RULE60}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("rule60_report.jasper")]]></subreportExpression>
+			</subreport>
+		</band>
+		<band height="30">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+			<subreport>
+				<reportElement x="24" y="5" width="489" height="25" uuid="9d6288ef-3274-46ed-b2f7-0a8f8bdc1f74"/>
+				<subreportParameter name="RULE32">
+					<subreportParameterExpression><![CDATA[$P{RULE61}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("rule61_report.jasper")]]></subreportExpression>
 			</subreport>
 		</band>
 	</detail>
