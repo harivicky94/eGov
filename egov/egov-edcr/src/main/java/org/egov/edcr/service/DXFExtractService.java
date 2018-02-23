@@ -50,8 +50,8 @@ public class DXFExtractService {
             // Extract DXF Data
             DXFDocument doc = parser.getDocument();
 
-            pl.setPlanInformation(extractPlanInfo(doc));
-
+            pl.setPlanInformation(extractPlanInfo(doc,pl));
+            pl.getPlanInformation().setOccupancy(dcrApplication.getPlanInformation().getOccupancy());
             Plot plot = new Plot();
             polyLinesByLayer = Util.getPolyLinesByLayer(doc, DcrConstants.PLOT_BOUNDARY);
             if (polyLinesByLayer.size() > 0){
@@ -122,10 +122,25 @@ public class DXFExtractService {
      * @param doc
      * @return add condition for what are mandatory
      */
-    private PlanInformation extractPlanInfo(DXFDocument doc) {
+    private PlanInformation extractPlanInfo(DXFDocument doc, PlanDetail pl) {
         PlanInformation pi = new PlanInformation();
         Map<String, String> planInfoProperties = Util.getPlanInfoProperties(doc);
         pi.setArchitectInformation(planInfoProperties.get(DcrConstants.ARCHITECTNAME));
+        String plotArea = planInfoProperties.get(DcrConstants.PLOT_AREA_PLAN_INFO);
+    
+        if (plotArea == null) {
+            pl.addError(DcrConstants.PLOT_AREA_PLAN_INFO, DcrConstants.PLOT_AREA_PLAN_INFO + " is not defined in the Plan Information Layer");
+        } else {
+            try {
+                pi.setPlotArea(BigDecimal.valueOf(Double.parseDouble(plotArea)));
+            } catch (Exception e) {
+                pl.addError(DcrConstants.PLOT_AREA_PLAN_INFO, DcrConstants.PLOT_AREA_PLAN_INFO + " contains non numeric values.");
+            }
+
+        }
+        
+        
+        
         return pi;
     }
 
@@ -160,7 +175,7 @@ public class DXFExtractService {
 
     private PlanDetail extractOverheadElectricLines(DXFDocument doc, PlanDetail pl) {
         ElectricLine line = new ElectricLine();
-        String voltage = Util.getMtextByLayerName(doc, DcrConstants.VOLTAGE);
+        String voltage = Util.getMtextByLayerName(doc, "VOLTAGE");
         if (voltage != null)
             try {
                 BigDecimal volt = BigDecimal.valueOf(Double.parseDouble(voltage));

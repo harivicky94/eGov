@@ -72,6 +72,7 @@ public class DcrService {
         // planDetail= generalRule.validate(planDetail);
         // EXTRACT DATA FROM DXFFILE TO planDetail;
         planDetail = extractService.extract(dxf1File, dcrApplication);
+        
 
         // USING PLANDETAIL OBJECT, FINDOUT RULES.
         // ITERATE EACH RULE.CHECK CONDITIONS.

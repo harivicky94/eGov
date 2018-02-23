@@ -70,5 +70,6 @@ public class DcrConstants {
     public static final String RESIDENTIAL = "RESIDENTIAL";
     public static final String TOTAL_FLOOR_AREA = "TOTAL_FLOOR_AREA";
     public static final String NOC = "NOC";
+    public static final String PLOT_AREA_PLAN_INFO = "PLOT_AREA";
 
 }
