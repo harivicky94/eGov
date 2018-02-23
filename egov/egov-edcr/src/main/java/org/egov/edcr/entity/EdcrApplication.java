@@ -1,28 +1,14 @@
 package org.egov.edcr.entity;
 
-import java.io.File;
-import java.util.Date;
-import java.util.List;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.Transient;
-import javax.validation.constraints.NotNull;
-
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import java.io.File;
+import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "EDCR_APPLICATION")
@@ -63,6 +49,7 @@ public class EdcrApplication extends AbstractAuditable {
     }
 
     @OneToMany(mappedBy = "application", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OrderBy("id DESC ")
     private List<DcrDocument> dcrDocuments;
 
     @ManyToOne(cascade = CascadeType.ALL)

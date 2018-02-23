@@ -1,10 +1,15 @@
 package org.egov.edcr.web.controller;
 
+import org.egov.bpa.master.entity.StakeHolder;
 import org.egov.bpa.master.service.OccupancyService;
 import org.egov.bpa.master.service.ServiceTypeService;
+import org.egov.bpa.master.service.StakeHolderService;
 import org.egov.edcr.entity.EdcrApplication;
+import org.egov.edcr.entity.PlanInformation;
 import org.egov.edcr.service.EdcrApplicationService;
 import org.egov.edcr.web.adaptor.EdcrApplicationJsonAdaptor;
+import org.egov.infra.persistence.entity.Address;
+import org.egov.infra.persistence.entity.enums.AddressType;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -39,6 +44,8 @@ public class EdcrApplicationController {
     private ServiceTypeService serviceTypeService;
     @Autowired
     private SecurityUtils securityUtils;
+    @Autowired
+    private StakeHolderService stakeHolderService;
   /*  @Autowired
   //  private PlanInformationService planInformationService;
 */
@@ -52,7 +59,18 @@ public class EdcrApplicationController {
     @RequestMapping(value = "/new", method = RequestMethod.GET)
     public String newForm(final Model model) {
         prepareNewForm(model);
-        model.addAttribute("edcrApplication", new EdcrApplication());
+        StakeHolder stakeHolder = stakeHolderService.findById(securityUtils.getCurrentUser().getId());
+        Address permanentAddress = stakeHolder.getAddress().stream().filter(permtAddress -> permtAddress.getType().equals(AddressType.PERMANENT)).findAny().orElse(null);
+        StringBuilder architectInfo = new StringBuilder(256).append(stakeHolder.getName())
+                                                            .append(stakeHolder.getStakeHolderType().name()).
+                                                                    append(stakeHolder.getMobileNumber()).
+                                                                    append(permanentAddress.getStreetRoadLine()).append(".");
+        EdcrApplication edcrApplication = new EdcrApplication();
+        PlanInformation planInformation = new PlanInformation();
+        planInformation.setArchitectInformation(architectInfo.toString());
+        edcrApplication.setPlanInformation(planInformation);
+        model.addAttribute("edcrApplication", edcrApplication);
+
         return EDCRAPPLICATION_NEW;
     }
 

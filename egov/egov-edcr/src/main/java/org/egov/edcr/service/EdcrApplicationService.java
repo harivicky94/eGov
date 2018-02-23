@@ -62,14 +62,18 @@ public class EdcrApplicationService {
         edcrApplication.setSavedDxfFile(saveDXF(edcrApplication));
         edcrApplication.setPlanInformation(edcrApplication.getPlanInformation());
         edcrApplicationRepository.save(edcrApplication);
+        callDcrProcess(edcrApplication);
+        portalInetgrationService.createPortalUserinbox(edcrApplication, Arrays.asList(securityUtils.getCurrentUser()));
+        return edcrApplication;
+    }
+
+    private void callDcrProcess(EdcrApplication edcrApplication) {
         try {
             dcrService.process(edcrApplication.getSavedDxfFile(), edcrApplication);
         } catch (Exception e) {
           LOG.error("Error in edcr Processing",e);
             //e.printStackTrace();
         }
-        portalInetgrationService.createPortalUserinbox(edcrApplication, Arrays.asList(securityUtils.getCurrentUser()));
-        return edcrApplication;
     }
 
     /*public void saveDcrApplication(EdcrApplication edcrApplication) {
@@ -134,6 +138,7 @@ public class EdcrApplicationService {
     public EdcrApplication update(final EdcrApplication edcrApplication) {
         edcrApplication.setSavedDxfFile(saveDXF(edcrApplication));
         EdcrApplication applicationRes = edcrApplicationRepository.save(edcrApplication);
+        callDcrProcess(edcrApplication);
         portalInetgrationService.updatePortalUserinbox(applicationRes, securityUtils.getCurrentUser());
         return applicationRes;
     }

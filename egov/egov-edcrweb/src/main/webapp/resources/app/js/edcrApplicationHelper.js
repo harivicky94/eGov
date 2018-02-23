@@ -59,6 +59,8 @@ $(document)
             }).prop('selected', true);
 
 
+            $('#planInfoOccupancy').val( $( "#occupancy option:selected" ).text());
+            $('#planInfoServiceType').val($( "#serviceType option:selected" ).text());
             // New Upload EDCR Form Submit
             $('#buttonSubmit').click(function(e) {
                 if(!$('#myfile').val()) {

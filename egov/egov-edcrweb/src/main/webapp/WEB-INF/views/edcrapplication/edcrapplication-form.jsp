@@ -62,8 +62,10 @@
         <label class="col-sm-3 control-label text-right"><spring:message code="lbl.occupancy" /> <span
                 class="mandatory"></span></label>
         <div class="col-sm-3 add-margin">
+            <input type="hidden" id="planInfoOccupancy" name="planInformation.occupancy">
+            <input type="hidden" id="architectInformation" name="planInformation.architectInformation" value="${edcrApplication.planInformation.architectInformation}">
             <form:select path="planInformation.occupancy" data-first-option="false"
-                         id="occupancy" cssClass="form-control" readonly="true" required="required">
+                         id="occupancy" cssClass="form-control" disabled="true" required="required">
                 <form:option value="">
                     <spring:message code="lbl.select" />
                 </form:option>
@@ -75,8 +77,9 @@
         <label class="col-sm-2 control-label text-right"><spring:message code="lbl.service.type" /> <span class="mandatory"></span>
         </label>
         <div class="col-sm-3 add-margin">
+            <input type="hidden" id="planInfoServiceType" name="planInformation.serviceType">
             <form:select path="planInformation.serviceType" data-first-option="false"
-                         id="serviceType" cssClass="form-control serviceType" readonly="true"
+                         id="serviceType" cssClass="form-control serviceType" disabled="true"
                          required="required">
                 <form:option value="">
                     <spring:message code="lbl.select" />
