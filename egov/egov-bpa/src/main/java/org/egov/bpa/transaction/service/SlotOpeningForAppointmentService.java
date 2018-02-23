@@ -196,7 +196,7 @@ public class SlotOpeningForAppointmentService {
 		LocalDateTime yourDate = LocalDateTime.now();
 		int weekOfyear = yourDate.getWeekOfWeekyear();
 		final User user = securityUtils.getCurrentUser();
-		SlotMapping slotMapping = zoneSlotRepository.findByApplTypeAndZoneAndWard(ApplicationType.ONE_DAY_PERMIT, zone,
+		SlotMapping slotMapping = zoneSlotRepository.findByApplTypeAndZoneAndElectionWard(ApplicationType.ONE_DAY_PERMIT, zone,
 				ward);
 		// TODO : if no slotmapping data found then need to make new insertion
 		// TODO : consider cross year no of weeks ie week falling in end of
