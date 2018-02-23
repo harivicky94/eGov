@@ -30,8 +30,7 @@ public class Rule23 extends GeneralRule {
     public PlanDetail validate(PlanDetail planDetail) {
         HashMap<String, String> errors = new HashMap<>();
         System.out.println("validate 23");
-        if (planDetail != null &&
-                planDetail.getElectricLine() != null && planDetail.getElectricLine().getPresentInDxf()) {
+        if (planDetail.getElectricLine().getPresentInDxf()) {
             if (planDetail.getElectricLine().getVoltage() == null) {
                 errors.put(DcrConstants.VOLTAGE,
                         edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
@@ -39,7 +38,7 @@ public class Rule23 extends GeneralRule {
                 planDetail.addErrors(errors);
             }
             if (planDetail.getElectricLine().getHorizontalDistance() == null
-                    && planDetail.getElectricLine().getVerticalDistance() == null) {
+                    || planDetail.getElectricLine().getVerticalDistance() == null) {
                 errors.put(DcrConstants.ELECTRICLINE_DISTANCE,
                         edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
                                 new String[] { DcrConstants.ELECTRICLINE_DISTANCE }, LocaleContextHolder.getLocale()));
@@ -60,7 +59,7 @@ public class Rule23 extends GeneralRule {
     }
 
     private void rule23_4(PlanDetail planDetail) {
-        if (planDetail.getPlanInformation() != null && planDetail.getPlanInformation().getCrzZoneArea())
+        if (planDetail.getPlanInformation().getCrzZoneArea())
         planDetail.reportOutput
         .add(buildRuleOutputWithSubRule(DcrConstants.RULE23, SUB_RULE_23_4, SUB_RULE_23_4_DESCRIPTION,
                 DcrConstants.CRZZONE,
@@ -70,8 +69,7 @@ public class Rule23 extends GeneralRule {
     }
 
     private void rule23_5(PlanDetail planDetail) {
-        if (planDetail != null &&
-                planDetail.getElectricLine() != null && planDetail.getElectricLine().getPresentInDxf())
+        if (planDetail.getElectricLine().getPresentInDxf())
             if (planDetail.getElectricLine().getVoltage() != null
                     && planDetail.getElectricLine().getVoltage().compareTo(BigDecimal.ZERO) > 0
                     && (planDetail.getElectricLine().getHorizontalDistance() != null

@@ -33,4 +33,10 @@ public class ElectricLine extends Measurement {
         this.voltage = voltage;
     }
 
+    @Override
+    public String toString() {
+        return "ElectricLine :verticalDistance=" + verticalDistance + ", horizontalDistance=" + horizontalDistance + ", voltage="
+                + voltage + "";
+    }
+
 }
