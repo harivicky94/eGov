@@ -15,9 +15,13 @@ public class Rule32 extends GeneralRule {
     private static final String SUB_RULE_32_1A = "SUB_RULE_32_1A";
     private static final String SUB_RULE_32_1A_DESCRIPTION = "SUB_RULE_32_1A";
     private static final String SUB_RULE_32_3 = "SUB_RULE_32_3";
-    ;
+
     private static final String SUB_RULE_32_3_DESCRIPTION = "SUB_RULE_32_3";
-    BigDecimal ten = new BigDecimal("10");
+    private static final BigDecimal ten =  BigDecimal.valueOf(10);
+    private static final BigDecimal max =  BigDecimal.valueOf(12);
+    private static final BigDecimal two =  BigDecimal.valueOf(2);
+
+
 
 
     @Override
@@ -56,17 +60,15 @@ public class Rule32 extends GeneralRule {
     }
 
     private void rule32_1a(PlanDetail planDetail) {
-        BigDecimal max = new BigDecimal("12");
-        BigDecimal constant = new BigDecimal("2");
-        if (constant.multiply(planDetail.getMaxHeightCal()).compareTo(max) == -1)
+        if (two.multiply(planDetail.getMaxHeightCal()).compareTo(max) == -1)
             planDetail.reportOutput.add(buildRuleOutputWithSubRule(DcrConstants.RULE32, SUB_RULE_32_1A,
                     SUB_RULE_32_1A_DESCRIPTION, DcrConstants.BUILDING_HEIGHT, max.toString(),
-                    constant.multiply(planDetail.getMaxHeightCal()) + DcrConstants.IN_METER,
+                    two.multiply(planDetail.getMaxHeightCal()) + DcrConstants.IN_METER,
                     Result.Accepted, null));
         else
             planDetail.reportOutput.add(buildRuleOutputWithSubRule(DcrConstants.RULE32, SUB_RULE_32_1A,
                     SUB_RULE_32_1A_DESCRIPTION, DcrConstants.BUILDING_HEIGHT, max.toString(),
-                    constant.multiply(planDetail.getMaxHeightCal()) + DcrConstants.IN_METER,
+                    two.multiply(planDetail.getMaxHeightCal()) + DcrConstants.IN_METER,
                     Result.Not_Accepted, null));
 
     }

@@ -15,26 +15,25 @@ public class Rule33 extends GeneralRule {
     private static final String SUB_RULE_33_1 = "SUB_RULE_33_1";
     private static final String SUB_RULE_33_1_DESCRIPTION = "SUB_RULE_33_1";
 
-    BigDecimal threeHundred = new BigDecimal("300");
-    BigDecimal sixHundred = new BigDecimal("600");
-    BigDecimal oneThousand = new BigDecimal("1000");
-    BigDecimal oneThousandFiveHundred = new BigDecimal("1500");
-    BigDecimal fourThousand = new BigDecimal("4000");
-    BigDecimal sixThousand = new BigDecimal("6000");
-    BigDecimal eightThousand = new BigDecimal("8000");
-    BigDecimal twelveThousand = new BigDecimal("12000");
-    BigDecimal eighteenThousand = new BigDecimal("18000");
-    BigDecimal twentyFourThousand = new BigDecimal("24000");
+    private static final BigDecimal threeHundred =  BigDecimal.valueOf(300);
+    private static final BigDecimal sixHundred =  BigDecimal.valueOf(600);
+    private static final BigDecimal oneThousand =  BigDecimal.valueOf(1000);
+    private static final BigDecimal oneThousandFiveHundred =  BigDecimal.valueOf(1500);
+    private static final BigDecimal fourThousand =  BigDecimal.valueOf(4000);
+    private static final BigDecimal sixThousand =  BigDecimal.valueOf(6000);
+    private static final BigDecimal eightThousand =  BigDecimal.valueOf(8000);
+    private static final BigDecimal twelveThousand =  BigDecimal.valueOf(12000);
+    private static final BigDecimal eighteenThousand =  BigDecimal.valueOf(18000);
+    private static final BigDecimal twentyFourThousand =  BigDecimal.valueOf(24000);
 
-
-    BigDecimal onePointTwoZero = new BigDecimal("1.20");
-    BigDecimal twoPointZero = new BigDecimal("2.0");
-    BigDecimal threePointZero = new BigDecimal("3.0");
-    BigDecimal threePointSix = new BigDecimal("3.6");
-    BigDecimal fivePointZero = new BigDecimal("5.0");
-    BigDecimal sixPointZero = new BigDecimal("6.0");
-    BigDecimal sevenPointZero = new BigDecimal("7.0");
-    BigDecimal tenPointZero = new BigDecimal("10.0");
+    private static final BigDecimal onePointTwoZero =  BigDecimal.valueOf(1.20);
+    private static final BigDecimal twoPointZero =  BigDecimal.valueOf(2.0);
+    private static final BigDecimal threePointZero =  BigDecimal.valueOf(3.0);
+    private static final BigDecimal threePointSix =  BigDecimal.valueOf(3.6);
+    private static final BigDecimal fivePointZero =  BigDecimal.valueOf(5.0);
+    private static final BigDecimal sixPointZero =  BigDecimal.valueOf(6.0);
+    private static final BigDecimal sevenPointZero =  BigDecimal.valueOf(7.0);
+    private static final BigDecimal tenPointZero =  BigDecimal.valueOf(10.0);
 
 
     @Override
