@@ -45,7 +45,7 @@ public class DcrConstants {
     // ----- names
     public static final String VERT_CLEAR_OHE = "VERT_CLEAR_OHE";
     public static final String REAR_YARD = "REAR_YARD";
-    public static final String BUILDING_FOOT_PRINT = "BUILDING_FOOTPRINT";
+    public static final String BUILDING_FOOT_PRINT = "BLDG_FOOT_PRINT";
     public static final String SIDE_YARD_2 = "SIDE_YARD_2";
     public static final String SIDE_YARD_1 = "SIDE_YARD_1";
     public static final String FRONT_YARD = "FRONT_YARD";

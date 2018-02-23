@@ -235,9 +235,12 @@ public class Util {
     }
 
     public static String getMtextByLayerName(DXFDocument doc, String layerName) {
+        String param = null;
         DXFLayer planInfoLayer = doc.getDXFLayer(layerName);
+        if(planInfoLayer!=null)
+        {
         List texts = planInfoLayer.getDXFEntities(DXFConstants.ENTITY_TYPE_MTEXT);
-        String param = "";
+     
         DXFText text = null;
         Iterator iterator = texts.iterator();
 
@@ -252,6 +255,7 @@ public class Util {
 
                 param = param.replace("VOLTS", "").trim();
             }
+        }
         }
         return param;
     }
@@ -470,7 +474,7 @@ public class Util {
         LOG.info("Side Yard1 \n "+ pl.getPlot().getSideYard1());
         LOG.info("Side Yard2 \n "+ pl.getPlot().getSideYard2());
         LOG.info("Rear Yard \n "+ pl.getPlot().getRearYard());
-        LOG.info("Set Backs");
+        LOG.info(pl.getElectricLine());
     }
 
 }

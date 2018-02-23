@@ -52,6 +52,8 @@ public class DXFExtractService {
 
             pl.setPlanInformation(extractPlanInfo(doc,pl));
             pl.getPlanInformation().setOccupancy(dcrApplication.getPlanInformation().getOccupancy());
+            pl.getPlanInformation().setOwnerName(dcrApplication.getPlanInformation().getOwnerName());
+            
             Plot plot = new Plot();
             polyLinesByLayer = Util.getPolyLinesByLayer(doc, DcrConstants.PLOT_BOUNDARY);
             if (polyLinesByLayer.size() > 0){
@@ -139,6 +141,11 @@ public class DXFExtractService {
 
         }
         
+        if(planInfoProperties.get(DcrConstants.CRZ_ZONE)!=null)
+        {
+        pi.setCrzZoneArea(true);
+        }
+        
         
         
         return pi;
@@ -175,15 +182,7 @@ public class DXFExtractService {
 
     private PlanDetail extractOverheadElectricLines(DXFDocument doc, PlanDetail pl) {
         ElectricLine line = new ElectricLine();
-        String voltage = Util.getMtextByLayerName(doc, "VOLTAGE");
-        if (voltage != null)
-            try {
-                BigDecimal volt = BigDecimal.valueOf(Double.parseDouble(voltage));
-                line.setVoltage(volt);
-                line.setPresentInDxf(true);
-            } catch (NumberFormatException e) {
-
-            }
+       
 
         DXFLine horiz_clear_OHE = Util.getSingleLineByLayer(doc, DcrConstants.HORIZ_CLEAR_OHE2);
         if (horiz_clear_OHE != null) {
@@ -196,7 +195,27 @@ public class DXFExtractService {
             line.setVerticalDistance(BigDecimal.valueOf(vert_clear_OHE.getLength()));
             line.setPresentInDxf(true);
         }
+        
+        if(horiz_clear_OHE!=null || vert_clear_OHE!=null )
+        {
+        String voltage = Util.getMtextByLayerName(doc, "VOLTAGE");
+        if (voltage != null)
+            try {
+                BigDecimal volt = BigDecimal.valueOf(Double.parseDouble(voltage));
+                line.setVoltage(volt);
+                line.setPresentInDxf(true);
+            } catch (NumberFormatException e) {
+                
+                pl.addError("VOLTAGE", "Voltage value contains non numeric character.Voltage must be Number specified in  KW unit, without the text KW");
+
+            }else
+            {
+                pl.addError("VOLTAGE", "Voltage is not mentioned for the "+DcrConstants.HORIZ_CLEAR_OHE2+" or "+DcrConstants.VERT_CLEAR_OHE);
+            }
+        }
         pl.setElectricLine(line);
+        
+        
         return pl;
     }
 

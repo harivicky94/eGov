@@ -1,5 +1,6 @@
 package org.egov.edcr.service;
 
+import org.apache.log4j.Logger;
 import org.egov.edcr.autonumber.DcrApplicationNumberGenerator;
 import org.egov.edcr.entity.DcrDocument;
 import org.egov.edcr.entity.EdcrApplication;
@@ -33,7 +34,7 @@ import static org.egov.edcr.utility.DcrConstants.FILESTORE_MODULECODE;
 @Service
 @Transactional(readOnly = true)
 public class EdcrApplicationService {
-
+    private static Logger LOG = Logger.getLogger(DcrService.class);
     @Autowired
     protected SecurityUtils securityUtils;
     @Autowired
@@ -52,7 +53,7 @@ public class EdcrApplicationService {
     private PortalInetgrationService portalInetgrationService;
     @Autowired
     private ApplicationNumberGenerator applicationNumberGenerator;
-
+  
     @Transactional
     public EdcrApplication create(final EdcrApplication edcrApplication) {
 
@@ -61,7 +62,12 @@ public class EdcrApplicationService {
         edcrApplication.setSavedDxfFile(saveDXF(edcrApplication));
         edcrApplication.setPlanInformation(edcrApplication.getPlanInformation());
         edcrApplicationRepository.save(edcrApplication);
-        dcrService.process(edcrApplication.getSavedDxfFile(), edcrApplication);
+        try {
+            dcrService.process(edcrApplication.getSavedDxfFile(), edcrApplication);
+        } catch (Exception e) {
+          LOG.error("Error in edcr Processing",e);
+            //e.printStackTrace();
+        }
         portalInetgrationService.createPortalUserinbox(edcrApplication, Arrays.asList(securityUtils.getCurrentUser()));
         return edcrApplication;
     }
