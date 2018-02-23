@@ -19,6 +19,7 @@ import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
+import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
@@ -85,9 +86,10 @@ public class DcrService {
             for (String s : ruleSet) {
                 String ruleName = "rule" + s;
                 LOG.info(s);
-                if(applicationContext.getBean(ruleName)!=null)
+                Object ruleBean = getRuleBean(ruleName);
+                if(ruleBean!=null)
                 {
-                GeneralRule bean = (GeneralRule) applicationContext.getBean(ruleName);
+                GeneralRule bean = (GeneralRule) ruleBean;
                 if(bean!=null)
                 {
                     planDetail = bean.validate(planDetail);
@@ -108,10 +110,10 @@ public class DcrService {
 
             for (String s : ruleSet) {
                 String ruleName = "rule" + s;
-                if(applicationContext.getBean(ruleName)!=null)
+                Object ruleBean = getRuleBean(ruleName);
+                if(ruleBean!=null)
                 {
-                        
-                GeneralRule bean = (GeneralRule) applicationContext.getBean(ruleName);
+                GeneralRule bean = (GeneralRule) ruleBean;
                 if(bean!=null){
                 planDetail = bean.process(planDetail);
                 }
@@ -129,6 +131,16 @@ public class DcrService {
         Util.print(planDetail.getGeneralInformation()) ;
         Util.print(planDetail.getReportOutput());
         return planDetail;
+    }
+
+    private Object getRuleBean(String ruleName) {
+        Object bean= null;
+        try {
+            bean=  applicationContext.getBean(ruleName);
+        } catch (BeansException e) {
+            LOG.error("No Bean Defined for the Rule"+ruleName); 
+        }
+        return bean;
     }
 
     public ReportOutput generateDCRReport(PlanDetail planDetail) {

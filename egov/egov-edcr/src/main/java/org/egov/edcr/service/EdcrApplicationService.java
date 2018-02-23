@@ -61,7 +61,7 @@ public class EdcrApplicationService {
         edcrApplication.setSavedDxfFile(saveDXF(edcrApplication));
         edcrApplication.setPlanInformation(edcrApplication.getPlanInformation());
         edcrApplicationRepository.save(edcrApplication);
-        //dcrService.process(dxfFile, edcrApplication);
+        dcrService.process(edcrApplication.getSavedDxfFile(), edcrApplication);
         portalInetgrationService.createPortalUserinbox(edcrApplication, Arrays.asList(securityUtils.getCurrentUser()));
         return edcrApplication;
     }
