@@ -52,6 +52,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.egov.bpa.master.entity.enums.ApplicationType;
@@ -79,15 +80,30 @@ public class SlotMapping extends AbstractAuditable {
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	@JoinColumn(name = "zone")
 	private Boundary zone;
+	
+	
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JoinColumn(name = "revenueward")
+	private Boundary revenueWard; 
 
 	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	@JoinColumn(name = "ward")
-	private Boundary ward;
+	@JoinColumn(name = "electionward")
+	private Boundary electionWard;
 
 	@NotNull
 	@Enumerated(EnumType.STRING)
 	@Column(name = "applicationType")
 	private ApplicationType applType;
+
+	@Transient
+	private WorkingDays days;
+
+	private String day;
+
+	@NotNull
+	private Integer maxSlotsAllowed;
+
+	private Integer maxRescheduledSlotsAllowed;
 
 	public ApplicationType getApplType() {
 		return applType;
@@ -97,28 +113,35 @@ public class SlotMapping extends AbstractAuditable {
 		this.applType = applType;
 	}
 
-	@Enumerated(EnumType.STRING)
-	private WorkingDays day;
-
-	@NotNull
-	private Integer maxSlotsAllowed;
-
-	private Integer maxRescheduledSlotsAllowed;
-
-
-	public Boundary getWard() {
-		return ward;
+	public Boundary getRevenueWard() {
+		return revenueWard;
 	}
 
-	public void setWard(Boundary ward) {
-		this.ward = ward;
+	public void setRevenueWard(Boundary revenueWard) {
+		this.revenueWard = revenueWard;
 	}
 
-	public WorkingDays getDay() {
+	public Boundary getElectionWard() {
+		return electionWard;
+	}
+
+	public void setElectionWard(Boundary electionWard) {
+		this.electionWard = electionWard;
+	}
+
+	public String getDay() {
 		return day;
 	}
 
-	public void setDay(WorkingDays day) {
+	public WorkingDays getDays() {
+		return days;
+	}
+
+	public void setDays(WorkingDays days) {
+		this.days = days;
+	}
+
+	public void setDay(String day) {
 		this.day = day;
 	}
 

@@ -90,7 +90,11 @@ $(document)
 														"sClass" : "text-left"
 													},
 													{
-														"data" : "ward",
+														"data" : "revenueWard",
+														"sClass" : "text-left"
+													},
+													{
+														"data" : "electionWard",
 														"sClass" : "text-left"
 													},
 													{
@@ -169,7 +173,11 @@ $(document)
 														"sClass" : "text-left"
 													},
 													{
-														"data" : "ward",
+														"data" : "revenueWard",
+														"sClass" : "text-left"
+													},
+													{
+														"data" : "electionWard",
 														"sClass" : "text-left"
 													},
 													{

@@ -61,4 +61,9 @@ public interface SlotMappingRepository extends JpaRepository<SlotMapping, Long> 
 	@Query("select distinct sm.zone from SlotMapping sm where sm.applType = :applType")
 	List<Boundary> findZoneByApplType(@Param("applType")ApplicationType applType);
 
+	@Query("select sm from SlotMapping sm where sm.zone = :zone and sm.revenueWard = :revenueWard and sm.electionWard = :electionWard and sm.applType =:applType")
+	List<SlotMapping> findByZoneRevenueWardElectionWardAndAppType(@Param("zone") Boundary zone,
+			@Param("revenueWard") Boundary revenueWard, @Param("electionWard") Boundary electionWard,
+			@Param("applType") ApplicationType applType);
+
 }

@@ -121,26 +121,43 @@
 								code="lbl.slotmapping.ward" /> <span class="mandatory"></span>
 						</label>
 						<div class="col-sm-3 add-margin">
-							<select name="ward" id="ward" class="form-control"
+							<select name="revenueWard" id="revenueWard" class="form-control"
 								required="true">
 								<option value=""><spring:message code="lbl.select" /></option>
 								<c:forEach items="${wards}" var="wrd">
 									<option value="${wrd.id}">${wrd.name}</option>
 								</c:forEach>
 							</select>
-							<form:errors path="ward" cssClass="error-msg" />
+							<form:errors path="revenueWard" cssClass="error-msg" />
 						</div>
 						<label class="col-sm-2 control-label"><spring:message
+								code="lbl.slotmapping.electionward" /> <span class="mandatory"></span>
+						</label>
+						<div class="col-sm-3 add-margin">
+							<select name="electionWard" id="electionWard"
+								class="form-control" required="true">
+								<option value=""><spring:message code="lbl.select" /></option>
+								<c:forEach items="${wards}" var="wrd">
+									<option value="${wrd.id}">${wrd.name}</option>
+								</c:forEach>
+							</select>
+							<form:errors path="electionWard" cssClass="error-msg" />
+						</div>
+
+					</div>
+					<div class="form-group daysforonedaypermit">
+						<label class="col-sm-3 control-label"><spring:message
 								code="lbl.slotmapping.days" /> <span class="mandatory"></span>
 						</label>
 						<div class="col-sm-3 add-margin">
-							<select name="day" id="day" class="form-control" required="true">
+							<select name="days" id="days" class="form-control"
+								required="true">
 								<option value=""><spring:message code="lbl.select" /></option>
 								<c:forEach items="${daysList}" var="dy">
 									<option value="${dy}">${dy}</option>
 								</c:forEach>
 							</select>
-							<form:errors path="day" cssClass="error-msg" />
+							<form:errors path="days" cssClass="error-msg" />
 						</div>
 					</div>
 				</div>

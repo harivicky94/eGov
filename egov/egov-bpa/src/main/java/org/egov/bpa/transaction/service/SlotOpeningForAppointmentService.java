@@ -305,7 +305,7 @@ public class SlotOpeningForAppointmentService {
 								}
 							}
 							slot.setZone(slotMapping.getZone());
-							slot.setElectionWard(slotMapping.getWard());
+							slot.setElectionWard(slotMapping.getElectionWard());
 							slot.setCreatedBy(user);
 							slot.setCreatedDate(new Date());
 							slot.setAppointmentDate(weekDateTime.toDate());

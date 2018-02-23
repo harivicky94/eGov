@@ -66,12 +66,12 @@
 				<div class="panel-body">
 					<div class="form-group">
 						<label class="col-sm-3 control-label"><spring:message
-								code="lbl.slotmapping.zone" /></label>
+								code="lbl.slotmapping.zone" /> <span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
 							<input type="hidden" name="slotMapping" value="${slotMapping.id}">
 							<input type="hidden" id="message" value="${message}">
 							<form:select path="zone" id="zone" cssClass="form-control"
-								disabled="true">
+								disabled="true" value="${slotMapping.zone}">
 								<form:option value="">
 									<spring:message code="lbl.select" />
 								</form:option>
@@ -83,9 +83,9 @@
 								code="lbl.slotmapping.applicationtype" /> <span
 							class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
-							<input type="hidden" name="slotMapping" value="${slotMapping.id}">
 							<form:select path="applType" id="applType"
-								cssClass="form-control" disabled="true">
+								cssClass="form-control" disabled="true"
+								value="${slotMapping.applType}">
 								<form:option value="">
 									<spring:message code="lbl.select" />
 								</form:option>
@@ -101,7 +101,8 @@
 							class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
 							<form:input type="text" cssClass="form-control required"
-								path="maxSlotsAllowed" id="maxSlotsAllowed" />
+								path="maxSlotsAllowed" id="maxSlotsAllowed"
+								value="${slotMapping.maxSlotsAllowed}" />
 							<form:errors path="maxSlotsAllowed" maxlength="10"
 								cssClass="error-msg" />
 						</div>
@@ -113,7 +114,8 @@
 							<form:input type="text"
 								cssClass="form-control maxRescheduledSlotsAllowed required"
 								path="maxRescheduledSlotsAllowed"
-								id="maxRescheduledSlotsAllowed" />
+								id="maxRescheduledSlotsAllowed"
+								value="${slotMapping.maxRescheduledSlotsAllowed}" />
 							<form:errors path="maxRescheduledSlotsAllowed" maxlength="10"
 								cssClass="error-msg" />
 						</div>
@@ -123,33 +125,40 @@
 								code="lbl.slotmapping.ward" /> <span class="mandatory"></span>
 						</label>
 						<div class="col-sm-3 add-margin">
-							<input type="hidden" name="slotMapping" value="${slotMapping.id}">
-							<form:select path="ward" id="ward" cssClass="form-control"
-								disabled="true">
-								<form:option value="">
-									<spring:message code="lbl.select" />
-								</form:option>
-								<form:options items="${wards}" itemValue="id" itemLabel="name" />
-							</form:select>
-							<form:errors path="zone" cssClass="add-margin error-msg" />
+							<form:input type="text" cssClass="form-control required"
+								path="revenueWard" id="revenueWard" disabled="true"
+								value="${slotMapping.revenueWard.name}" />
+							<form:errors path="revenueWard" maxlength="10"
+								cssClass="error-msg" />
 						</div>
 						<label class="col-sm-2 control-label"><spring:message
-								code="lbl.slotmapping.days" /> <span class="mandatory"></span>
+								code="lbl.slotmapping.electionward" /> <span class="mandatory"></span>
 						</label>
 						<div class="col-sm-3 add-margin">
-							<input type="hidden" name="slotMapping" value="${slotMapping.id}">
-							<form:select path="day" id="day" cssClass="form-control"
-								disabled="true">
-								<form:option value="">
-									<spring:message code="lbl.select" />
-								</form:option>
-								<form:options items="${daysList}" />
-							</form:select>
-							<form:errors path="day" cssClass="add-margin error-msg" />
+							<form:input type="text" cssClass="form-control required"
+								path="electionWard" id="electionWard" disabled="true"
+								value="${slotMapping.electionWard.name}" />
+							<form:errors path="electionWard" maxlength="10"
+								cssClass="error-msg" />
 						</div>
+					</div>
+
+				</div>
+				<div class="form-group daysforonedaypermit">
+					<label class="col-sm-3 control-label"><spring:message
+							code="lbl.slotmapping.days" /> <span class="mandatory"></span> </label>
+					<div class="col-sm-3 add-margin">
+						<form:select path="days" id="days" cssClass="form-control">
+							<form:option value="">
+								<spring:message code="lbl.select" />
+							</form:option>
+							<form:options items="${daysList}" />
+						</form:select>
+						<form:errors path="days" cssClass="add-margin error-msg" />
 					</div>
 				</div>
 			</div>
+		</div>
 		</div>
 	</div>
 	<div class="text-center">

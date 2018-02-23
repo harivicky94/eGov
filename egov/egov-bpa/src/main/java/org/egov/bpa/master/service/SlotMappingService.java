@@ -74,6 +74,8 @@ public class SlotMappingService {
 	}
 
 	public void createSlotMapping(SlotMapping slotMapping) {
+		if(slotMapping.getApplType().toString().equals(ApplicationType.ONE_DAY_PERMIT.toString()))
+		slotMapping.setDay(slotMapping.getDays().getHolidayTypeVal());
 		slotMapping.setCreatedBy(securityUtils.getCurrentUser());
 		slotMapping.setCreatedDate(new Date());
 		noOfApplicationsRepository.save(slotMapping);
@@ -82,11 +84,13 @@ public class SlotMappingService {
 	public void updateSlotMapping(SlotMapping slotMapping) {
 		SlotMapping slotMap = noOfApplicationsRepository.findOne(slotMapping.getId());
 		slotMap.setApplType(slotMapping.getApplType());
-		slotMap.setDay(slotMapping.getDay());
+		if(slotMapping.getApplType().toString().equals(ApplicationType.ONE_DAY_PERMIT.toString()))
+			slotMap.setDay(slotMapping.getDays().getHolidayTypeVal());
 		slotMap.setMaxSlotsAllowed(slotMapping.getMaxSlotsAllowed());
 		slotMap.setMaxRescheduledSlotsAllowed(slotMapping.getMaxRescheduledSlotsAllowed());
 		slotMap.setZone(slotMapping.getZone());
-		slotMap.setWard(slotMapping.getWard());
+		slotMap.setRevenueWard(slotMapping.getRevenueWard());
+		slotMap.setElectionWard(slotMapping.getElectionWard());
 		slotMap.setLastModifiedBy(securityUtils.getCurrentUser());
 		slotMap.setLastModifiedDate(new Date());
 		noOfApplicationsRepository.save(slotMap);
@@ -106,11 +110,14 @@ public class SlotMappingService {
 		if (slotMapping.getApplType() != null) {
 			criteria.add(Restrictions.eq("slotMapping.applType", slotMapping.getApplType()));
 		}
-		if (slotMapping.getWard() != null) {
-			criteria.add(Restrictions.eq("slotMapping.ward", slotMapping.getWard()));
+		if (slotMapping.getElectionWard() != null) {
+			criteria.add(Restrictions.eq("slotMapping.electionWard", slotMapping.getElectionWard()));
 		}
-		if (slotMapping.getDay() != null) {
-			criteria.add(Restrictions.eq("slotMapping.day", slotMapping.getDay()));
+		if (slotMapping.getRevenueWard() != null) {
+			criteria.add(Restrictions.eq("slotMapping.revenueWard", slotMapping.getRevenueWard()));
+		}
+		if (slotMapping.getDays() != null) {
+			criteria.add(Restrictions.eq("slotMapping.day", slotMapping.getDays().getHolidayTypeVal()));
 		}
 		criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 		return criteria;
@@ -126,6 +133,13 @@ public class SlotMappingService {
 
 	public List<Boundary> slotfindZoneByApplType(ApplicationType applType) {
 		return noOfApplicationsRepository.findZoneByApplType(applType);
+
+	}
+
+	public List<SlotMapping> findByZoneRevenueWardElectionWardAndAppType(Boundary zone, Boundary revenueWard,
+			Boundary electionWard, ApplicationType applType) {
+		return noOfApplicationsRepository.findByZoneRevenueWardElectionWardAndAppType(zone, revenueWard, electionWard,
+				applType);
 
 	}
 

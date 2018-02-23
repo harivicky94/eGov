@@ -95,13 +95,24 @@
 							<spring:message code="lbl.slotmapping.ward" />
 						</div>
 						<div class="col-sm-3 add-margin view-content">
-							<c:out value="${slotMapping.ward.name}" default="N/A"></c:out>
+							<c:out value="${slotMapping.revenueWard.name}" default="N/A"></c:out>
 						</div>
+						<div class="col-sm-3 add-margin">
+							<spring:message code="lbl.slotmapping.electionward" />
+						</div>
+						<div class="col-sm-3 add-margin view-content">
+							<c:out value="${slotMapping.electionWard.name}" default="N/A"></c:out>
+						</div>
+
+					</div>
+				</c:if>
+				<c:if test="${slotMapping.applType eq 'ONE_DAY_PERMIT'}">
+					<div class="row add-border">
 						<div class="col-sm-3 add-margin">
 							<spring:message code="lbl.slotmapping.days" />
 						</div>
 						<div class="col-sm-3 add-margin view-content">
-							<c:out value="${slotMapping.day}" default="N/A"></c:out>
+							<c:out value="${slotMapping.days}" default="N/A"></c:out>
 						</div>
 					</div>
 				</c:if>

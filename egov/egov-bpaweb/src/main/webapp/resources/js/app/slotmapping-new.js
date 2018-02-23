@@ -53,6 +53,7 @@ $(document)
 					}
 					$('.allservices').hide();
 					$('.maxRescheduledSlotsAllowed').hide();
+					$('.daysforonedaypermit').hide();
 					$('#applType')
 							.change(
 									function() {
@@ -62,13 +63,14 @@ $(document)
 										if ('ONE_DAY_PERMIT'
 												.localeCompare(applicationTypeName) == 0) {
 											$('.allservices').show();
+											$('.daysforonedaypermit').show();
 											$('.maxRescheduledSlotsAllowed')
 													.hide();
 											$('#zone').attr('required', true);
 											$('#applType').attr('required',
 													true);
 											$('#ward').attr('required', true);
-											$('#day').attr('required', true);
+											$('#days').attr('required', true);
 											$('#maxSlotsAllowed').attr(
 													'required', true);
 											$('.maxRescheduledSlotsAllowed')
@@ -76,6 +78,7 @@ $(document)
 										} else if ('ALL_OTHER_SERVICES'
 												.localeCompare(applicationTypeName) == 0) {
 											$('.allservices').hide();
+											$('.daysforonedaypermit').hide();
 											$('.maxRescheduledSlotsAllowed')
 													.show();
 											$('#zone').attr('required', true);
@@ -86,7 +89,7 @@ $(document)
 											$('.maxRescheduledSlotsAllowed')
 													.attr('required', true);
 											$('#ward').removeAttr('required');
-											$('#day').removeAttr('required');
+											$('#days').removeAttr('required');
 
 										}
 									});
@@ -105,8 +108,8 @@ $(document)
 													cache : false,
 													dataType : "json",
 													success : function(response) {
-														$('#ward').html("");
-														$('#ward')
+														$('#revenueWard').html("");
+														$('#revenueWard')
 																.append(
 																		"<option value=''>Select</option>");
 														$
@@ -116,7 +119,7 @@ $(document)
 																				index,
 																				value) {
 																			$(
-																					'#ward')
+																					'#revenueWard')
 																					.append(
 																							$(
 																									'<option>')
@@ -128,13 +131,38 @@ $(document)
 																		});
 													},
 													error : function(response) {
-														$('#ward').html("");
-														$('#ward')
+														$('#revenueWard').html("");
+														$('#revenueWard')
 																.append(
 																		"<option value=''>Select</option>");
 													}
 												});
 									});
+					
+					$('#revenueWard').change(function(){
+						$.ajax({
+							url: "/bpa/boundary/ajaxBoundary-localityByWard",
+							type: "GET",
+							data: {
+								wardId : $('#revenueWard').val()
+							},
+							cache: false,
+							dataType: "json",
+							success: function (response) {
+								$('#electionWard').html("");
+								$('#electionWard').append("<option value=''>Select</option>");
+								$.each(response, function(index, value) {
+									$('#electionWard').append($('<option>').text(value.localityName).attr('value', value.localityId));
+								});
+							}, 
+							error: function (response) {
+								$('#electionWard').html("");
+								$('#electionWard').append("<option value=''>Select</option>");
+							}
+						});
+						populateElectionWardByRevenueWard();
+						
+					});
 
 					$('#applType').trigger("change");
 					$('#zone').trigger("change");

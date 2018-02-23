@@ -52,9 +52,10 @@
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 
 <form:form role="form" action="" modelAttribute="slotMapping"
-	id="slotMapping" cssClass="form-horizontal form-groups-bordered"
+	id="slotMappingSearchEditForm"
+	cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
-	<jsp:include page="slotmapping-searchForm.jsp"></jsp:include>
+	<jsp:include page="slotmapping-search-form.jsp"></jsp:include>
 	<div class="text-center">
 		<button type='button' class='btn btn-primary' id="btnSearchForEdit">
 			<spring:message code='lbl.search' />
@@ -77,6 +78,7 @@
 				<tr>
 					<th><spring:message code="lbl.slotmapping.zone" /></th>
 					<th><spring:message code="lbl.slotmapping.ward" /></th>
+					<th><spring:message code="lbl.slotmapping.electionward" /></th>
 					<th><spring:message code="lbl.slotmapping.applicationtype" /></th>
 					<th><spring:message code="lbl.slotmapping.days" /></th>
 					<th><spring:message
@@ -104,7 +106,6 @@
 
 <script
 	src="<cdn:url value='/resources/js/app/slotmapping-edit.js?rnd=${app_release_no}'/> "></script>
-<script
-	src="<cdn:url value='/resources/js/app/bpa-ajax-helper.js?rnd=${app_release_no}'/>"></script>
+
 
 

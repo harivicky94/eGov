@@ -104,11 +104,23 @@ public class SlotMappingController extends BpaGenericApplicationController {
 	}
 
 	private boolean validateSlotMapping(SlotMapping slotMapping, Model model) {
-		if (!noOfApplicationsService.findByZoneAndAppType(slotMapping.getZone(), slotMapping.getApplType()).isEmpty()) {
-			model.addAttribute("message", messageSource.getMessage("msg.slotmapping.zone.already.exists", null, null));
-			return true;
-		} else
-			return false;
+		if (slotMapping.getApplType().toString().equals(ApplicationType.ALL_OTHER_SERVICES.toString())) {
+			if (!noOfApplicationsService.findByZoneAndAppType(slotMapping.getZone(), slotMapping.getApplType())
+					.isEmpty()) {
+				model.addAttribute("message",
+						messageSource.getMessage("msg.slotmapping.zone.already.exists", null, null));
+				return true;
+			} else
+				return false;
+		} else {
+			if (!noOfApplicationsService.findByZoneRevenueWardElectionWardAndAppType(slotMapping.getZone(),
+					slotMapping.getRevenueWard(), slotMapping.getElectionWard(), slotMapping.getApplType()).isEmpty()) {
+				model.addAttribute("message",
+						messageSource.getMessage("msg.slotmapping.zone.ward.already.exists", null, null));
+				return true;
+			} else
+				return false;
+		}
 	}
 
 	@RequestMapping(value = "/search/update", method = RequestMethod.GET)
@@ -142,11 +154,18 @@ public class SlotMappingController extends BpaGenericApplicationController {
 		if (!slotMapping.getZone().getId().equals(sltMapping.getZone().getId())) {
 			model.addAttribute("message", messageSource.getMessage("msg.slotmapping.zone.not.updatable", null, null));
 			return true;
-		} else if (slotMapping.getWard() != null) {
-			if (slotMapping.getWard().getId().equals(sltMapping.getWard().getId()))
+		} else if (slotMapping.getRevenueWard() != null) {
+			if (!slotMapping.getRevenueWard().getId().equals(sltMapping.getRevenueWard().getId()))
 
 				model.addAttribute("message",
-						messageSource.getMessage("msg.slotmapping.ward.not.updatable", null, null));
+						messageSource.getMessage("msg.slotmapping.revenue.ward.not.updatable", null, null));
+			return true;
+
+		} else if (slotMapping.getElectionWard() != null) {
+			if (!slotMapping.getElectionWard().getId().equals(sltMapping.getElectionWard().getId()))
+
+				model.addAttribute("message",
+						messageSource.getMessage("msg.slotmapping.election.ward.not.updatable", null, null));
 			return true;
 
 		} else if (!slotMapping.getApplType().toString().equals(sltMapping.getApplType().toString())) {
@@ -162,6 +181,8 @@ public class SlotMappingController extends BpaGenericApplicationController {
 	@RequestMapping(value = "/update/{id}", method = RequestMethod.GET)
 	public String editHolidayList(@PathVariable final Long id, final Model model) {
 		final SlotMapping slotmapping = noOfApplicationsService.findById(id);
+		if (slotmapping.getApplType().toString().equals(ApplicationType.ONE_DAY_PERMIT.toString()))
+			slotmapping.setDays(WorkingDays.valueOf(WorkingDays.getEnumNameForValue(slotmapping.getDay())));
 		preapreUpdateModel(slotmapping, model);
 		return SLOTMAPPING_UPDATE;
 	}
@@ -181,6 +202,8 @@ public class SlotMappingController extends BpaGenericApplicationController {
 	@RequestMapping(value = "/view/{id}", method = RequestMethod.GET)
 	public String viewHolidayList(@PathVariable final Long id, final Model model) {
 		final SlotMapping slotmapping = noOfApplicationsService.findById(id);
+		if (slotmapping.getApplType().toString().equals(ApplicationType.ONE_DAY_PERMIT.toString()))
+			slotmapping.setDays(WorkingDays.valueOf(WorkingDays.getEnumNameForValue(slotmapping.getDay())));
 		preapreUpdateModel(slotmapping, model);
 		return SLOTMAPPING_VIEW;
 	}
