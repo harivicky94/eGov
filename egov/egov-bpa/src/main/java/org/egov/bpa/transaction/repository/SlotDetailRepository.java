@@ -59,6 +59,16 @@ public interface SlotDetailRepository extends JpaRepository<SlotDetail, Long> {
 	@Query("select detail from SlotDetail detail where detail.appointmentTime  = :appointmentTime and detail.slot.appointmentDate = :rescheduleAppointmentDate and detail.slot.zone = :zone")
 	SlotDetail findByAppointmentDateTimeAndZone(@Param("rescheduleAppointmentDate")Date rescheduleAppointmentDate, @Param("appointmentTime")String appointmentTime,
 			@Param("zone")Boundary zone);
+	
+	@Query("select slotdetail from SlotDetail slotdetail"
+			+ " where slotdetail.slot.appointmentDate >= :appointmentDate and (slotdetail.maxScheduledSlots"
+			+ " - slotdetail.utilizedScheduledSlots >0 or slotdetail.maxRescheduledSlots -"
+			+ " slotdetail.utilizedRescheduledSlots >0 or (slotdetail.maxScheduledSlots -"
+			+ " slotdetail.utilizedScheduledSlots >0 and slotdetail.maxRescheduledSlots -"
+			+ " slotdetail.utilizedRescheduledSlots >0)) and slotdetail.slot.zone = :zone order by slotdetail.slot.appointmentDate ,"
+			+ " slotdetail.id")
+	List<SlotDetail> findSlotsByAppointmentDateAndZone(@Param("appointmentDate") Date appointmentDate,
+			@Param("zone") Boundary zone);
 
 	@Query("select detail from SlotDetail detail where detail.slot.appointmentDate = :rescheduleAppointmentDate and detail.slot.zone = :zone"
 			+ " and (detail.maxScheduledSlots" + " - detail.utilizedScheduledSlots >0 or detail.maxRescheduledSlots -"

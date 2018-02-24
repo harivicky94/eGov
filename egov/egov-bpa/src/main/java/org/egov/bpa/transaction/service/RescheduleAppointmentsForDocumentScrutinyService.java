@@ -158,14 +158,14 @@ public class RescheduleAppointmentsForDocumentScrutinyService {
 		slotApplicationRepository.save(slotApplication);
 	}
 
-	public List<Slot> searchAvailableSlotsForReschedule(Long applicationId) {
+	public List<SlotDetail> searchAvailableSlotsForReschedule(Long applicationId) {
 		BpaApplication bpaApplication = applicationBpaRepository.findById(applicationId);
 		Boundary zone = bpaApplication.getSiteDetail().get(0).getAdminBoundary().getParent();
 		List<SlotApplication> slotApplication = slotApplicationRepository
 				.findByApplicationOrderByIdDesc(bpaApplication);
 		Date appointmentDate = slotApplication.get(0).getSlotDetail().getSlot().getAppointmentDate();
-		List<Slot> slotList = slotRepository.findByZoneAndApplicationDate(zone, appointmentDate);
-		return slotList;
+		List<SlotDetail> slotDetailList = slotDetailRepository.findSlotsByAppointmentDateAndZone(appointmentDate,zone);
+		return slotDetailList;
 	}
 
 	@Transactional

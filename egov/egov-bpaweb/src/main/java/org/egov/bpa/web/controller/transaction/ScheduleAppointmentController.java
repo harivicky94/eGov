@@ -70,7 +70,7 @@ import java.util.*;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_DOC_VERIFIED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_SCHEDULED;
 
-@Controller
+@RestController
 @RequestMapping(value = "/application")
 public class ScheduleAppointmentController extends BpaGenericApplicationController {
 
@@ -202,21 +202,19 @@ public class ScheduleAppointmentController extends BpaGenericApplicationControll
 
         return REDIRECT_APPLICATION_VIEW_APPOINTMENT + schedule.getId();
     }
-
+    @ResponseBody
     @GetMapping("/scrutiny/reschedule/{applicationNumber}")
     public String showReScheduleDcoumentScrutiny(@PathVariable final String applicationNumber, final Model model) {
         BpaApplication application = applicationBpaService.findByApplicationNumber(applicationNumber);
-		List<Slot> slots = rescheduleAppnmtsForDocScrutinyService
+		List<SlotDetail> slotDetails = rescheduleAppnmtsForDocScrutinyService
 				.searchAvailableSlotsForReschedule(application.getId());
 		Set<Date> appointmentDates = new LinkedHashSet<>();
-		for (Slot slot : slots) {
-			if (new DateTime(slot.getAppointmentDate()).isAfterNow())
-				appointmentDates.add(slot.getAppointmentDate());
+		for (SlotDetail slotDetail : slotDetails) {
+				appointmentDates.add(slotDetail.getSlot().getAppointmentDate());
 		}
-		if (slots.isEmpty() || appointmentDates.isEmpty()) {
+		if (slotDetails.isEmpty() || appointmentDates.isEmpty()) {
 			model.addAttribute("slotsNotAvailableMsg", messageSource.getMessage("msg.slot.not.available", null, null));
 		}
-
 		ScheduleScrutiny scheduleScrutiny = new ScheduleScrutiny();
 		scheduleScrutiny.setApplicationId(application.getId());
 		if (bpaUtils.logedInuseCitizenOrBusinessUser()) {
@@ -227,7 +225,7 @@ public class ScheduleAppointmentController extends BpaGenericApplicationControll
         model.addAttribute("appointmentDates", appointmentDates);
         model.addAttribute("bpaApplication", application);
         model.addAttribute("scheduleScrutiny", scheduleScrutiny);
-        model.addAttribute("slotDetailList", slots);
+        model.addAttribute("slotDetailList", slotDetails);
 
         return RESCHEDULE_DOC_SCRUTINY;
     }
@@ -282,12 +280,10 @@ public class ScheduleAppointmentController extends BpaGenericApplicationControll
     @RequestMapping(value = {"/scrutiny/slotdetails"}, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public void registrarOfficeVillageMapping(@RequestParam Date appointmentDate, @RequestParam Long zoneId, HttpServletResponse response) throws IOException {
         List<SlotDetail> slotDetails = rescheduleAppnmtsForDocScrutinyService.getOneSlotDetailsByAppointmentDateAndZoneId(appointmentDate, zoneId);
-
         final List<JSONObject> jsonObjects = new ArrayList<>();
         if (!slotDetails.isEmpty()) {
             for (final SlotDetail slotDetail : slotDetails) {
                 final JSONObject jsonObj = new JSONObject();
-                jsonObj.put("appointmentTime", slotDetail.getAppointmentTime());
                 jsonObj.put("appointmentTime", slotDetail.getAppointmentTime());
                 jsonObjects.add(jsonObj);
             }
