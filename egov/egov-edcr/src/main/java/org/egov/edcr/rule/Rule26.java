@@ -15,10 +15,10 @@ import org.springframework.stereotype.Service;
 public class Rule26 extends GeneralRule {
     private static final BigDecimal _NOTIFIEDROADDISTINCE = BigDecimal.valueOf(3);
     private static final BigDecimal _NONNOTIFIEDROADDISTINCE = BigDecimal.valueOf(1.8);
-    private static final String SUB_RULE_26_DESCRIPTION = "SUB_RULE__DESCRIPTION";
+    private static final String SUB_RULE_26_DESCRIPTION = "Prohibition for constructions abutting public roads.";
     private static final String SUB_RULE_26 = "Rule 26";
     private static final String SUB_RULE_26A = "26A";
-    private static final String SUB_RULE_26A_DESCRIPTION = "Water Disposal";
+    private static final String SUB_RULE_26A_DESCRIPTION = "Waste Disposal";
 
     @Override
     public PlanDetail validate(PlanDetail planDetail) {

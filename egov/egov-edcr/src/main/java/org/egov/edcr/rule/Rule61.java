@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class Rule61 extends GeneralRule {
     private static final BigDecimal MAXIMUM_NUMBER_OF_FLOORS = BigDecimal.valueOf(3);
-    private static final String RULE_61_DESCRIPTION = "RULE_61_DESCRIPTION";
+    private static final String RULE_61_DESCRIPTION = "Number of floor to be limit";
 
     @Override
     public PlanDetail validate(PlanDetail planDetail) {

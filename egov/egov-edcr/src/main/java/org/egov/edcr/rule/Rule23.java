@@ -13,8 +13,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class Rule23 extends GeneralRule {
 
-    private static final String SUB_RULE_5_DESCRIPTION = "SUB_RULE_5_DESCRIPTION";
-    private static final String SUB_RULE_5 = "Sub Rule 5";
+    private static final String SUB_RULE_5_DESCRIPTION = "Overhead Electric line and Voltage";
+    private static final String SUB_RULE_5 = "23(5)";
 
     private static final BigDecimal VERTICAL_DISTANCE_11000 = BigDecimal.valueOf(2.4);
     private static final BigDecimal VERTICAL_DISTANCE_33000 = BigDecimal.valueOf(3.7);
@@ -24,7 +24,7 @@ public class Rule23 extends GeneralRule {
     private static final int VOLTAGE_33000 = 33000;
     private static final BigDecimal HORIZONTAL_DISTANCE_11000 = BigDecimal.valueOf(1.2);
     private static final String SUB_RULE_23_4 = "23(4)";
-    private static final String SUB_RULE_23_4_DESCRIPTION = "CRZ Zone";
+    private static final String SUB_RULE_23_4_DESCRIPTION = " Plot present in CRZ Zone";
 
     @Override
     public PlanDetail validate(PlanDetail planDetail) {

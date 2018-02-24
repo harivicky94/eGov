@@ -31,4 +31,17 @@ public class SubRuleOutput {
 
     }
 
+
+
+    public List<RuleReportOutput> getRuleReportOutputs() {
+        return ruleReportOutputs;
+    }
+
+
+
+    public void setRuleReportOutputs(List<RuleReportOutput> ruleReportOutputs) {
+        this.ruleReportOutputs = ruleReportOutputs;
+    }
+    
+
 }

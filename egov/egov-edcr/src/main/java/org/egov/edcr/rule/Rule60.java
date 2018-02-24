@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 public class Rule60 extends GeneralRule {
 
     private static final BigDecimal _EXPECTED_PLOT_AREA = BigDecimal.valueOf(125);
-    private static final String SUB_RULE_60_DESCRIPTION = "SUB_RULE_60_DESCRIPTION";
+    private static final String SUB_RULE_60_DESCRIPTION = "Constructions in small plots";
 
     @Override
     public PlanDetail validate(PlanDetail planDetail) {

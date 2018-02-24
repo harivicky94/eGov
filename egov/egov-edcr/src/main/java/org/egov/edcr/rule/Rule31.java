@@ -11,10 +11,10 @@ import java.util.HashMap;
 
 public class Rule31 extends GeneralRule {
 
-    private static final String SUB_RULE_31_1 = "SUB_RULE_31_1";
-    private static final String SUB_RULE_31_2 = "SUB_RULE_31_2";
-    private static final String SUB_RULE_31_1_DESCRIPTION = "SUB_RULE_31_1";
-    private static final String SUB_RULE_31_2_DESCRIPTION = "SUB_RULE_31_2";
+    private static final String SUB_RULE_31_1 = "31(1)";
+    private static final String SUB_RULE_31_2 = "31(2)";
+    private static final String SUB_RULE_31_1_DESCRIPTION = "FAR";
+    private static final String SUB_RULE_31_2_DESCRIPTION = "FAR Coverage";
 
     private static final BigDecimal thirtyFive = BigDecimal.valueOf(35);
     private static final BigDecimal fourty = BigDecimal.valueOf(40);

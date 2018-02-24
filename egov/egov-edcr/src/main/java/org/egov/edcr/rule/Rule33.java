@@ -12,8 +12,8 @@ import java.util.HashMap;
 @Service
 public class Rule33 extends GeneralRule {
 
-    private static final String SUB_RULE_33_1 = "SUB_RULE_33_1";
-    private static final String SUB_RULE_33_1_DESCRIPTION = "SUB_RULE_33_1";
+    private static final String SUB_RULE_33_1 = "33(1)";
+    private static final String SUB_RULE_33_1_DESCRIPTION = "Access to building";
 
     private static final BigDecimal threeHundred =  BigDecimal.valueOf(300);
     private static final BigDecimal sixHundred =  BigDecimal.valueOf(600);

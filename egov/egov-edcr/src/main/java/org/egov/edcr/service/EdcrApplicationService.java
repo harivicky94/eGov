@@ -116,10 +116,10 @@ public class EdcrApplicationService {
             dcrDocument.setReportOutputId(reportOutput);
 
         dcrDocument.setApplication(edcrApplication);
-
+       
         List<DcrDocument> dcrDocuments = new ArrayList<>();
         dcrDocuments.add(dcrDocument);
-
+        edcrApplication.setSavedDcrDocument(dcrDocument);
         edcrApplication.setDcrDocuments(dcrDocuments);
     }
 

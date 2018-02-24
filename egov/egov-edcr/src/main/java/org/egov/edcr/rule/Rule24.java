@@ -42,13 +42,13 @@ public class Rule24 extends GeneralRule {
     private static final BigDecimal REARYARDMINIMUM_DISTANCE_WITHOUTOPENING_NOC = BigDecimal.ZERO;
 
 
-    private static final String SUB_RULE_24_3 = "SUB_RULE_24_3";
-    private static final String SUB_RULE_24_3DESCRIPTION = "SUB_RULE_24_3";
-    private static final String SUB_RULE_24_4 = "SUB_RULE_24_4";
-    private static final String SUB_RULE_24_4DESCRIPTION = "SUB_RULE_24_4";
-    private static final String SUB_RULE_24_5 = "SUB_RULE_23_5";
-    private static final String SUB_RULE_24_5DESCRIPTION = "SUB_RULE_24_5";
-    private String MEAN_MINIMUM = "(Mean distince,Minimum distance) ";
+    private static final String SUB_RULE_24_3 = "24(3)";
+    private static final String SUB_RULE_24_3DESCRIPTION = "Front yard distance";
+    private static final String SUB_RULE_24_4 = "24(4)";
+    private static final String SUB_RULE_24_4DESCRIPTION = "Rear yard distance";
+    private static final String SUB_RULE_24_5 = "23(5)";
+    private static final String SUB_RULE_24_5DESCRIPTION = "Side yard distance";
+    private String MEAN_MINIMUM = "(Minimum distince,Mean distance) ";
 
     @Override
     public PlanDetail validate(PlanDetail planDetail) {

@@ -12,11 +12,11 @@ import org.springframework.stereotype.Service;
 @Service
 public class Rule32 extends GeneralRule {
 
-    private static final String SUB_RULE_32_1A = "SUB_RULE_32_1A";
-    private static final String SUB_RULE_32_1A_DESCRIPTION = "SUB_RULE_32_1A";
-    private static final String SUB_RULE_32_3 = "SUB_RULE_32_3";
+    private static final String SUB_RULE_32_1A = "32(1A)";
+    private static final String SUB_RULE_32_1A_DESCRIPTION = "Maximum height of building ";
+    private static final String SUB_RULE_32_3 = "32(3)";
 
-    private static final String SUB_RULE_32_3_DESCRIPTION = "SUB_RULE_32_3";
+    private static final String SUB_RULE_32_3_DESCRIPTION = "Security zone ";
     private static final BigDecimal ten =  BigDecimal.valueOf(10);
     private static final BigDecimal max =  BigDecimal.valueOf(12);
     private static final BigDecimal two =  BigDecimal.valueOf(2);

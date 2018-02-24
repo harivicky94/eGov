@@ -22,15 +22,15 @@ public class Rule62 extends GeneralRule {
 
     private static final BigDecimal SIDE1MINIMUM_DISTANCE = BigDecimal.valueOf(0.9);
     private static final BigDecimal SIDE2MINIMUM_DISTANCE = BigDecimal.valueOf(0.6);
-    private static final String SUB_RULE_62_2 = "SUB_RULE_62_2";
-    private static final String SUB_RULE_62_2DESCRIPTION = "SUB_RULE_62_2";
+    private static final String SUB_RULE_62_2 = "62(2)";
+    private static final String SUB_RULE_62_2DESCRIPTION = "Any Side yard validation";
     private static final String SUB_RULE_62_1 = "62(1)";
-    private static final String SUB_RULE_62_1DESCRIPTION = "SUB_RULE_62_1";
-    private static final String SUB_RULE_62_1A = "SUB_RULE_62_1A";
-    private static final String SUB_RULE_62_1A_DESCRIPTION = "SUB_RULE_62_1A";
-    private static final String SUB_RULE_62_3 = "SUB_RULE_62_3";
-    private static final String SUB_RULE_62_3_DESCRIPTION = "SUB_RULE_62_3";
-    private String MEAN_MINIMUM = "(Mean distince,Minimum distance) ";
+    private static final String SUB_RULE_62_1DESCRIPTION = "Minimum distance between plot boundary and abutting Street.";
+    private static final String SUB_RULE_62_1A = "62(1)A";
+    private static final String SUB_RULE_62_1A_DESCRIPTION = "Front yard validation";
+    private static final String SUB_RULE_62_3 = "62(3)";
+    private static final String SUB_RULE_62_3_DESCRIPTION = "Rear yard validation";
+    private String MEAN_MINIMUM = "(Minimum distince,Mean distance) ";
 
     @Override
     public PlanDetail validate(PlanDetail planDetail) {

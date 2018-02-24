@@ -56,6 +56,19 @@ public class EdcrApplication extends AbstractAuditable {
     @JoinColumn(name = "planinfoid")
     private PlanInformation planInformation;
 
+    @Transient
+    private DcrDocument savedDcrDocument;
+    
+
+    public DcrDocument getSavedDcrDocument() {
+        return savedDcrDocument;
+    }
+
+    public void setSavedDcrDocument(DcrDocument savedDcrDocument) {
+        this.savedDcrDocument = savedDcrDocument;
+    }
+
+    
     @Override
     public Long getId() {
         return id;
