@@ -39,14 +39,6 @@
  */
 package org.egov.bpa.transaction.service;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.egov.bpa.master.entity.enums.ApplicationType;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.SlotApplication;
@@ -58,11 +50,17 @@ import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.transform.ResultTransformer;
 import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -275,7 +273,8 @@ public class SearchBpaApplicationService {
 			criteria.createAlias("adminBoundary.parent", "parent")
 					.add(Restrictions.eq("parent.name", searchBpaApplicationForm.getZone()));
 		}
-		criteria.setResultTransformer((ResultTransformer) CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+		criteria.add(Restrictions.eq("slotApplication.active", true));
+		criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 		criteria.setProjection(Projections.distinct(Projections.projectionList()
 			    .add(Projections.property("application"), "application") )).setResultTransformer(Transformers.aliasToBean(SlotApplication.class)); 
 		return criteria;

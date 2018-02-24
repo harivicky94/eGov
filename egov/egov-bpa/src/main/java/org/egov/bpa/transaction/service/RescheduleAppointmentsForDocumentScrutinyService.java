@@ -93,10 +93,12 @@ public class RescheduleAppointmentsForDocumentScrutinyService {
 			slotDetail.setUtilizedScheduledSlots(slotDetail.getUtilizedScheduledSlots() - 1);
 		else
 			slotDetail.setUtilizedRescheduledSlots(slotDetail.getUtilizedRescheduledSlots() - 1);
+		updateParentInActive(slotApplication.get(0));
 		slotDetailRepository.save(slotDetail);
 		// build new slot application and reschedule appointment
 		SlotApplication slotApp = new SlotApplication();
 		slotApp.setApplication(application);
+		slotApp.setActive(true);
 		slotApp.setScheduleAppointmentType(ScheduleAppointmentType.RESCHEDULE);
 		SlotDetail slotDet = slotDetailRepository.findByAppointmentDateTimeAndZone(rescheduleAppointmentDate,
 				appointmentTime, application.getSiteDetail().get(0).getAdminBoundary().getParent());
@@ -110,6 +112,7 @@ public class RescheduleAppointmentsForDocumentScrutinyService {
 		slotApplicationRepository.save(slotApp);
 		return slotApp;
 	}
+
 
 	@Transactional
 	public SlotApplication rescheduleAppointmentsForDocumentScrutinyByEmployee(Long applicationId,
@@ -126,9 +129,11 @@ public class RescheduleAppointmentsForDocumentScrutinyService {
 		else
 			slotDetail.setUtilizedRescheduledSlots(slotDetail.getUtilizedRescheduledSlots() - 1);
 		slotDetailRepository.save(slotDetail);
+		updateParentInActive(slotApplication.get(0));
 		// build new slot application and reschedule appointment
 		SlotApplication slotApp = new SlotApplication();
 		slotApp.setApplication(bpaApplication);
+		slotApp.setActive(true);
 		slotApp.setScheduleAppointmentType(ScheduleAppointmentType.RESCHEDULE);
 		SlotDetail slotDet = slotDetailRepository.findByAppointmentDateTimeAndZone(rescheduleAppointmentDate,
 				appointmentTime, bpaApplication.getSiteDetail().get(0).getAdminBoundary().getParent());
@@ -141,6 +146,11 @@ public class RescheduleAppointmentsForDocumentScrutinyService {
 		bpaSmsAndEmailService.sendSMSAndEmailForDocumentScrutiny(slotApplication.get(0), bpaApplication);
 		slotApplicationRepository.save(slotApp);
 		return slotApp;
+	}
+
+	private void updateParentInActive(final SlotApplication slotApplication) {
+		slotApplication.setActive(false);
+		slotApplicationRepository.save(slotApplication);
 	}
 
 	public List<SlotDetail> searchAvailableSlotsForReschedule(Long applicationId) {
@@ -177,7 +187,7 @@ public class RescheduleAppointmentsForDocumentScrutinyService {
 	}
 
 	public List<SlotDetail> getOneSlotDetailsByAppointmentDateAndZoneId(final Date appointmentDate, final Long zoneId) {
-		return slotDetailRepository.findOneByAppointmentDateAndZoneId(appointmentDate, boundaryService.getBoundaryById(zoneId));
+		return slotDetailRepository.findSlotsByAppointmentDateAndZone(appointmentDate, boundaryService.getBoundaryById(zoneId));
 	}
 
 }

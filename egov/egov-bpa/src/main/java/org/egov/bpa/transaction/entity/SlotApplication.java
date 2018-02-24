@@ -68,6 +68,8 @@ public class SlotApplication extends AbstractAuditable {
 	@JoinColumn(name = "slotdetailid", nullable = false)
 	private SlotDetail slotDetail;
 
+	private Boolean isActive;
+
 	@Override
 	public Long getId() {
 		return id;
@@ -102,4 +104,11 @@ public class SlotApplication extends AbstractAuditable {
 		this.slotDetail = slotDetail;
 	}
 
+	public Boolean getActive() {
+		return isActive;
+	}
+
+	public void setActive(Boolean active) {
+		isActive = active;
+	}
 }

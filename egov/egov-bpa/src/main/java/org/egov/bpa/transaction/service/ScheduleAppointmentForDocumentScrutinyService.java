@@ -41,14 +41,10 @@ package org.egov.bpa.transaction.service;
 
 import org.egov.bpa.master.entity.enums.ApplicationType;
 import org.egov.bpa.master.service.SlotMappingService;
-
-import org.egov.bpa.transaction.entity.BpaApplication;
-import org.egov.bpa.transaction.entity.BpaStatus;
-import org.egov.bpa.transaction.entity.Slot;
-import org.egov.bpa.transaction.entity.SlotApplication;
-import org.egov.bpa.transaction.entity.SlotDetail;
+import org.egov.bpa.transaction.entity.*;
 import org.egov.bpa.transaction.entity.enums.ScheduleAppointmentType;
 import org.egov.bpa.transaction.repository.BpaStatusRepository;
+import org.egov.bpa.transaction.repository.SlotApplicationRepository;
 import org.egov.bpa.transaction.repository.SlotDetailRepository;
 import org.egov.bpa.transaction.repository.SlotRepository;
 import org.egov.bpa.transaction.service.messaging.BPASmsAndEmailService;
@@ -56,7 +52,6 @@ import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.utils.BpaUtils;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.repository.BoundaryRepository;
-import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.validation.exception.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -73,30 +68,24 @@ public class ScheduleAppointmentForDocumentScrutinyService {
 
 	@Autowired
 	private SlotMappingService slotMappingService;
-
 	@Autowired
 	private BpaStatusRepository bpaStatusRepository;
-
 	@Autowired
 	private ApplicationBpaService applicationBpaService;
-
 	@Autowired
 	private SlotRepository slotRepository;
-
 	@Autowired
 	private SlotApplicationService slotApplicationService;
-
 	@Autowired
 	private SlotDetailRepository slotDetailRepository;
-
 	@Autowired
 	private BPASmsAndEmailService bpaSmsAndEmailService;
-
 	@Autowired
 	private BoundaryRepository boundaryRepository;
 	@Autowired
 	private BpaUtils bpaUtils;
-
+	@Autowired
+	private SlotApplicationRepository slotApplicationRepository;
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
@@ -142,6 +131,10 @@ public class ScheduleAppointmentForDocumentScrutinyService {
 										for (SlotDetail slotDetail : slot.getSlotDetail()) {
 											if (bpaApp.getStatus().getCode().toString()
 													.equals(BpaConstants.APPLICATION_STATUS_PENDING_FOR_RESCHEDULING)) {
+												List<SlotApplication> slotApplications = slotApplicationRepository
+														.findByApplicationOrderByIdDesc(bpaApp);
+												slotApplications.get(0).setActive(false);
+												slotApplicationRepository.save(slotApplications.get(0));
 												if (slotDetail.getMaxRescheduledSlots()
 														- slotDetail.getUtilizedRescheduledSlots() > 0) {
 													slotDetail.setUtilizedRescheduledSlots(
@@ -173,14 +166,12 @@ public class ScheduleAppointmentForDocumentScrutinyService {
 													break;
 												}
 											}
-
 										}
 										return true;
 									});
 								} catch (Exception e) {
 									getErrorMessage(e);
 								}
-
 							}
 						}
 					}
@@ -191,6 +182,7 @@ public class ScheduleAppointmentForDocumentScrutinyService {
 
 	private SlotApplication buildSlotApplicationObject(BpaApplication bpaApp, SlotDetail slotDetail) {
 		SlotApplication slotApplication = new SlotApplication();
+		slotApplication.setActive(true);
 		slotApplication.setApplication(bpaApp);
 		slotApplication.setSlotDetail(slotDetail);
 		if (bpaApp.getStatus().getCode().toString().equals(BpaConstants.APPLICATION_STATUS_PENDING_FOR_RESCHEDULING)) {
@@ -209,7 +201,6 @@ public class ScheduleAppointmentForDocumentScrutinyService {
 			SlotApplication slotApplication) {
 		slotApplicationService.save(slotApplication);
 		applicationBpaService.saveBpaApplication(bpaApp);
-		bpaSmsAndEmailService.sendSMSAndEmailForDocumentScrutiny(slotApplication, bpaApp);
 		if (slotApplication.getScheduleAppointmentType().toString()
 				.equals(ScheduleAppointmentType.RESCHEDULE.toString())) {
 			bpaUtils.redirectToBpaWorkFlow(bpaApp.getCurrentState().getOwnerPosition().getId(), bpaApp, null,
@@ -220,6 +211,7 @@ public class ScheduleAppointmentForDocumentScrutinyService {
 					slotApplication.getApplication().getCurrentState().getOwnerPosition().getId(),
 					slotApplication.getApplication(), null, BpaConstants.APPLICATION_STATUS_SCHEDULED, "Forward", null);
 		}
+		bpaSmsAndEmailService.sendSMSAndEmailForDocumentScrutiny(slotApplication, bpaApp);
 	}
 
 	private String getErrorMessage(final Exception exception) {
