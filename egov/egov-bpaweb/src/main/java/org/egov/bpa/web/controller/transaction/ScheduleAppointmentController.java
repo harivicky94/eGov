@@ -44,6 +44,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.egov.bpa.master.service.AppointmentLocationsService;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.BpaAppointmentSchedule;
+import org.egov.bpa.transaction.entity.Slot;
 import org.egov.bpa.transaction.entity.SlotDetail;
 import org.egov.bpa.transaction.entity.dto.ScheduleScrutiny;
 import org.egov.bpa.transaction.entity.enums.AppointmentSchedulePurpose;
@@ -205,27 +206,28 @@ public class ScheduleAppointmentController extends BpaGenericApplicationControll
     @GetMapping("/scrutiny/reschedule/{applicationNumber}")
     public String showReScheduleDcoumentScrutiny(@PathVariable final String applicationNumber, final Model model) {
         BpaApplication application = applicationBpaService.findByApplicationNumber(applicationNumber);
-        List<SlotDetail> slotDetails = rescheduleAppnmtsForDocScrutinyService.searchAvailableSlotsForReschedule(application.getId());
-        Set<Date> appointmentDates = new LinkedHashSet<>();
-        for (SlotDetail slotDetail : slotDetails) {
-            if (new DateTime(slotDetail.getSlot().getAppointmentDate()).isAfterNow())
-                appointmentDates.add(slotDetail.getSlot().getAppointmentDate());
-        }
-        if (slotDetails.isEmpty() || appointmentDates.isEmpty()) {
-            model.addAttribute("slotsNotAvailableMsg", messageSource.getMessage("msg.slot.not.available", null, null));
-        }
+		List<Slot> slots = rescheduleAppnmtsForDocScrutinyService
+				.searchAvailableSlotsForReschedule(application.getId());
+		Set<Date> appointmentDates = new LinkedHashSet<>();
+		for (Slot slot : slots) {
+			if (new DateTime(slot.getAppointmentDate()).isAfterNow())
+				appointmentDates.add(slot.getAppointmentDate());
+		}
+		if (slots.isEmpty() || appointmentDates.isEmpty()) {
+			model.addAttribute("slotsNotAvailableMsg", messageSource.getMessage("msg.slot.not.available", null, null));
+		}
 
-        ScheduleScrutiny scheduleScrutiny = new ScheduleScrutiny();
-        scheduleScrutiny.setApplicationId(application.getId());
-        if (bpaUtils.logedInuseCitizenOrBusinessUser()) {
-            scheduleScrutiny.setReScheduledBy(Source.CITIZENPORTAL.name());
-        } else {
-            scheduleScrutiny.setReScheduledBy(Source.SYSTEM.name());
+		ScheduleScrutiny scheduleScrutiny = new ScheduleScrutiny();
+		scheduleScrutiny.setApplicationId(application.getId());
+		if (bpaUtils.logedInuseCitizenOrBusinessUser()) {
+			scheduleScrutiny.setReScheduledBy(Source.CITIZENPORTAL.name());
+		} else {
+			scheduleScrutiny.setReScheduledBy(Source.SYSTEM.name());
         }
         model.addAttribute("appointmentDates", appointmentDates);
         model.addAttribute("bpaApplication", application);
         model.addAttribute("scheduleScrutiny", scheduleScrutiny);
-        model.addAttribute("slotDetailList", slotDetails);
+        model.addAttribute("slotDetailList", slots);
 
         return RESCHEDULE_DOC_SCRUTINY;
     }

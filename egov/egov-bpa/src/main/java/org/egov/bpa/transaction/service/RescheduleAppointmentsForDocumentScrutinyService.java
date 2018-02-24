@@ -41,6 +41,7 @@ package org.egov.bpa.transaction.service;
 
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.BpaStatus;
+import org.egov.bpa.transaction.entity.Slot;
 import org.egov.bpa.transaction.entity.SlotApplication;
 import org.egov.bpa.transaction.entity.SlotDetail;
 import org.egov.bpa.transaction.entity.enums.ScheduleAppointmentType;
@@ -48,6 +49,7 @@ import org.egov.bpa.transaction.repository.ApplicationBpaRepository;
 import org.egov.bpa.transaction.repository.BpaStatusRepository;
 import org.egov.bpa.transaction.repository.SlotApplicationRepository;
 import org.egov.bpa.transaction.repository.SlotDetailRepository;
+import org.egov.bpa.transaction.repository.SlotRepository;
 import org.egov.bpa.transaction.service.messaging.BPASmsAndEmailService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -71,6 +73,9 @@ public class RescheduleAppointmentsForDocumentScrutinyService {
 
 	@Autowired
 	private SlotDetailRepository slotDetailRepository;
+	
+	@Autowired
+	private SlotRepository slotRepository;
 
 	@Autowired
 	private BpaStatusRepository bpaStatusRepository;
@@ -153,14 +158,14 @@ public class RescheduleAppointmentsForDocumentScrutinyService {
 		slotApplicationRepository.save(slotApplication);
 	}
 
-	public List<SlotDetail> searchAvailableSlotsForReschedule(Long applicationId) {
+	public List<Slot> searchAvailableSlotsForReschedule(Long applicationId) {
 		BpaApplication bpaApplication = applicationBpaRepository.findById(applicationId);
 		Boundary zone = bpaApplication.getSiteDetail().get(0).getAdminBoundary().getParent();
 		List<SlotApplication> slotApplication = slotApplicationRepository
 				.findByApplicationOrderByIdDesc(bpaApplication);
 		Date appointmentDate = slotApplication.get(0).getSlotDetail().getSlot().getAppointmentDate();
-		List<SlotDetail> slotDetailList = slotDetailRepository.findSlotsByAppointmentDateAndZone(appointmentDate, zone);
-		return slotDetailList;
+		List<Slot> slotList = slotRepository.findByZoneAndApplicationDate(zone, appointmentDate);
+		return slotList;
 	}
 
 	@Transactional
@@ -187,7 +192,7 @@ public class RescheduleAppointmentsForDocumentScrutinyService {
 	}
 
 	public List<SlotDetail> getOneSlotDetailsByAppointmentDateAndZoneId(final Date appointmentDate, final Long zoneId) {
-		return slotDetailRepository.findSlotsByAppointmentDateAndZone(appointmentDate, boundaryService.getBoundaryById(zoneId));
+		return slotDetailRepository.findOneByAppointmentDateAndZoneId(appointmentDate, boundaryService.getBoundaryById(zoneId));
 	}
 
 }

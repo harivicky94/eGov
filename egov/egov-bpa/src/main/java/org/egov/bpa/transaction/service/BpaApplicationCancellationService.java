@@ -51,6 +51,7 @@ import org.egov.bpa.transaction.repository.BpaStatusRepository;
 import org.egov.bpa.transaction.repository.SlotApplicationRepository;
 import org.egov.bpa.transaction.service.messaging.BPASmsAndEmailService;
 import org.egov.bpa.utils.BpaConstants;
+import org.egov.bpa.utils.BpaUtils;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -70,6 +71,9 @@ public class BpaApplicationCancellationService {
 
 	@Autowired
 	private BPASmsAndEmailService bpaSmsAndEmailService;
+	
+	@Autowired
+	private BpaUtils bpaUtils;
 
 	@Transactional
 	public void cancelNonverifiedApplications() {
@@ -91,6 +95,9 @@ public class BpaApplicationCancellationService {
 					BpaStatus status = bpaStatusRepository
 							.findByCodeAndModuleType(BpaConstants.APPLICATION_STATUS_CANCELLED, "REGISTRATION");
 					bpaApplication.setStatus(status);
+					bpaUtils.redirectToBpaWorkFlow(bpaApplication.getCurrentState().getOwnerPosition().getId(),
+							bpaApplication, null, "Application is cancelled because not attended for document scrutiny",
+							BpaConstants.WF_CANCELAPPLICATION_BUTTON, null);
 					applicationBpaService.saveBpaApplication(bpaApplication);
 					bpaSmsAndEmailService.sendSMSAndEmailForDocumentScrutiny(slotApplicationList.get(0),
 							bpaApplication);
