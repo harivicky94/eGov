@@ -217,7 +217,7 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         }
         if(application.getIsOneDayPermitApplication() && application.getStatus().getCode().equalsIgnoreCase(BpaConstants.APPLICATION_STATUS_REGISTERED)) {
         	SlotDetail slotDetail = slotOpeningForAppointmentService.openSlotsForDocumentScrutiny(application.getSiteDetail().get(0).getAdminBoundary().getParent(),
-        			application.getSiteDetail().get(0).getElectionBoundary());
+        			application.getSiteDetail().get(0).getAdminBoundary(), application.getSiteDetail().get(0).getElectionBoundary());
         	scheduleAppointmentForDocumentScrutinyService.scheduleOneDayPermitApplicationsForDocumentScrutiny(application, slotDetail);
         }
         return applicationBpaRepository.save(application);

@@ -291,6 +291,12 @@ $(document).ready(function() {
 	
 	// making atleast one amenity should be mandatory if service type is selected as amenities 
 	$('#buttonSubmit, #bpaCreate, #bpaSave').click(function(){
+		if($('#isOneDayPermitApplication').is(':checked')){
+			if($('#totalPlintArea').val()>300){
+				bootbox.alert("One day permit is only for Total Builtup Area less than or equl to 300. Application cannot be created.");
+				return false;
+			}
+		}
 		var seviceTypeName = $( "#serviceType option:selected" ).text();
 		if('Amenities' == seviceTypeName && !$( "#applicationAmenity option:selected" ).val()){
 				bootbox.alert("Please Select Atleast one amenity.");

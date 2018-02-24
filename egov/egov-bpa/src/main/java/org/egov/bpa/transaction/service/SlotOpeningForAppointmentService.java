@@ -184,9 +184,8 @@ public class SlotOpeningForAppointmentService {
 		return new LocalDate(date);
 	}
 
-	//TODO : refactoring code. duplicate code correction
 	@Transactional
-	public SlotDetail openSlotsForDocumentScrutiny(Boundary zone, Boundary ward) {
+	public SlotDetail openSlotsForDocumentScrutiny(Boundary zone, Boundary revWard, Boundary elecWard) {
 		SlotDetail slotDetailToBeUsed = null;
 		Slot slot = new Slot();
 		Integer scheduledSlotsAllowedForMorning = 0;
@@ -194,158 +193,91 @@ public class SlotOpeningForAppointmentService {
 		Calendar calendar = Calendar.getInstance();
 		Integer weeksOfYear = calendar.getActualMaximum(Calendar.WEEK_OF_YEAR);
 		LocalDateTime yourDate = LocalDateTime.now();
-		int weekOfyear = yourDate.getWeekOfWeekyear();
 		final User user = securityUtils.getCurrentUser();
-		SlotMapping slotMapping = zoneSlotRepository.findByApplTypeAndZoneAndElectionWard(ApplicationType.ONE_DAY_PERMIT, zone,
-				ward);
+		List<SlotMapping> slotMapping = zoneSlotRepository.findByZoneRevenueWardElectionWardAndAppType(zone, revWard, elecWard, ApplicationType.ONE_DAY_PERMIT);
 		// TODO : if no slotmapping data found then need to make new insertion
 		// TODO : consider cross year no of weeks ie week falling in end of
 		// current and start of next year
-		if (slotMapping != null) {
+		if (slotMapping != null && !slotMapping.isEmpty()) {
+			int weekOfyear = yourDate.getWeekOfWeekyear();
 			// Fetch Week Start Date for Given Week Number
 			DateTime weekStartDate = new DateTime().withWeekOfWeekyear(weekOfyear);
 			// Fetch Specific Days for given week
-			DateTime weekDateTime = weekStartDate.withDayOfWeek(Integer.parseInt(slotMapping.getDay().toString()));
+			DateTime weekDateTime = weekStartDate.withDayOfWeek(Integer.parseInt(slotMapping.get(0).getDay().toString()));
 			// Day falling in same week
-			if (Integer.parseInt(slotMapping.getDay().toString()) > yourDate.getDayOfWeek()) {
-				Boolean flag = true;
-				while (flag) {
-					// Not a holiday
-					if (holidayListRepository.findByHolidayDate(weekDateTime.toDate()) == null) {
-						Slot dbSlot = slotRepository.findByZoneAndElectionWardAndAppointmentDate(zone, ward,
-								weekDateTime.toDate());
-						if (dbSlot != null) {
-							if (!dbSlot.getSlotDetail().isEmpty()) {
-								for (SlotDetail sd : dbSlot.getSlotDetail()) {
-									if (sd.getMaxScheduledSlots() > sd.getUtilizedScheduledSlots()) {
-										slotDetailToBeUsed = sd;
-										break;
-									}
-								}
-							}
-						} // Create New Slot
-						if (slotDetailToBeUsed == null) {
-							if (slotMapping.getMaxSlotsAllowed() != null && slotMapping.getMaxSlotsAllowed() > 0) {
-								if (slotMapping.getMaxSlotsAllowed() % 2 == 0) {
-									scheduledSlotsAllowedForMorning = slotMapping.getMaxSlotsAllowed() / 2;
-									scheduledSlotsAllowedForEvening = slotMapping.getMaxSlotsAllowed() / 2;
-								} else {
-									scheduledSlotsAllowedForMorning = (slotMapping.getMaxSlotsAllowed() / 2) + 1;
-									scheduledSlotsAllowedForEvening = slotMapping.getMaxSlotsAllowed() / 2;
-								}
-							}
-							slot.setZone(slotMapping.getZone());
-							slot.setCreatedBy(user);
-							slot.setCreatedDate(new Date());
-							slot.setAppointmentDate(weekDateTime.toDate());
-							List<SlotDetail> slotDetailList = new ArrayList<>();
-							for (int j = 1; j <= 2; j++) {
-								SlotDetail slotDetail = new SlotDetail();
-								if (j == 1) {
-									slotDetail.setAppointmentTime(APP_TIME_MORNING);
-									slotDetail.setMaxScheduledSlots(scheduledSlotsAllowedForMorning);
-
-								} else {
-									slotDetail.setAppointmentTime(APP_TIME_EVENING);
-									slotDetail.setMaxScheduledSlots(scheduledSlotsAllowedForEvening);
-
-								}
-								slotDetail.setUtilizedScheduledSlots(0);
-								slotDetail.setUtilizedRescheduledSlots(0);
-								slotDetail.setCreatedDate(new Date());
-								slotDetail.setCreatedBy(user);
-								slotDetail.setSlot(slot);
-								slotDetailList.add(slotDetail);
-							}
-							slot.setSlotDetail(slotDetailList);
-							slot = slotRepository.save(slot);
-							slotDetailToBeUsed = slot.getSlotDetail().get(0);
-						}
-						flag = false;
-					} // if its holiday pick other date
-					else {
-						flag = true;
-						weekOfyear = weekOfyear + 1;
-						weekStartDate = new DateTime().withWeekOfWeekyear(weekOfyear);
-						// Fetch Specific Days for given week
-						weekDateTime = weekStartDate.withDayOfWeek(Integer.parseInt(slotMapping.getDay().toString()));
-
-					}
-				}
-			} //If day mapped is prior to current day consider next week. 
-			else {
+			if(!(Integer.parseInt(slotMapping.get(0).getDay().toString()) > yourDate.getDayOfWeek())) {
 				weekOfyear = weekOfyear + 1;
 				weekStartDate = new DateTime().withWeekOfWeekyear(weekOfyear);
 				// Fetch Specific Days for given week
-				weekDateTime = weekStartDate.withDayOfWeek(Integer.parseInt(slotMapping.getDay().toString()));
-				Boolean flag = true;
-				while (flag) {
-					// Not a holiday
-					if (holidayListRepository.findByHolidayDate(weekDateTime.toDate()) == null) {
-						Slot dbSlot = slotRepository.findByZoneAndElectionWardAndAppointmentDate(zone, ward,
-								weekDateTime.toDate());
-						if (dbSlot != null) {
-							if (!dbSlot.getSlotDetail().isEmpty()) {
-								for (SlotDetail sd : dbSlot.getSlotDetail()) {
-									if (sd.getMaxScheduledSlots() > sd.getUtilizedScheduledSlots()) {
-										slotDetailToBeUsed = sd;
-										break;
-									}
+				weekDateTime = weekStartDate.withDayOfWeek(Integer.parseInt(slotMapping.get(0).getDay().toString()));
+			} 
+			Boolean flag = true;
+			while (flag) {
+				// Not a holiday
+				if (holidayListRepository.findByHolidayDate(weekDateTime.toDate()) == null) {
+					Slot dbSlot = slotRepository.findByZoneAndElectionWardAndAppointmentDate(zone, elecWard,
+							weekDateTime.toDate());
+					if (dbSlot != null) {
+						if (!dbSlot.getSlotDetail().isEmpty()) {
+							for (SlotDetail sd : dbSlot.getSlotDetail()) {
+								if (sd.getMaxScheduledSlots() > sd.getUtilizedScheduledSlots()) {
+									slotDetailToBeUsed = sd;
+									break;
 								}
 							}
-						} // Create New Slot
-						if (slotDetailToBeUsed == null) {
-							if (slotMapping.getMaxSlotsAllowed() != null && slotMapping.getMaxSlotsAllowed() > 0) {
-								if (slotMapping.getMaxSlotsAllowed() % 2 == 0) {
-									scheduledSlotsAllowedForMorning = slotMapping.getMaxSlotsAllowed() / 2;
-									scheduledSlotsAllowedForEvening = slotMapping.getMaxSlotsAllowed() / 2;
-								} else {
-									scheduledSlotsAllowedForMorning = (slotMapping.getMaxSlotsAllowed() / 2) + 1;
-									scheduledSlotsAllowedForEvening = slotMapping.getMaxSlotsAllowed() / 2;
-								}
-							}
-							slot.setZone(slotMapping.getZone());
-							slot.setElectionWard(slotMapping.getElectionWard());
-							slot.setCreatedBy(user);
-							slot.setCreatedDate(new Date());
-							slot.setAppointmentDate(weekDateTime.toDate());
-							List<SlotDetail> slotDetailList = new ArrayList<>();
-							for (int j = 1; j <= 2; j++) {
-								SlotDetail slotDetail = new SlotDetail();
-								if (j == 1) {
-									slotDetail.setAppointmentTime(APP_TIME_MORNING);
-									slotDetail.setMaxScheduledSlots(scheduledSlotsAllowedForMorning);
-									slotDetail.setMaxRescheduledSlots(0);
-
-								} else {
-									slotDetail.setAppointmentTime(APP_TIME_EVENING);
-									slotDetail.setMaxScheduledSlots(scheduledSlotsAllowedForEvening);
-									slotDetail.setMaxRescheduledSlots(0);
-								}
-								slotDetail.setUtilizedScheduledSlots(0);
-								slotDetail.setUtilizedRescheduledSlots(0);
-								slotDetail.setCreatedDate(new Date());
-								slotDetail.setCreatedBy(user);
-								slotDetail.setSlot(slot);
-								slotDetailList.add(slotDetail);
-							}
-							slot.setSlotDetail(slotDetailList);
-							slot = slotRepository.save(slot);
-							slotDetailToBeUsed = slot.getSlotDetail().get(0);
 						}
-						flag = false;
-					} // if its holiday pick other date
-					else {
-						flag = true;
-						weekOfyear = weekOfyear + 1;
-						weekStartDate = new DateTime().withWeekOfWeekyear(weekOfyear);
-						// Fetch Specific Days for given week
-						weekDateTime = weekStartDate.withDayOfWeek(Integer.parseInt(slotMapping.getDay().toString()));
+					} // Create New Slot
+					if (slotDetailToBeUsed == null) {
+						if (slotMapping.get(0).getMaxSlotsAllowed() != null && slotMapping.get(0).getMaxSlotsAllowed() > 0) {
+							if (slotMapping.get(0).getMaxSlotsAllowed() % 2 == 0) {
+								scheduledSlotsAllowedForMorning = slotMapping.get(0).getMaxSlotsAllowed() / 2;
+								scheduledSlotsAllowedForEvening = slotMapping.get(0).getMaxSlotsAllowed() / 2;
+							} else {
+								scheduledSlotsAllowedForMorning = (slotMapping.get(0).getMaxSlotsAllowed() / 2) + 1;
+								scheduledSlotsAllowedForEvening = slotMapping.get(0).getMaxSlotsAllowed() / 2;
+							}
+						}
+						slot.setZone(slotMapping.get(0).getZone());
+						slot.setElectionWard(slotMapping.get(0).getElectionWard());
+						slot.setCreatedBy(user);
+						slot.setCreatedDate(new Date());
+						slot.setAppointmentDate(weekDateTime.toDate());
+						List<SlotDetail> slotDetailList = new ArrayList<>();
+						for (int j = 1; j <= 2; j++) {
+							SlotDetail slotDetail = new SlotDetail();
+							if (j == 1) {
+								slotDetail.setAppointmentTime(APP_TIME_MORNING);
+								slotDetail.setMaxScheduledSlots(scheduledSlotsAllowedForMorning);
 
+							} else {
+								slotDetail.setAppointmentTime(APP_TIME_EVENING);
+								slotDetail.setMaxScheduledSlots(scheduledSlotsAllowedForEvening);
+
+							}
+							slotDetail.setUtilizedScheduledSlots(0);
+							slotDetail.setMaxRescheduledSlots(0);
+							slotDetail.setUtilizedRescheduledSlots(0);
+							slotDetail.setCreatedDate(new Date());
+							slotDetail.setCreatedBy(user);
+							slotDetail.setSlot(slot);
+							slotDetailList.add(slotDetail);
+						}
+						slot.setSlotDetail(slotDetailList);
+						slot = slotRepository.save(slot);
+						slotDetailToBeUsed = slot.getSlotDetail().get(0);
 					}
+					flag = false;
+				} // if its holiday pick other date
+				else {
+					flag = true;
+					weekOfyear = weekOfyear + 1;
+					weekStartDate = new DateTime().withWeekOfWeekyear(weekOfyear);
+					// Fetch Specific Days for given week
+					weekDateTime = weekStartDate.withDayOfWeek(Integer.parseInt(slotMapping.get(0).getDay().toString()));
+
 				}
 			}
-		}
+		} 
 		return slotDetailToBeUsed;
 	}
 }

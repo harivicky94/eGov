@@ -56,8 +56,6 @@ public interface SlotMappingRepository extends JpaRepository<SlotMapping, Long> 
 
 	List<SlotMapping> findByApplTypeAndZone(ApplicationType applType, Boundary zone);
 	
-	SlotMapping findByApplTypeAndZoneAndElectionWard(ApplicationType applType, Boundary zone, Boundary ward);
-
 	@Query("select distinct sm.zone from SlotMapping sm where sm.applType = :applType")
 	List<Boundary> findZoneByApplType(@Param("applType")ApplicationType applType);
 

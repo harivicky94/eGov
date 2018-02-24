@@ -258,6 +258,24 @@
 		</div>
 	</div>
 	
+	<c:if test="${bpaApplication.isOneDayPermitApplication}">
+		<div class="row add-border">
+			<div class="col-sm-3 add-margin">
+				Is One Day Permit
+			</div>
+			<div class="col-sm-3 add-margin view-content">
+				<c:out value="${bpaApplication.isOneDayPermitApplication}" default="N/A"></c:out>
+			</div>
+			
+			<div class="col-sm-3 add-margin">
+				Type of Land
+			</div>
+			<div class="col-sm-3 add-margin view-content">
+				<c:out value="${bpaApplication.typeOfLand}" default="N/A"></c:out>  
+			</div> 
+		</div>
+	</c:if>
+	
 	<div class="row add-border">
 		<div class="col-sm-3 add-margin">
 			<spring:message code="lbl.government.type" />

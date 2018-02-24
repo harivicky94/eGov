@@ -270,8 +270,10 @@
 				</c:if>
 			</div>
 			<br>
-			<c:if test="${(not empty bpaApplication.inspections && bpaApplication.status.code eq 'Document Verified') || (bpaApplication.state.value eq 'Field Inspection completed' && bpaApplication.status.code eq 'Field Inspected')}">
-				<div class="panel panel-primary" data-collapsed="0">
+			<c:if test="${(not empty bpaApplication.inspections && bpaApplication.status.code eq 'Document Verified') 
+				|| (bpaApplication.state.value eq 'Field Inspection completed' && bpaApplication.status.code eq 'Field Inspected')}">
+				<c:if test="${!bpaApplication.isOneDayPermitApplication}">
+				<div class="panel panel-primary" data-collapsed="0" id="townSurveyorInspectionDiv">
 					<div class="panel-heading toggle-header custom_form_panel_heading">
 						<div class="panel-title">
 						</div>
@@ -285,7 +287,8 @@
 						</label>
 					</div>
 				</div>
-			</c:if>
+				</c:if>
+			</c:if> 
 			<c:choose>
 				<c:when
 					test="${isFeeCollected && bpaApplication.status.code eq 'Approved'}">

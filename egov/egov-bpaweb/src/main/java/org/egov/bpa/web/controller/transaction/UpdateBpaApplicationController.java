@@ -129,9 +129,9 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
         getModeForUpdateApplication(model, application);
         model.addAttribute("inspectionList", inspectionService.findByBpaApplicationOrderByIdAsc(application));
         model.addAttribute("lettertopartylist", lettertoPartyService.findByBpaApplicationOrderByIdDesc(application));
-        if (FWD_TO_AE_FOR_FIELD_ISPECTION.equals(application.getState().getNextAction())
+        if (!application.getIsOneDayPermitApplication() && (FWD_TO_AE_FOR_FIELD_ISPECTION.equals(application.getState().getNextAction())
                 || APPLICATION_STATUS_FIELD_INS.equals(application.getStatus().getCode())
-                || APPLICATION_STATUS_NOCUPDATED.equalsIgnoreCase(application.getStatus().getCode())) {
+                || APPLICATION_STATUS_NOCUPDATED.equalsIgnoreCase(application.getStatus().getCode()))) {
             model.addAttribute("createlettertoparty", true);
         }
 
