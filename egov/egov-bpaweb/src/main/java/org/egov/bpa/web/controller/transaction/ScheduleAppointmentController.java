@@ -44,7 +44,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.egov.bpa.master.service.AppointmentLocationsService;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.BpaAppointmentSchedule;
-import org.egov.bpa.transaction.entity.Slot;
+
 import org.egov.bpa.transaction.entity.SlotDetail;
 import org.egov.bpa.transaction.entity.dto.ScheduleScrutiny;
 import org.egov.bpa.transaction.entity.enums.AppointmentSchedulePurpose;
@@ -52,7 +52,6 @@ import org.egov.bpa.transaction.service.BpaAppointmentScheduleService;
 import org.egov.bpa.transaction.service.RescheduleAppointmentsForDocumentScrutinyService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.commons.entity.Source;
-import org.joda.time.DateTime;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -70,7 +69,7 @@ import java.util.*;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_DOC_VERIFIED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_SCHEDULED;
 
-@RestController
+@Controller
 @RequestMapping(value = "/application")
 public class ScheduleAppointmentController extends BpaGenericApplicationController {
 
@@ -202,7 +201,7 @@ public class ScheduleAppointmentController extends BpaGenericApplicationControll
 
         return REDIRECT_APPLICATION_VIEW_APPOINTMENT + schedule.getId();
     }
-    @ResponseBody
+   
     @GetMapping("/scrutiny/reschedule/{applicationNumber}")
     public String showReScheduleDcoumentScrutiny(@PathVariable final String applicationNumber, final Model model) {
         BpaApplication application = applicationBpaService.findByApplicationNumber(applicationNumber);
