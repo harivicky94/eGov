@@ -193,7 +193,7 @@ public class DcrService {
             reportStatus = false;
         }
         
-        resultOutput.append(" Rules Verified : \n\n");
+        resultOutput.append("Rules Verified : \n\n");
         
     for(RuleOutput ruleOutput: planReportOutput.getRuleOutPuts())
         {
@@ -261,6 +261,7 @@ public class DcrService {
                 }
            }else
            {
+               resultOutput.append("\n\b");
                if (ruleOutput.ruleDescription != null) {
                    resultOutput.append(" :: ");
                    resultOutput.append("\b");
