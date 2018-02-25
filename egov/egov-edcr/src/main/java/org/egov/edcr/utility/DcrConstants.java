@@ -43,35 +43,26 @@ public class DcrConstants {
     public static final String SEQ_ECDR_APPLICATIONNO = "SEQ_ECDR_APPLICATIONNO";
     public static final String APPLICATION_MODULE_TYPE = "EDCR";
     // ----- names
-    public static final String VERT_CLEAR_OHE = "VERT_CLEAR_OHE";
-    public static final String REAR_YARD = "REAR_YARD";
-    public static final String BUILDING_FOOT_PRINT = "BLDG_FOOT_PRINT";
-    public static final String SIDE_YARD_2 = "SIDE_YARD_2";
-    public static final String SIDE_YARD_1 = "SIDE_YARD_1";
-    public static final String FRONT_YARD = "FRONT_YARD";
-    public static final String NOTIFIED_ROADS = "NOTIFIED_ROADS";
-    public static final String NON_NOTIFIED_ROAD = "NON_NOTIFIED_ROAD";
-    public static final String HORIZ_CLEAR_OHE2 = "HORIZ_CLEAR_OHE";
-    public static final String PLOT_BOUNDARY = "PLOT_BOUNDARY";
+   
     public static Integer FLOOR_COLOUR_CODE = 10;
-    public static String LAYER_NAME_WASTE_DISPOSAL = "WASTE_DISPOSAL";
-    public static String CRZ_ZONE = "CRZ_ZONE";
+
+   
     public static final int DECIMALDIGITS = 10;
     public static final int DECIMALDIGITS_MEASUREMENTS = 3;
-    public static final Object ARCHITECTNAME = "ARCHITECT_NAME";
+   
     public static final String BUILDING_EXTERIOR_WALL = "BUILDING_EXTERIOR_WALL";
     public static final String OCCUPANCY = "Occupancy";
     public static final String BUILDING_HEIGHT = "BUILDING_HEIGHT";
     public static final String BUILDING_TOP_MOST_HEIGHT = "BUILDING_TOP_MOST_HEIGHT";
     public static final String MAX_HEIGHT_CAL = "MAX_HEIGHT_CAL";
     public static final String SECURITY_ZONE = "SECURITY Zone";
-    public static final String SHORTEST_DISTANCE_TO_ROAD = "SHORTEST_DISTANCE_TO_ROAD";
-    public static final String ACCESS_WIDTH = "ACCESS_WIDTH";
+    
+    
     public static final String IN_METER_SQR = "(MTRSQ)";
     public static final String RESIDENTIAL = "RESIDENTIAL";
     public static final String TOTAL_FLOOR_AREA = "TOTAL_FLOOR_AREA";
     public static final String NOC = "NOC";
-    public static final String PLOT_AREA_PLAN_INFO = "PLOT_AREA";
+ 
     public static final String FAR_DEDUCT ="FAR_DEDUCT";
     public static final String FLOOR_AREA ="FLOOR_AREA";
     public static final String FAR ="F.A.R";

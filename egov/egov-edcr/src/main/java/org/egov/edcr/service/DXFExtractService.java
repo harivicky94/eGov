@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.egov.edcr.constants.DxfFileConstants;
 import org.egov.edcr.entity.Building;
 import org.egov.edcr.entity.EdcrApplication;
 import org.egov.edcr.entity.ElectricLine;
@@ -19,7 +20,7 @@ import org.egov.edcr.entity.measurement.WasteDisposal;
 import org.egov.edcr.entity.measurement.Yard;
 import org.egov.edcr.utility.DcrConstants;
 import org.egov.edcr.utility.Util;
-import org.jfree.util.Log;
+import org.kabeja.dxf.DXFDimension;
 import org.kabeja.dxf.DXFDocument;
 import org.kabeja.dxf.DXFLWPolyline;
 import org.kabeja.dxf.DXFLine;
@@ -50,42 +51,40 @@ public class DXFExtractService {
             // Extract DXF Data
             DXFDocument doc = parser.getDocument();
 
-            pl.setPlanInformation(extractPlanInfo(doc,pl));
+            pl.setPlanInformation(extractPlanInfo(doc, pl));
             pl.getPlanInformation().setOccupancy(dcrApplication.getPlanInformation().getOccupancy());
             pl.getPlanInformation().setOwnerName(dcrApplication.getPlanInformation().getOwnerName());
-            
+
             Plot plot = new Plot();
-            polyLinesByLayer = Util.getPolyLinesByLayer(doc, DcrConstants.PLOT_BOUNDARY);
-            if (polyLinesByLayer.size() > 0){
+            polyLinesByLayer = Util.getPolyLinesByLayer(doc, DxfFileConstants.PLOT_BOUNDARY);
+            if (polyLinesByLayer.size() > 0) {
                 plot.setPolyLine(polyLinesByLayer.get(0));
                 plot.setPresentInDxf(true);
-            }
-            else
+            } else
                 pl.addError("", edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
-                        new String[] { DcrConstants.PLOT_BOUNDARY }, null));
+                        new String[] { DxfFileConstants.PLOT_BOUNDARY }, null));
             pl.setPlot(plot);
             Building building = new Building();
-            polyLinesByLayer = Util.getPolyLinesByLayer(doc, DcrConstants.BUILDING_FOOT_PRINT);
-            
-            if (polyLinesByLayer.size() > 0)
-            {
+            polyLinesByLayer = Util.getPolyLinesByLayer(doc, DxfFileConstants.BUILDING_FOOT_PRINT);
+
+            if (polyLinesByLayer.size() > 0) {
                 building.setPolyLine(polyLinesByLayer.get(0));
                 building.setPresentInDxf(true);
-            }
-            else
+            } else
                 pl.addError("", edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
-                        new String[] { DcrConstants.BUILDING_FOOT_PRINT }, null));
+                        new String[] { DxfFileConstants.BUILDING_FOOT_PRINT }, null));
             pl.setBuilding(building);
+            pl.getBuilding().setTotalFloorArea(extractTotalFloorArea(doc, pl));
 
-            pl.getPlot().setFrontYard(getYard(pl, doc, DcrConstants.FRONT_YARD));
-            pl.getPlot().setRearYard(getYard(pl, doc, DcrConstants.REAR_YARD));
-            pl.getPlot().setSideYard1(getYard(pl, doc, DcrConstants.SIDE_YARD_1));
-            pl.getPlot().setSideYard2(getYard(pl, doc, DcrConstants.SIDE_YARD_2));
+            pl.getPlot().setFrontYard(getYard(pl, doc, DxfFileConstants.FRONT_YARD));
+            pl.getPlot().setRearYard(getYard(pl, doc, DxfFileConstants.REAR_YARD));
+            pl.getPlot().setSideYard1(getYard(pl, doc, DxfFileConstants.SIDE_YARD_1));
+            pl.getPlot().setSideYard2(getYard(pl, doc, DxfFileConstants.SIDE_YARD_2));
 
-            pl.getPlot().getFrontYard().setMinimumDistance(MinDistance.getYardMinDistance(pl, DcrConstants.FRONT_YARD));
-            pl.getPlot().getSideYard1().setMinimumDistance(MinDistance.getYardMinDistance(pl, DcrConstants.SIDE_YARD_1));
-            pl.getPlot().getSideYard2().setMinimumDistance(MinDistance.getYardMinDistance(pl, DcrConstants.SIDE_YARD_2));
-            pl.getPlot().getRearYard().setMinimumDistance(MinDistance.getYardMinDistance(pl, DcrConstants.REAR_YARD));
+            pl.getPlot().getFrontYard().setMinimumDistance(MinDistance.getYardMinDistance(pl, DxfFileConstants.FRONT_YARD));
+            pl.getPlot().getSideYard1().setMinimumDistance(MinDistance.getYardMinDistance(pl, DxfFileConstants.SIDE_YARD_1));
+            pl.getPlot().getSideYard2().setMinimumDistance(MinDistance.getYardMinDistance(pl, DxfFileConstants.SIDE_YARD_2));
+            pl.getPlot().getRearYard().setMinimumDistance(MinDistance.getYardMinDistance(pl, DxfFileConstants.REAR_YARD));
 
             pl = extractRoadDetails(doc, pl);
             pl.setNotifiedRoads(new ArrayList<>());
@@ -101,6 +100,11 @@ public class DXFExtractService {
         return pl;
     }
 
+    private BigDecimal extractTotalFloorArea(DXFDocument doc, PlanDetail pl) {
+        // TODO Auto-generated method stub
+        return BigDecimal.ZERO;
+    }
+
     private Yard getYard(PlanDetail pl, DXFDocument doc, String yardName) {
         Yard yard = new Yard();
         List<DXFLWPolyline> frontYardLines = Util.getPolyLinesByLayer(doc, yardName);
@@ -109,7 +113,7 @@ public class DXFExtractService {
             yard.setArea(Util.getPolyLineArea(yard.getPolyLine()));
             yard.setMean(yard.getArea().divide(BigDecimal.valueOf(yard.getPolyLine().getBounds().getWidth()), 5,
                     RoundingMode.HALF_UP));
-            LOG.info(yardName+" Mean "+yard.getMean());
+            LOG.info(yardName + " Mean " + yard.getMean());
             yard.setPresentInDxf(true);
 
         } else
@@ -127,35 +131,58 @@ public class DXFExtractService {
     private PlanInformation extractPlanInfo(DXFDocument doc, PlanDetail pl) {
         PlanInformation pi = new PlanInformation();
         Map<String, String> planInfoProperties = Util.getPlanInfoProperties(doc);
-        pi.setArchitectInformation(planInfoProperties.get(DcrConstants.ARCHITECTNAME));
-        String plotArea = planInfoProperties.get(DcrConstants.PLOT_AREA_PLAN_INFO);
-    
+        if (planInfoProperties.get(DxfFileConstants.ARCHITECT_NAME) != null)
+            pi.setArchitectInformation(planInfoProperties.get(DxfFileConstants.ARCHITECT_NAME));
+        String plotArea = planInfoProperties.get(DxfFileConstants.PLOT_AREA);
+
         if (plotArea == null) {
-            pl.addError(DcrConstants.PLOT_AREA_PLAN_INFO, DcrConstants.PLOT_AREA_PLAN_INFO + " is not defined in the Plan Information Layer");
+            pl.addError(DxfFileConstants.PLOT_AREA, DxfFileConstants.PLOT_AREA + " is not defined in the Plan Information Layer");
         } else {
             try {
+                plotArea = plotArea.replaceAll("[^\\d.]", "");
                 pi.setPlotArea(BigDecimal.valueOf(Double.parseDouble(plotArea)));
             } catch (Exception e) {
-                pl.addError(DcrConstants.PLOT_AREA_PLAN_INFO, DcrConstants.PLOT_AREA_PLAN_INFO + " contains non numeric values.");
+                pl.addError(DxfFileConstants.PLOT_AREA, DxfFileConstants.PLOT_AREA + " contains non invalid values.");
             }
 
         }
-        
-        if(planInfoProperties.get(DcrConstants.CRZ_ZONE)!=null)
-        {
-        pi.setCrzZoneArea(true);
+
+        if (planInfoProperties.get(DxfFileConstants.CRZ_ZONE) != null) {
+            pi.setCrzZoneArea(true);
         }
-        
-        
-        
+        if (planInfoProperties.get(DxfFileConstants.ARCHITECT_NAME) != null) {
+            pi.setArchitectInformation(planInfoProperties.get(DxfFileConstants.ARCHITECT_NAME));
+        }
+
+        String accwidth = "";
+        if (planInfoProperties.get(DxfFileConstants.ACCESS_WIDTH) != null) {
+            String accessWidth = planInfoProperties.get(DxfFileConstants.ACCESS_WIDTH);
+            accwidth = accessWidth;
+            if (accessWidth == null) {
+                pl.addError(DxfFileConstants.ACCESS_WIDTH, DxfFileConstants.ACCESS_WIDTH + "  Is not defined");
+
+            } else {
+                accessWidth = accessWidth.replaceAll("[^\\d.]", "");
+                if (!accessWidth.isEmpty()) {
+                    pi.setAccessWidth(BigDecimal.valueOf(Double.parseDouble(accessWidth)));
+                } else {
+                    pl.addError(DxfFileConstants.ACCESS_WIDTH,
+                            "The value for " + DxfFileConstants.ACCESS_WIDTH + " '" + accwidth + "' Is Invalid");
+                }
+
+            }
+        } else {
+            pi.setAccessWidth(BigDecimal.ZERO);
+        }
+
         return pi;
     }
 
     private PlanDetail extractRoadDetails(DXFDocument doc, PlanDetail pl) {
-        Util.getPolyLinesByLayer(doc, DcrConstants.NON_NOTIFIED_ROAD);
-        Util.getPolyLinesByLayer(doc, DcrConstants.NOTIFIED_ROADS);
+        Util.getPolyLinesByLayer(doc, DxfFileConstants.NON_NOTIFIED_ROAD);
+        Util.getPolyLinesByLayer(doc, DxfFileConstants.NOTIFIED_ROADS);
 
-        List<DXFLine> distancesToRoads = Util.getLinesByLayer(doc, DcrConstants.SHORTEST_DISTANCE_TO_ROAD);
+        List<DXFLine> distancesToRoads = Util.getLinesByLayer(doc, DxfFileConstants.SHORTEST_DISTANCE_TO_ROAD);
         if (distancesToRoads.size() > 0) {
             List<NotifiedRoad> notifiedRoads = new ArrayList<>();
             NotifiedRoad road = new NotifiedRoad();
@@ -170,7 +197,7 @@ public class DXFExtractService {
     }
 
     private PlanDetail extractUtilities(DXFDocument doc, PlanDetail pl) {
-        List<DXFLWPolyline> wasterDisposalPolyLines = Util.getPolyLinesByLayer(doc, DcrConstants.LAYER_NAME_WASTE_DISPOSAL);
+        List<DXFLWPolyline> wasterDisposalPolyLines = Util.getPolyLinesByLayer(doc, DxfFileConstants.LAYER_NAME_WASTE_DISPOSAL);
         if (wasterDisposalPolyLines.size() > 0) {
             WasteDisposal disposal = new WasteDisposal();
             disposal.setPresentInDxf(true);
@@ -182,40 +209,63 @@ public class DXFExtractService {
 
     private PlanDetail extractOverheadElectricLines(DXFDocument doc, PlanDetail pl) {
         ElectricLine line = new ElectricLine();
-       
 
-        DXFLine horiz_clear_OHE = Util.getSingleLineByLayer(doc, DcrConstants.HORIZ_CLEAR_OHE2);
+        DXFLine horiz_clear_OHE = Util.getSingleLineByLayer(doc, DxfFileConstants.HORIZ_CLEAR_OHE2);
+
         if (horiz_clear_OHE != null) {
             line.setHorizontalDistance(BigDecimal.valueOf(horiz_clear_OHE.getLength()));
             line.setPresentInDxf(true);
+        } else {
+            DXFDimension dimension = Util.getSingleDimensionByLayer(doc, DxfFileConstants.HORIZ_CLEAR_OHE2);
+            if (dimension != null) {
+                // LOG.info(dimension.getHorizontalAlign()+dimension.getLeadingLineLength()+"xxx:"+(dimension.getBounds().getMaximumX()-dimension.getBounds().getMinimumX()));
+                // LOG.info(dimension.getLeadingLineLength()+"yyy:"+(dimension.getBounds().getMaximumY()-dimension.getBounds().getMinimumY()));
+                double x = dimension.getBounds().getMaximumY() - dimension.getBounds().getMinimumY();
+                line.setHorizontalDistance(BigDecimal.valueOf(x));
+
+                line.setPresentInDxf(true);
+            }
         }
-        DXFLine vert_clear_OHE = Util.getSingleLineByLayer(doc, DcrConstants.VERT_CLEAR_OHE);
+        DXFLine vert_clear_OHE = Util.getSingleLineByLayer(doc, DxfFileConstants.VERT_CLEAR_OHE);
 
         if (vert_clear_OHE != null) {
             line.setVerticalDistance(BigDecimal.valueOf(vert_clear_OHE.getLength()));
             line.setPresentInDxf(true);
+        } else {
+            Util.getMtextByLayerName(doc, DxfFileConstants.VERT_CLEAR_OHE);
+
+            DXFDimension dimension = Util.getSingleDimensionByLayer(doc, DxfFileConstants.VERT_CLEAR_OHE);
+            if (dimension != null) {
+
+                // LOG.info(dimension.getHorizontalAlign()+dimension.getLeadingLineLength()+"xxx:"+(dimension.getBounds().getMaximumX()-dimension.getBounds().getMinimumX()));
+                // LOG.info(dimension.getLeadingLineLength()+"yyy:"+(dimension.getBounds().getMaximumY()-dimension.getBounds().getMinimumY()));
+                double x = dimension.getBounds().getMaximumY() - dimension.getBounds().getMinimumY();
+                line.setVerticalDistance(BigDecimal.valueOf(x));
+                line.setPresentInDxf(true);
+            } else {
+
+            }
         }
-        
-        if(horiz_clear_OHE!=null || vert_clear_OHE!=null )
-        {
+
         String voltage = Util.getMtextByLayerName(doc, "VOLTAGE");
-        if (voltage != null)
+        if (voltage != null) {
             try {
+                voltage = voltage.replaceAll("[^\\d.]", "");
                 BigDecimal volt = BigDecimal.valueOf(Double.parseDouble(voltage));
                 line.setVoltage(volt);
                 line.setPresentInDxf(true);
             } catch (NumberFormatException e) {
-                
-                pl.addError("VOLTAGE", "Voltage value contains non numeric character.Voltage must be Number specified in  KW unit, without the text KW");
 
-            }else
-            {
-                pl.addError("VOLTAGE", "Voltage is not mentioned for the "+DcrConstants.HORIZ_CLEAR_OHE2+" or "+DcrConstants.VERT_CLEAR_OHE);
+                pl.addError("VOLTAGE",
+                        "Voltage value contains non numeric character.Voltage must be Number specified in  KW unit, without the text KW");
+
             }
+        } else {
+            pl.addError("VOLTAGE", "Voltage is not mentioned for the " + DxfFileConstants.HORIZ_CLEAR_OHE2 + " or "
+                    + DxfFileConstants.VERT_CLEAR_OHE);
         }
         pl.setElectricLine(line);
-        
-        
+
         return pl;
     }
 

@@ -67,7 +67,7 @@ public class EdcrApplicationController {
                                                                     append(permanentAddress.getStreetRoadLine()).append(".");
         EdcrApplication edcrApplication = new EdcrApplication();
         PlanInformation planInformation = new PlanInformation();
-        planInformation.setArchitectInformation(architectInfo.toString());
+      //  planInformation.setArchitectInformation(architectInfo.toString());
         edcrApplication.setPlanInformation(planInformation);
         model.addAttribute("edcrApplication", edcrApplication);
 

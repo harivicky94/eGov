@@ -10,12 +10,16 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
+import org.egov.edcr.constants.DxfFileConstants;
 import org.egov.edcr.entity.PlanDetail;
 import org.egov.edcr.entity.ReportOutput;
 import org.egov.edcr.entity.RuleOutput;
 import org.egov.edcr.entity.SubRuleOutput;
 import org.egov.edcr.entity.utility.RuleReportOutput;
+import org.kabeja.dxf.DXFBlock;
 import org.kabeja.dxf.DXFConstants;
+import org.kabeja.dxf.DXFDimension;
+import org.kabeja.dxf.DXFDimensionStyle;
 import org.kabeja.dxf.DXFDocument;
 import org.kabeja.dxf.DXFLWPolyline;
 import org.kabeja.dxf.DXFLayer;
@@ -30,7 +34,6 @@ public class Util {
     private static String FLOOR_NAME_PREFIX = "FLOOR_";
     private static final int DECIMALDIGITS = 10;
     private static Logger LOG = Logger.getLogger(Util.class);
-
 
     public List<DXFLWPolyline> getPolyLinesByColor(DXFDocument dxfDocument, Integer colorCode) {
 
@@ -84,8 +87,11 @@ public class Util {
     }
 
     public static List<DXFLine> getLinesByLayer(DXFDocument dxfDocument, String name) {
-
         List<DXFLine> lines = new ArrayList<>();
+        if(name==null)
+            return lines;
+        name = name.toUpperCase();
+       
 
         Iterator dxfLayerIterator = dxfDocument.getDXFLayerIterator();
 
@@ -100,7 +106,7 @@ public class Util {
 
                     DXFLine line = (DXFLine) dxfEntity;
 
-                    if (name == line.getLayerName())
+                    if (name.contains(line.getLayerName().toUpperCase()))
                         lines.add(line);
 
                 }
@@ -111,12 +117,18 @@ public class Util {
 
     public static DXFLine getSingleLineByLayer(DXFDocument dxfDocument, String name) {
 
+        if (name == null)
+            return null;
         if (dxfDocument == null)
             return null;
         if (name == null)
             return null;
+        
+        name=name.toUpperCase();
 
         List<DXFLine> lines = new ArrayList<>();
+
+        List<DXFDimension> dimensions = new ArrayList<>();
 
         Iterator dxfLayerIterator = dxfDocument.getDXFLayerIterator();
 
@@ -131,13 +143,57 @@ public class Util {
 
                     DXFLine line = (DXFLine) dxfEntity;
 
-                    if (name.equalsIgnoreCase(line.getLayerName()))
+                    if (name.contains(line.getLayerName().toUpperCase()))
                         lines.add(line);
 
                 }
+
+            
         }
         if (lines.size() == 1)
             return lines.get(0);
+        else
+            return null;
+
+    }
+
+    public static DXFDimension getSingleDimensionByLayer(DXFDocument dxfDocument, String name) {
+
+        if (dxfDocument == null)
+            return null;
+        if (name == null)
+            return null;
+        name=name.toUpperCase();
+
+        List<DXFDimension> dimensions = new ArrayList<>();
+
+        Iterator dxfLayerIterator = dxfDocument.getDXFLayerIterator();
+       
+
+        while (dxfLayerIterator.hasNext()) {
+
+            DXFLayer dxfLayer = (DXFLayer) dxfLayerIterator.next();
+            
+            List dxfLineEntities = dxfLayer.getDXFEntities(DXFConstants.ENTITY_TYPE_DIMENSION);
+
+            if (null != dxfLineEntities)
+                for (Object dxfEntity : dxfLineEntities) {
+
+                    DXFDimension line = (DXFDimension) dxfEntity;
+                    String dimensionBlock = line.getDimensionBlock();
+                    DXFBlock dxfBlock = dxfDocument.getDXFBlock(dimensionBlock);
+                    LOG.info("BLOCK data"+ dxfBlock.getDescription());
+                    DXFDimensionStyle dxfDimensionStyle = dxfDocument.getDXFDimensionStyle(line.getDimensionStyleID());
+                    LOG.info("---"+dxfDimensionStyle.getProperty(DXFDimensionStyle.PROPERTY_DIMEXO));
+                   // LOG.info(line.getInclinationHelpLine()+"HELP LINE"+line.getDimensionText() +"--"+line.getLayerName()+"--"+line.getDimensionArea());
+                    
+                    if (name.contains(line.getLayerName().toUpperCase()))
+                        dimensions.add(line);  
+
+                }
+        }
+        if (dimensions.size() == 1)
+            return dimensions.get(0);
         else
             return null;
 
@@ -172,6 +228,8 @@ public class Util {
     public static List<DXFLWPolyline> getPolyLinesByLayer(DXFDocument dxfDocument, String name) {
 
         List<DXFLWPolyline> dxflwPolylines = new ArrayList<>();
+        if(name==null)
+            return dxflwPolylines;
 
         Iterator dxfLayerIterator = dxfDocument.getDXFLayerIterator();
 
@@ -186,7 +244,7 @@ public class Util {
 
                     DXFLWPolyline dxflwPolyline = (DXFLWPolyline) dxfEntity;
 
-                    if (name.equalsIgnoreCase(dxflwPolyline.getLayerName()))
+                    if (name.contains(dxflwPolyline.getLayerName().toUpperCase()))
                         dxflwPolylines.add(dxflwPolyline);
                 }
         }
@@ -234,35 +292,80 @@ public class Util {
 
     }
 
-    public static String getMtextByLayerName(DXFDocument doc, String layerName) {
-        String param = null;
-        DXFLayer planInfoLayer = doc.getDXFLayer(layerName);
-        if(planInfoLayer!=null)
+    public static String getMtextByLayerName(DXFDocument doc, String name) {
+       if(name==null)
+           return null;
+       String param = null;
+       name=name.toUpperCase();
+       String[] split = name.split(",");
+       for(String layerName:split )
+       {
+       
+        
+        Boolean found=false;
+        Iterator dxfLayerIterator = doc.getDXFLayerIterator();
+        while(dxfLayerIterator.hasNext())
         {
-        List texts = planInfoLayer.getDXFEntities(DXFConstants.ENTITY_TYPE_MTEXT);
+            DXFLayer next =(DXFLayer) dxfLayerIterator.next();
+            DXFLayer planInfoLayer = doc.getDXFLayer(next.getName());
+           // LOG.info("----------"+planInfoLayer.getName()+"---------------------------------------------------");
+            if (planInfoLayer != null) {
+                List texts = planInfoLayer.getDXFEntities(DXFConstants.ENTITY_TYPE_MTEXT);
+                if(texts!=null)
+                {
+                    Iterator iterator = texts.iterator();
+
+                    while (iterator.hasNext()) {
+                        DXFText   text = (DXFText) iterator.next();
+                       // LOG.info("Mtext :"+text.getText());
+                    }
+                }
      
-        DXFText text = null;
-        Iterator iterator = texts.iterator();
-
-        while (iterator.hasNext()) {
-            text = (DXFText) iterator.next();
-            if (text != null && text.getText() != null) {
-                param = text.getText();
-                /*
-                 * if(new Float(param).isNaN()) { throw new RuntimeException("Texts in the layer" + layerName
-                 * +"Does not follow standard "); }
-                 */
-
-                param = param.replace("VOLTS", "").trim();
+            }
+            if(layerName.equals(next.getName().toUpperCase()))
+            {
+              found=true;   
+                layerName=next.getName();
             }
         }
+        if(!found)
+        {
+            LOG.error("No Layer Found with name" +layerName);
         }
+        
+        
+        DXFLayer planInfoLayer = doc.getDXFLayer(layerName);
+       // LOG.info(planInfoLayer.getName());
+        if (planInfoLayer != null) {
+            List texts = planInfoLayer.getDXFEntities(DXFConstants.ENTITY_TYPE_MTEXT);
+
+           // LOG.info("Texts list is null ");
+            DXFText text = null;
+            if(texts!=null)
+            {
+            Iterator iterator = texts.iterator();
+
+            while (iterator.hasNext()) {
+                text = (DXFText) iterator.next();
+               // LOG.info("Mtext :"+text.getText());
+                if (text != null && text.getText() != null) {
+                    param = text.getText();
+                    /*
+                     * if(new Float(param).isNaN()) { throw new RuntimeException("Texts in the layer" + layerName
+                     * +"Does not follow standard "); }
+                     */
+
+                    param = param.replace("VOLTS", "").trim();
+                }
+            }}
+        }
+       }
         return param;
     }
 
     public static Map<String, String> getPlanInfoProperties(DXFDocument doc) {
 
-        DXFLayer planInfoLayer = doc.getDXFLayer("Plan info");
+        DXFLayer planInfoLayer = doc.getDXFLayer(DxfFileConstants.PLAN_INFO);
         List texts = planInfoLayer.getDXFEntities(DXFConstants.ENTITY_TYPE_MTEXT);
         String param = "";
         DXFText text = null;
@@ -409,71 +512,64 @@ public class Util {
         return myPoints;
     }
 
-    public static void print(DXFLWPolyline yard,String name) {
-        if(yard!=null)
-        {
-        Iterator vertexIterator = yard.getVertexIterator();
-        LOG.info("Points on the "+name);
-        while (vertexIterator.hasNext()) {
-            DXFVertex next = (DXFVertex) vertexIterator.next();
-            LOG.info(next.getPoint().getX()+","+next.getPoint().getY());
-            LOG.info(next.getX()+","+next.getY());
+    public static void print(DXFLWPolyline yard, String name) {
+        if (yard != null) {
+            Iterator vertexIterator = yard.getVertexIterator();
+            LOG.info("Points on the " + name);
+            while (vertexIterator.hasNext()) {
+                DXFVertex next = (DXFVertex) vertexIterator.next();
+                LOG.info(next.getPoint().getX() + "," + next.getPoint().getY());
+                LOG.info(next.getX() + "," + next.getY());
+            }
         }
-        }
-        
+
     }
-    
-    public static void print(HashMap<String,String> errors)
-    {
+
+    public static void print(HashMap<String, String> errors) {
         LOG.info(errors.getClass().getName());
         Iterator<Entry<String, String>> iterator = errors.entrySet().iterator();
-        while (iterator.hasNext())
-        {
+        while (iterator.hasNext()) {
             Entry<String, String> next = iterator.next();
-            LOG.info(next.getKey()+"---"+next.getValue());
+            LOG.info(next.getKey() + "---" + next.getValue());
         }
     }
-    
-    
-    public static void print(ReportOutput ro)
-    {
+
+    public static void print(ReportOutput ro) {
         try {
             LOG.info("ReportOutput");
-            if(ro.getRuleOutPuts()!=null)
-            for( RuleOutput rp:  ro.getRuleOutPuts())
-            {
-                LOG.info(rp.key +" -- "+rp.getMessage()+" -- "+rp.getResult());
-                if(rp.getSubRuleOutputs()!=null)
-                for(SubRuleOutput so:rp.getSubRuleOutputs())
-                {
-                    LOG.info(so.key+" , "+so.message+" , "+so.ruleDescription);
-                    List<RuleReportOutput> ruleReportOutputs = so.ruleReportOutputs;
-                    if(ruleReportOutputs!=null)
-                    for(RuleReportOutput rro:ruleReportOutputs)
-                    {
-                        LOG.info("Actual: "+rro.actualResult );
-                        LOG.info("Expected: "+rro.expectedResult);
-                        LOG.info("Filed Verified: "+rro.fieldVerified );
-                        LOG.info("Status: "+rro.status);
-                        
-                    }
+            if (ro.getRuleOutPuts() != null)
+                for (RuleOutput rp : ro.getRuleOutPuts()) {
+                    LOG.info(rp.key + " -- " + rp.getMessage() + " -- " + rp.getResult());
+                    if (rp.getSubRuleOutputs() != null)
+                        for (SubRuleOutput so : rp.getSubRuleOutputs()) {
+                            LOG.info(so.key + " , " + so.message + " , " + so.ruleDescription);
+                            List<RuleReportOutput> ruleReportOutputs = so.ruleReportOutputs;
+                            if (ruleReportOutputs != null)
+                                for (RuleReportOutput rro : ruleReportOutputs) {
+                                    LOG.info("Actual: " + rro.actualResult);
+                                    LOG.info("Expected: " + rro.expectedResult);
+                                    LOG.info("Filed Verified: " + rro.fieldVerified);
+                                    LOG.info("Status: " + rro.status);
+
+                                }
+                        }
+
                 }
-                    
-            }
         } catch (Exception e) {
-            
-          LOG.error("Ignoring since it is logging error",e);
+
+            LOG.error("Ignoring since it is logging error", e);
         }
-         
+        
+        LOG.info("ReportOutput Completed");
+
     }
-    
-    public static void print(PlanDetail pl)
-    {
+
+    public static void print(PlanDetail pl) {
         LOG.info("Set Backs");
-        LOG.info("Front Yard \n "+ pl.getPlot().getFrontYard());
-        LOG.info("Side Yard1 \n "+ pl.getPlot().getSideYard1());
-        LOG.info("Side Yard2 \n "+ pl.getPlot().getSideYard2());
-        LOG.info("Rear Yard \n "+ pl.getPlot().getRearYard());
+        LOG.info("Front Yard \n " + pl.getPlot().getFrontYard());
+        LOG.info("Side Yard1 \n " + pl.getPlot().getSideYard1());
+        LOG.info("Side Yard2 \n " + pl.getPlot().getSideYard2());
+        LOG.info("Rear Yard \n " + pl.getPlot().getRearYard());
         LOG.info(pl.getElectricLine());
     }
 

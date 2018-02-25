@@ -64,7 +64,7 @@ public class EdcrApplicationService {
         edcrApplicationRepository.save(edcrApplication);
         callDcrProcess(edcrApplication);
         portalInetgrationService.createPortalUserinbox(edcrApplication, Arrays.asList(securityUtils.getCurrentUser()));
-        return edcrApplication;
+        return edcrApplication;  
     }
 
     private void callDcrProcess(EdcrApplication edcrApplication) {
