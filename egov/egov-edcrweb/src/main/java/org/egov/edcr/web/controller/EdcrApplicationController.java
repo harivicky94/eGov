@@ -1,28 +1,25 @@
 package org.egov.edcr.web.controller;
 
-import org.egov.bpa.master.entity.StakeHolder;
-import org.egov.bpa.master.service.OccupancyService;
-import org.egov.bpa.master.service.ServiceTypeService;
-import org.egov.bpa.master.service.StakeHolderService;
-import org.egov.edcr.entity.EdcrApplication;
-import org.egov.edcr.entity.PlanInformation;
-import org.egov.edcr.service.EdcrApplicationService;
-import org.egov.edcr.web.adaptor.EdcrApplicationJsonAdaptor;
-import org.egov.infra.persistence.entity.Address;
-import org.egov.infra.persistence.entity.enums.AddressType;
-import org.egov.infra.security.utils.SecurityUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
-import org.springframework.http.MediaType;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
+import org.egov.bpa.master.entity.*;
+import org.egov.bpa.master.service.*;
+import org.egov.edcr.entity.*;
+import org.egov.edcr.service.*;
+import org.egov.edcr.web.adaptor.*;
+import org.egov.infra.persistence.entity.*;
+import org.egov.infra.persistence.entity.enums.*;
+import org.egov.infra.security.utils.*;
+import org.springframework.beans.factory.annotation.*;
+import org.springframework.context.*;
+import org.springframework.http.*;
+import org.springframework.stereotype.*;
+import org.springframework.ui.*;
+import org.springframework.validation.*;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.mvc.support.*;
 
-import java.util.List;
+import java.util.*;
 
-import static org.egov.infra.utils.JsonUtils.toJSON;
+import static org.egov.infra.utils.JsonUtils.*;
 
 @Controller
 @RequestMapping("/edcrapplication")
@@ -61,9 +58,9 @@ public class EdcrApplicationController {
         prepareNewForm(model);
         StakeHolder stakeHolder = stakeHolderService.findById(securityUtils.getCurrentUser().getId());
         Address permanentAddress = stakeHolder.getAddress().stream().filter(permtAddress -> permtAddress.getType().equals(AddressType.PERMANENT)).findAny().orElse(null);
-        StringBuilder architectInfo = new StringBuilder(256).append(stakeHolder.getName())
-                                                            .append(stakeHolder.getStakeHolderType().name()).
-                                                                    append(stakeHolder.getMobileNumber()).
+        StringBuilder architectInfo = new StringBuilder(256).append(stakeHolder.getName()).append(",")
+                                                            .append(stakeHolder.getStakeHolderType().name()).append(",").
+                                                                    append(stakeHolder.getMobileNumber()).append(",").
                                                                     append(permanentAddress.getStreetRoadLine()).append(".");
         EdcrApplication edcrApplication = new EdcrApplication();
         PlanInformation planInformation = new PlanInformation();
