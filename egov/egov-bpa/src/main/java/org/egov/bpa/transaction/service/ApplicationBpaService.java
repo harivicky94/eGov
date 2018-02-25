@@ -39,60 +39,42 @@
  */
 package org.egov.bpa.transaction.service;
 
-import org.apache.commons.lang3.ArrayUtils;
-import org.egov.bpa.autonumber.PlanPermissionNumberGenerator;
-import org.egov.bpa.master.entity.BpaFeeDetail;
-import org.egov.bpa.master.entity.ServiceType;
-import org.egov.bpa.master.service.BpaSchemeLandUsageService;
-import org.egov.bpa.master.service.CheckListDetailService;
-import org.egov.bpa.master.service.PostalAddressService;
-import org.egov.bpa.master.service.RegistrarOfficeVillageService;
-import org.egov.bpa.transaction.entity.ApplicationDocument;
-import org.egov.bpa.transaction.entity.ApplicationNocDocument;
-import org.egov.bpa.transaction.entity.BpaApplication;
-import org.egov.bpa.transaction.entity.BpaStatus;
-import org.egov.bpa.transaction.entity.SlotDetail;
-import org.egov.bpa.transaction.repository.ApplicationBpaRepository;
-import org.egov.bpa.transaction.service.collection.ApplicationBpaBillService;
-import org.egov.bpa.transaction.service.collection.BpaDemandService;
-import org.egov.bpa.transaction.service.collection.GenericBillGeneratorService;
-import org.egov.bpa.utils.BpaConstants;
-import org.egov.bpa.utils.BpaUtils;
-import org.egov.commons.entity.Source;
-import org.egov.demand.model.EgDemand;
-import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.service.RoleService;
-import org.egov.infra.admin.master.service.UserService;
-import org.egov.infra.config.core.EnvironmentSettings;
-import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.filestore.entity.FileStoreMapper;
-import org.egov.infra.filestore.service.FileStoreService;
-import org.egov.infra.persistence.entity.enums.UserType;
-import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.infra.utils.ApplicationNumberGenerator;
-import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
-import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
-import org.hibernate.Criteria;
-import org.hibernate.Session;
-import org.hibernate.criterion.Order;
-import org.hibernate.criterion.Restrictions;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.MessageSource;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.ui.Model;
-import org.springframework.web.multipart.MultipartFile;
+import org.apache.commons.lang3.*;
+import org.egov.bpa.autonumber.*;
+import org.egov.bpa.master.entity.*;
+import org.egov.bpa.master.service.*;
+import org.egov.bpa.transaction.entity.*;
+import org.egov.bpa.transaction.repository.*;
+import org.egov.bpa.transaction.service.collection.*;
+import org.egov.bpa.utils.*;
+import org.egov.commons.entity.*;
+import org.egov.demand.model.*;
+import org.egov.infra.admin.master.entity.*;
+import org.egov.infra.admin.master.service.*;
+import org.egov.infra.config.core.*;
+import org.egov.infra.exception.*;
+import org.egov.infra.filestore.entity.*;
+import org.egov.infra.filestore.service.*;
+import org.egov.infra.persistence.entity.enums.*;
+import org.egov.infra.security.utils.*;
+import org.egov.infra.utils.*;
+import org.egov.infra.utils.autonumber.*;
+import org.egov.infra.workflow.matrix.entity.*;
+import org.hibernate.*;
+import org.hibernate.criterion.*;
+import org.springframework.beans.factory.annotation.*;
+import org.springframework.context.*;
+import org.springframework.security.crypto.password.*;
+import org.springframework.stereotype.*;
+import org.springframework.transaction.annotation.*;
+import org.springframework.ui.*;
+import org.springframework.web.multipart.*;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
-import java.io.IOException;
-import java.math.BigDecimal;
+import javax.persistence.*;
+import java.io.*;
+import java.math.*;
 import java.util.*;
-import java.util.stream.Collectors;
+import java.util.stream.*;
 
 import static org.egov.bpa.utils.BpaConstants.*;
 
@@ -346,6 +328,12 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
             || WF_INITIATE_REJECTION_BUTTON.equalsIgnoreCase(workFlowAction)
             || APPLICATION_STATUS_REJECTED.equalsIgnoreCase(application.getStatus().getCode())) {
             buildRejectionReasons(application);
+        }
+
+        if (FWDINGTOLPINITIATORPENDING.equalsIgnoreCase(application.getState().getNextAction())) {
+            application.setLPRequestInitiated(true);
+        } else {
+            application.setLPRequestInitiated(false);
         }
         final BpaApplication updatedApplication = applicationBpaRepository.save(application);
         if (!WF_SAVE_BUTTON.equalsIgnoreCase(workFlowAction) && updatedApplication.getCurrentState() != null

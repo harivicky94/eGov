@@ -38,7 +38,6 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
-<%@page import="org.python.modules.jarray"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
@@ -77,6 +76,16 @@
 				type="file" name="files" class="filechange inline btn"
 				style="display: none;" /> <input type="file" name="files"
 				class="filechange inline btn" style="display: none;" /> <input
+				type="file" name="files" class="filechange inline btn"
+				style="display: none;" /><input
+				type="file" name="files" class="filechange inline btn"
+				style="display: none;" /><input
+				type="file" name="files" class="filechange inline btn"
+				style="display: none;" /><input
+				type="file" name="files" class="filechange inline btn"
+				style="display: none;" /><input
+				type="file" name="files" class="filechange inline btn"
+				style="display: none;" /><input
 				type="file" name="files" class="filechange inline btn"
 				style="display: none;" />
 		</div>

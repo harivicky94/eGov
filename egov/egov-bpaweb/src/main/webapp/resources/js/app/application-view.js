@@ -116,7 +116,7 @@ jQuery(document)
 
 
 					// Prevent continuous send back to previous owners, one step backward only allowed
-                    if ($('#sentToPreviousOwner').val() == 'true') {
+                    if ($('#sentToPreviousOwner').val() == 'true' || $('#lpRequestInitiated').val() == 'true') {
                         $("#Revert").hide();
                     } else {
                         $("#Revert").show();

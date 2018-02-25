@@ -46,25 +46,22 @@
  */
 package org.egov.bpa.transaction.entity;
 
-import org.egov.bpa.master.entity.Occupancy;
-import org.egov.bpa.master.entity.ServiceType;
-import org.egov.bpa.transaction.entity.dto.BpaStateInfo;
-import org.egov.bpa.transaction.entity.enums.ApplicantMode;
-import org.egov.bpa.transaction.entity.enums.GovernmentType;
-import org.egov.bpa.transaction.entity.enums.OneDayPermitLandType;
-import org.egov.commons.entity.Source;
-import org.egov.dcb.bean.Receipt;
-import org.egov.demand.model.EgDemand;
-import org.egov.infra.workflow.entity.StateAware;
-import org.egov.pims.commons.Position;
-import org.hibernate.validator.constraints.Length;
+import org.egov.bpa.master.entity.*;
+import org.egov.bpa.transaction.entity.dto.*;
+import org.egov.bpa.transaction.entity.enums.*;
+import org.egov.commons.entity.*;
+import org.egov.dcb.bean.*;
+import org.egov.demand.model.*;
+import org.egov.infra.workflow.entity.*;
+import org.egov.pims.commons.*;
+import org.hibernate.validator.constraints.*;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
+import javax.validation.constraints.*;
+import java.math.*;
+import java.text.*;
 import java.util.*;
-import java.util.stream.Collectors;
+import java.util.stream.*;
 
 @Entity
 @Table(name = "EGBPA_APPLICATION")
@@ -153,6 +150,7 @@ public class BpaApplication extends StateAware<Position> {
 	private Boolean isRescheduledByCitizen = false;
 	private Boolean isRescheduledByEmployee = false;
 	private Boolean isOneDayPermitApplication = false;
+	private Boolean isLPRequestInitiated;
 	@Enumerated(EnumType.STRING)
     @Column(name = "typeOfLand")
     private OneDayPermitLandType typeOfLand;// Garden Land or Wet Land
@@ -845,6 +843,14 @@ public class BpaApplication extends StateAware<Position> {
 
 	public void setIsOneDayPermitApplication(Boolean isOneDayPermitApplication) {
 		this.isOneDayPermitApplication = isOneDayPermitApplication;
+	}
+
+	public Boolean getLPRequestInitiated() {
+		return isLPRequestInitiated;
+	}
+
+	public void setLPRequestInitiated(Boolean LPRequestInitiated) {
+		isLPRequestInitiated = LPRequestInitiated;
 	}
 
 	public OneDayPermitLandType getTypeOfLand() {

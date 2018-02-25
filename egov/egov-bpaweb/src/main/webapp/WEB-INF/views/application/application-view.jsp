@@ -82,6 +82,7 @@
 				value="${scheduleType}" />
 			<form:hidden path="" id="showPermitConditions" value="${showpermitconditions}" />
 			<form:hidden path="sentToPreviousOwner" id="sentToPreviousOwner" />
+			<form:hidden path="LPRequestInitiated" id="lpRequestInitiated" value="${bpaApplication.LPRequestInitiated}" />
 			<ul class="nav nav-tabs" id="settingstab">
 				<li class="active"><a data-toggle="tab" href="#applicant-info"
 					data-tabidx=0><spring:message code='lbl.appln.details' /></a></li>

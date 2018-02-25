@@ -46,40 +46,34 @@
  */
 package org.egov.bpa.web.controller.transaction;
 
-import org.apache.commons.lang3.StringUtils;
-import org.egov.bpa.master.service.PermitConditionsService;
-import org.egov.bpa.transaction.entity.BpaApplication;
-import org.egov.bpa.transaction.entity.BpaAppointmentSchedule;
-import org.egov.bpa.transaction.entity.LettertoParty;
-import org.egov.bpa.transaction.entity.enums.AppointmentSchedulePurpose;
-import org.egov.bpa.transaction.entity.enums.PermitConditionType;
-import org.egov.bpa.transaction.service.BpaApplicationPermitConditionsService;
-import org.egov.bpa.transaction.service.InspectionService;
-import org.egov.bpa.transaction.service.LettertoPartyService;
-import org.egov.bpa.utils.BpaConstants;
-import org.egov.eis.entity.Assignment;
-import org.egov.eis.service.PositionMasterService;
-import org.egov.eis.web.contract.WorkflowContainer;
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.persistence.entity.PermanentAddress;
-import org.egov.infra.workflow.entity.StateHistory;
-import org.egov.pims.commons.Position;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
+import org.apache.commons.lang3.*;
+import org.egov.bpa.master.service.*;
+import org.egov.bpa.transaction.entity.*;
+import org.egov.bpa.transaction.entity.enums.*;
+import org.egov.bpa.transaction.service.*;
+import org.egov.bpa.utils.*;
+import org.egov.eis.entity.*;
+import org.egov.eis.service.*;
+import org.egov.eis.web.contract.*;
+import org.egov.infra.admin.master.entity.*;
+import org.egov.infra.persistence.entity.*;
+import org.egov.infra.workflow.entity.*;
+import org.egov.pims.commons.*;
+import org.springframework.beans.factory.annotation.*;
+import org.springframework.context.i18n.*;
+import org.springframework.stereotype.*;
+import org.springframework.ui.*;
+import org.springframework.validation.*;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.multipart.*;
+import org.springframework.web.servlet.mvc.support.*;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import javax.servlet.http.*;
+import javax.validation.*;
+import java.math.*;
+import java.util.*;
 
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.apache.commons.lang3.StringUtils.*;
 import static org.egov.bpa.utils.BpaConstants.*;
 
 @Controller
@@ -238,7 +232,8 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
                 && APPLICATION_STATUS_FIELD_INS.equalsIgnoreCase(application.getStatus().getCode())) {
             model.addAttribute("showUpdateNoc", true);
         } else if (FWD_TO_AE_FOR_APPROVAL.equalsIgnoreCase(application.getState().getNextAction())
-                && !application.getInspections().isEmpty()) {
+                && BpaConstants.getBpaFeeCateory1().contains(application.getServiceType().getCode()) &&
+				   !application.getInspections().isEmpty()) {
             mode = "initialtedApprove";
         }
 
