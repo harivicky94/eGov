@@ -29,6 +29,7 @@ public class DcrConstants {
     public static final String CRZZONE = "CRZ Zone";
     public static final String ROAD = "Road";
     public static final String PLOT_AREA = "Plot Area ";
+    public static final String BUILDING_HEIGHT_DESC = "Building height";
     public static final String FRONT_YARD_DESC = "Front Yard";
     public static final String REAR_YARD_DESC = "Rear Yard";
     public static final String SIDE_YARD1_DESC = "Side Yard1";

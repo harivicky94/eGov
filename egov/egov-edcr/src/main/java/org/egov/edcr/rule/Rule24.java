@@ -55,7 +55,13 @@ public class Rule24 extends GeneralRule {
         HashMap<String, String> errors = new HashMap<>();
 
         if (planDetail != null) {
-
+            
+            if(planDetail.getBuilding().getBuildingHeight()==null)
+            {
+                errors.put(DcrConstants.BUILDING_HEIGHT_DESC,
+                        prepareMessage(DcrConstants.OBJECTNOTDEFINED, DcrConstants.BUILDING_HEIGHT_DESC));
+                planDetail.addErrors(errors);  
+            }
             if (planDetail.getPlot() != null && (planDetail.getPlot().getFrontYard() == null ||
                     !planDetail.getPlot().getFrontYard().getPresentInDxf())) {
                 errors.put(DcrConstants.FRONT_YARD_DESC,
