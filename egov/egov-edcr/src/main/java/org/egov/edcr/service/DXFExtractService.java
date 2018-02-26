@@ -153,9 +153,12 @@ public class DXFExtractService {
                 for (DXFLWPolyline pline : cvDeductPlines) {
                     cvDeduct.add(Util.getPolyLineArea(pline));
                 }
+                if(cvDeduct.compareTo(BigDecimal.ZERO)>0)
+                {
                 BigDecimal coverage = buildingFootPrintArea.multiply(BigDecimal.valueOf(100)).divide(cvDeduct);
                 pl.getBuilding().setCoverage(coverage);
                 LOG.info("coverage:"+coverage);
+                }
             }else
             {
             pl.addError(DxfFileConstants.COVERGAE_DEDUCT, DxfFileConstants.COVERGAE_DEDUCT+" layer is not defined");

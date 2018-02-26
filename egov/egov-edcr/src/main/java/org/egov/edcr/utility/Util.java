@@ -434,6 +434,9 @@ public class Util {
         String param = "";
         DXFText text = null;
         Map<String, String> planInfoProperties = new HashMap<>();
+        
+       if(texts!=null){
+           
         Iterator iterator = texts.iterator();
         String[] split;
         String s = "\\";
@@ -462,6 +465,7 @@ public class Util {
                 }
             }
         }
+    }
         return planInfoProperties;
 
     }
