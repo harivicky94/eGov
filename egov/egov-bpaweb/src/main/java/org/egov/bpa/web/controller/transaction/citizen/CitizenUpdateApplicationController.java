@@ -40,8 +40,11 @@
 package org.egov.bpa.web.controller.transaction.citizen;
 
 import org.egov.bpa.transaction.entity.BpaApplication;
+import org.egov.bpa.transaction.entity.SlotDetail;
 import org.egov.bpa.transaction.service.InspectionService;
 import org.egov.bpa.transaction.service.LettertoPartyService;
+import org.egov.bpa.transaction.service.ScheduleAppointmentForDocumentScrutinyService;
+import org.egov.bpa.transaction.service.SlotOpeningForAppointmentService;
 import org.egov.bpa.transaction.service.collection.ApplicationBpaBillService;
 import org.egov.bpa.transaction.service.collection.GenericBillGeneratorService;
 import org.egov.bpa.utils.BpaConstants;
@@ -51,6 +54,7 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.PermanentAddress;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.pims.commons.Position;
+import org.python.icu.text.SimpleDateFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
@@ -85,11 +89,15 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
     private PositionMasterService positionMasterService;
     @Autowired
     private ApplicationBpaBillService applicationBpaBillService;
+    @Autowired
+    private SlotOpeningForAppointmentService slotOpeningForAppointmentService;
+    @Autowired
+    private ScheduleAppointmentForDocumentScrutinyService scheduleAppointmentForDocumentScrutinyService;
 
     @ModelAttribute
     public BpaApplication getBpaApplication(@PathVariable final String applicationNumber) {
         return applicationBpaService.findByApplicationNumber(applicationNumber);
-    }
+    } 
 
     @RequestMapping(value = "/citizen/update/{applicationNumber}", method = RequestMethod.GET)
     public String updateApplicationForm(final Model model, @PathVariable final String applicationNumber,
@@ -97,7 +105,7 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
         final BpaApplication application = getBpaApplication(applicationNumber);
         model.addAttribute("mode", "newappointment");
 
-        if ((APPLICATION_STATUS_SCHEDULED.equals(application.getStatus().getCode()) ||
+        if (!application.getIsOneDayPermitApplication() && (APPLICATION_STATUS_SCHEDULED.equals(application.getStatus().getCode()) ||
              APPLICATION_STATUS_RESCHEDULED.equals(application.getStatus().getCode()) ||
              APPLICATION_STATUS_PENDING_FOR_RESCHEDULING.equals(application.getStatus().getCode()))
             && !application.getIsRescheduledByCitizen()) {
@@ -113,7 +121,10 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
         application.setApplicationAmenityTemp(application.getApplicationAmenity());
         applicationBpaService.buildExistingAndProposedBuildingDetails(application);
         model.addAttribute("stateType", application.getClass().getSimpleName());
-        model.addAttribute(ADDITIONALRULE, CREATE_ADDITIONAL_RULE_CREATE);
+        if(application.getIsOneDayPermitApplication()){
+        	model.addAttribute(ADDITIONALRULE, CREATE_ADDITIONAL_RULE_CREATE_ONEDAYPERMIT);
+        }else
+        	model.addAttribute(ADDITIONALRULE, CREATE_ADDITIONAL_RULE_CREATE);
         model.addAttribute(BPA_APPLICATION, application);
         model.addAttribute("currentState",
                 application.getCurrentState() != null ? application.getCurrentState().getValue() : "");
@@ -184,12 +195,16 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
                                             : null);
                 bpaUtils.redirectToBpaWorkFlow(approvalPosition, bpaApplication, WF_NEW_STATE, null, null,
                         null);
-
             }
             if (WF_CANCELAPPLICATION_BUTTON.equalsIgnoreCase(workFlowAction)) {
                 bpaApplication.setStatus(
                         applicationBpaService.getStatusByCodeAndModuleType(APPLICATION_STATUS_CANCELLED));
                 bpaUtils.updatePortalUserinbox(bpaApplication, null);
+            } // To allot slot for one day permit applications
+            if(bpaApplication.getIsOneDayPermitApplication() && bpaApplication.getStatus().getCode().equalsIgnoreCase(BpaConstants.APPLICATION_STATUS_REGISTERED)) {
+            	SlotDetail slotDetail = slotOpeningForAppointmentService.openSlotsForDocumentScrutiny(bpaApplication.getSiteDetail().get(0).getAdminBoundary().getParent(),
+            			bpaApplication.getSiteDetail().get(0).getAdminBoundary(), bpaApplication.getSiteDetail().get(0).getElectionBoundary());
+            	scheduleAppointmentForDocumentScrutinyService.scheduleOneDayPermitApplicationsForDocumentScrutiny(bpaApplication, slotDetail);
             }
         }
         if (bpaApplication.getOwner().getUser() != null && bpaApplication.getOwner().getUser().getId() == null)
@@ -207,7 +222,15 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
                             .concat(getDesinationNameByPosition(pos))
                             : "",
                     bpaApplication.getApplicationNumber() }, LocaleContextHolder.getLocale());
-            model.addAttribute(MESSAGE, message.concat(bpaApplication.getIsOneDayPermitApplication()?DISCLIMER_MESSAGE_ONEDAYPERMIT_ONSAVE:DISCLIMER_MESSAGE_ONSAVE));
+            if(bpaApplication.getIsOneDayPermitApplication()){
+            	SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+            	/*message.concat(DISCLIMER_MESSAGE_ONEDAYPERMIT_ONSAVE).concat( messageSource.getMessage("msg.onedaypermit.schedule.details", new String[] {
+                    sdf.format(bpaApplication.getSlotApplications().get(0).getSlotDetail().getSlot().getAppointmentDate()), bpaApplication.getSlotApplications().get(0).getSlotDetail().getAppointmentTime() }, LocaleContextHolder.getLocale()));*/
+            	message = message.concat(DISCLIMER_MESSAGE_ONEDAYPERMIT_ONSAVE);
+            } else {
+            	message = message.concat(DISCLIMER_MESSAGE_ONSAVE);
+            }
+            model.addAttribute(MESSAGE, message);
         } else if (workFlowAction != null && workFlowAction.equals(WF_CANCELAPPLICATION_BUTTON)) {
             model.addAttribute(MESSAGE,
                     bpaApplication.getApplicationNumber() + " Application Cancelled Successfully.");

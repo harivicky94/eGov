@@ -585,7 +585,10 @@ $(document).ready(function() {
 	$( ".serviceType" ).trigger( "change" );
 	$( ".applicationAmenity" ).trigger( "change" );
 	
-	$('#oneDayPermitSec').hide(); 
+	 if ($('#isOneDayPermitApplication').is(':checked')) {
+		 $('#oneDayPermitSec').show(); 
+	 }else
+		 $('#oneDayPermitSec').hide(); 
 	var seviceTypeName = $( "#serviceType option:selected" ).text();
 	if('Addition or Extension' == seviceTypeName || 'Alteration' == seviceTypeName || 'New Construction' == seviceTypeName
 			|| 'Amenities' == seviceTypeName) {
@@ -594,7 +597,7 @@ $(document).ready(function() {
 				$('#oneDayPermitSec').show(); 
 				$('#isOneDayPermitApplication').prop('checked', false); 
 				$('#oneDayPermitTypeOfLandSec').hide(); 
-				  $('#isOneDayPermitApplication').click(function() {
+				 /* $('#isOneDayPermitApplication').click(function() {
 				        if (!$(this).is(':checked')) {
 				        	$( "#typeOfLand" ).val('')
 				        	$('#oneDayPermitTypeOfLandSec').hide(); 
@@ -604,7 +607,7 @@ $(document).ready(function() {
 				        	$('#typeOfLand').prop('required', true); 
 				        	$('#oneDayPermitTypeOfLandSec').show();
 				        }
-				  });
+				  });*/
 			} else {
 				$('#typeOfLand').removeAttr('required');
 				$('#isOneDayPermitApplication').prop('checked', false); 
@@ -613,6 +616,18 @@ $(document).ready(function() {
 			}
 		}); 
 	}
+	
+	 $('#isOneDayPermitApplication').click(function() {
+	        if (!$(this).is(':checked')) {
+	        	$( "#typeOfLand" ).val('')
+	        	$('#oneDayPermitTypeOfLandSec').hide(); 
+	        	$('#isOneDayPermitApplication').prop('checked', false);
+	        	$('#typeOfLand').removeAttr('required');
+	        } else{
+	        	$('#typeOfLand').prop('required', true); 
+	        	$('#oneDayPermitTypeOfLandSec').show();
+	        }
+	  });
 });
 
 

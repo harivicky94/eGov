@@ -130,7 +130,7 @@ $(document).ready(function($) {
 	 
 	 
 	});
-	
+ 
 });
 
 function validateEditForm(button, validator) {

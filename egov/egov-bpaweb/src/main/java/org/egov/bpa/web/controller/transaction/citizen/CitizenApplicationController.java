@@ -57,6 +57,7 @@ import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.pims.commons.Position;
+import org.python.icu.text.SimpleDateFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
@@ -317,7 +318,15 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
                                 .concat(getDesinationNameByPosition(pos))
                                 : "",
                         bpaApplicationRes.getApplicationNumber() }, LocaleContextHolder.getLocale());
-                model.addAttribute(MESSAGE, message.concat(bpaApplicationRes.getIsOneDayPermitApplication()?DISCLIMER_MESSAGE_ONEDAYPERMIT_ONSAVE:DISCLIMER_MESSAGE_ONSAVE));
+                if(bpaApplication.getIsOneDayPermitApplication()){
+                	SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                	/*message.concat(DISCLIMER_MESSAGE_ONEDAYPERMIT_ONSAVE).concat( messageSource.getMessage("msg.onedaypermit.schedule.details", new String[] {
+                        sdf.format(bpaApplication.getSlotApplications().get(0).getSlotDetail().getSlot().getAppointmentDate()), bpaApplication.getSlotApplications().get(0).getSlotDetail().getAppointmentTime() }, LocaleContextHolder.getLocale()));*/
+                	message = message.concat(DISCLIMER_MESSAGE_ONEDAYPERMIT_ONSAVE);
+                } else {
+                	message = message.concat(DISCLIMER_MESSAGE_ONSAVE);
+                }
+                model.addAttribute(MESSAGE, message);
             } else {
                 model.addAttribute(MESSAGE,
                         "Sucessfully saved with ApplicationNumber " + bpaApplicationRes.getApplicationNumber() + ".");
