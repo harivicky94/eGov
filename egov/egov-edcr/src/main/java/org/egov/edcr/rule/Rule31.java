@@ -47,26 +47,29 @@ public class Rule31 extends GeneralRule {
     public PlanDetail validate(PlanDetail planDetail) {
         HashMap<String, String> errors = new HashMap<String, String>();
         System.out.println("validate 31");
+        if(planDetail != null) {
+            if (planDetail.getBuilding() != null && planDetail.getBuilding().getFloors() != null && planDetail.getBuilding().getFloors().size() > 0) {
+                for (Floor floor : planDetail.getBuilding().getFloors()) {
+                    if (floor.getBuildingExteriorWall() == null) {
+                        errors.put(DcrConstants.BUILDING_EXTERIOR_WALL, edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED, new String[]{DcrConstants.BUILDING_EXTERIOR_WALL}, LocaleContextHolder.getLocale()));
+                        planDetail.addErrors(errors);
+                    }
 
-        if (planDetail != null && planDetail.getBuilding() != null && planDetail.getBuilding().getFloors() != null) {
-            for (Floor floor : planDetail.getBuilding().getFloors()) {
-                if (floor.getBuildingExteriorWall() != null) {
-                    errors.put(DcrConstants.BUILDING_EXTERIOR_WALL, edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED, new String[]{DcrConstants.BUILDING_EXTERIOR_WALL}, LocaleContextHolder.getLocale()));
-                    planDetail.addErrors(errors);
-                }
-
-                if (planDetail != null && planDetail.getBuilding() != null && planDetail.getBuilding().getFloors() != null) {
-                    if (floor.getFarDeduct() != null) {
+                    if (floor.getFarDeduct() == null) {
                         errors.put(DcrConstants.FAR_DEDUCT, edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED, new String[]{DcrConstants.FAR_DEDUCT}, LocaleContextHolder.getLocale()));
                         planDetail.addErrors(errors);
                     }
                 }
-
-                if (planDetail != null && planDetail.getPlanInformation() != null && planDetail.getPlanInformation().getOccupancy() != null) {
-                    errors.put(DcrConstants.OCCUPANCY, edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED, new String[]{DcrConstants.OCCUPANCY}, LocaleContextHolder.getLocale()));
-                    planDetail.addErrors(errors);
-                }
+            }else{
+                errors.put(DcrConstants.FLOOR_AREA , edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED, new String[]{DcrConstants.FLOOR_AREA}, LocaleContextHolder.getLocale()));
+                planDetail.addErrors(errors);
             }
+
+                    if ( planDetail.getPlanInformation() == null || planDetail.getPlanInformation().getOccupancy() == null) {
+                        errors.put(DcrConstants.OCCUPANCY, edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED, new String[]{DcrConstants.OCCUPANCY}, LocaleContextHolder.getLocale()));
+                        planDetail.addErrors(errors);
+
+                }
         }
         return planDetail;
 
@@ -276,7 +279,7 @@ public class Rule31 extends GeneralRule {
 
     }
 
-    /* need to set  coverage data and occupency type and future change condition on basis of occupancy types */
+    /* need to set  coverage data and occupency type and  change condition on basis of occupancy types */
     private void rule_31_2(PlanDetail planDetail) {
         //Occpancy RECIDENTIAL
         if (planDetail.getPlanInformation().getOccupancy().toUpperCase().equals(DcrConstants.RESIDENTIAL)) {
