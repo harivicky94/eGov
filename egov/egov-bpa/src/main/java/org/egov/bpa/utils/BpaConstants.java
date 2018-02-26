@@ -263,6 +263,8 @@ public class BpaConstants {
     // configuration value constants
     public static final String YES = "YES";
     public static final String NO = "NO";
+    // other
+    public static final int SCALING_FACTOR = 2;
 
     private static final List<String> BUILDPERMIT = new ArrayList<>();
     static {

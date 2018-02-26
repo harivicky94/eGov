@@ -44,6 +44,7 @@ import static org.egov.bpa.utils.BpaConstants.EGMODULE_NAME;
 import static org.egov.bpa.utils.BpaConstants.EXTENTINSQMTS;
 import static org.egov.bpa.utils.BpaConstants.FLOOR_COUNT;
 import static org.egov.bpa.utils.BpaConstants.TOTAL_PLINT_AREA;
+import static org.egov.bpa.utils.BpaConstants.SCALING_FACTOR;
 import static org.egov.bpa.utils.BpaConstants.getServicesForValidation;
 import static org.egov.bpa.utils.BpaConstants.getStakeholderType1Restrictions;
 import static org.egov.bpa.utils.BpaConstants.getStakeholderType2Restrictions;
@@ -145,7 +146,7 @@ public class BpaApplicationValidationService {
             Map<String, BigDecimal> stakeHolderType1Restriction = getStakeholderType1Restrictions()
                     .get(type.toLowerCase());
             BigDecimal extentinsqmtsInput = stakeHolderType1Restriction.get(EXTENTINSQMTS);
-            return extentInArea.compareTo(extentinsqmtsInput) <= 0 ? true : false;
+            return extentInArea.compareTo(extentinsqmtsInput) <= 0;
         } else if (TOWN_PLANNER_B.equalsIgnoreCase(type.toLowerCase())
                 && BpaConstants.getServicesForBuildPermit().contains(serviceType)) {
             return false;
@@ -157,7 +158,7 @@ public class BpaApplicationValidationService {
             Map<String, BigDecimal> stakeHolderType2Restriction = getStakeholderType2Restrictions()
                     .get(type.toLowerCase());
             BigDecimal extentinsqmtsInput = stakeHolderType2Restriction.get(EXTENTINSQMTS);
-            return extentInArea.compareTo(extentinsqmtsInput) <= 0 ? true : false;
+            return extentInArea.compareTo(extentinsqmtsInput) <= 0;
         } else if (getStakeholderType2Restrictions().containsKey(type.toLowerCase())
                 && BpaConstants.getServicesForBuildPermit().contains(serviceType)) {
             Map<String, BigDecimal> stakeHolderType2Restriction = getStakeholderType2Restrictions()
@@ -166,9 +167,9 @@ public class BpaApplicationValidationService {
             BigDecimal plinthAreaInput = stakeHolderType2Restriction.get(TOTAL_PLINT_AREA);
             BigDecimal floorCountInput = stakeHolderType2Restriction.get(FLOOR_COUNT);
             BigDecimal buildingHeightInput = stakeHolderType2Restriction.get(BUILDINGHEIGHT_GROUND);
-            return (extentInArea.compareTo(extentinsqmtsInput) <= 0 && totalPlinthArea.compareTo(plinthAreaInput) <= 0
-                    && buildingHeight.compareTo(buildingHeightInput) <= 0
-                    && BigDecimal.valueOf(floorCount).compareTo(floorCountInput) <= 0) ? true : false;
+            return extentInArea.compareTo(extentinsqmtsInput) <= 0 && totalPlinthArea.compareTo(plinthAreaInput) <= 0
+                   && buildingHeight.compareTo(buildingHeightInput) <= 0
+                   && BigDecimal.valueOf(floorCount).compareTo(floorCountInput) <= 0;
         } else if ((getStakeholderType3Restrictions().containsKey(type.toLowerCase())
                 || getStakeholderType4Restrictions().containsKey(type.toLowerCase()))
                 && BpaConstants.getServicesForDevelopPermit().contains(serviceType)) {
@@ -180,9 +181,9 @@ public class BpaApplicationValidationService {
             BigDecimal plinthAreaInput = stakeHolderType3Restriction.get(TOTAL_PLINT_AREA);
             BigDecimal floorCountInput = stakeHolderType3Restriction.get(FLOOR_COUNT);
             BigDecimal buildingHeightInput = stakeHolderType3Restriction.get(BUILDINGHEIGHT_GROUND);
-            return (totalPlinthArea.compareTo(plinthAreaInput) <= 0
-                    && buildingHeight.compareTo(buildingHeightInput) <= 0
-                    && BigDecimal.valueOf(floorCount).compareTo(floorCountInput) <= 0) ? true : false;
+            return totalPlinthArea.compareTo(plinthAreaInput) <= 0
+                   && buildingHeight.compareTo(buildingHeightInput) <= 0
+                   && BigDecimal.valueOf(floorCount).compareTo(floorCountInput) <= 0;
         } else if (getStakeholderType4Restrictions().containsKey(type.toLowerCase())
                 && BpaConstants.getServicesForBuildPermit().contains(serviceType)) {
             Map<String, BigDecimal> stakeHolderType4Restriction = getStakeholderType4Restrictions()
@@ -190,23 +191,23 @@ public class BpaApplicationValidationService {
             BigDecimal plinthAreaInput = stakeHolderType4Restriction.get(TOTAL_PLINT_AREA);
             BigDecimal floorCountInput = stakeHolderType4Restriction.get(FLOOR_COUNT);
             BigDecimal buildingHeightInput = stakeHolderType4Restriction.get(BUILDINGHEIGHT_GROUND);
-            return (totalPlinthArea.compareTo(plinthAreaInput) <= 0
-                    && buildingHeight.compareTo(buildingHeightInput) <= 0
-                    && BigDecimal.valueOf(floorCount).compareTo(floorCountInput) <= 0) ? true : false;
+            return totalPlinthArea.compareTo(plinthAreaInput) <= 0
+                   && buildingHeight.compareTo(buildingHeightInput) <= 0
+                   && BigDecimal.valueOf(floorCount).compareTo(floorCountInput) <= 0;
         } else if ((getStakeholderType5Restrictions().containsKey(type.toLowerCase())
                 && BpaConstants.getServicesForDevelopPermit().contains(serviceType))) {
             Map<String, BigDecimal> stakeHolderType5Restriction = getStakeholderType5Restrictions()
                     .get(type.toLowerCase());
             BigDecimal extentinsqmtsInput = stakeHolderType5Restriction.get(EXTENTINSQMTS);
-            return extentInArea.compareTo(extentinsqmtsInput) <= 0 ? true : false;
+            return extentInArea.compareTo(extentinsqmtsInput) <= 0;
         } else if (getStakeholderType5Restrictions().containsKey(type.toLowerCase())
                 && BpaConstants.getServicesForBuildPermit().contains(serviceType)) {
             Map<String, BigDecimal> stakeHolderType5Restriction = getStakeholderType5Restrictions()
                     .get(type.toLowerCase());
             BigDecimal plinthAreaInput = stakeHolderType5Restriction.get(TOTAL_PLINT_AREA);
             BigDecimal floorCountInput = stakeHolderType5Restriction.get(FLOOR_COUNT);
-            return (totalPlinthArea.compareTo(plinthAreaInput) <= 0
-                    && BigDecimal.valueOf(floorCount).compareTo(floorCountInput) <= 0) ? true : false;
+            return totalPlinthArea.compareTo(plinthAreaInput) <= 0
+                   && BigDecimal.valueOf(floorCount).compareTo(floorCountInput) <= 0;
         }
         return true;
     }
@@ -328,17 +329,17 @@ public class BpaApplicationValidationService {
         StringBuilder floorAreaBuilder = new StringBuilder();
         for (Entry<String, BigDecimal[]> floorDescSet : floorMap.entrySet()) {
             String floorDesc = floorDescSet.getKey();
-            BigDecimal permissableCoveredArea = floorDescSet.getValue()[0];
-            BigDecimal floorArea = floorDescSet.getValue()[1];
-            BigDecimal weightedCoverage = permissableCoveredArea.divide(floorArea, 2, BigDecimal.ROUND_HALF_UP);
-            BigDecimal coverageProvided = (floorArea.divide(application.getSiteDetail().get(0).getExtentinsqmts(), 2,
-                    BigDecimal.ROUND_HALF_UP)).multiply(new BigDecimal(100)).setScale(2, BigDecimal.ROUND_HALF_UP);
-            BigDecimal permitedFloorArea = (weightedCoverage.multiply(application.getSiteDetail().get(0).getExtentinsqmts())
-                    .divide(new BigDecimal(100))).setScale(2, BigDecimal.ROUND_HALF_UP);
+            BigDecimal permissableCoveredArea = floorDescSet.getValue()[0].setScale(SCALING_FACTOR, BigDecimal.ROUND_HALF_UP);
+            BigDecimal floorArea = floorDescSet.getValue()[1].setScale(SCALING_FACTOR, BigDecimal.ROUND_HALF_UP);
+            BigDecimal extentInSqmts = application.getSiteDetail().get(0).getExtentinsqmts().setScale(SCALING_FACTOR, BigDecimal.ROUND_HALF_UP);
+            BigDecimal weightedCoverage = permissableCoveredArea.divide(floorArea, SCALING_FACTOR, BigDecimal.ROUND_HALF_UP);
+            BigDecimal coverageProvided = floorArea.divide(extentInSqmts, 4, BigDecimal.ROUND_DOWN).multiply(new BigDecimal(100)).setScale(SCALING_FACTOR, BigDecimal.ROUND_HALF_UP);
+            BigDecimal permitedFloorArea = (weightedCoverage.multiply(extentInSqmts)
+                    .divide(new BigDecimal(100))).setScale(SCALING_FACTOR, BigDecimal.ROUND_HALF_UP);
 
             if (coverageProvided.compareTo(weightedCoverage) > 0) {
                 floorDescBuilder.append(floorDesc).append(",");
-                floorAreaBuilder.append(permitedFloorArea.setScale(2, BigDecimal.ROUND_HALF_UP)).append(",");
+                floorAreaBuilder.append(permitedFloorArea.setScale(SCALING_FACTOR, BigDecimal.ROUND_HALF_UP)).append(",");
             }
         }
         if (floorDescBuilder.length() > 0) {
@@ -386,7 +387,7 @@ public class BpaApplicationValidationService {
             if(new BigDecimal(violationWithAddnlFee.get(MAXIMUM_ALLOWED_AREA_WITH_ADDNL_FEE)).compareTo(BigDecimal.ZERO) == 0) {
                 BigDecimal sumOfFloorArea = applicationBpaFeeCalculationService
                         .getOccupancyWiseSumOfFloorArea(application.getBuildingDetail().get(0)).entrySet().stream()
-                        .map(Entry<Occupancy, BigDecimal>::getValue).reduce(BigDecimal.ZERO, BigDecimal::add);
+                        .map(Entry::getValue).reduce(BigDecimal.ZERO, BigDecimal::add);
                 if(sumOfFloorArea.compareTo(new BigDecimal(violationWOAddnlFee.get(MAXIMUM_ALLOWED_AREA_WO_ADDNL_FEE))) > 0) {
                     String message = bpaMessageSource.getMessage("msg.violation.max.with.wo.addnl.fee", new String[] {
                             application.getOccupancy().getDescription(), violationWOAddnlFee.get(MAXIMUM_ALLOWED_AREA_WO_ADDNL_FEE) },
@@ -425,7 +426,7 @@ public class BpaApplicationValidationService {
         Map<String, String> violation = new HashMap<>();
         BigDecimal sumOfFloorArea = applicationBpaFeeCalculationService
                 .getOccupancyWiseSumOfFloorArea(application.getBuildingDetail().get(0)).entrySet().stream()
-                .map(Entry<Occupancy, BigDecimal>::getValue).reduce(BigDecimal.ZERO, BigDecimal::add);
+                .map(Entry::getValue).reduce(BigDecimal.ZERO, BigDecimal::add);
         BigDecimal maximumAllowedAreaWOAddnlFee = BigDecimal.ZERO;
         if (MIXED.equalsIgnoreCase(application.getOccupancy().getDescription())) {
             if (application.getSiteDetail().get(0).getExtentinsqmts().compareTo(new BigDecimal(5000)) <= 0) {
@@ -443,7 +444,7 @@ public class BpaApplicationValidationService {
         }
         violation.put(IS_VIOLATING, sumOfFloorArea.compareTo(maximumAllowedAreaWOAddnlFee) > 0 ? TRUE : FALSE);
         violation.put(MAXIMUM_ALLOWED_AREA_WO_ADDNL_FEE,
-                maximumAllowedAreaWOAddnlFee.setScale(2, BigDecimal.ROUND_HALF_UP).toString());
+                maximumAllowedAreaWOAddnlFee.setScale(SCALING_FACTOR, BigDecimal.ROUND_HALF_UP).toString());
         return violation;
     }
 
@@ -457,7 +458,7 @@ public class BpaApplicationValidationService {
         Map<String, String> violation = new HashMap<>();
         BigDecimal sumOfFloorArea = applicationBpaFeeCalculationService
                 .getOccupancyWiseSumOfFloorArea(application.getBuildingDetail().get(0)).entrySet().stream()
-                .map(Entry<Occupancy, BigDecimal>::getValue).reduce(BigDecimal.ZERO, BigDecimal::add);
+                .map(Entry::getValue).reduce(BigDecimal.ZERO, BigDecimal::add);
         BigDecimal maximumAllowedAreaWithAddnlFee = BigDecimal.ZERO;
         if (MIXED.equalsIgnoreCase(application.getOccupancy().getDescription())) {
             if (application.getSiteDetail().get(0).getExtentinsqmts().compareTo(new BigDecimal(5000)) <= 0) {
@@ -476,7 +477,7 @@ public class BpaApplicationValidationService {
 
         violation.put(IS_VIOLATING, sumOfFloorArea.compareTo(maximumAllowedAreaWithAddnlFee) > 0 ? TRUE : FALSE);
         violation.put(MAXIMUM_ALLOWED_AREA_WITH_ADDNL_FEE,
-                maximumAllowedAreaWithAddnlFee.setScale(2, BigDecimal.ROUND_HALF_UP).toString());
+                maximumAllowedAreaWithAddnlFee.setScale(SCALING_FACTOR, BigDecimal.ROUND_HALF_UP).toString());
         return violation;
     }
 

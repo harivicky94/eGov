@@ -326,7 +326,8 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
 
         if (WF_REJECT_BUTTON.equalsIgnoreCase(workFlowAction)
             || WF_INITIATE_REJECTION_BUTTON.equalsIgnoreCase(workFlowAction)
-            || APPLICATION_STATUS_REJECTED.equalsIgnoreCase(application.getStatus().getCode())) {
+            || APPLICATION_STATUS_REJECTED.equalsIgnoreCase(application.getStatus().getCode())
+            || APPLICATION_STATUS_NOCUPDATED.equals(application.getStatus().getCode())) {
             buildRejectionReasons(application);
         }
 
