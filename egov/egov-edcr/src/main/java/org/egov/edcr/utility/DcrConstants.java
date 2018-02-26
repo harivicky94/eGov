@@ -1,5 +1,7 @@
 package org.egov.edcr.utility;
 
+import java.math.RoundingMode;
+
 public class DcrConstants {
     public static final String SITALAREA = "SITALAREA";
     public static final String SHORTESTDISTINCTTOROAD = "Shortest Distance to road ";
@@ -67,5 +69,6 @@ public class DcrConstants {
     public static final String FLOOR_AREA ="FLOOR_AREA";
     public static final String FAR ="F.A.R";
     public static final String COVERAGE ="COVERAGE";
+    public static final RoundingMode ROUNDMODE_MEASUREMENTS = RoundingMode.HALF_UP;
 
 }

@@ -14,6 +14,9 @@ public class Building extends Measurement {
 
     private BigDecimal totalFloorArea;
 
+    private BigDecimal far;
+    
+    private BigDecimal coverage;
     /*
      * Maximum number of floors
      */
@@ -80,4 +83,22 @@ public class Building extends Measurement {
     public void setTotalFloorArea(BigDecimal totalFloorArea) {
         this.totalFloorArea = totalFloorArea;
     }
+
+    public BigDecimal getFar() {
+        return far;
+    }
+
+    public void setFar(BigDecimal far) {
+        this.far = far;
+    }
+
+    public BigDecimal getCoverage() {
+        return coverage;
+    }
+
+    public void setCoverage(BigDecimal coverage) {
+        this.coverage = coverage;
+    }
+
+    
 }

@@ -6,6 +6,7 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.egov.edcr.constants.DxfFileConstants;
@@ -59,6 +60,7 @@ public class DXFExtractService {
             polyLinesByLayer = Util.getPolyLinesByLayer(doc, DxfFileConstants.PLOT_BOUNDARY);
             if (polyLinesByLayer.size() > 0) {
                 plot.setPolyLine(polyLinesByLayer.get(0));
+                plot.setArea(Util.getPolyLineArea(plot.getPolyLine()));
                 plot.setPresentInDxf(true);
             } else
                 pl.addError("", edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
@@ -74,7 +76,7 @@ public class DXFExtractService {
                 pl.addError("", edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
                         new String[] { DxfFileConstants.BUILDING_FOOT_PRINT }, null));
             pl.setBuilding(building);
-            pl.getBuilding().setTotalFloorArea(extractTotalFloorArea(doc, pl));
+            pl = extractTotalFloorArea(doc, pl);
 
             pl.getPlot().setFrontYard(getYard(pl, doc, DxfFileConstants.FRONT_YARD));
             pl.getPlot().setRearYard(getYard(pl, doc, DxfFileConstants.REAR_YARD));
@@ -91,6 +93,7 @@ public class DXFExtractService {
             pl.setNonNotifiedRoads(new ArrayList<>());
             pl = extractUtilities(doc, pl);
             pl = extractOverheadElectricLines(doc, pl);
+            pl = extractHeights(doc, pl);
 
         } catch (ParseException e) {
             // TODO Auto-generated catch block
@@ -100,9 +103,70 @@ public class DXFExtractService {
         return pl;
     }
 
-    private BigDecimal extractTotalFloorArea(DXFDocument doc, PlanDetail pl) {
-        // TODO Auto-generated method stub
-        return BigDecimal.ZERO;
+    private PlanDetail extractHeights(DXFDocument doc, PlanDetail pl) {
+
+        BigDecimal ht = Util.getSingleDimensionValueByLayer(doc, DxfFileConstants.HEIGHT_OF_BUILDING, pl);
+        pl.getBuilding().setBuildingHeight(ht);
+        return pl;
+    }
+
+    /**
+     * 
+     * @param doc
+     * @param pl
+     * @return 1) Floor area = (sum of areas of all polygon in Building_exterior_wall layer) - (sum of all polygons in FAR_deduct
+     * layer)
+     */
+    private PlanDetail extractTotalFloorArea(DXFDocument doc, PlanDetail pl) {
+
+        BigDecimal floorArea = BigDecimal.ZERO;
+        List<DXFLWPolyline> bldgext = Util.getPolyLinesByLayerAndColor(doc, DxfFileConstants.BLDG_EXTERIOR_WALL,
+                DxfFileConstants.BLDG_EXTERIOR_WALL_COLOR, pl);
+        if (!bldgext.isEmpty()) {
+            for (DXFLWPolyline pline : bldgext) {
+                floorArea= floorArea.add(Util.getPolyLineArea(pline));
+            }
+        }
+        List<DXFLWPolyline> bldDeduct = Util.getPolyLinesByLayerAndColor(doc, DxfFileConstants.FAR_DEDUCT,
+                DxfFileConstants.FAR_DEDUCT_COLOR, pl);
+        if (!bldDeduct.isEmpty()) {
+            for (DXFLWPolyline pline : bldDeduct) {
+                floorArea=  floorArea.subtract(Util.getPolyLineArea(pline));
+            }
+        }
+
+        LOG.info("floorArea:"+floorArea);
+        pl.getBuilding().setTotalFloorArea(floorArea);
+
+        if (pl.getPlot().getArea() != null) {
+            BigDecimal far = floorArea.divide(pl.getPlot().getArea(), DcrConstants.DECIMALDIGITS_MEASUREMENTS,
+                    DcrConstants.ROUNDMODE_MEASUREMENTS);
+            pl.getBuilding().setFar(far);
+        }
+
+        if (pl.getBuilding().getPolyLine() != null) {
+
+            BigDecimal cvDeduct = BigDecimal.ZERO;
+            BigDecimal buildingFootPrintArea = Util.getPolyLineArea(pl.getBuilding().getPolyLine());
+            List<DXFLWPolyline> cvDeductPlines = Util.getPolyLinesByLayerAndColor(doc, DxfFileConstants.COVERGAE_DEDUCT,0,pl);
+            if (!cvDeductPlines.isEmpty()) {
+                for (DXFLWPolyline pline : cvDeductPlines) {
+                    cvDeduct.add(Util.getPolyLineArea(pline));
+                }
+                BigDecimal coverage = buildingFootPrintArea.multiply(BigDecimal.valueOf(100)).divide(cvDeduct);
+                pl.getBuilding().setCoverage(coverage);
+                LOG.info("coverage:"+coverage);
+            }else
+            {
+            pl.addError(DxfFileConstants.COVERGAE_DEDUCT, DxfFileConstants.COVERGAE_DEDUCT+" layer is not defined");
+            pl.getBuilding().setCoverage(BigDecimal.ZERO);
+            }
+           
+
+        }
+
+        return pl;
+
     }
 
     private Yard getYard(PlanDetail pl, DXFDocument doc, String yardName) {
@@ -146,22 +210,66 @@ public class DXFExtractService {
             }
 
         }
+        //The below code must be deleted once plot area is defined properly in dxf file
+        {
+        if (plotArea == null) {
+                 Set<String> keySet = planInfoProperties.keySet();
+                 for(String s:keySet)
+                 {
+                     if(s.contains(DxfFileConstants.PLOT_AREA))
+                     {
+                         plotArea =planInfoProperties.get(s);
+                         pl.addError(DxfFileConstants.PLOT_AREA, DxfFileConstants.PLOT_AREA +" is invalid .Text in dxf file is "+s);
+                     }
+                 }
+                 
+            try {
+                plotArea = plotArea.replaceAll("[^\\d.]", "");
+                pi.setPlotArea(BigDecimal.valueOf(Double.parseDouble(plotArea)));
+            } catch (Exception e) {
+                pl.addError(DxfFileConstants.PLOT_AREA, DxfFileConstants.PLOT_AREA + " contains non invalid values.");
+            
+
+       
+        }
+        }
+        }
+        //till here
 
         if (planInfoProperties.get(DxfFileConstants.CRZ_ZONE) != null) {
             pi.setCrzZoneArea(true);
+        }
+        
+        if (planInfoProperties.get(DxfFileConstants.SECURITY_ZONE) != null) {
+            pi.setSecurityZone(true);
         }
         if (planInfoProperties.get(DxfFileConstants.ARCHITECT_NAME) != null) {
             pi.setArchitectInformation(planInfoProperties.get(DxfFileConstants.ARCHITECT_NAME));
         }
 
         String accwidth = "";
-        if (planInfoProperties.get(DxfFileConstants.ACCESS_WIDTH) != null) {
+        if (planInfoProperties.size()>0 ) {
             String accessWidth = planInfoProperties.get(DxfFileConstants.ACCESS_WIDTH);
             accwidth = accessWidth;
             if (accessWidth == null) {
-                pl.addError(DxfFileConstants.ACCESS_WIDTH, DxfFileConstants.ACCESS_WIDTH + "  Is not defined");
+                
+                Set<String> keySet = planInfoProperties.keySet();
+                for(String s:keySet)
+                {
+                    if(s.contains(DxfFileConstants.ACCESS_WIDTH))
+                    {
+                        accessWidth =planInfoProperties.get(s);
+                        pl.addError(DxfFileConstants.ACCESS_WIDTH, DxfFileConstants.ACCESS_WIDTH +" is invalid .Text in dxf file is "+s);
+                    }
+                }       
 
-            } else {
+            }
+            
+            
+            if (accessWidth == null) {
+                pl.addError(DxfFileConstants.ACCESS_WIDTH, DxfFileConstants.ACCESS_WIDTH + "  Is not defined");
+            }
+            else {
                 accessWidth = accessWidth.replaceAll("[^\\d.]", "");
                 if (!accessWidth.isEmpty()) {
                     pi.setAccessWidth(BigDecimal.valueOf(Double.parseDouble(accessWidth)));

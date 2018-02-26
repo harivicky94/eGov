@@ -19,5 +19,12 @@ public class DxfFileConstants {
     public static final String PLAN_INFO = "PLAN_INFO";
     public static String LAYER_NAME_WASTE_DISPOSAL = "WASTE_DISPOSAL";
     public static final String ACCESS_WIDTH = "ACCESS_WIDTH";
+    public static final String HEIGHT_OF_BUILDING = "HT_OF_BLDG";
+    public static final String BLDG_EXTERIOR_WALL = "BLDG_EXT_WALL";
+    public static final int BLDG_EXTERIOR_WALL_COLOR = 2;
+    public static final String FAR_DEDUCT = "FAR_DEDUCT";
+    public static final int FAR_DEDUCT_COLOR = 2;
+    public static final String COVERGAE_DEDUCT = "COVERAGE_DEDUCT";
+    public static final String SECURITY_ZONE = "SECURITY Zone";
     
 }

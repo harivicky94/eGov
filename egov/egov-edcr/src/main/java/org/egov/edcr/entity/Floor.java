@@ -9,7 +9,7 @@ public class Floor {
 
     private String name;
 
-    private BigDecimal area;
+    private BigDecimal area;                    
 
     private List<Measurement> rooms;
 

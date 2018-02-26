@@ -21,9 +21,11 @@ import org.kabeja.dxf.DXFConstants;
 import org.kabeja.dxf.DXFDimension;
 import org.kabeja.dxf.DXFDimensionStyle;
 import org.kabeja.dxf.DXFDocument;
+import org.kabeja.dxf.DXFEntity;
 import org.kabeja.dxf.DXFLWPolyline;
 import org.kabeja.dxf.DXFLayer;
 import org.kabeja.dxf.DXFLine;
+import org.kabeja.dxf.DXFMText;
 import org.kabeja.dxf.DXFPolyline;
 import org.kabeja.dxf.DXFText;
 import org.kabeja.dxf.DXFVertex;
@@ -88,10 +90,9 @@ public class Util {
 
     public static List<DXFLine> getLinesByLayer(DXFDocument dxfDocument, String name) {
         List<DXFLine> lines = new ArrayList<>();
-        if(name==null)
+        if (name == null)
             return lines;
         name = name.toUpperCase();
-       
 
         Iterator dxfLayerIterator = dxfDocument.getDXFLayerIterator();
 
@@ -123,8 +124,8 @@ public class Util {
             return null;
         if (name == null)
             return null;
-        
-        name=name.toUpperCase();
+
+        name = name.toUpperCase();
 
         List<DXFLine> lines = new ArrayList<>();
 
@@ -148,7 +149,6 @@ public class Util {
 
                 }
 
-            
         }
         if (lines.size() == 1)
             return lines.get(0);
@@ -163,17 +163,16 @@ public class Util {
             return null;
         if (name == null)
             return null;
-        name=name.toUpperCase();
+        name = name.toUpperCase();
 
         List<DXFDimension> dimensions = new ArrayList<>();
 
         Iterator dxfLayerIterator = dxfDocument.getDXFLayerIterator();
-       
 
         while (dxfLayerIterator.hasNext()) {
 
             DXFLayer dxfLayer = (DXFLayer) dxfLayerIterator.next();
-            
+
             List dxfLineEntities = dxfLayer.getDXFEntities(DXFConstants.ENTITY_TYPE_DIMENSION);
 
             if (null != dxfLineEntities)
@@ -182,13 +181,14 @@ public class Util {
                     DXFDimension line = (DXFDimension) dxfEntity;
                     String dimensionBlock = line.getDimensionBlock();
                     DXFBlock dxfBlock = dxfDocument.getDXFBlock(dimensionBlock);
-                    LOG.info("BLOCK data"+ dxfBlock.getDescription());
+                    LOG.info("BLOCK data" + dxfBlock.getDescription());
                     DXFDimensionStyle dxfDimensionStyle = dxfDocument.getDXFDimensionStyle(line.getDimensionStyleID());
-                    LOG.info("---"+dxfDimensionStyle.getProperty(DXFDimensionStyle.PROPERTY_DIMEXO));
-                   // LOG.info(line.getInclinationHelpLine()+"HELP LINE"+line.getDimensionText() +"--"+line.getLayerName()+"--"+line.getDimensionArea());
-                    
+                    LOG.info("---" + dxfDimensionStyle.getProperty(DXFDimensionStyle.PROPERTY_DIMEXO));
+                    // LOG.info(line.getInclinationHelpLine()+"HELP LINE"+line.getDimensionText()
+                    // +"--"+line.getLayerName()+"--"+line.getDimensionArea());
+
                     if (name.contains(line.getLayerName().toUpperCase()))
-                        dimensions.add(line);  
+                        dimensions.add(line);
 
                 }
         }
@@ -196,6 +196,52 @@ public class Util {
             return dimensions.get(0);
         else
             return null;
+
+    }
+
+    public static BigDecimal getSingleDimensionValueByLayer(DXFDocument dxfDocument, String name, PlanDetail pl) {
+
+        if (dxfDocument == null)
+            return null;
+        if (name == null)
+            return null;
+        name = name.toUpperCase();
+        BigDecimal value = BigDecimal.ZERO;
+
+        DXFLayer dxfLayer = (DXFLayer) dxfDocument.getDXFLayer(name);
+        if (dxfLayer == null) {
+            pl.addError(name, name + " layer not defined");
+        }
+
+        List dxfLineEntities = dxfLayer.getDXFEntities(DXFConstants.ENTITY_TYPE_DIMENSION);
+
+        if (null != dxfLineEntities)
+            for (Object dxfEntity : dxfLineEntities) {
+
+                DXFDimension line = (DXFDimension) dxfEntity;
+                String dimensionBlock = line.getDimensionBlock();
+                // String dimensionBlock = line.getDimensionBlock();
+                DXFBlock dxfBlock = dxfDocument.getDXFBlock(dimensionBlock);
+                Iterator dxfEntitiesIterator = dxfBlock.getDXFEntitiesIterator();
+                while (dxfEntitiesIterator.hasNext()) {
+                    DXFEntity e = (DXFEntity) dxfEntitiesIterator.next();
+                    if (e.getType().equals(DXFConstants.ENTITY_TYPE_MTEXT)) {
+                        DXFMText text = (DXFMText) e;
+                        String text2 = text.getText();
+                        text2 = text2.replaceAll("[^\\d.]", "");
+                        ;
+                        if (!text2.isEmpty()) {
+                            value = BigDecimal.valueOf(Double.parseDouble(text2));
+                        }
+
+                    }
+                }
+
+            }
+        if (BigDecimal.ZERO.compareTo(value) == 0) {
+            pl.addError(name, "Dimension value is invalid for layer " + name);
+        }
+        return value;
 
     }
 
@@ -224,11 +270,36 @@ public class Util {
 
         return dxflwPolylines;
     }
+    
+    public  static List<DXFLWPolyline> getPolyLinesByLayerAndColor(DXFDocument dxfDocument,String layerName,int colorCode,PlanDetail pl) {
+
+        List<DXFLWPolyline> dxflwPolylines = new ArrayList<>();
+
+       
+
+            DXFLayer dxfLayer = (DXFLayer) dxfDocument.getDXFLayer(layerName);
+
+            List dxfPolyLineEntities = dxfLayer.getDXFEntities(DXFConstants.ENTITY_TYPE_LWPOLYLINE);
+
+            if (null != dxfPolyLineEntities)
+                for (Object dxfEntity : dxfPolyLineEntities) {
+
+                    DXFLWPolyline dxflwPolyline = (DXFLWPolyline) dxfEntity;
+
+                    
+                      //  if (colorCode == dxflwPolyline.getColor())
+                            dxflwPolylines.add(dxflwPolyline);
+                }
+       
+
+        return dxflwPolylines;
+    }
+    
 
     public static List<DXFLWPolyline> getPolyLinesByLayer(DXFDocument dxfDocument, String name) {
 
         List<DXFLWPolyline> dxflwPolylines = new ArrayList<>();
-        if(name==null)
+        if (name == null)
             return dxflwPolylines;
 
         Iterator dxfLayerIterator = dxfDocument.getDXFLayerIterator();
@@ -293,73 +364,66 @@ public class Util {
     }
 
     public static String getMtextByLayerName(DXFDocument doc, String name) {
-       if(name==null)
-           return null;
-       String param = null;
-       name=name.toUpperCase();
-       String[] split = name.split(",");
-       for(String layerName:split )
-       {
-       
-        
-        Boolean found=false;
-        Iterator dxfLayerIterator = doc.getDXFLayerIterator();
-        while(dxfLayerIterator.hasNext())
-        {
-            DXFLayer next =(DXFLayer) dxfLayerIterator.next();
-            DXFLayer planInfoLayer = doc.getDXFLayer(next.getName());
-           // LOG.info("----------"+planInfoLayer.getName()+"---------------------------------------------------");
+        if (name == null)
+            return null;
+        String param = null;
+        name = name.toUpperCase();
+        String[] split = name.split(",");
+        for (String layerName : split) {
+
+            Boolean found = false;
+            Iterator dxfLayerIterator = doc.getDXFLayerIterator();
+            while (dxfLayerIterator.hasNext()) {
+                DXFLayer next = (DXFLayer) dxfLayerIterator.next();
+                DXFLayer planInfoLayer = doc.getDXFLayer(next.getName());
+                // LOG.info("----------"+planInfoLayer.getName()+"---------------------------------------------------");
+                if (planInfoLayer != null) {
+                    List texts = planInfoLayer.getDXFEntities(DXFConstants.ENTITY_TYPE_MTEXT);
+                    if (texts != null) {
+                        Iterator iterator = texts.iterator();
+
+                        while (iterator.hasNext()) {
+                            DXFText text = (DXFText) iterator.next();
+                            // LOG.info("Mtext :"+text.getText());
+                        }
+                    }
+
+                }
+                if (layerName.equals(next.getName().toUpperCase())) {
+                    found = true;
+                    layerName = next.getName();
+                }
+            }
+            if (!found) {
+                LOG.error("No Layer Found with name" + layerName);
+            }
+
+            DXFLayer planInfoLayer = doc.getDXFLayer(layerName);
+            // LOG.info(planInfoLayer.getName());
             if (planInfoLayer != null) {
                 List texts = planInfoLayer.getDXFEntities(DXFConstants.ENTITY_TYPE_MTEXT);
-                if(texts!=null)
-                {
+
+                // LOG.info("Texts list is null ");
+                DXFText text = null;
+                if (texts != null) {
                     Iterator iterator = texts.iterator();
 
                     while (iterator.hasNext()) {
-                        DXFText   text = (DXFText) iterator.next();
-                       // LOG.info("Mtext :"+text.getText());
+                        text = (DXFText) iterator.next();
+                        // LOG.info("Mtext :"+text.getText());
+                        if (text != null && text.getText() != null) {
+                            param = text.getText();
+                            /*
+                             * if(new Float(param).isNaN()) { throw new RuntimeException("Texts in the layer" + layerName
+                             * +"Does not follow standard "); }
+                             */
+
+                            param = param.replace("VOLTS", "").trim();
+                        }
                     }
                 }
-     
-            }
-            if(layerName.equals(next.getName().toUpperCase()))
-            {
-              found=true;   
-                layerName=next.getName();
             }
         }
-        if(!found)
-        {
-            LOG.error("No Layer Found with name" +layerName);
-        }
-        
-        
-        DXFLayer planInfoLayer = doc.getDXFLayer(layerName);
-       // LOG.info(planInfoLayer.getName());
-        if (planInfoLayer != null) {
-            List texts = planInfoLayer.getDXFEntities(DXFConstants.ENTITY_TYPE_MTEXT);
-
-           // LOG.info("Texts list is null ");
-            DXFText text = null;
-            if(texts!=null)
-            {
-            Iterator iterator = texts.iterator();
-
-            while (iterator.hasNext()) {
-                text = (DXFText) iterator.next();
-               // LOG.info("Mtext :"+text.getText());
-                if (text != null && text.getText() != null) {
-                    param = text.getText();
-                    /*
-                     * if(new Float(param).isNaN()) { throw new RuntimeException("Texts in the layer" + layerName
-                     * +"Does not follow standard "); }
-                     */
-
-                    param = param.replace("VOLTS", "").trim();
-                }
-            }}
-        }
-       }
         return param;
     }
 
@@ -559,7 +623,7 @@ public class Util {
 
             LOG.error("Ignoring since it is logging error", e);
         }
-        
+
         LOG.info("ReportOutput Completed");
 
     }
