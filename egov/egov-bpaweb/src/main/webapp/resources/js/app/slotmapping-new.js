@@ -141,7 +141,7 @@ $(document)
 					
 					$('#revenueWard').change(function(){
 						$.ajax({
-							url: "/bpa/boundary/ajaxBoundary-localityByWard",
+							url: "/bpa/boundary/ajaxBoundary-electionwardbyrevenueward",
 							type: "GET",
 							data: {
 								wardId : $('#revenueWard').val()
@@ -152,7 +152,7 @@ $(document)
 								$('#electionWard').html("");
 								$('#electionWard').append("<option value=''>Select</option>");
 								$.each(response, function(index, value) {
-									$('#electionWard').append($('<option>').text(value.localityName).attr('value', value.localityId));
+									$('#electionWard').append($('<option>').text(value.electionwardName).attr('value', value.electionwardId));
 								});
 							}, 
 							error: function (response) {
@@ -160,7 +160,6 @@ $(document)
 								$('#electionWard').append("<option value=''>Select</option>");
 							}
 						});
-						populateElectionWardByRevenueWard();
 						
 					});
 

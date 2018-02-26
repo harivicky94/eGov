@@ -67,27 +67,26 @@ $(document)
 
 					$('#revenueWard').change(function(){
 						$.ajax({
-						url: "/bpa/boundary/ajaxBoundary-localityByWard",
-						type: "GET",
-						data: {
-							wardId : $('#revenueWard').val()
-						},
-						cache: false,
-						dataType: "json",
-						success: function (response) {
-							$('#electionWard').html("");
-						$('#electionWard').append("<option value=''>Select</option>");
-						$.each(response, function(index, value) {
-							$('#electionWard').append($('<option>').text(value.localityName).attr('value', value.localityId));
-							});
-						}, 
-						error: function (response) {
-							$('#electionWard').html("");
-						$('#electionWard').append("<option value=''>Select</option>");
-						}
+							url: "/bpa/boundary/ajaxBoundary-electionwardbyrevenueward",
+							type: "GET",
+							data: {
+								wardId : $('#revenueWard').val()
+							},
+							cache: false,
+							dataType: "json",
+							success: function (response) {
+								$('#electionWard').html("");
+								$('#electionWard').append("<option value=''>Select</option>");
+								$.each(response, function(index, value) {
+									$('#electionWard').append($('<option>').text(value.electionwardName).attr('value', value.electionwardId));
+								});
+							}, 
+							error: function (response) {
+								$('#electionWard').html("");
+								$('#electionWard').append("<option value=''>Select</option>");
+							}
 						});
-						populateElectionWardByRevenueWard();
-
+						
 					});
 					
 					$('#applType').trigger("change");
