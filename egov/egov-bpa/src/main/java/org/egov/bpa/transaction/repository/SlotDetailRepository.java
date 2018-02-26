@@ -65,7 +65,7 @@ public interface SlotDetailRepository extends JpaRepository<SlotDetail, Long> {
 			+ " - slotdetail.utilizedScheduledSlots >0 or slotdetail.maxRescheduledSlots -"
 			+ " slotdetail.utilizedRescheduledSlots >0 or (slotdetail.maxScheduledSlots -"
 			+ " slotdetail.utilizedScheduledSlots >0 and slotdetail.maxRescheduledSlots -"
-			+ " slotdetail.utilizedRescheduledSlots >0)) and slotdetail.slot.zone = :zone order by slotdetail.slot.appointmentDate ,"
+			+ " slotdetail.utilizedRescheduledSlots >0)) and slotdetail.slot.zone = :zone and slotdetail.slot.electionWard is null order by slotdetail.slot.appointmentDate ,"
 			+ " slotdetail.id")
 	List<SlotDetail> findSlotsByAppointmentDateAndZone(@Param("appointmentDate") Date appointmentDate,
 			@Param("zone") Boundary zone);
