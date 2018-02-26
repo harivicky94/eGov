@@ -74,7 +74,7 @@ public interface SlotDetailRepository extends JpaRepository<SlotDetail, Long> {
 			+ " and (detail.maxScheduledSlots" + " - detail.utilizedScheduledSlots >0 or detail.maxRescheduledSlots -"
 			+ " detail.utilizedRescheduledSlots >0 or (detail.maxScheduledSlots -"
 			+ " detail.utilizedScheduledSlots >0 and detail.maxRescheduledSlots -"
-			+ " detail.utilizedRescheduledSlots >0)) order by detail.id asc")
+			+ " detail.utilizedRescheduledSlots >0)) and detail.slot.electionWard is null order by detail.id asc")
 	List<SlotDetail> findOneByAppointmentDateAndZoneId(
 			@Param("rescheduleAppointmentDate") Date rescheduleAppointmentDate, @Param("zone") Boundary zone);
 
