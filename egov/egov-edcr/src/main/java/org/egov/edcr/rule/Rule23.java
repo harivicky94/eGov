@@ -38,7 +38,7 @@ public class Rule23 extends GeneralRule {
                 planDetail.addErrors(errors);
             }
             if (planDetail.getElectricLine().getHorizontalDistance() == null
-                    || planDetail.getElectricLine().getVerticalDistance() == null) {
+                    && planDetail.getElectricLine().getVerticalDistance() == null) {
                 errors.put(DcrConstants.ELECTRICLINE_DISTANCE,
                         edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
                                 new String[] { DcrConstants.ELECTRICLINE_DISTANCE }, LocaleContextHolder.getLocale()));

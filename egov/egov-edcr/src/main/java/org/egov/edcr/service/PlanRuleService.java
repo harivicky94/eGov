@@ -33,7 +33,7 @@ public class PlanRuleService {
         // TODO Auto-generated method stub
         PlanRule planRule = new PlanRule();
         StringBuffer planRules= new StringBuffer();
-        planRules.append("23,30"); //Default rule to be add.// overheadline and other
+        planRules.append("23"); //Default rule to be add.// overheadline and other
         BigDecimal plotArea;
         if(planDetail!=null && planDetail.getPlanInformation()!=null && planDetail.getPlanInformation().getPlotArea()!=null)
         {
@@ -41,7 +41,9 @@ public class PlanRuleService {
 
             if (plotArea.compareTo(BigDecimal.valueOf(125)) <= 0) // Plot area less than 125
             {
+              
                 planRules.append(",26");// construction abuting to public road
+                planRules.append(",30"); 
                 planRules.append(",61");
                 planRules.append(",62");
                 planRules.append(",63");
@@ -50,6 +52,7 @@ public class PlanRuleService {
             } else {
                 planRules.append(",24"); // interior or exterior
                 planRules.append(",25");// distance from road
+                planRules.append(",30"); 
                 planRules.append(",31");// coverage and FAR
 
                 if (planDetail.getBuilding().getMaxFloor() != null

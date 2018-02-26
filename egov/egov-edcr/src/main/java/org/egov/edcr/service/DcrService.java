@@ -154,33 +154,18 @@ public class DcrService {
         StringBuffer resultOutput= new StringBuffer();
         StringBuffer errorOutput= new StringBuffer();
         boolean reportStatus=true;
-        if(dcrApplication!=null){
-        if(dcrApplication.getApplicationNumber()!=null)
-        params.put("applicationNumber",dcrApplication.getApplicationNumber());
-        if(dcrApplication.getApplicationDate()!=null)
-        params.put("applicationDate",dcrApplication.getApplicationDate().toString());  
-        if(dcrApplication.getPlanInformation()!=null && dcrApplication.getPlanInformation().getOccupancy()!=null)
-            params.put("occupancy",dcrApplication.getPlanInformation().getOccupancy()); 
-        if(dcrApplication.getPlanInformation()!=null && dcrApplication.getPlanInformation().getArchitectInformation()!=null)
-            params.put("architect",dcrApplication.getPlanInformation().getArchitectInformation()); 
+        if (dcrApplication != null) {
+            if (dcrApplication.getApplicationNumber() != null)
+                params.put("applicationNumber", dcrApplication.getApplicationNumber());
+            if (dcrApplication.getApplicationDate() != null)
+                params.put("applicationDate", dcrApplication.getApplicationDate().toString());
+            if (dcrApplication.getPlanInformation() != null && dcrApplication.getPlanInformation().getOccupancy() != null)
+                params.put("occupancy", dcrApplication.getPlanInformation().getOccupancy());
+            if (dcrApplication.getPlanInformation() != null
+                    && dcrApplication.getPlanInformation().getArchitectInformation() != null)
+                params.put("architect", dcrApplication.getPlanInformation().getArchitectInformation());
 
         }
-    /*    List<RuleOutput> rules = planReportOutput.getRuleOutPuts();
-        for(RuleOutput ruleOutput : rules) {
-        	if(ruleOutput.getKey().equalsIgnoreCase(DcrConstants.RULE23)) {
-        		params.put(ruleOutput.getKey(), ruleOutput);
-        	}
-        	if(ruleOutput.getKey().equalsIgnoreCase(DcrConstants.RULE26)) {
-        		params.put(ruleOutput.getKey(), ruleOutput);
-        	}
-        	if(ruleOutput.getKey().equalsIgnoreCase(DcrConstants.RULE30)) {
-        		params.put(ruleOutput.getKey(), ruleOutput);
-        	}
-        	if(ruleOutput.getKey().equalsIgnoreCase(DcrConstants.RULE32)) {
-        		params.put(ruleOutput.getKey(), ruleOutput);
-        	}
-        
-        }*/
         
         if (planDetail.getErrors() != null) {
 
@@ -197,9 +182,10 @@ public class DcrService {
         
     for(RuleOutput ruleOutput: planReportOutput.getRuleOutPuts())
         {
+            resultOutput.append("\n");
             resultOutput.append(ruleOutput.key);
-            
-           if(ruleOutput.getSubRuleOutputs()!=null && ruleOutput.getSubRuleOutputs().size()>0){  
+
+            if (ruleOutput.getSubRuleOutputs() != null && ruleOutput.getSubRuleOutputs().size() > 0) {
                 for (SubRuleOutput subRuleOutputs : ruleOutput.getSubRuleOutputs()) {
                     if (subRuleOutputs.ruleReportOutputs != null && subRuleOutputs.ruleReportOutputs.size()>0) {
                         resultOutput.append("\n\b");
@@ -262,13 +248,12 @@ public class DcrService {
            }else
            {
                resultOutput.append("\n\b");
-               if (ruleOutput.ruleDescription != null) {
-                   resultOutput.append(" :: ");
-                   resultOutput.append("\b");
+               if (ruleOutput.ruleDescription != null && !ruleOutput.ruleDescription.equals("")) {
                    resultOutput.append(ruleOutput.ruleDescription);
                }
-               resultOutput.append("\b\n");
+               
                if (ruleOutput.message != null) {
+                   resultOutput.append("\b\n");
                    resultOutput.append("\tMessage: ");
                    resultOutput.append("\b");
                    resultOutput.append(ruleOutput.message);
