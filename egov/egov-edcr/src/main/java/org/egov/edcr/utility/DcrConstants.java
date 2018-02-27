@@ -35,6 +35,7 @@ public class DcrConstants {
     public static final String REAR_YARD_DESC = "Rear Yard";
     public static final String SIDE_YARD1_DESC = "Side Yard1";
     public static final String SIDE_YARD2_DESC = "Side Yard2";
+    public static final String SIDE_YARD_DESC = "Side Yard";
     public static final String VOLTAGE = "Voltage";
     public static final String ELECTRICLINE_DISTANCE = "Horizontal/Vertical line distance from electric line ";
     public static final String HORIZONTAL_ELECTRICLINE_DISTANCE = "Horizontal line distance from electric line ";
