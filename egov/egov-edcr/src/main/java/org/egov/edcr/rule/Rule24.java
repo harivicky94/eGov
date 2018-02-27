@@ -71,7 +71,7 @@ public class Rule24 extends GeneralRule {
             //check either of side yard present or not
             if (planDetail.getPlot() != null
                     && ((planDetail.getPlot().getSideYard1() == null || !planDetail.getPlot().getSideYard1().getPresentInDxf()))
-                    || (planDetail.getPlot().getSideYard2() == null || !planDetail.getPlot().getSideYard2().getPresentInDxf())) {
+                    && (planDetail.getPlot().getSideYard2() == null || !planDetail.getPlot().getSideYard2().getPresentInDxf())) {
                 errors.put(DcrConstants.SIDE_YARD_DESC,
                         prepareMessage(DcrConstants.OBJECTNOTDEFINED, DcrConstants.SIDE_YARD_DESC));
                 planDetail.addErrors(errors);
@@ -150,8 +150,6 @@ public class Rule24 extends GeneralRule {
                                 "(" + planDetail.getPlot().getFrontYard().getMinimumDistance().toString() + "," +
                                         planDetail.getPlot().getFrontYard().getMean().toString() + ")" + DcrConstants.IN_METER,
                                 Result.Accepted, null));
-
-
             } else {
                 planDetail.reportOutput
                         .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_4, SUB_RULE_24_4_DESCRIPTION, DcrConstants.FRONT_YARD_DESC,
@@ -161,7 +159,6 @@ public class Rule24 extends GeneralRule {
                                         planDetail.getPlot().getFrontYard().getMean().toString() + ")" + DcrConstants.IN_METER,
                                 Result.Not_Accepted, null));
             }
-
         }
     }
 
@@ -184,8 +181,7 @@ public class Rule24 extends GeneralRule {
         }
 
         if (sideyard1.compareTo(sideyard2) > 0) {
-            if (sideyard1.compareTo(sideYard1MinDist) == 0)//side1>1
-            {
+            if (sideyard1.compareTo(sideYard1MinDist) == 0) {
                 planDetail.reportOutput
                         .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_3, SUB_RULE_24_3_DESCRIPTION,
                                 DcrConstants.SIDE_YARD1_DESC,
@@ -203,8 +199,7 @@ public class Rule24 extends GeneralRule {
                                         + DcrConstants.IN_METER,
                                 Result.Accepted, null));
 
-            if (sideyard2.compareTo(sideYard2MinDist) < 0)//side2>2.2
-            {
+            if (sideyard2.compareTo(sideYard2MinDist) < 0) {
                 planDetail.reportOutput
                         .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_3, SUB_RULE_24_3_DESCRIPTION,
                                 DcrConstants.SIDE_YARD2_DESC,
@@ -212,7 +207,6 @@ public class Rule24 extends GeneralRule {
                                 sideyard2.toString()
                                         + DcrConstants.IN_METER,
                                 Result.Verify, null));
-
             } else
                 planDetail.reportOutput
                         .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_3, SUB_RULE_24_3_DESCRIPTION,
@@ -221,11 +215,8 @@ public class Rule24 extends GeneralRule {
                                 sideyard2.toString()
                                         + DcrConstants.IN_METER,
                                 Result.Accepted, null));
-
-
         } else {
-            if (sideyard2.compareTo(sideYard1MinDist) == 0)//side1>1
-            {
+            if (sideyard2.compareTo(sideYard1MinDist) == 0) {
                 planDetail.reportOutput
                         .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_3, SUB_RULE_24_3_DESCRIPTION,
                                 DcrConstants.SIDE_YARD2_DESC,
@@ -243,8 +234,7 @@ public class Rule24 extends GeneralRule {
                                         + DcrConstants.IN_METER,
                                 Result.Accepted, null));
 
-            if (sideyard1.compareTo(sideYard2MinDist) < 0)//side2>2.2
-            {
+            if (sideyard1.compareTo(sideYard2MinDist) < 0) {
                 planDetail.reportOutput
                         .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_3, SUB_RULE_24_3_DESCRIPTION,
                                 DcrConstants.SIDE_YARD1_DESC,
@@ -252,7 +242,6 @@ public class Rule24 extends GeneralRule {
                                 sideyard1.toString()
                                         + DcrConstants.IN_METER,
                                 Result.Verify, null));
-
             } else
                 planDetail.reportOutput
                         .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_3, SUB_RULE_24_3_DESCRIPTION,
@@ -261,11 +250,9 @@ public class Rule24 extends GeneralRule {
                                 sideyard1.toString()
                                         + DcrConstants.IN_METER,
                                 Result.Accepted, null));
-
         }
 
     }
-
 
     private void rule24_5(PlanDetail planDetail, BigDecimal rearYardMin, BigDecimal rearYardMean) {
 
@@ -283,11 +270,9 @@ public class Rule24 extends GeneralRule {
                                 "(" + planDetail.getPlot().getRearYard().getMinimumDistance().toString() + "," +
                                         planDetail.getPlot().getRearYard().getMean().toString() + ")" + DcrConstants.IN_METER,
                                 Result.Accepted, null));
-
-
             } else {
                 planDetail.reportOutput
-                        .add(buildRuleOutputWithSubRule(DcrConstants.RULE62, SUB_RULE_24_5, SUB_RULE_24_5_DESCRIPTION, DcrConstants.REAR_YARD_DESC,
+                        .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_5, SUB_RULE_24_5_DESCRIPTION, DcrConstants.REAR_YARD_DESC,
                                 MEAN_MINIMUM + "(" + rearYardMin.toString() + "," + rearYardMean + ")"
                                         + DcrConstants.IN_METER,
                                 "(" + planDetail.getPlot().getRearYard().getMinimumDistance().toString() + "," +
