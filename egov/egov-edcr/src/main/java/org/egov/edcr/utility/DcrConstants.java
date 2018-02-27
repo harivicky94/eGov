@@ -30,6 +30,7 @@ public class DcrConstants {
     public static final String ROAD = "Road";
     public static final String PLOT_AREA = "Plot Area ";
     public static final String BUILDING_HEIGHT_DESC = "Building height";
+    public static final String BUILDING_FOOT_PRINT = "Building foot print";
     public static final String FRONT_YARD_DESC = "Front Yard";
     public static final String REAR_YARD_DESC = "Rear Yard";
     public static final String SIDE_YARD1_DESC = "Side Yard1";
@@ -70,6 +71,7 @@ public class DcrConstants {
     public static final String FLOOR_AREA ="FLOOR_AREA";
     public static final String FAR ="F.A.R";
     public static final String COVERAGE ="COVERAGE";
+    public static final String COVERAGE_DEDUCT ="COVERAGE DEDUCT";
     public static final RoundingMode ROUNDMODE_MEASUREMENTS = RoundingMode.HALF_UP;
 
 }
