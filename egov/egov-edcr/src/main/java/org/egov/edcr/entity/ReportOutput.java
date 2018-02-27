@@ -5,7 +5,7 @@ import java.util.List;
 
 public class ReportOutput {
 
-    public List<RuleOutput> ruleOutPuts;
+    public List<RuleOutput> ruleOutPuts = new ArrayList<>();
 
     public void add(RuleOutput ruleOut) {
         if (ruleOutPuts == null) {
