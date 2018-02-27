@@ -53,10 +53,12 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface SlotRepository extends JpaRepository<Slot, Long> {
 	
-	@Query("select slot from Slot slot where slot.zone = :zone and slot.appointmentDate >= :slotDate order by slot.appointmentDate asc")
+	@Query("select slot from Slot slot where slot.zone = :zone and slot.appointmentDate >= :slotDate and slot.electionWard is null order by slot.appointmentDate asc")
 	List<Slot> findByZoneAndApplicationDate(@Param("zone") Boundary zone, @Param("slotDate") Date slotDate);
 
-	Slot findByZoneAndAppointmentDate(Boundary zone, Date appointmentDate);
-	
+	@Query("select slot from Slot slot where slot.zone = :zone and slot.appointmentDate = :appointmentDate and slot.electionWard is null")
+	List<Slot> findByZoneAndAppointmentDate(@Param("zone") Boundary zone,
+			@Param("appointmentDate") Date appointmentDate);
+
 	Slot findByZoneAndElectionWardAndAppointmentDate(Boundary zone, Boundary electionWard, Date appointmentDate);
 }

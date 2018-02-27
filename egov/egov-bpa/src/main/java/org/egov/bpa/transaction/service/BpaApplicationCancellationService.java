@@ -52,10 +52,12 @@ import org.egov.bpa.transaction.repository.SlotApplicationRepository;
 import org.egov.bpa.transaction.service.messaging.BPASmsAndEmailService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.utils.BpaUtils;
+import org.egov.infra.validation.exception.ValidationException;
 import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 
 @Service
 @Transactional(readOnly = true)
@@ -74,6 +76,9 @@ public class BpaApplicationCancellationService {
 	
 	@Autowired
 	private BpaUtils bpaUtils;
+	
+	@Autowired
+	private TransactionTemplate transactionTemplate;
 
 	@Transactional
 	public void cancelNonverifiedApplications() {
@@ -87,23 +92,28 @@ public class BpaApplicationCancellationService {
 		List<BpaApplication> bpaApplicationList = applicationBpaService
 				.findByStatusListOrderByCreatedDate(listOfBpaStatus);
 		for (BpaApplication bpaApplication : bpaApplicationList) {
+			try {
+				TransactionTemplate template = new TransactionTemplate(transactionTemplate.getTransactionManager());
+				template.execute(result -> {
 			List<SlotApplication> slotApplicationList = slotApplicationRepository
 					.findByApplicationOrderByIdDesc(bpaApplication);
 			if (slotApplicationList.size() > 0) {
 				Date appointmentDate = slotApplicationList.get(0).getSlotDetail().getSlot().getAppointmentDate();
 				if (todayDate.compareTo(appointmentDate) > 0) {
-					BpaStatus status = bpaStatusRepository
-							.findByCodeAndModuleType(BpaConstants.APPLICATION_STATUS_CANCELLED, "REGISTRATION");
-					bpaApplication.setStatus(status);
 					bpaUtils.redirectToBpaWorkFlow(bpaApplication.getCurrentState().getOwnerPosition().getId(),
-							bpaApplication, null, "Application is cancelled because not attended for document scrutiny",
+							bpaApplication, null, "Application is cancelled because citizen not attended for document scrutiny",
 							BpaConstants.WF_CANCELAPPLICATION_BUTTON, null);
 					applicationBpaService.saveBpaApplication(bpaApplication);
 					bpaSmsAndEmailService.sendSMSAndEmailForDocumentScrutiny(slotApplicationList.get(0),
 							bpaApplication);
 				}
 			}
-		}
+					return true;
+				});
+			} catch (Exception e) {
+				getErrorMessage(e);
+			}
+			}
 	}
 
 	LocalDate convertToLocalDate(Date date) {
@@ -111,4 +121,14 @@ public class BpaApplicationCancellationService {
 			return null;
 		return new LocalDate(date);
 	}
-}
+	
+	private String getErrorMessage(final Exception exception) {
+		String error;
+		if (exception instanceof ValidationException)
+			error = ((ValidationException) exception).getErrors().get(0).getMessage();
+		else
+			error = "Error : " + exception;
+		return error;
+	}
+	
+	}

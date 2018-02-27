@@ -144,7 +144,7 @@ public class SlotOpeningForAppointmentService {
 						calender.add(Calendar.DAY_OF_YEAR, 1);
 					}
 				}
-				if (slotRepository.findByZoneAndAppointmentDate(slotZone.getZone(), calender.getTime()) == null) {
+				if (slotRepository.findByZoneAndAppointmentDate(slotZone.getZone(), calender.getTime()).isEmpty()) {
 					Slot slot = new Slot();
 					slot.setZone(slotZone.getZone());
 					slot.setCreatedBy(user);
@@ -174,8 +174,8 @@ public class SlotOpeningForAppointmentService {
 					slots.add(slot);
 				}
 			}
-			slotRepository.save(slots);
 		}
+		slotRepository.save(slots);
 	}
 
 	LocalDate convertToLocalDate(Date date) {
