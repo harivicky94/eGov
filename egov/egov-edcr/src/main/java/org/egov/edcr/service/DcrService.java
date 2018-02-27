@@ -2,7 +2,6 @@ package org.egov.edcr.service;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,7 +48,7 @@ public class DcrService {
 
     @Autowired
     private ReportService reportService;
-    
+
     @Autowired
     private FileStoreService fileStoreService;
 
@@ -67,7 +66,7 @@ public class DcrService {
         // TODO:
         // BASIC VALIDATION
 
-       // File dxfFile = new File("/home/mani/Desktop/BPA/kozhi/SAMPLE 4.dxf");
+        // File dxfFile = new File("/home/mani/Desktop/BPA/kozhi/SAMPLE 4.dxf");
 
         generalRule.validate(planDetail);
 
@@ -77,7 +76,6 @@ public class DcrService {
         // planDetail= generalRule.validate(planDetail);
         // EXTRACT DATA FROM DXFFILE TO planDetail;
         planDetail = extractService.extract(dxf1File, dcrApplication);
-        
 
         // USING PLANDETAIL OBJECT, FINDOUT RULES.
         // ITERATE EACH RULE.CHECK CONDITIONS.
@@ -91,18 +89,12 @@ public class DcrService {
                 String ruleName = "rule" + s;
                 LOG.info(s);
                 Object ruleBean = getRuleBean(ruleName);
-                if(ruleBean!=null)
-                {
-                GeneralRule bean = (GeneralRule) ruleBean;
-                if(bean!=null)
-                {
-                    planDetail = bean.validate(planDetail);
-                }
-                }else
-                {
-                    LOG.error("Skipping rule "+ruleName+ "Since rule cannot be injected");
-                }
-              
+                if (ruleBean != null) {
+                    GeneralRule bean = (GeneralRule) ruleBean;
+                    if (bean != null)
+                        planDetail = bean.validate(planDetail);
+                } else
+                    LOG.error("Skipping rule " + ruleName + "Since rule cannot be injected");
 
             }
         }
@@ -115,45 +107,41 @@ public class DcrService {
             for (String s : ruleSet) {
                 String ruleName = "rule" + s;
                 Object ruleBean = getRuleBean(ruleName);
-                if(ruleBean!=null)
-                {
-                GeneralRule bean = (GeneralRule) ruleBean;
-                if(bean!=null){
-                planDetail = bean.process(planDetail);
-                }
-                }else
-                {
-                    LOG.error("Skipping rule "+ruleName+ "Since rule cannot be injected");
-                } 
+                if (ruleBean != null) {
+                    GeneralRule bean = (GeneralRule) ruleBean;
+                    if (bean != null)
+                        planDetail = bean.process(planDetail);
+                } else
+                    LOG.error("Skipping rule " + ruleName + "Since rule cannot be injected");
 
             }
         }
-        generateDCRReport(planDetail,dcrApplication);
+        generateDCRReport(planDetail, dcrApplication);
 
         Util.print(planDetail);
         Util.print(planDetail.getErrors());
-        Util.print(planDetail.getGeneralInformation()) ;
+        Util.print(planDetail.getGeneralInformation());
         Util.print(planDetail.getReportOutput());
         return planDetail;
     }
 
     private Object getRuleBean(String ruleName) {
-        Object bean= null;
+        Object bean = null;
         try {
-            bean=  applicationContext.getBean(ruleName);
+            bean = applicationContext.getBean(ruleName);
         } catch (BeansException e) {
-            LOG.error("No Bean Defined for the Rule"+ruleName); 
+            LOG.error("No Bean Defined for the Rule" + ruleName);
         }
         return bean;
     }
 
     public ReportOutput generateDCRReport(PlanDetail planDetail, EdcrApplication dcrApplication) {
-    	
+
         Map<String, Object> params = new HashMap<>();
-        org.egov.edcr.entity.ReportOutput planReportOutput =  planDetail.getReportOutput();
-        StringBuffer resultOutput= new StringBuffer();
-        StringBuffer errorOutput= new StringBuffer();
-        boolean reportStatus=true;
+        org.egov.edcr.entity.ReportOutput planReportOutput = planDetail.getReportOutput();
+        StringBuffer resultOutput = new StringBuffer();
+        StringBuffer errorOutput = new StringBuffer();
+        boolean reportStatus = true;
         if (dcrApplication != null) {
             if (dcrApplication.getApplicationNumber() != null)
                 params.put("applicationNumber", dcrApplication.getApplicationNumber());
@@ -166,7 +154,7 @@ public class DcrService {
                 params.put("architect", dcrApplication.getPlanInformation().getArchitectInformation());
 
         }
-        
+
         if (planDetail.getErrors() != null) {
 
             for (Map.Entry<String, String> entry : planDetail.getErrors().entrySet()) {
@@ -177,17 +165,16 @@ public class DcrService {
             params.put("errorOutput", errorOutput.toString());
             reportStatus = false;
         }
-        
+
         resultOutput.append("Rules Verified : \n\n");
-        
-    for(RuleOutput ruleOutput: planReportOutput.getRuleOutPuts())
-        {
+
+        for (RuleOutput ruleOutput : planReportOutput.getRuleOutPuts()) {
             resultOutput.append("\n");
             resultOutput.append(ruleOutput.key);
 
             if (ruleOutput.getSubRuleOutputs() != null && ruleOutput.getSubRuleOutputs().size() > 0) {
-                for (SubRuleOutput subRuleOutputs : ruleOutput.getSubRuleOutputs()) {
-                    if (subRuleOutputs.ruleReportOutputs != null && subRuleOutputs.ruleReportOutputs.size()>0) {
+                for (SubRuleOutput subRuleOutputs : ruleOutput.getSubRuleOutputs())
+                    if (subRuleOutputs.ruleReportOutputs != null && subRuleOutputs.ruleReportOutputs.size() > 0) {
                         resultOutput.append("\n\b");
                         resultOutput.append(subRuleOutputs.key);
                         if (subRuleOutputs.ruleDescription != null) {
@@ -214,7 +201,8 @@ public class DcrService {
                                 resultOutput.append("\nResult : ");
                                 resultOutput.append("\b");
                                 resultOutput.append(ruleReportOutput.status);
-                                if(ruleReportOutput.status.equals("NotAccepted"))  reportStatus=false;    
+                                if (ruleReportOutput.status.equals("NotAccepted"))
+                                    reportStatus = false;
 
                             }
                             resultOutput.append("\b\n");
@@ -240,49 +228,49 @@ public class DcrService {
                             resultOutput.append("\b");
                             resultOutput.append(subRuleOutputs.result);
                             resultOutput.append("\n");
-                            if(subRuleOutputs.result.equals("NotAccepted"))  reportStatus=false;    
+                            if (subRuleOutputs.result.equals("NotAccepted"))
+                                reportStatus = false;
 
                         }
                     }
+            } else {
+                resultOutput.append("\n\b");
+                if (ruleOutput.ruleDescription != null && !ruleOutput.ruleDescription.equals(""))
+                    resultOutput.append(ruleOutput.ruleDescription);
+
+                if (ruleOutput.message != null) {
+                    resultOutput.append("\b\n");
+                    resultOutput.append("\tMessage: ");
+                    resultOutput.append("\b");
+                    resultOutput.append(ruleOutput.message);
                 }
-           }else
-           {
-               resultOutput.append("\n\b");
-               if (ruleOutput.ruleDescription != null && !ruleOutput.ruleDescription.equals("")) {
-                   resultOutput.append(ruleOutput.ruleDescription);
-               }
-               
-               if (ruleOutput.message != null) {
-                   resultOutput.append("\b\n");
-                   resultOutput.append("\tMessage: ");
-                   resultOutput.append("\b");
-                   resultOutput.append(ruleOutput.message);
-               }
-               if (ruleOutput.result != null) {
-                   resultOutput.append("\n");
-                   resultOutput.append("\tResult : ");
-                   resultOutput.append("\b");
-                   resultOutput.append(ruleOutput.result);
-                   resultOutput.append("\n");
-               }
-               
-           }
+                if (ruleOutput.result != null) {
+                    resultOutput.append("\n");
+                    resultOutput.append("\tResult : ");
+                    resultOutput.append("\b");
+                    resultOutput.append(ruleOutput.result);
+                    resultOutput.append("\n");
+                }
+
+            }
         }
-    
-        params.put("resultOutput",resultOutput.toString());  
+
+        params.put("resultOutput", resultOutput.toString());
         final ReportRequest reportInput = new ReportRequest("edcr_report", planDetail,
                 params);
-        
-        if(reportStatus)   params.put("reportStatus",Result.Accepted.toString());    
+
+        if (reportStatus)
+            params.put("reportStatus", Result.Accepted.toString());
         else
-            params.put("reportStatus",Result.Not_Accepted.toString());    
-            
+            params.put("reportStatus", Result.Not_Accepted.toString());
+
         final ReportOutput reportOutput = reportService.createReport(reportInput);
-        FileStoreMapper fileStoreId = fileStoreService.store(new ByteArrayInputStream(reportOutput.getReportOutputData()), "EDCR", "application/pdf",DcrConstants.FILESTORE_MODULECODE);
-        
-        if(fileStoreId!=null)
+        FileStoreMapper fileStoreId = fileStoreService.store(new ByteArrayInputStream(reportOutput.getReportOutputData()), "EDCR",
+                "application/pdf", DcrConstants.FILESTORE_MODULECODE);
+
+        if (fileStoreId != null)
             dcrApplication.getSavedDcrDocument().setReportOutputId(fileStoreId);
-        
+
         return reportOutput;
 
     }

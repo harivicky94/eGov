@@ -17,12 +17,9 @@ public class Rule32 extends GeneralRule {
     private static final String SUB_RULE_32_3 = "32(3)";
 
     private static final String SUB_RULE_32_3_DESCRIPTION = "Security zone ";
-    private static final BigDecimal ten =  BigDecimal.valueOf(10);
-    private static final BigDecimal max =  BigDecimal.valueOf(12);
-    private static final BigDecimal two =  BigDecimal.valueOf(2);
-
-
-
+    private static final BigDecimal ten = BigDecimal.valueOf(10);
+    private static final BigDecimal max = BigDecimal.valueOf(12);
+    private static final BigDecimal two = BigDecimal.valueOf(2);
 
     @Override
     public PlanDetail validate(PlanDetail planDetail) {
@@ -32,19 +29,20 @@ public class Rule32 extends GeneralRule {
         if (planDetail != null && planDetail.getBuilding() != null && planDetail.getBuilding().getPresentInDxf()) {
             if (planDetail.getBuilding().getBuildingHeight() == null) {
                 errors.put(DcrConstants.BUILDING_HEIGHT, edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
-                        new String[]{DcrConstants.BUILDING_HEIGHT}, LocaleContextHolder.getLocale()));
+                        new String[] { DcrConstants.BUILDING_HEIGHT }, LocaleContextHolder.getLocale()));
                 planDetail.addErrors(errors);
             }
 
             if (planDetail.getMaxHeightCal() != null && planDetail.getMaxHeightCal().compareTo(BigDecimal.ZERO) < 0) {
                 errors.put(DcrConstants.BUILDING_HEIGHT, edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
-                        new String[]{DcrConstants.BUILDING_HEIGHT}, LocaleContextHolder.getLocale()));
+                        new String[] { DcrConstants.BUILDING_HEIGHT }, LocaleContextHolder.getLocale()));
                 planDetail.addErrors(errors);
             }
 
-            if (planDetail.getBuilding().getBuildingTopMostHeight() != null && planDetail.getBuilding().getBuildingTopMostHeight().compareTo(BigDecimal.ZERO) < 0) {
+            if (planDetail.getBuilding().getBuildingTopMostHeight() != null
+                    && planDetail.getBuilding().getBuildingTopMostHeight().compareTo(BigDecimal.ZERO) < 0) {
                 errors.put(DcrConstants.BUILDING_TOP_MOST_HEIGHT, edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
-                        new String[]{DcrConstants.BUILDING_TOP_MOST_HEIGHT}, LocaleContextHolder.getLocale()));
+                        new String[] { DcrConstants.BUILDING_TOP_MOST_HEIGHT }, LocaleContextHolder.getLocale()));
                 planDetail.addErrors(errors);
             }
 

@@ -23,8 +23,8 @@ public class DcrConstants {
     public static final String OBJECTNOTDEFINED_DESC = " Not defined in the plan.";
     public static final String EXPECTEDRESULT = "msg.result.expected.actual";
 
-    public static final String OBJECTDEFINED="msg.object.defined";
-    public static final String OBJECTNOTDEFINED="msg.error.not.defined";
+    public static final String OBJECTDEFINED = "msg.object.defined";
+    public static final String OBJECTNOTDEFINED = "msg.error.not.defined";
     public static final String WASTEDISPOSAL = "Waste disposal";
     public static final String CRZZONE = "CRZ Zone";
     public static final String ROAD = "Road";
@@ -48,31 +48,31 @@ public class DcrConstants {
     public static final String SEQ_ECDR_APPLICATIONNO = "SEQ_ECDR_APPLICATIONNO";
     public static final String APPLICATION_MODULE_TYPE = "EDCR";
     // ----- names
-   
+
     public static Integer FLOOR_COLOUR_CODE = 10;
 
-   
     public static final int DECIMALDIGITS = 10;
     public static final int DECIMALDIGITS_MEASUREMENTS = 3;
-   
+
     public static final String BUILDING_EXTERIOR_WALL = "BUILDING_EXTERIOR_WALL";
     public static final String OCCUPANCY = "Occupancy";
     public static final String BUILDING_HEIGHT = "BUILDING_HEIGHT";
     public static final String BUILDING_TOP_MOST_HEIGHT = "BUILDING_TOP_MOST_HEIGHT";
     public static final String MAX_HEIGHT_CAL = "MAX_HEIGHT_CAL";
     public static final String SECURITY_ZONE = "SECURITY Zone";
-    
-    
+
     public static final String IN_METER_SQR = "(MTRSQ)";
     public static final String RESIDENTIAL = "RESIDENTIAL";
     public static final String TOTAL_FLOOR_AREA = "TOTAL_FLOOR_AREA";
     public static final String NOC = "NOC";
- 
-    public static final String FAR_DEDUCT ="FAR_DEDUCT";
-    public static final String FLOOR_AREA ="FLOOR_AREA";
-    public static final String FAR ="F.A.R";
-    public static final String COVERAGE ="COVERAGE";
-    public static final String COVERAGE_DEDUCT ="COVERAGE DEDUCT";
+
+    public static final String FAR_DEDUCT = "FAR_DEDUCT";
+    public static final String FLOOR_AREA = "FLOOR_AREA";
+    public static final String FAR = "F.A.R";
+    public static final String COVERAGE = "COVERAGE";
+    public static final String COVERAGE_DEDUCT = "COVERAGE DEDUCT";
     public static final RoundingMode ROUNDMODE_MEASUREMENTS = RoundingMode.HALF_UP;
+    public static final String YES = "YES";
+    public static final String NO = "NO";
 
 }

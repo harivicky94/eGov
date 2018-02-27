@@ -1,7 +1,19 @@
 package org.egov.edcr.service;
 
+import static org.egov.edcr.utility.DcrConstants.FILESTORE_MODULECODE;
+
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.log4j.Logger;
-import org.egov.edcr.autonumber.DcrApplicationNumberGenerator;
 import org.egov.edcr.entity.DcrDocument;
 import org.egov.edcr.entity.EdcrApplication;
 import org.egov.edcr.repository.EdcrApplicationRepository;
@@ -19,18 +31,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
-import static org.egov.edcr.utility.DcrConstants.FILESTORE_MODULECODE;
-
 @Service
 @Transactional(readOnly = true)
 public class EdcrApplicationService {
@@ -46,14 +46,12 @@ public class EdcrApplicationService {
     @PersistenceContext
     private EntityManager entityManager;
     @Autowired
-    private DcrApplicationNumberGenerator dcrApplicationNumberGenerator;
-    @Autowired
     private FileStoreService fileStoreService;
     @Autowired
     private PortalInetgrationService portalInetgrationService;
     @Autowired
     private ApplicationNumberGenerator applicationNumberGenerator;
-  
+
     @Transactional
     public EdcrApplication create(final EdcrApplication edcrApplication) {
 
@@ -64,24 +62,22 @@ public class EdcrApplicationService {
         edcrApplicationRepository.save(edcrApplication);
         callDcrProcess(edcrApplication);
         portalInetgrationService.createPortalUserinbox(edcrApplication, Arrays.asList(securityUtils.getCurrentUser()));
-        return edcrApplication;  
+        return edcrApplication;
     }
 
     private void callDcrProcess(EdcrApplication edcrApplication) {
         try {
             dcrService.process(edcrApplication.getSavedDxfFile(), edcrApplication);
         } catch (Exception e) {
-          LOG.error("Error in edcr Processing",e);
-            //e.printStackTrace();
+            LOG.error("Error in edcr Processing", e);
+            // e.printStackTrace();
         }
     }
 
-    /*public void saveDcrApplication(EdcrApplication edcrApplication) {
-        saveDXF(edcrApplication);
-
-        dcrService.process(edcrApplication.getSavedDxfFile(), edcrApplication);
-    }
-*/
+    /*
+     * public void saveDcrApplication(EdcrApplication edcrApplication) { saveDXF(edcrApplication);
+     * dcrService.process(edcrApplication.getSavedDxfFile(), edcrApplication); }
+     */
     private File saveDXF(EdcrApplication edcrApplication) {
         FileStoreMapper fileStoreMapper = addToFileStore(edcrApplication.getDxfFile());
         File dxfFile = fileStoreService.fetch(fileStoreMapper.getFileStoreId(), FILESTORE_MODULECODE);
@@ -116,7 +112,7 @@ public class EdcrApplicationService {
             dcrDocument.setReportOutputId(reportOutput);
 
         dcrDocument.setApplication(edcrApplication);
-       
+
         List<DcrDocument> dcrDocuments = new ArrayList<>();
         dcrDocuments.add(dcrDocument);
         edcrApplication.setSavedDcrDocument(dcrDocument);

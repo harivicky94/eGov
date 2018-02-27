@@ -1,14 +1,29 @@
 package org.egov.edcr.entity;
 
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.hibernate.validator.constraints.Length;
-import org.springframework.web.multipart.MultipartFile;
-
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.io.File;
 import java.util.Date;
 import java.util.List;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
+
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.validator.constraints.Length;
+import org.springframework.web.multipart.MultipartFile;
 
 @Entity
 @Table(name = "EDCR_APPLICATION")
@@ -36,7 +51,7 @@ public class EdcrApplication extends AbstractAuditable {
 
     @Transient
     private MultipartFile dxfFile; // File to be process.
-    
+
     @Transient
     private File savedDxfFile;
 
@@ -58,7 +73,6 @@ public class EdcrApplication extends AbstractAuditable {
 
     @Transient
     private DcrDocument savedDcrDocument;
-    
 
     public DcrDocument getSavedDcrDocument() {
         return savedDcrDocument;
@@ -68,7 +82,6 @@ public class EdcrApplication extends AbstractAuditable {
         this.savedDcrDocument = savedDcrDocument;
     }
 
-    
     @Override
     public Long getId() {
         return id;

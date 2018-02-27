@@ -1,41 +1,26 @@
 package org.egov.edcr.entity.utility;
 
-import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.egov.edcr.entity.measurement.Measurement;
+import org.egov.edcr.entity.measurement.WasteDisposal;
 
 public class Utility extends Measurement {
 
-    private String name;
+    private List<WasteDisposal> wasteDisposalUnits = new ArrayList<>();
 
-    private BigDecimal area;
-
-    private BigDecimal distanceFromBuilding;
-
-    public String getName() {
-        return name;
+    public List<WasteDisposal> getWasteDisposalUnits() {
+        return wasteDisposalUnits;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setWasteDisposalUnits(List<WasteDisposal> wasteDisposalUnits) {
+        this.wasteDisposalUnits = wasteDisposalUnits;
     }
 
-    @Override
-    public BigDecimal getArea() {
-        return area;
-    }
+    public void addWasteDisposal(WasteDisposal wasteDisposal) {
+        wasteDisposalUnits.add(wasteDisposal);
 
-    @Override
-    public void setArea(BigDecimal area) {
-        this.area = area;
-    }
-
-    public BigDecimal getDistanceFromBuilding() {
-        return distanceFromBuilding;
-    }
-
-    public void setDistanceFromBuilding(BigDecimal distanceFromBuilding) {
-        this.distanceFromBuilding = distanceFromBuilding;
     }
 
 }

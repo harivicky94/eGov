@@ -60,12 +60,12 @@ public class Rule23 extends GeneralRule {
 
     private void rule23_4(PlanDetail planDetail) {
         if (planDetail.getPlanInformation().getCrzZoneArea())
-        planDetail.reportOutput
-        .add(buildRuleOutputWithSubRule(DcrConstants.RULE23, SUB_RULE_23_4, SUB_RULE_23_4_DESCRIPTION,
-                DcrConstants.CRZZONE,
-                null,
-                null,
-                Result.Verify, DcrConstants.CRZZONE + DcrConstants.OBJECTDEFINED_DESC)); 
+            planDetail.reportOutput
+                    .add(buildRuleOutputWithSubRule(DcrConstants.RULE23, SUB_RULE_23_4, SUB_RULE_23_4_DESCRIPTION,
+                            DcrConstants.CRZZONE,
+                            null,
+                            null,
+                            Result.Verify, DcrConstants.CRZZONE + DcrConstants.OBJECTDEFINED_DESC));
     }
 
     private void rule23_5(PlanDetail planDetail) {

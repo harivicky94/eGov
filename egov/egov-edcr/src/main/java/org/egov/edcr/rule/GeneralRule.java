@@ -34,7 +34,7 @@ public class GeneralRule {
 
         if (mainRule != null) {
             ruleOutput.key = mainRule;
-          //  ruleOutput.result = status;
+            // ruleOutput.result = status;
 
             if (subRule != null || fieldVerified != null) {
                 SubRuleOutput subRuleOutput = new SubRuleOutput();

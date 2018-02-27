@@ -34,7 +34,7 @@ public class Rule61 extends GeneralRule {
 
         if (planDetail != null &&
                 planDetail.getBuilding() != null && planDetail.getBuilding().getMaxFloor() != null)
-            if (planDetail.getBuilding().getMaxFloor().compareTo(MAXIMUM_NUMBER_OF_FLOORS) <= 0)
+            if (planDetail.getBuilding().getFloorsAboveGround().compareTo(MAXIMUM_NUMBER_OF_FLOORS) <= 0)
                 planDetail.reportOutput
                         .add(buildRuleOutputWithSubRule(DcrConstants.RULE61, DcrConstants.RULE61, RULE_61_DESCRIPTION,
                                 DcrConstants.MAXIMUM_NUMBEROF_FLOOR,

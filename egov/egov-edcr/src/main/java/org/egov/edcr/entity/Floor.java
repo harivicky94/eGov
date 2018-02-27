@@ -1,87 +1,38 @@
 package org.egov.edcr.entity;
 
-import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.egov.edcr.entity.measurement.Measurement;
 
-public class Floor {
+public class Floor extends Measurement {
 
-    private String name;
+    private List<Room> habitableRooms = new ArrayList<>();
+    private Measurement exterior;
+    private List<Measurement> openSpaces = new ArrayList<>();
 
-    private BigDecimal area;                    
-
-    private List<Measurement> rooms;
-
-    private BigDecimal floorHeight;
-
-    //Building_exterior_wall
-    private BigDecimal buildingExteriorWall;
-
-    //FAR_deduct
-    private BigDecimal farDeduct;
-
-    private BigDecimal coverageDeduct;
-
-    private BigDecimal buildingFootPrint;
-
-    public String getName() {
-        return name;
+    public List<Room> getHabitableRooms() {
+        return habitableRooms;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setHabitableRooms(List<Room> habitableRooms) {
+        this.habitableRooms = habitableRooms;
     }
 
-    public BigDecimal getArea() {
-        return area;
+    public Measurement getExterior() {
+        return exterior;
     }
 
-    public void setArea(BigDecimal area) {
-        this.area = area;
+    public void setExterior(Measurement exterior) {
+        this.exterior = exterior;
     }
 
-    public List<Measurement> getRooms() {
-        return rooms;
+    public List<Measurement> getOpenSpaces() {
+        return openSpaces;
     }
 
-    public void setRooms(List<Measurement> rooms) {
-        this.rooms = rooms;
+    public void setOpenSpaces(List<Measurement> openSpaces) {
+        this.openSpaces = openSpaces;
     }
 
-    public BigDecimal getFloorHeight() {
-        return floorHeight;
-    }
-
-    public void setFloorHeight(BigDecimal floorHeight) {
-        this.floorHeight = floorHeight;
-    }
-
-    public BigDecimal getBuildingExteriorWall() {
-        return buildingExteriorWall;
-    }
-
-    public BigDecimal getFarDeduct() {
-        return farDeduct;
-    }
-
-    public void setFarDeduct(BigDecimal farDeduct) {
-        this.farDeduct = farDeduct;
-    }
-
-    public BigDecimal getCoverageDeduct() {
-        return coverageDeduct;
-    }
-
-    public void setCoverageDeduct(BigDecimal coverageDeduct) {
-        this.coverageDeduct = coverageDeduct;
-    }
-
-    public BigDecimal getBuildingFootPrint() {
-        return buildingFootPrint;
-    }
-
-    public void setBuildingFootPrint(BigDecimal buildingFootPrint) {
-        this.buildingFootPrint = buildingFootPrint;
-    }
 }

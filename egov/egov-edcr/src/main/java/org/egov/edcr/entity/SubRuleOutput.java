@@ -12,15 +12,11 @@ public class SubRuleOutput {
     public Result result;
     public String ruleDescription;
 
-   
-
     @Override
     public String toString() {
         return "SubRuleOutput [key=" + key + ", ruleReportOutputs=" + ruleReportOutputs + ", message=" + message + ", result="
                 + result + ", ruleDescription=" + ruleDescription + "]";
     }
-
-
 
     public void add(RuleReportOutput ruleReportOutput) {
         if (ruleReportOutputs == null) {
@@ -31,17 +27,12 @@ public class SubRuleOutput {
 
     }
 
-
-
     public List<RuleReportOutput> getRuleReportOutputs() {
         return ruleReportOutputs;
     }
 
-
-
     public void setRuleReportOutputs(List<RuleReportOutput> ruleReportOutputs) {
         this.ruleReportOutputs = ruleReportOutputs;
     }
-    
 
 }

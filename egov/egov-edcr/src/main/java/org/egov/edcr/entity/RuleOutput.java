@@ -12,16 +12,17 @@ public class RuleOutput {
     public String ruleDescription;
 
     public void add(SubRuleOutput subruleOut) {
-        if (subRuleOutputs.isEmpty()) {
+        if (subRuleOutputs.isEmpty())
             subRuleOutputs.add(subruleOut);
-        } else
+        else
             subRuleOutputs.add(subruleOut);
 
     }
-    public void addAll(List<SubRuleOutput>  subruleOut) {
-        if (subRuleOutputs.isEmpty()) {
+
+    public void addAll(List<SubRuleOutput> subruleOut) {
+        if (subRuleOutputs.isEmpty())
             subRuleOutputs.addAll(subruleOut);
-        } else
+        else
             subRuleOutputs.addAll(subruleOut);
 
     }
@@ -30,7 +31,7 @@ public class RuleOutput {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((key == null) ? 0 : key.hashCode());
+        result = prime * result + (key == null ? 0 : key.hashCode());
         return result;
     }
 
@@ -51,13 +52,12 @@ public class RuleOutput {
         return true;
     }
 
-   
-
     @Override
     public String toString() {
         return "RuleOutput [key=" + key + ", subRuleOutputs=" + subRuleOutputs + ", message=" + message + ", result=" + result
                 + ", ruleDescription=" + ruleDescription + "]";
     }
+
     public String getKey() {
         return key;
     }
@@ -90,14 +90,12 @@ public class RuleOutput {
         this.result = result;
     }
 
-	public String getRuleDescription() {
-		return ruleDescription;
-	}
+    public String getRuleDescription() {
+        return ruleDescription;
+    }
 
-	public void setRuleDescription(String ruleDescription) {
-		this.ruleDescription = ruleDescription;
-	}
-    
-    
+    public void setRuleDescription(String ruleDescription) {
+        this.ruleDescription = ruleDescription;
+    }
 
 }

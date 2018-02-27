@@ -53,6 +53,4 @@ public class RuleReportOutput {
                 + actualResult + ", status=" + status + "]";
     }
 
-   
-
 }

@@ -129,7 +129,7 @@ public class Util {
 
         List<DXFLine> lines = new ArrayList<>();
 
-        List<DXFDimension> dimensions = new ArrayList<>();
+        new ArrayList<>();
 
         Iterator dxfLayerIterator = dxfDocument.getDXFLayerIterator();
 
@@ -208,10 +208,9 @@ public class Util {
         name = name.toUpperCase();
         BigDecimal value = BigDecimal.ZERO;
 
-        DXFLayer dxfLayer = (DXFLayer) dxfDocument.getDXFLayer(name);
-        if (dxfLayer == null) {
+        DXFLayer dxfLayer = dxfDocument.getDXFLayer(name);
+        if (dxfLayer == null)
             pl.addError(name, name + " layer not defined");
-        }
 
         List dxfLineEntities = dxfLayer.getDXFEntities(DXFConstants.ENTITY_TYPE_DIMENSION);
 
@@ -230,17 +229,15 @@ public class Util {
                         String text2 = text.getText();
                         text2 = text2.replaceAll("[^\\d.]", "");
                         ;
-                        if (!text2.isEmpty()) {
+                        if (!text2.isEmpty())
                             value = BigDecimal.valueOf(Double.parseDouble(text2));
-                        }
 
                     }
                 }
 
             }
-        if (BigDecimal.ZERO.compareTo(value) == 0) {
+        if (BigDecimal.ZERO.compareTo(value) == 0)
             pl.addError(name, "Dimension value is invalid for layer " + name);
-        }
         return value;
 
     }
@@ -270,54 +267,43 @@ public class Util {
 
         return dxflwPolylines;
     }
-    
-    public  static List<DXFLWPolyline> getPolyLinesByLayerAndColor(DXFDocument dxfDocument,String layerName,int colorCode,PlanDetail pl) {
+
+    public static List<DXFLWPolyline> getPolyLinesByLayerAndColor(DXFDocument dxfDocument, String layerName, int colorCode,
+            PlanDetail pl) {
 
         List<DXFLWPolyline> dxflwPolylines = new ArrayList<>();
 
-       
+        DXFLayer dxfLayer = dxfDocument.getDXFLayer(layerName);
 
-            DXFLayer dxfLayer = (DXFLayer) dxfDocument.getDXFLayer(layerName);
+        List dxfPolyLineEntities = dxfLayer.getDXFEntities(DXFConstants.ENTITY_TYPE_LWPOLYLINE);
 
-            List dxfPolyLineEntities = dxfLayer.getDXFEntities(DXFConstants.ENTITY_TYPE_LWPOLYLINE);
+        if (null != dxfPolyLineEntities)
+            for (Object dxfEntity : dxfPolyLineEntities) {
 
-            if (null != dxfPolyLineEntities)
-                for (Object dxfEntity : dxfPolyLineEntities) {
+                DXFLWPolyline dxflwPolyline = (DXFLWPolyline) dxfEntity;
 
-                    DXFLWPolyline dxflwPolyline = (DXFLWPolyline) dxfEntity;
-
-                    
-                      //  if (colorCode == dxflwPolyline.getColor())
-                            dxflwPolylines.add(dxflwPolyline);
-                }
-       
+                if (colorCode == dxflwPolyline.getColor())
+                    dxflwPolylines.add(dxflwPolyline);
+            }
 
         return dxflwPolylines;
     }
-    
 
     public static List<DXFLWPolyline> getPolyLinesByLayer(DXFDocument dxfDocument, String name) {
 
         List<DXFLWPolyline> dxflwPolylines = new ArrayList<>();
         if (name == null)
             return dxflwPolylines;
-
-        Iterator dxfLayerIterator = dxfDocument.getDXFLayerIterator();
-
-        while (dxfLayerIterator.hasNext()) {
-
-            DXFLayer dxfLayer = (DXFLayer) dxfLayerIterator.next();
-
+        DXFLayer dxfLayer = dxfDocument.getDXFLayer(name);
+        if (dxfLayer.hasDXFEntities(DXFConstants.ENTITY_TYPE_LWPOLYLINE)) {
             List dxfPolyLineEntities = dxfLayer.getDXFEntities(DXFConstants.ENTITY_TYPE_LWPOLYLINE);
+            for (Object dxfEntity : dxfPolyLineEntities) {
+                DXFLWPolyline dxflwPolyline = (DXFLWPolyline) dxfEntity;
+                dxflwPolylines.add(dxflwPolyline);
+            }
+        } else {
+            // TODO: add what if polylines not found
 
-            if (null != dxfPolyLineEntities)
-                for (Object dxfEntity : dxfPolyLineEntities) {
-
-                    DXFLWPolyline dxflwPolyline = (DXFLWPolyline) dxfEntity;
-
-                    if (name.contains(dxflwPolyline.getLayerName().toUpperCase()))
-                        dxflwPolylines.add(dxflwPolyline);
-                }
         }
 
         return dxflwPolylines;
@@ -394,9 +380,8 @@ public class Util {
                     layerName = next.getName();
                 }
             }
-            if (!found) {
+            if (!found)
                 LOG.error("No Layer Found with name" + layerName);
-            }
 
             DXFLayer planInfoLayer = doc.getDXFLayer(layerName);
             // LOG.info(planInfoLayer.getName());
@@ -434,38 +419,38 @@ public class Util {
         String param = "";
         DXFText text = null;
         Map<String, String> planInfoProperties = new HashMap<>();
-        
-       if(texts!=null){
-           
-        Iterator iterator = texts.iterator();
-        String[] split;
-        String s = "\\";
-        while (iterator.hasNext()) {
-            text = (DXFText) iterator.next();
 
-            param = text.getText();
-            param = param.replace(s, "#");
-            // System.out.println(param);
-            if (param.contains("#P"))
-                // System.out.println("inside");
-                split = param.split("#P");
-            else {
-                split = new String[1];
-                split[0] = param;
-            }
+        if (texts != null) {
 
-            for (String element : split) {
+            Iterator iterator = texts.iterator();
+            String[] split;
+            String s = "\\";
+            while (iterator.hasNext()) {
+                text = (DXFText) iterator.next();
 
-                String[] data = element.split("=");
-                if (data.length == 2)
-                    // System.out.println(data[0]+"---"+data[1]);
-                    planInfoProperties.put(data[0], data[1]);
+                param = text.getText();
+                param = param.replace(s, "#");
+                // System.out.println(param);
+                if (param.contains("#P"))
+                    // System.out.println("inside");
+                    split = param.split("#P");
                 else {
-                    // throw new RuntimeException("Plan info sheet data not following standard '=' for " +param);
+                    split = new String[1];
+                    split[0] = param;
+                }
+
+                for (String element : split) {
+
+                    String[] data = element.split("=");
+                    if (data.length == 2)
+                        // System.out.println(data[0]+"---"+data[1]);
+                        planInfoProperties.put(data[0], data[1]);
+                    else {
+                        // throw new RuntimeException("Plan info sheet data not following standard '=' for " +param);
+                    }
                 }
             }
         }
-    }
         return planInfoProperties;
 
     }

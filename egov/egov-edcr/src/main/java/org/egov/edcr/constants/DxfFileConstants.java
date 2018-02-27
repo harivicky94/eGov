@@ -12,7 +12,7 @@ public class DxfFileConstants {
     public static final String NON_NOTIFIED_ROAD = "NON_NOTIFIED_ROAD";
     public static final String HORIZ_CLEAR_OHE2 = "HORIZ_CLEAR_OHE,HORIZ_CLEAR_OHEL";
     public static final String PLOT_BOUNDARY = "PLOT_BOUNDARY";
-    public static String CRZ_ZONE = "CRZ_ZONE";
+    public static String CRZ_ZONE = "CRZ";
     public static final String PLOT_AREA = "PLOT_AREA";
     public static final Object ARCHITECT_NAME = "ARCHITECT_NAME";
     public static final String SHORTEST_DISTANCE_TO_ROAD = "SHORTEST_DISTANCE_TO_ROAD";
@@ -28,6 +28,9 @@ public class DxfFileConstants {
     public static final String SECURITY_ZONE = "SECURITY Zone";
     public static final String FLOOR_AREA = "FLOOR_AREA";
     public static final String OCCUPANCY = "OCCUPANCY";
-
+    public static final String FLOOR_NAME_PREFIX = "FLOOR_";
+    public static final int HABITABLE_ROOM_COLOR = 4;
+    public static final int FLOOR_EXTERIOR_WALL_COLOR = 5;
+    public static final int FLOOR_OPENSPACE_COLOR = 6;
 
 }

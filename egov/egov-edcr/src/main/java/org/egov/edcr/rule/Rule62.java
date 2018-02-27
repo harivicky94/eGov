@@ -208,13 +208,13 @@ public class Rule62 extends GeneralRule {
         if (planDetail.getNotifiedRoads() != null &&
                 !(planDetail.getNotifiedRoads().size() > 0 ||
                         planDetail.getNonNotifiedRoads().size() > 0))
-        planDetail.reportOutput
-        .add(buildRuleOutputWithSubRule(DcrConstants.RULE62, SUB_RULE_62_1, SUB_RULE_62_1DESCRIPTION,
-                DcrConstants.ROAD,
-               null,
-                null,
-                Result.Verify,  DcrConstants.ROAD + DcrConstants.OBJECTNOTDEFINED_DESC)); 
-        
+            planDetail.reportOutput
+                    .add(buildRuleOutputWithSubRule(DcrConstants.RULE62, SUB_RULE_62_1, SUB_RULE_62_1DESCRIPTION,
+                            DcrConstants.ROAD,
+                            null,
+                            null,
+                            Result.Verify, DcrConstants.ROAD + DcrConstants.OBJECTNOTDEFINED_DESC));
+
         else if (planDetail.getNotifiedRoads() != null &&
                 planDetail.getNotifiedRoads().size() > 0)
             for (NotifiedRoad notifiedRoad : planDetail.getNotifiedRoads())

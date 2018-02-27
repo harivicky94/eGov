@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import org.egov.edcr.entity.measurement.Measurement;
-import org.egov.edcr.entity.measurement.WasteDisposal;
 
 public class Building extends Measurement {
 
@@ -14,8 +13,10 @@ public class Building extends Measurement {
 
     private BigDecimal totalFloorArea;
 
+    private Measurement exteriorWall;
+
     private BigDecimal far;
-    
+
     private BigDecimal coverage;
     /*
      * Maximum number of floors
@@ -27,15 +28,7 @@ public class Building extends Measurement {
     private BigDecimal totalFloors;
     private List<Floor> floors;
 
-    private WasteDisposal wasteDisposal;
-
-    public WasteDisposal getWasteDisposal() {
-        return wasteDisposal;
-    }
-
-    public void setWasteDisposal(WasteDisposal wasteDisposal) {
-        this.wasteDisposal = wasteDisposal;
-    }
+    private BigDecimal floorsAboveGround;
 
     public BigDecimal getBuildingHeight() {
         return buildingHeight;
@@ -76,6 +69,7 @@ public class Building extends Measurement {
     public void setBuildingTopMostHeight(BigDecimal buildingHeightTopMost) {
         buildingTopMostHeight = buildingHeightTopMost;
     }
+
     public BigDecimal getTotalFloorArea() {
         return totalFloorArea;
     }
@@ -100,5 +94,20 @@ public class Building extends Measurement {
         this.coverage = coverage;
     }
 
-    
+    public Measurement getExteriorWall() {
+        return exteriorWall;
+    }
+
+    public void setExteriorWall(Measurement exteriorWall) {
+        this.exteriorWall = exteriorWall;
+    }
+
+    public BigDecimal getFloorsAboveGround() {
+        return floorsAboveGround;
+    }
+
+    public void setFloorsAboveGround(BigDecimal floorsAboveGround) {
+        this.floorsAboveGround = floorsAboveGround;
+    }
+
 }

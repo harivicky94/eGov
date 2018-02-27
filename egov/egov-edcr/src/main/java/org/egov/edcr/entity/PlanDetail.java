@@ -1,6 +1,7 @@
 package org.egov.edcr.entity;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,15 +14,15 @@ import org.egov.edcr.entity.utility.Utility;
 /*All the details extracted from the plan are referred in this object*/
 public class PlanDetail {
 
-    private List<Utility> utilities;
+    private Utility utility;
     private PlanInformation planInformation;
     private Plot plot;
     private Building building;
     public ReportOutput reportOutput = new ReportOutput();
     private Boolean edcrPassed = false;
     private ElectricLine electricLine;
-    private List<NonNotifiedRoad> nonNotifiedRoads;
-    private List<NotifiedRoad> notifiedRoads;
+    private List<NonNotifiedRoad> nonNotifiedRoads = new ArrayList<>();
+    private List<NotifiedRoad> notifiedRoads = new ArrayList<>();
     private BigDecimal maxHeightCal;
 
     private HashMap<String, String> errors = new HashMap<>();
@@ -91,14 +92,6 @@ public class PlanDetail {
         this.errors = errors;
     }
 
-    public List<Utility> getUtilities() {
-        return utilities;
-    }
-
-    public void setUtilities(List<Utility> utilities) {
-        this.utilities = utilities;
-    }
-
     public ReportOutput getReportOutput() {
         return reportOutput;
     }
@@ -137,6 +130,14 @@ public class PlanDetail {
 
     public void setMaxHeightCal(BigDecimal maxHeightCal) {
         this.maxHeightCal = maxHeightCal;
+    }
+
+    public Utility getUtility() {
+        return utility;
+    }
+
+    public void setUtility(Utility utility) {
+        this.utility = utility;
     }
 
 }

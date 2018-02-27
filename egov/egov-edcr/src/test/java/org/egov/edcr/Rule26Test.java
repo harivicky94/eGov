@@ -70,7 +70,7 @@ public class Rule26Test {
         
         planDetail.setPlanInformation(planinformation);
         //wasteDisposal.setPresentInDxf(true);
-        buildingDetail.setWasteDisposal(wasteDisposal);
+        planDetail.getUtility().getWasteDisposalUnits().add(wasteDisposal);
         buildingDetail.setMaxFloor(BigDecimal.valueOf(3));
         planDetail.setBuilding(buildingDetail);
         planDetail.setPlot(landDetail);

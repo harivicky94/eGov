@@ -59,8 +59,7 @@ public class Rule26 extends GeneralRule {
 
         if (planDetail != null && planDetail.getBuilding() != null)
             // waste disposal defined or not
-            if (planDetail.getBuilding().getWasteDisposal() == null ||
-                    !planDetail.getBuilding().getWasteDisposal().getPresentInDxf()) {
+            if (planDetail.getUtility().getWasteDisposalUnits().isEmpty()) {
                 errors.put(DcrConstants.WASTEDISPOSAL,
                         prepareMessage(DcrConstants.OBJECTNOTDEFINED, DcrConstants.WASTEDISPOSAL));
                 planDetail.addErrors(errors);
@@ -94,7 +93,7 @@ public class Rule26 extends GeneralRule {
                             null,
                             null,
                             Result.Not_Accepted, DcrConstants.ROAD + DcrConstants.OBJECTNOTDEFINED_DESC));
-        
+
         else if (planDetail.getNotifiedRoads() != null &&
                 planDetail.getNotifiedRoads().size() > 0)
             for (NotifiedRoad notifiedRoad : planDetail.getNotifiedRoads())
@@ -141,8 +140,7 @@ public class Rule26 extends GeneralRule {
     }
 
     private void rule26A(PlanDetail planDetail) {
-        if (planDetail.getBuilding().getWasteDisposal() != null &&
-                planDetail.getBuilding().getWasteDisposal().getPresentInDxf())
+        if (planDetail.getUtility().getWasteDisposalUnits().size() > 0)
 
             planDetail.reportOutput
                     .add(buildRuleOutputWithSubRule(DcrConstants.RULE26, SUB_RULE_26A, SUB_RULE_26A_DESCRIPTION,
