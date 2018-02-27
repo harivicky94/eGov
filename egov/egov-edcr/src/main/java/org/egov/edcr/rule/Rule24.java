@@ -48,38 +48,36 @@ public class Rule24 extends GeneralRule {
     private static final String SUB_RULE_24_4DESCRIPTION = "Rear yard distance";
     private static final String SUB_RULE_24_5 = "23(5)";
     private static final String SUB_RULE_24_5DESCRIPTION = "Side yard distance";
-    private String MEAN_MINIMUM = "(Minimum distince,Mean distance) ";
+    private String MEAN_MINIMUM = "(Minimum distance,Mean distance) ";
 
     @Override
     public PlanDetail validate(PlanDetail planDetail) {
         HashMap<String, String> errors = new HashMap<>();
 
         if (planDetail != null) {
-            
-            if(planDetail.getBuilding().getBuildingHeight()==null)
-            {
+
+            if (planDetail.getBuilding().getBuildingHeight() == null) {
                 errors.put(DcrConstants.BUILDING_HEIGHT_DESC,
                         prepareMessage(DcrConstants.OBJECTNOTDEFINED, DcrConstants.BUILDING_HEIGHT_DESC));
-                planDetail.addErrors(errors);  
+                planDetail.addErrors(errors);
             }
+
             if (planDetail.getPlot() != null && (planDetail.getPlot().getFrontYard() == null ||
                     !planDetail.getPlot().getFrontYard().getPresentInDxf())) {
                 errors.put(DcrConstants.FRONT_YARD_DESC,
                         prepareMessage(DcrConstants.OBJECTNOTDEFINED, DcrConstants.FRONT_YARD_DESC));
                 planDetail.addErrors(errors);
             }
-            if (planDetail.getPlot() != null && (planDetail.getPlot().getSideYard1() == null ||
-                    !planDetail.getPlot().getSideYard1().getPresentInDxf())) {
-                errors.put(DcrConstants.SIDE_YARD1_DESC,
-                        prepareMessage(DcrConstants.OBJECTNOTDEFINED, DcrConstants.SIDE_YARD1_DESC));
+
+            //check either of side yard present or not
+            if (planDetail.getPlot() != null
+                    && ((planDetail.getPlot().getSideYard1() == null || !planDetail.getPlot().getSideYard1().getPresentInDxf()))
+                    || (planDetail.getPlot().getSideYard2() == null || !planDetail.getPlot().getSideYard2().getPresentInDxf())) {
+                errors.put(DcrConstants.SIDE_YARD_DESC,
+                        prepareMessage(DcrConstants.OBJECTNOTDEFINED, DcrConstants.SIDE_YARD_DESC));
                 planDetail.addErrors(errors);
             }
-            if (planDetail.getPlot() != null && (planDetail.getPlot().getSideYard2() == null ||
-                    !planDetail.getPlot().getSideYard2().getPresentInDxf())) {
-                errors.put(DcrConstants.SIDE_YARD2_DESC,
-                        prepareMessage(DcrConstants.OBJECTNOTDEFINED, DcrConstants.SIDE_YARD2_DESC));
-                planDetail.addErrors(errors);
-            }
+
             if (planDetail.getPlot() != null && (planDetail.getPlot().getRearYard() == null ||
                     !planDetail.getPlot().getRearYard().getPresentInDxf())) {
                 errors.put(DcrConstants.REAR_YARD_DESC,
@@ -99,7 +97,12 @@ public class Rule24 extends GeneralRule {
     @Override
     public PlanDetail process(PlanDetail planDetail) {
 
-        rule24_3(planDetail);
+        //For building of heights less than or equal to 10
+        if (planDetail.getBuilding() != null && planDetail.getBuilding().getBuildingHeight() != null
+                && ((planDetail.getBuilding().getBuildingHeight().compareTo(BigDecimal.ZERO) > 0
+                && planDetail.getBuilding().getBuildingHeight().compareTo(new BigDecimal(10)) <= 0))) {
+            rule24_3(planDetail);
+        }
 
         //Building Height between 7 to 10
         if (planDetail.getBuilding() != null && planDetail.getBuilding().getBuildingHeight() != null
@@ -117,17 +120,16 @@ public class Rule24 extends GeneralRule {
             if (planDetail.getPlanInformation() != null && planDetail.getPlanInformation().getOpeningPresent()) {
                 rule24_4_lessThan7WithOpening(planDetail);
                 rule24_5_LessThan7WithOpening(planDetail);
-            }
-            //NOC PRESENT
-            if (planDetail.getPlanInformation() != null && planDetail.getPlanInformation().getNocPresent()) {
-                rule24_4_lessThan7WithoutOpeningNoc(planDetail);
-                rule24_5_LessThan7WithoutOpeningNoc(planDetail);
-            }
-            //OPENING NOT PRESENT
-            if (planDetail.getPlanInformation() != null && !planDetail.getPlanInformation().getOpeningPresent()) {
+            } else {
                 rule24_5_LessThan7_WithoutOpening(planDetail);
                 rule24_5_LessThan7_WithoutOpeningCorrespondingFloor(planDetail);
+                //WITHOUT OPENING AND NOC PRESENT
+                if (planDetail.getPlanInformation() != null && planDetail.getPlanInformation().getNocPresent()) {
+                    rule24_4_lessThan7WithoutOpeningNoc(planDetail);
+                    rule24_5_LessThan7WithoutOpeningNoc(planDetail);
+                }
             }
+
         }
         return planDetail;
     }
@@ -609,5 +611,21 @@ public class Rule24 extends GeneralRule {
                                 Result.Not_Accepted, null));
             }
         }
+    }
+
+    private void rule24_1(PlanDetail planDetail) {
+
+    }
+
+    private void rule24_6(PlanDetail planDetail) {
+
+    }
+
+    private void rule24_10(PlanDetail planDetail) {
+
+    }
+
+    private void rule24_12(PlanDetail planDetail) {
+
     }
 }
