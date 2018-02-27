@@ -9,6 +9,9 @@ import org.egov.edcr.entity.measurement.WasteDisposal;
 public class Utility extends Measurement {
 
     private List<WasteDisposal> wasteDisposalUnits = new ArrayList<>();
+    
+    
+    
 
     public List<WasteDisposal> getWasteDisposalUnits() {
         return wasteDisposalUnits;

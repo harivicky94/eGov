@@ -1,6 +1,7 @@
 package org.egov.edcr.entity;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.egov.edcr.entity.measurement.Measurement;
@@ -14,6 +15,10 @@ public class Building extends Measurement {
     private BigDecimal totalFloorArea;
 
     private Measurement exteriorWall;
+   
+    private Measurement shade;
+    
+    private List<Measurement> openStairs=new ArrayList<>();
 
     private BigDecimal far;
 
@@ -26,7 +31,8 @@ public class Building extends Measurement {
      * Total number of floors including celler
      */
     private BigDecimal totalFloors;
-    private List<Floor> floors;
+    
+    private List<Floor> floors=new ArrayList<>();
 
     private BigDecimal floorsAboveGround;
 
@@ -108,6 +114,22 @@ public class Building extends Measurement {
 
     public void setFloorsAboveGround(BigDecimal floorsAboveGround) {
         this.floorsAboveGround = floorsAboveGround;
+    }
+
+    public Measurement getShade() {
+        return shade;
+    }
+
+    public void setShade(Measurement shade) {
+        this.shade = shade;
+    }
+
+    public List<Measurement> getOpenStairs() {
+        return openStairs;
+    }
+
+    public void setOpenStairs(List<Measurement> openStairs) {
+        this.openStairs = openStairs;
     }
 
 }

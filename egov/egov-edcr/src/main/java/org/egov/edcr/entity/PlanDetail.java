@@ -14,7 +14,7 @@ import org.egov.edcr.entity.utility.Utility;
 /*All the details extracted from the plan are referred in this object*/
 public class PlanDetail {
 
-    private Utility utility;
+    private Utility utility=new Utility();
     private PlanInformation planInformation;
     private Plot plot;
     private Building building;

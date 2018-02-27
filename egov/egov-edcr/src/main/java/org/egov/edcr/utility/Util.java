@@ -94,12 +94,9 @@ public class Util {
             return lines;
         name = name.toUpperCase();
 
-        Iterator dxfLayerIterator = dxfDocument.getDXFLayerIterator();
-
-        while (dxfLayerIterator.hasNext()) {
-
-            DXFLayer dxfLayer = (DXFLayer) dxfLayerIterator.next();
-
+        DXFLayer dxfLayer = dxfDocument.getDXFLayer(name);
+        //if layer with name not found kabeja will return default layer or create new layer and gives
+        if (dxfLayer.getName().equalsIgnoreCase(name)) {
             List dxfPolyLineEntities = dxfLayer.getDXFEntities(DXFConstants.ENTITY_TYPE_LINE);
 
             if (null != dxfPolyLineEntities)
@@ -111,8 +108,8 @@ public class Util {
                         lines.add(line);
 
                 }
-        }
 
+        }
         return lines;
     }
 

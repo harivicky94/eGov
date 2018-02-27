@@ -92,7 +92,7 @@ public class DXFExtractService {
     }
 
     private void extractFloorDetails(DXFDocument doc, PlanDetail pl) {
-
+        
         DXFLayer layer = new DXFLayer();
         int floorNo = -1;
         while (layer != null) {
@@ -178,7 +178,26 @@ public class DXFExtractService {
         } else
             pl.addError(DxfFileConstants.BUILDING_FOOT_PRINT, edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
                     new String[] { DxfFileConstants.BUILDING_FOOT_PRINT }, null));
+
+        polyLinesByLayer = Util.getPolyLinesByLayer(doc, DxfFileConstants.SHADE_OVERHANG);
+
+        Measurement shade = new Measurement();
+        if (polyLinesByLayer.size() > 0) {
+            shade.setPolyLine(polyLinesByLayer.get(0));
+        }
+        building.setShade(shade);
+
+        // TODO : Verify it is line only or dimension
+        List<DXFLine> lines = Util.getLinesByLayer(doc, DxfFileConstants.OPEN_STAIR);
+        for (DXFLine line : lines) {
+            Measurement shortDistanceToPlot = new Measurement();
+            shortDistanceToPlot
+                    .setMinimumDistance(BigDecimal.valueOf(line.getLength()).setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS));
+            building.getOpenStairs().add(shortDistanceToPlot);
+        }
+
         pl.setBuilding(building);
+
     }
 
     private void extractPlotDetails(PlanDetail pl, DXFDocument doc) {
@@ -241,7 +260,8 @@ public class DXFExtractService {
                 for (DXFLWPolyline pline : cvDeductPlines)
                     cvDeduct.add(Util.getPolyLineArea(pline));
                 if (cvDeduct.compareTo(BigDecimal.ZERO) > 0) {
-                    BigDecimal coverage = buildingFootPrintArea.multiply(BigDecimal.valueOf(100)).divide(cvDeduct);
+                    BigDecimal coverage = buildingFootPrintArea.multiply(BigDecimal.valueOf(100)).divide(cvDeduct,
+                            DcrConstants.DECIMALDIGITS_MEASUREMENTS, DcrConstants.ROUNDMODE_MEASUREMENTS);
                     pl.getBuilding().setCoverage(coverage);
                     LOG.info("coverage:" + coverage);
                 }
@@ -403,6 +423,7 @@ public class DXFExtractService {
             }
 
         return pl;
+
     }
 
     private PlanDetail extractOverheadElectricLines(DXFDocument doc, PlanDetail pl) {

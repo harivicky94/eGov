@@ -32,5 +32,9 @@ public class DxfFileConstants {
     public static final int HABITABLE_ROOM_COLOR = 4;
     public static final int FLOOR_EXTERIOR_WALL_COLOR = 5;
     public static final int FLOOR_OPENSPACE_COLOR = 6;
+    public static final String SHADE_OVERHANG = "SHADE_OVERHANG";
+    public static final String OPEN_STAIR = "OPEN_STAIR";
+    public static final String DIST_CL_ROAD = "DIST_CL_ROAD";
+    
 
 }
