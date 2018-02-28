@@ -12,18 +12,17 @@ import org.springframework.stereotype.Service;
 @Service
 public class Rule61 extends GeneralRule {
     private static final BigDecimal MAXIMUM_NUMBER_OF_FLOORS = BigDecimal.valueOf(3);
-    private static final String RULE_61_DESCRIPTION = "Number of floor to be limit";
+    private static final String RULE_61_DESCRIPTION = "Number of floor to be limited";
 
     @Override
     public PlanDetail validate(PlanDetail planDetail) {
         HashMap<String, String> errors = new HashMap<>();
 
         if (planDetail != null &&
-                (planDetail.getBuilding() == null || planDetail.getBuilding().getMaxFloor() == null)) {
+                (planDetail.getBuilding() == null || planDetail.getBuilding().getFloorsAboveGround() == null)) {
             errors.put(DcrConstants.MAXIMUM_NUMBEROF_FLOOR,
                     edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
                             new String[] { DcrConstants.MAXIMUM_NUMBEROF_FLOOR }, LocaleContextHolder.getLocale()));
-            // DcrConstants.OBJECTNOTDEFINED+DcrConstants.MAXIMUM_NUMBEROF_FLOOR );
             planDetail.addErrors(errors);
         }
         return planDetail;
@@ -33,20 +32,20 @@ public class Rule61 extends GeneralRule {
     public PlanDetail process(PlanDetail planDetail) {
 
         if (planDetail != null &&
-                planDetail.getBuilding() != null && planDetail.getBuilding().getMaxFloor() != null)
+                planDetail.getBuilding() != null && planDetail.getBuilding().getFloorsAboveGround() != null)
             if (planDetail.getBuilding().getFloorsAboveGround().compareTo(MAXIMUM_NUMBER_OF_FLOORS) <= 0)
                 planDetail.reportOutput
                         .add(buildRuleOutputWithSubRule(DcrConstants.RULE61, DcrConstants.RULE61, RULE_61_DESCRIPTION,
                                 DcrConstants.MAXIMUM_NUMBEROF_FLOOR,
                                 MAXIMUM_NUMBER_OF_FLOORS.toString(),
-                                planDetail.getBuilding().getMaxFloor().toString(),
+                                planDetail.getBuilding().getFloorsAboveGround().toString(),
                                 Result.Accepted, null));
             else
                 planDetail.reportOutput
                         .add(buildRuleOutputWithSubRule(DcrConstants.RULE61, DcrConstants.RULE61, RULE_61_DESCRIPTION,
                                 DcrConstants.MAXIMUM_NUMBEROF_FLOOR,
                                 MAXIMUM_NUMBER_OF_FLOORS.toString(),
-                                planDetail.getBuilding().getMaxFloor().toString(),
+                                planDetail.getBuilding().getFloorsAboveGround().toString(),
                                 Result.Not_Accepted, null));
 
         return planDetail;
