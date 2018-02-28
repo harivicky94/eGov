@@ -57,10 +57,17 @@
 			id="editWaterConnectionform"
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
-						<form:hidden path="" id="workFlowAction" name="workFlowAction"/>		
-			<form:hidden path="" id="wfstateDesc"
-				value="${bpaApplication.state.value}" />
-					<input type="hidden" name="citizenOrBusinessUser"
+				<form:hidden path="" id="workFlowAction" name="workFlowAction"/>
+				<form:hidden path="" id="wfstateDesc" value="${bpaApplication.state.value}" />
+				<c:forEach items="${bpaApplication.slotApplications}" var="slotAppln"
+						   varStatus="counter">
+					<c:if test="${counter.last}">
+						<input type="hidden" id="appointmentDateRes" value="${slotAppln.slotDetail.slot.appointmentDate}" />
+						<input type="hidden" id="appointmentTimeRes" value="${slotAppln.slotDetail.appointmentTime}" />
+					</c:if>
+				</c:forEach>
+				<input type="hidden" id="collectFeeValidate" value="${collectFeeValidate}" />
+				<input type="hidden" name="citizenOrBusinessUser"
 				value="${citizenOrBusinessUser}">
 			<ul class="nav nav-tabs" id="settingstab">
 				<li class="active"><a data-toggle="tab"
@@ -213,6 +220,38 @@
 		</form:form>
 	</div>
 </div>
+
+<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true"  id="myModal">
+	<div class="modal-dialog">
+		<!-- Modal content-->
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal">×</button>
+				<h4 class="modal-title"><spring:message code="lbl.existing.schedule.scrutiny"></spring:message> </h4>
+			</div>
+			<div class="modal-body">
+				<div class="row add-border">
+					<div class="col-sm-5 add-margin">
+						<spring:message code="lbl.appmnt.date"></spring:message>
+					</div>
+					<div class="col-sm-4 add-margin view-content" id="appointmentDateModal">
+					</div>
+				</div>
+				<div class="row add-border">
+					<div class="col-sm-5 add-margin">
+						<spring:message code="lbl.appmnt.time"></spring:message>
+					</div>
+					<div class="col-sm-4 add-margin view-content" id="appointmentTimeModal">
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+
 <script
 	src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
 <script

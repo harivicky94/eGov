@@ -560,6 +560,7 @@ $(document).ready(function() {
 		$("#extentinsqmts").val(convertExtendOfLandToSqmts(extentOfLand, $("#unitOfMeasurement").val()));
 		$("#extentinsqmtshdn").val(convertExtendOfLandToSqmts(extentOfLand, $("#unitOfMeasurement").val()));
 	});
+    $('.for-calculation').trigger('change');
 	
 	// multi-select without pressing ctrl key
 	$("select.tick-indicator").mousedown(function(e){
@@ -611,7 +612,7 @@ $(document).ready(function() {
 			} else {
 				$('#typeOfLand').removeAttr('required');
 				$('#isOneDayPermitApplication').prop('checked', false); 
-	    		$( "#typeOfLand" ).val('')
+	    		$( "#typeOfLand" ).val('');
 				$('#oneDayPermitSec').hide();
 			}
 		}); 
@@ -619,7 +620,7 @@ $(document).ready(function() {
 	
 	 $('#isOneDayPermitApplication').click(function() {
 	        if (!$(this).is(':checked')) {
-	        	$( "#typeOfLand" ).val('')
+	        	$( "#typeOfLand" ).val('');
 	        	$('#oneDayPermitTypeOfLandSec').hide(); 
 	        	$('#isOneDayPermitApplication').prop('checked', false);
 	        	$('#typeOfLand').removeAttr('required');

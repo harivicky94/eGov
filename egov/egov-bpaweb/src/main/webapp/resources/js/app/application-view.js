@@ -40,9 +40,16 @@
 jQuery(document)
 		.ready(
 				function() {
-					
 
-					// start -- update checked true for saved permit conditions
+						//To show notification to business user/citizen on application open
+						if($('#wfstateDesc').val() == 'Scheduled For Document Scrutiny'
+							|| $('#wfstateDesc').val() == 'Rescheduled For Document Scrutiny') {
+                            $('#appointmentDateModal').html($('#appointmentDateRes').val());
+                            $('#appointmentTimeModal').html($('#appointmentTimeRes').val());
+                            $('#myModal').modal('show');
+						}
+
+                    // start -- update checked true for saved permit conditions
 					var savedPermitCondn = $("#persistedPermitConditions")
 							.val();
 					if (savedPermitCondn && savedPermitCondn.length > 0) {

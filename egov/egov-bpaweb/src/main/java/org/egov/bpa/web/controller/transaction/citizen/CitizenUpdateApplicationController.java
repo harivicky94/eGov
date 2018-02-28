@@ -71,6 +71,7 @@ import static org.egov.bpa.utils.BpaConstants.*;
 @Controller
 @RequestMapping(value = "/application")
 public class CitizenUpdateApplicationController extends BpaGenericApplicationController {
+    private static final String COLLECT_FEE_VALIDATE = "collectFeeValidate";
     private static final String IS_CITIZEN = "isCitizen";
     private static final String CITIZEN_VIEW = "citizen-view";
     private static final String BPAAPP_CITIZEN_FORM = "bpaapp-citizenForm";
@@ -141,6 +142,15 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
                 application.getServiceType().getId(), application.getApplicationAmenity()));
         Boolean isCitizen = (Boolean) model.asMap().get(IS_CITIZEN);
         Boolean validateCitizenAcceptance = (Boolean) model.asMap().get("validateCitizenAcceptance");
+        if (APPLICATION_STATUS_REGISTERED.equals(application.getStatus().getCode())
+            || APPLICATION_STATUS_SCHEDULED.equals(application.getStatus().getCode())
+            || APPLICATION_STATUS_RESCHEDULED.equals(application.getStatus().getCode())) {
+            if (applicationBpaService.applicationinitiatedByNonEmployee(application)
+                && applicationBpaService.checkAnyTaxIsPendingToCollect(application)) {
+                model.addAttribute(COLLECT_FEE_VALIDATE, "Please Pay Application Fees to Process Application");
+            } else
+                model.addAttribute(COLLECT_FEE_VALIDATE, "");
+        }
         if (application.getStatus() != null
                 && application.getStatus().getCode().equals(BpaConstants.APPLICATION_STATUS_CREATED) &&
                 (!isCitizen || (isCitizen && (validateCitizenAcceptance && !application.isCitizenAccepted()))))

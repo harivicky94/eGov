@@ -315,18 +315,15 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
         model.addAttribute("stateType", application.getClass().getSimpleName());
         final WorkflowContainer workflowContainer = new WorkflowContainer();  
         // added for one day permit. amount rule and pending action needs to be set only for other services.
-        if(application.getIsOneDayPermitApplication()){
+        if(application.getIsOneDayPermitApplication()) {
         	model.addAttribute(ADDITIONALRULE, CREATE_ADDITIONAL_RULE_CREATE_ONEDAYPERMIT);
         	workflowContainer.setAdditionalRule(CREATE_ADDITIONAL_RULE_CREATE_ONEDAYPERMIT);
         	
         	 if (application.getState() != null
-		    			&& application.getState().getValue().equalsIgnoreCase(APPLICATION_STATUS_REGISTERED) ||
-		    			application.getState().getValue().equalsIgnoreCase(APPLICATION_STATUS_SCHEDULED)
-		    			|| application.getState().getValue().equalsIgnoreCase(APPLICATION_STATUS_RESCHEDULED)) {
+		    			&& application.getState().getValue().equalsIgnoreCase(APPLICATION_STATUS_SCHEDULED)) {
 		    			workflowContainer.setPendingActions(application.getState().getNextAction());
 		    		}
-        }
-        else{
+        } else {
 	        	model.addAttribute(ADDITIONALRULE, CREATE_ADDITIONAL_RULE_CREATE);
 	            workflowContainer.setAdditionalRule(CREATE_ADDITIONAL_RULE_CREATE);
 		        List<LettertoParty> lettertoParties = lettertoPartyService.findByBpaApplicationOrderByIdDesc(application);
