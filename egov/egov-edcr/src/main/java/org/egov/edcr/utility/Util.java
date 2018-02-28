@@ -292,6 +292,7 @@ public class Util {
         if (name == null)
             return dxflwPolylines;
         DXFLayer dxfLayer = dxfDocument.getDXFLayer(name);
+        
         if (dxfLayer.hasDXFEntities(DXFConstants.ENTITY_TYPE_LWPOLYLINE)) {
             List dxfPolyLineEntities = dxfLayer.getDXFEntities(DXFConstants.ENTITY_TYPE_LWPOLYLINE);
             for (Object dxfEntity : dxfPolyLineEntities) {
@@ -621,6 +622,8 @@ public class Util {
         LOG.info("Side Yard2 \n " + pl.getPlot().getSideYard2());
         LOG.info("Rear Yard \n " + pl.getPlot().getRearYard());
         LOG.info(pl.getElectricLine());
+        LOG.info(pl.getBuilding());
+        
     }
 
 }

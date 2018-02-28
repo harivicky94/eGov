@@ -132,4 +132,25 @@ public class Building extends Measurement {
         this.openStairs = openStairs;
     }
 
+    @Override
+    public String toString() {
+        String newLine="\n";
+        StringBuilder str=new StringBuilder();
+        str.append("Building :")
+        .append(newLine)
+        .append("buildingHeight:").append(this.buildingHeight).append(newLine)
+        .append("totalFloorArea:").append(this.totalFloorArea).append(newLine)
+        .append("Coverage:").append(this.coverage).append(newLine)
+        .append("totalFloors:").append(this.totalFloors).append(newLine)
+        .append("floorsAboveGround:").append(this.floorsAboveGround).append(newLine)
+        .append("maxFloor").append(this.maxFloor).append(newLine)
+        .append("area").append(this.area).append(newLine)
+        .append("Floors Count:").append(this.floors.size()).append(newLine)
+        .append("Exterior wall").append(this.exteriorWall).append(newLine)
+        .append("Open Stair count:").append(this.openStairs.size()).append(newLine)
+        .append("Floors:").append(this.floors).append(newLine)
+        .append("open stairs").append(this.openStairs);
+        return str.toString();
+    }
+
 }

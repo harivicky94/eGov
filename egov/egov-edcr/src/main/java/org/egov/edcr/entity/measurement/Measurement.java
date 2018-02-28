@@ -86,4 +86,9 @@ public class Measurement {
         this.polyLine = polyLine;
     }
 
+    @Override
+    public String toString() {
+        return "Measurement : presentInDxf=" + presentInDxf +"\n polyLine Count=" + polyLine.getVertexCount() + "]";
+    }
+
 }

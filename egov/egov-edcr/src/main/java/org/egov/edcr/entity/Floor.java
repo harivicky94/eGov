@@ -35,4 +35,9 @@ public class Floor extends Measurement {
         this.openSpaces = openSpaces;
     }
 
+    @Override
+    public String toString() {
+        return "Floor [habitableRooms Count" + habitableRooms.size() + "\n exterior=" + exterior.getPolyLine().getVertexCount() + "\n openSpaces Count=" + openSpaces.size() + "]";
+    }
+
 }

@@ -92,7 +92,7 @@ public class DXFExtractService {
     }
 
     private void extractFloorDetails(DXFDocument doc, PlanDetail pl) {
-        
+
         DXFLayer layer = new DXFLayer();
         int floorNo = -1;
         while (layer != null) {
@@ -226,18 +226,16 @@ public class DXFExtractService {
      * @param doc
      * @param pl
      * @return 1) Floor area = (sum of areas of all polygon in Building_exterior_wall layer) - (sum of all polygons in FAR_deduct
-     * layer)
+     * layer) Color is not available here when color availble change to getPolyLinesByLayerAndColor Api if required
      */
     private PlanDetail extractTotalFloorArea(DXFDocument doc, PlanDetail pl) {
 
         BigDecimal floorArea = BigDecimal.ZERO;
-        List<DXFLWPolyline> bldgext = Util.getPolyLinesByLayerAndColor(doc, DxfFileConstants.BLDG_EXTERIOR_WALL,
-                DxfFileConstants.BLDG_EXTERIOR_WALL_COLOR, pl);
+        List<DXFLWPolyline> bldgext = Util.getPolyLinesByLayer(doc, DxfFileConstants.BLDG_EXTERIOR_WALL);
         if (!bldgext.isEmpty())
             for (DXFLWPolyline pline : bldgext)
                 floorArea = floorArea.add(Util.getPolyLineArea(pline));
-        List<DXFLWPolyline> bldDeduct = Util.getPolyLinesByLayerAndColor(doc, DxfFileConstants.FAR_DEDUCT,
-                DxfFileConstants.FAR_DEDUCT_COLOR, pl);
+        List<DXFLWPolyline> bldDeduct = Util.getPolyLinesByLayer(doc, DxfFileConstants.FAR_DEDUCT);
         if (!bldDeduct.isEmpty())
             for (DXFLWPolyline pline : bldDeduct)
                 floorArea = floorArea.subtract(Util.getPolyLineArea(pline));
@@ -255,19 +253,25 @@ public class DXFExtractService {
 
             BigDecimal cvDeduct = BigDecimal.ZERO;
             BigDecimal buildingFootPrintArea = Util.getPolyLineArea(pl.getBuilding().getPolyLine());
-            List<DXFLWPolyline> cvDeductPlines = Util.getPolyLinesByLayerAndColor(doc, DxfFileConstants.COVERGAE_DEDUCT, 0, pl);
+            List<DXFLWPolyline> cvDeductPlines = Util.getPolyLinesByLayer(doc, DxfFileConstants.COVERGAE_DEDUCT);
             if (!cvDeductPlines.isEmpty()) {
                 for (DXFLWPolyline pline : cvDeductPlines)
                     cvDeduct.add(Util.getPolyLineArea(pline));
-                if (cvDeduct.compareTo(BigDecimal.ZERO) > 0) {
-                    BigDecimal coverage = buildingFootPrintArea.multiply(BigDecimal.valueOf(100)).divide(cvDeduct,
-                            DcrConstants.DECIMALDIGITS_MEASUREMENTS, DcrConstants.ROUNDMODE_MEASUREMENTS);
-                    pl.getBuilding().setCoverage(coverage);
-                    LOG.info("coverage:" + coverage);
-                }
+            }
+            BigDecimal coverage;
+
+            if (buildingFootPrintArea != null && pl.getPlanInformation().getPlotArea() != null
+                    && pl.getPlanInformation().getPlotArea().intValue() > 0) {
+                coverage = buildingFootPrintArea.subtract(cvDeduct).multiply(BigDecimal.valueOf(100)).divide(
+                        pl.getPlanInformation().getPlotArea(),
+                        DcrConstants.DECIMALDIGITS_MEASUREMENTS, DcrConstants.ROUNDMODE_MEASUREMENTS);
+                pl.getBuilding().setCoverage(coverage);
+                LOG.info("coverage:" + coverage);
             } else {
-                pl.addError(DxfFileConstants.COVERGAE_DEDUCT, DxfFileConstants.COVERGAE_DEDUCT + " layer is not defined");
-                pl.getBuilding().setCoverage(BigDecimal.ZERO);
+                pl.addError(DxfFileConstants.COVERGAE_DEDUCT,
+                        "Cannot calculate coverage as " + DxfFileConstants.BUILDING_FOOT_PRINT
+                                + " or " + DxfFileConstants.PLOT_AREA + " is not defined");
+
             }
 
         }
