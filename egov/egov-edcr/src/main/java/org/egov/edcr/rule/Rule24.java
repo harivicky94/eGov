@@ -67,7 +67,7 @@ public class Rule24 extends GeneralRule {
     private static final String SUB_RULE_24_4_DESCRIPTION = "Rear yard distance";
     private static final String SUB_RULE_24_5 = "23(5)";
     private static final String SUB_RULE_24_5_DESCRIPTION = "Side yard distance";
-    private static final String SUB_RULE_24_10 = "23(10)";
+    private static final String SUB_RULE_24_10 = "24(10)";
     private static final String SUB_RULE_24_10_DESCRIPTION = "No construction or hangings outside the boundaries of the site";
     private String MEAN_MINIMUM = "(Minimum distance,Mean distance) ";
     

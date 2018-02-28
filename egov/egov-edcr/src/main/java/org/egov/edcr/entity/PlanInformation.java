@@ -43,13 +43,13 @@ public class PlanInformation extends AbstractAuditable {
     private BigDecimal accessWidth;
 
     @Transient
-    private Boolean nocToAbutSide;
+    private Boolean nocToAbutSide=false;
     @Transient
-    private Boolean nocToAbutRear;
+    private Boolean nocToAbutRear=false;
     @Transient
-    private Boolean openingOnSide;
+    private Boolean openingOnSide=false;
     @Transient
-    private Boolean openingOnRear;
+    private Boolean openingOnRear=false;
 
     @Override
     public Long getId() {
