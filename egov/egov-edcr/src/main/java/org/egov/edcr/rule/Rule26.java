@@ -23,7 +23,7 @@ public class Rule26 extends GeneralRule {
     @Override
     public PlanDetail validate(PlanDetail planDetail) {
         HashMap<String, String> errors = new HashMap<>();
-        System.out.println("validate 23");
+        System.out.println("validate 26");
         if (planDetail != null) {
 
             // TODO: CHECK WHETHER ANY ROAD SHOULD PASS THROUGH SITE IS MANDATORY ??????

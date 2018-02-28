@@ -13,18 +13,17 @@ import org.springframework.stereotype.Service;
 public class Rule60 extends GeneralRule {
 
     private static final BigDecimal _EXPECTED_PLOT_AREA = BigDecimal.valueOf(125);
-    private static final String SUB_RULE_60_DESCRIPTION = "Constructions in small plots";
+    private static final String SUB_RULE_60_DESCRIPTION = "Special provisions for constructions in small plots";
 
     @Override
     public PlanDetail validate(PlanDetail planDetail) {
         HashMap<String, String> errors = new HashMap<>();
 
         if (planDetail != null &&
-                (planDetail.getPlot() == null || planDetail.getPlot().getArea() == null)) {
+                (planDetail.getPlanInformation() == null || planDetail.getPlanInformation().getPlotArea() == null)) {
             errors.put(DcrConstants.PLOT_AREA,
                     edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
                             new String[] { DcrConstants.PLOT_AREA }, LocaleContextHolder.getLocale()));
-            // DcrConstants.OBJECTNOTDEFINED+DcrConstants.PLOT_AREA );
             planDetail.addErrors(errors);
         }
         return planDetail;
@@ -34,13 +33,13 @@ public class Rule60 extends GeneralRule {
     public PlanDetail process(PlanDetail planDetail) {
 
         if (planDetail != null &&
-                planDetail.getPlot() != null && planDetail.getPlot().getArea() != null)
-            if (planDetail.getPlot().getArea().compareTo(_EXPECTED_PLOT_AREA) <= 0)
+                planDetail.getPlanInformation() != null && planDetail.getPlanInformation().getPlotArea() != null)
+            if (planDetail.getPlanInformation().getPlotArea().compareTo(_EXPECTED_PLOT_AREA) <= 0)
                 planDetail.reportOutput
                         .add(buildRuleOutputWithSubRule(DcrConstants.RULE60, DcrConstants.RULE60, SUB_RULE_60_DESCRIPTION,
                                 DcrConstants.PLOT_AREA,
                                 _EXPECTED_PLOT_AREA.toString() + DcrConstants.IN_METER,
-                                planDetail.getPlot().getArea().toString()
+                                planDetail.getPlanInformation().getPlotArea().toString()
                                         + DcrConstants.IN_METER,
                                 Result.Accepted, null));
             else
@@ -48,7 +47,7 @@ public class Rule60 extends GeneralRule {
                         .add(buildRuleOutputWithSubRule(DcrConstants.RULE60, DcrConstants.RULE60, SUB_RULE_60_DESCRIPTION,
                                 DcrConstants.PLOT_AREA,
                                 _EXPECTED_PLOT_AREA.toString() + DcrConstants.IN_METER,
-                                planDetail.getPlot().getArea().toString()
+                                planDetail.getPlanInformation().getPlotArea().toString()
                                         + DcrConstants.IN_METER,
                                 Result.Not_Accepted, null));
 
