@@ -28,15 +28,16 @@ public class Rule32 extends GeneralRule {
         HashMap<String, String> errors = new HashMap<>();
         System.out.println("validate 32");
 
-        if (planDetail != null && planDetail.getBuilding() != null && planDetail.getBuilding().getPresentInDxf()) {
-            if (planDetail.getBuilding().getBuildingHeight() == null) {
+        if (planDetail != null && planDetail.getBuilding() != null) {
+            if (planDetail.getBuilding().getBuildingHeight() == null || 
+                    planDetail.getBuilding().getBuildingHeight().compareTo(BigDecimal.ZERO) < 0 ) {
                 errors.put(DcrConstants.BUILDING_HEIGHT, edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
                         new String[] { DcrConstants.BUILDING_HEIGHT }, LocaleContextHolder.getLocale()));
                 planDetail.addErrors(errors);
             }
 
-            if (planDetail.getBuilding() != null
-                    && planDetail.getBuilding().getDistanceFromBuildingFootPrintToRoadEnd().compareTo(BigDecimal.ZERO) < 0) {
+            if (planDetail.getBuilding() != null && (planDetail.getBuilding().getDistanceFromBuildingFootPrintToRoadEnd()==null
+                   || planDetail.getBuilding().getDistanceFromBuildingFootPrintToRoadEnd().compareTo(BigDecimal.ZERO) < 0)) {
                 errors.put(DcrConstants.SHORTESTDISTINACETOBUILDINGFOOTPRINT,
                         edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
                                 new String[] { DcrConstants.SHORTESTDISTINACETOBUILDINGFOOTPRINT },
@@ -56,7 +57,7 @@ public class Rule32 extends GeneralRule {
         return planDetail;
     }
 
-    public PlanDetail generateReport(PlanDetail planDetail) {
+    public PlanDetail process(PlanDetail planDetail) {
         rule32_1a(planDetail);
         rule32_3(planDetail);
         return planDetail;
@@ -67,7 +68,7 @@ public class Rule32 extends GeneralRule {
 
         if (planDetail.getNonNotifiedRoads() != null)
             for (NonNotifiedRoad nonnotifiedRoad : planDetail.getNonNotifiedRoads()) {
-                if (nonnotifiedRoad.getMinimumDistance().compareTo(BigDecimal.ZERO) > 0 &&
+                if (nonnotifiedRoad.getMinimumDistance()!=null && nonnotifiedRoad.getMinimumDistance().compareTo(BigDecimal.ZERO) > 0 &&
                         nonnotifiedRoad.getMinimumDistance().compareTo(TWELVE) <= 0) {
                     shortDistainceLessThan12 = true;
                     return;
@@ -76,7 +77,7 @@ public class Rule32 extends GeneralRule {
             }
         if (planDetail.getNotifiedRoads() != null)
             for (NotifiedRoad notifiedRoad : planDetail.getNotifiedRoads()) {
-                if (notifiedRoad.getMinimumDistance().compareTo(BigDecimal.ZERO) > 0 &&
+                if (notifiedRoad.getMinimumDistance()!=null && notifiedRoad.getMinimumDistance().compareTo(BigDecimal.ZERO) > 0 &&
                         notifiedRoad.getMinimumDistance().compareTo(TWELVE) <= 0) {
                     shortDistainceLessThan12 = true;
                     return;
@@ -84,23 +85,23 @@ public class Rule32 extends GeneralRule {
 
             }
 
-        if (shortDistainceLessThan12 && planDetail.getBuilding() != null && planDetail.getMaxHeightCal() != null
+        if (shortDistainceLessThan12 && planDetail.getBuilding() != null && planDetail.getBuilding().getBuildingHeight() != null
                 && planDetail.getBuilding().getDistanceFromBuildingFootPrintToRoadEnd() != null &&
                 planDetail.getBuilding().getDistanceFromBuildingFootPrintToRoadEnd().compareTo(BigDecimal.ZERO) > 0) {
-            if (planDetail.getBuilding().getHeight()
+            if (planDetail.getBuilding().getBuildingHeight()
                     .compareTo(planDetail.getBuilding().getDistanceFromBuildingFootPrintToRoadEnd().multiply(two)) > 0) {
                 planDetail.reportOutput.add(buildRuleOutputWithSubRule(DcrConstants.RULE32, SUB_RULE_32_1A,
                         SUB_RULE_32_1A_DESCRIPTION, DcrConstants.BUILDING_HEIGHT,
-                        planDetail.getBuilding().getDistanceFromBuildingFootPrintToRoadEnd().multiply(two).toString()
+                       "Upto "+ planDetail.getBuilding().getDistanceFromBuildingFootPrintToRoadEnd().multiply(two).toString()
                                 + DcrConstants.IN_METER,
-                        planDetail.getBuilding().getHeight() + DcrConstants.IN_METER,
+                        planDetail.getBuilding().getBuildingHeight() + DcrConstants.IN_METER,
                         Result.Not_Accepted, null));
             } else {
                 planDetail.reportOutput.add(buildRuleOutputWithSubRule(DcrConstants.RULE32, SUB_RULE_32_1A,
                         SUB_RULE_32_1A_DESCRIPTION, DcrConstants.BUILDING_HEIGHT,
-                        planDetail.getBuilding().getDistanceFromBuildingFootPrintToRoadEnd().multiply(two).toString()
+                        "Upto "+ planDetail.getBuilding().getDistanceFromBuildingFootPrintToRoadEnd().multiply(two).toString()
                                 + DcrConstants.IN_METER,
-                        planDetail.getBuilding().getHeight() + DcrConstants.IN_METER,
+                        planDetail.getBuilding().getBuildingHeight() + DcrConstants.IN_METER,
                         Result.Accepted, null));
             }
 
@@ -109,7 +110,7 @@ public class Rule32 extends GeneralRule {
 
     private void rule32_3(PlanDetail planDetail) {
 
-        if (planDetail.getPlanInformation().getSecurityZone() == true) {
+        if (planDetail.getPlanInformation().getSecurityZone()) {
             if (planDetail.getBuilding().getBuildingHeight().compareTo(ten) <= 0) // TODO: LATER CHECK MAXIMUM HEIGHT OF BUILDING
                                                                                   // FROM FLOOR
                 planDetail.reportOutput.add(buildRuleOutputWithSubRule(DcrConstants.RULE32, SUB_RULE_32_3,

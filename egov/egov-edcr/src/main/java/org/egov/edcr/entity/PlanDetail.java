@@ -23,7 +23,6 @@ public class PlanDetail {
     private ElectricLine electricLine;
     private List<NonNotifiedRoad> nonNotifiedRoads = new ArrayList<>();
     private List<NotifiedRoad> notifiedRoads = new ArrayList<>();
-    private BigDecimal maxHeightCal;
 
     private HashMap<String, String> errors = new HashMap<>();
     private HashMap<String, String> generalInformation = new HashMap<>();
@@ -124,13 +123,6 @@ public class PlanDetail {
         this.building = building;
     }
 
-    public BigDecimal getMaxHeightCal() {
-        return maxHeightCal;
-    }
-
-    public void setMaxHeightCal(BigDecimal maxHeightCal) {
-        this.maxHeightCal = maxHeightCal;
-    }
 
     public Utility getUtility() {
         return utility;
