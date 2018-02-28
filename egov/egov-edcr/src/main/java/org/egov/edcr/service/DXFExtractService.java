@@ -352,6 +352,36 @@ public class DXFExtractService {
             else
                 pi.setSecurityZone(false);
         }
+        if (planInfoProperties.get(DxfFileConstants.OPENING_BELOW_2_1_ON_SIDE_LESS_1M) != null){
+            String openingBelow2mside = planInfoProperties.get(DxfFileConstants.OPENING_BELOW_2_1_ON_SIDE_LESS_1M);
+            if (openingBelow2mside.equalsIgnoreCase(DcrConstants.YES))
+                pi.setOpeningOnSide(true);
+            else
+                pi.setOpeningOnSide(false);
+        }
+        if (planInfoProperties.get(DxfFileConstants.OPENING_BELOW_2_1_ON_REAR_LESS_1M) != null){
+            String openingBelow2mrear = planInfoProperties.get(DxfFileConstants.OPENING_BELOW_2_1_ON_REAR_LESS_1M);
+            if (openingBelow2mrear.equalsIgnoreCase(DcrConstants.YES))
+                pi.setOpeningOnRear(true);
+            else
+                pi.setOpeningOnRear(false);
+        }
+        if (planInfoProperties.get(DxfFileConstants.NOC_TO_ABUT_SIDE) != null){
+            String nocAbutSide = planInfoProperties.get(DxfFileConstants.NOC_TO_ABUT_SIDE);
+            if (nocAbutSide.equalsIgnoreCase(DcrConstants.YES))
+                pi.setNocToAbutSide(true);
+            else
+                pi.setNocToAbutSide(false);
+        }
+        if (planInfoProperties.get(DxfFileConstants.NOC_TO_ABUT_REAR) != null){
+            String nocAbutRear = planInfoProperties.get(DxfFileConstants.NOC_TO_ABUT_REAR);
+            if (nocAbutRear.equalsIgnoreCase(DcrConstants.YES))
+                pi.setNocToAbutRear(true);
+            else
+                pi.setNocToAbutRear(false);
+        }
+        
+        
         if (planInfoProperties.get(DxfFileConstants.ARCHITECT_NAME) != null)
             pi.setArchitectInformation(planInfoProperties.get(DxfFileConstants.ARCHITECT_NAME));
 

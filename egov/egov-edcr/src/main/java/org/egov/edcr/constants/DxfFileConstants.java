@@ -35,6 +35,10 @@ public class DxfFileConstants {
     public static final String SHADE_OVERHANG = "SHADE_OVERHANG";
     public static final String OPEN_STAIR = "OPEN_STAIR";
     public static final String DIST_CL_ROAD = "DIST_CL_ROAD";
+    public static final String OPENING_BELOW_2_1_ON_SIDE_LESS_1M="OPENING_BELOW_2.1_ON_SIDE_LESS_1M";
+    public static final String OPENING_BELOW_2_1_ON_REAR_LESS_1M="OPENING_BELOW_2.1_ON_REAR_LESS_1M";
+    public static final String NOC_TO_ABUT_SIDE="NOC_TO_ABUT_SIDE";
+    public static final String NOC_TO_ABUT_REAR="NOC_TO_ABUT_REAR";
     
 
 }

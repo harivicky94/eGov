@@ -120,7 +120,7 @@ public class Rule24 extends GeneralRule {
                         REARYARDMEAN_DISTANCE_WITHOUTOPENING_CORRESPONDINGFLOOR);
 
                 // WITHOUT OPENING AND NOC PRESENT
-                if (planDetail.getPlanInformation() != null && planDetail.getPlanInformation().getNocPresent()) {
+                if (planDetail.getPlanInformation() != null && planDetail.getPlanInformation().getNocToAbutSide()) {
                     rule24_4(planDetail, SIDE1MINIMUM_DISTANCE_LESSTHAN7_WITHOUTOPENING, SIDE2MINIMUM_DISTANCE_LESSTHAN7_WITHOUTOPENING);
                 }
 
@@ -275,7 +275,7 @@ public class Rule24 extends GeneralRule {
                 && planDetail.getPlot().getRearYard().getMinimumDistance() != null) {
 
             if (planDetail.getPlot().getRearYard().getMinimumDistance().compareTo(rearYardMin) >= 0
-                    && planDetail.getPlanInformation().getNocPresent()) {
+                    && planDetail.getPlanInformation().getNocToAbutRear()) {
                 planDetail.reportOutput
                         .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_5, SUB_RULE_24_5_DESCRIPTION, DcrConstants.REAR_YARD_DESC,
                                 "Minimum " + "(" + rearYardMin.toString() + ")"

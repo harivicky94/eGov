@@ -43,7 +43,13 @@ public class PlanInformation extends AbstractAuditable {
     private BigDecimal accessWidth;
 
     @Transient
-    private Boolean nocPresent;
+    private Boolean nocToAbutSide;
+    @Transient
+    private Boolean nocToAbutRear;
+    @Transient
+    private Boolean openingOnSide;
+    @Transient
+    private Boolean openingOnRear;
 
     @Transient
     private Boolean openingPresent;
@@ -138,12 +144,37 @@ public class PlanInformation extends AbstractAuditable {
         this.accessWidth = accessWidth;
     }
 
-    public Boolean getNocPresent() {
-        return nocPresent;
+
+    public Boolean getNocToAbutSide() {
+        return nocToAbutSide;
     }
 
-    public void setNocPresent(Boolean nocPresent) {
-        this.nocPresent = nocPresent;
+    public void setNocToAbutSide(Boolean nocToAbutSide) {
+        this.nocToAbutSide = nocToAbutSide;
+    }
+
+    public Boolean getNocToAbutRear() {
+        return nocToAbutRear;
+    }
+
+    public void setNocToAbutRear(Boolean nocToAbutRear) {
+        this.nocToAbutRear = nocToAbutRear;
+    }
+
+    public Boolean getOpeningOnSide() {
+        return openingOnSide;
+    }
+
+    public void setOpeningOnSide(Boolean openingOnSide) {
+        this.openingOnSide = openingOnSide;
+    }
+
+    public Boolean getOpeningOnRear() {
+        return openingOnRear;
+    }
+
+    public void setOpeningOnRear(Boolean openingOnRear) {
+        this.openingOnRear = openingOnRear;
     }
 
     public Boolean getOpeningPresent() {
