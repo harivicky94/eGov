@@ -25,7 +25,7 @@ public class DxfFileConstants {
     public static final String FAR_DEDUCT = "FAR_DEDUCT";
     public static final int FAR_DEDUCT_COLOR = 2;
     public static final String COVERGAE_DEDUCT = "COVERAGE_DEDUCT";
-    public static final String SECURITY_ZONE = "SECURITY Zone";
+    public static final String SECURITY_ZONE = "SECURITY ZONE";
     public static final String FLOOR_AREA = "FLOOR_AREA";
     public static final String OCCUPANCY = "OCCUPANCY";
     public static final String FLOOR_NAME_PREFIX = "FLOOR_";

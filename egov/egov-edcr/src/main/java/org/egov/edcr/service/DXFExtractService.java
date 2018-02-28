@@ -435,13 +435,9 @@ public class DXFExtractService {
             line.setHorizontalDistance(BigDecimal.valueOf(horiz_clear_OHE.getLength()));
             line.setPresentInDxf(true);
         } else {
-            DXFDimension dimension = Util.getSingleDimensionByLayer(doc, DxfFileConstants.HORIZ_CLEAR_OHE2);
+            BigDecimal dimension = Util.getSingleDimensionValueByLayer(doc, DxfFileConstants.HORIZ_CLEAR_OHE2, pl);
             if (dimension != null) {
-                // LOG.info(dimension.getHorizontalAlign()+dimension.getLeadingLineLength()+"xxx:"+(dimension.getBounds().getMaximumX()-dimension.getBounds().getMinimumX()));
-                // LOG.info(dimension.getLeadingLineLength()+"yyy:"+(dimension.getBounds().getMaximumY()-dimension.getBounds().getMinimumY()));
-                double x = dimension.getBounds().getMaximumY() - dimension.getBounds().getMinimumY();
-                line.setHorizontalDistance(BigDecimal.valueOf(x));
-
+                line.setHorizontalDistance(dimension);
                 line.setPresentInDxf(true);
             }
         }
@@ -453,17 +449,12 @@ public class DXFExtractService {
         } else {
             Util.getMtextByLayerName(doc, DxfFileConstants.VERT_CLEAR_OHE);
 
-            DXFDimension dimension = Util.getSingleDimensionByLayer(doc, DxfFileConstants.VERT_CLEAR_OHE);
+            BigDecimal dimension = Util.getSingleDimensionValueByLayer(doc, DxfFileConstants.VERT_CLEAR_OHE, pl);
             if (dimension != null) {
-
-                // LOG.info(dimension.getHorizontalAlign()+dimension.getLeadingLineLength()+"xxx:"+(dimension.getBounds().getMaximumX()-dimension.getBounds().getMinimumX()));
-                // LOG.info(dimension.getLeadingLineLength()+"yyy:"+(dimension.getBounds().getMaximumY()-dimension.getBounds().getMinimumY()));
-                double x = dimension.getBounds().getMaximumY() - dimension.getBounds().getMinimumY();
-                line.setVerticalDistance(BigDecimal.valueOf(x));
+                line.setVerticalDistance(dimension);
                 line.setPresentInDxf(true);
-            } else {
-
             }
+
         }
 
         String voltage = Util.getMtextByLayerName(doc, "VOLTAGE");
@@ -479,9 +470,11 @@ public class DXFExtractService {
                         "Voltage value contains non numeric character.Voltage must be Number specified in  KW unit, without the text KW");
 
             }
-        else
-            pl.addError("VOLTAGE", "Voltage is not mentioned for the " + DxfFileConstants.HORIZ_CLEAR_OHE2 + " or "
-                    + DxfFileConstants.VERT_CLEAR_OHE);
+        else {
+            if (horiz_clear_OHE != null || vert_clear_OHE != null)
+                pl.addError("VOLTAGE", "Voltage is not mentioned for the " + DxfFileConstants.HORIZ_CLEAR_OHE2 + " or "
+                        + DxfFileConstants.VERT_CLEAR_OHE);
+        }
         pl.setElectricLine(line);
 
         return pl;

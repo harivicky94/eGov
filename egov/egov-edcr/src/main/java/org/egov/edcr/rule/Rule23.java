@@ -20,8 +20,8 @@ public class Rule23 extends GeneralRule {
     private static final BigDecimal VERTICAL_DISTANCE_33000 = BigDecimal.valueOf(3.7);
     private static final BigDecimal HORIZONTAL_DISTANCE_33000 = BigDecimal.valueOf(1.85);
 
-    private static final int VOLTAGE_11000 = 11000;
-    private static final int VOLTAGE_33000 = 33000;
+    private static final int VOLTAGE_11000 = 11;
+    private static final int VOLTAGE_33000 = 33;
     private static final BigDecimal HORIZONTAL_DISTANCE_11000 = BigDecimal.valueOf(1.2);
     private static final String SUB_RULE_23_4 = "23(4)";
     private static final String SUB_RULE_23_4_DESCRIPTION = " Plot present in CRZ Zone";
