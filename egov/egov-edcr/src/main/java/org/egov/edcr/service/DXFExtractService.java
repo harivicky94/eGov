@@ -345,8 +345,13 @@ public class DXFExtractService {
                 pi.setCrzZoneArea(false);
         }
 
-        if (planInfoProperties.get(DxfFileConstants.SECURITY_ZONE) != null)
-            pi.setSecurityZone(true);
+        if (planInfoProperties.get(DxfFileConstants.SECURITY_ZONE) != null){
+            String securityZone = planInfoProperties.get(DxfFileConstants.SECURITY_ZONE);
+            if (securityZone.equalsIgnoreCase(DcrConstants.YES))
+                pi.setSecurityZone(true);
+            else
+                pi.setSecurityZone(false);
+        }
         if (planInfoProperties.get(DxfFileConstants.ARCHITECT_NAME) != null)
             pi.setArchitectInformation(planInfoProperties.get(DxfFileConstants.ARCHITECT_NAME));
 
