@@ -1,8 +1,5 @@
 package org.egov.edcr.rule;
 
-import java.math.BigDecimal;
-import java.util.HashMap;
-
 import org.egov.edcr.entity.PlanDetail;
 import org.egov.edcr.entity.Result;
 import org.egov.edcr.entity.measurement.NonNotifiedRoad;
@@ -10,6 +7,9 @@ import org.egov.edcr.entity.measurement.NotifiedRoad;
 import org.egov.edcr.utility.DcrConstants;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.util.HashMap;
 
 @Service
 public class Rule62 extends GeneralRule {
@@ -97,7 +97,7 @@ public class Rule62 extends GeneralRule {
 
     private String prepareMessage(String code, String args) {
         return edcrMessageSource.getMessage(code,
-                new String[] { args }, LocaleContextHolder.getLocale());
+                new String[]{args}, LocaleContextHolder.getLocale());
         // return code+" "+args;
     }
 
@@ -105,7 +105,10 @@ public class Rule62 extends GeneralRule {
     public PlanDetail process(PlanDetail planDetail) {
         rule62_1(planDetail);
         rule62_1A(planDetail);
-        rule62_2(planDetail);
+        if (planDetail != null && planDetail.getPlanInformation() != null
+                && planDetail.getPlanInformation().getOpeningOnSide()) {
+            rule62_2(planDetail);
+        }
         rule62_3(planDetail);
         return planDetail;
     }
