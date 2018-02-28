@@ -41,13 +41,7 @@ package org.egov.bpa.transaction.service;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -56,10 +50,7 @@ import org.apache.log4j.Logger;
 import org.egov.bpa.autonumber.InspectionNumberGenerator;
 import org.egov.bpa.master.entity.CheckListDetail;
 import org.egov.bpa.master.service.CheckListDetailService;
-import org.egov.bpa.transaction.entity.BpaApplication;
-import org.egov.bpa.transaction.entity.Docket;
-import org.egov.bpa.transaction.entity.DocketDetail;
-import org.egov.bpa.transaction.entity.Inspection;
+import org.egov.bpa.transaction.entity.*;
 import org.egov.bpa.transaction.repository.InspectionRepository;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.infra.admin.master.entity.User;
@@ -115,15 +106,20 @@ public class InspectionService {
         }
         if (inspection.getInspectionDate() == null)
             inspection.setInspectionDate(new Date());
-        if (inspection.getFiles() != null && inspection.getFiles().length > 0) {
-            Set<FileStoreMapper> docketSupportDocs = applicationBpaService.addToFileStore(inspection.getFiles());
-            if (!docketSupportDocs.isEmpty())
-                inspection.setInspectionSupportDocs(docketSupportDocs);
-        }
+        buildInspectionFiles(inspection);
         inspection.setApplication(application);
         inspection.getDocket().get(0).setInspection(inspection);
         buildDocketDetails(inspection.getDocket().get(0));
         return inspectionRepository.save(inspection);
+    }
+
+    private void buildInspectionFiles(Inspection inspection) {
+        if (inspection.getFiles() != null && inspection.getFiles().length > 0) {
+            Set<FileStoreMapper> existingInsnFiles = new HashSet<>();
+            existingInsnFiles.addAll(inspection.getInspectionSupportDocs());
+            existingInsnFiles.addAll(applicationBpaService.addToFileStore(inspection.getFiles()));
+            inspection.setInspectionSupportDocs(existingInsnFiles);
+        }
     }
 
     public List<Inspection> findByIdOrderByIdAsc(final Long id) {

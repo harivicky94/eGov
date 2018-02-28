@@ -113,6 +113,13 @@
 			</div>
 
 			<div align="center">
+				<c:if test="${ bpaApplication.status.code eq 'Scheduled For Document Scrutiny'
+								|| bpaApplication.status.code eq 'Pending For Rescheduling For Document Scrutiny'
+								|| bpaApplication.status.code eq 'Rescheduled For Document Scrutiny'}">
+					<a
+							href="/bpa/application/scrutiny/view/${bpaApplication.applicationNumber}"
+							class="btn btn-primary"> View Scheduled Appointment Details </a>
+				</c:if>
 				<c:if test="${collectFeeValidate eq ''}">
 					<%--<c:if test="${ bpaApplication.status.code eq 'Registered'}">
 						<a
@@ -124,13 +131,6 @@
 						<a
 								href="/bpa/application/scrutiny/reschedule/${bpaApplication.applicationNumber}"
 								class="btn btn-primary"> Reschedule Appointment </a>
-					</c:if>
-					<c:if test="${ bpaApplication.status.code eq 'Scheduled For Document Scrutiny'
-								|| bpaApplication.status.code eq 'Pending For Rescheduling For Document Scrutiny'
-								|| bpaApplication.status.code eq 'Rescheduled For Document Scrutiny'}">
-						<a
-								href="/bpa/application/scrutiny/view/${bpaApplication.applicationNumber}"
-								class="btn btn-primary"> View Scheduled Appointment Details </a>
 					</c:if>
 				<%-- 	<c:if test="${ bpaApplication.status.code eq 'Scheduled For Document Scrutiny' || bpaApplication.status.code eq 'Rescheduled For Document Scrutiny'}">
 						<a

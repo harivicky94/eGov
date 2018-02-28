@@ -53,6 +53,14 @@
 	</div>
 </div>
 
+<c:if test="${not empty appmntDetailsMsg}">
+	<div class="panel-heading custom_form_panel_heading">
+		<div class="panel-title text-center no-float">
+			<strong>${appmntDetailsMsg}</strong>
+		</div>
+	</div>
+</c:if>
+
 <div class="buttonbottom" align="center">
 	<table>
 		<tr>

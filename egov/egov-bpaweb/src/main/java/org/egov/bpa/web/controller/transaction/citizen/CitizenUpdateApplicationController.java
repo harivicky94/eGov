@@ -200,15 +200,12 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
                 bpaApplication.setStatus(
                         applicationBpaService.getStatusByCodeAndModuleType(APPLICATION_STATUS_CANCELLED));
                 bpaUtils.updatePortalUserinbox(bpaApplication, null);
-            } // To allot slot for one day permit applications
-            if(bpaApplication.getIsOneDayPermitApplication() && bpaApplication.getStatus().getCode().equalsIgnoreCase(BpaConstants.APPLICATION_STATUS_REGISTERED)) {
-            	SlotDetail slotDetail = slotOpeningForAppointmentService.openSlotsForDocumentScrutiny(bpaApplication.getSiteDetail().get(0).getAdminBoundary().getParent(),
-            			bpaApplication.getSiteDetail().get(0).getAdminBoundary(), bpaApplication.getSiteDetail().get(0).getElectionBoundary());
-            	scheduleAppointmentForDocumentScrutinyService.scheduleOneDayPermitApplicationsForDocumentScrutiny(bpaApplication, slotDetail);
             }
         }
         if (bpaApplication.getOwner().getUser() != null && bpaApplication.getOwner().getUser().getId() == null)
             buildOwnerDetails(bpaApplication);
+        // To allot slot for one day permit applications
+        applicationBpaService.scheduleAppointmentForOnePermit(bpaApplication);
         applicationBpaService.saveAndFlushApplication(bpaApplication);
         bpaUtils.updatePortalUserinbox(bpaApplication, null);
         if (workFlowAction != null
@@ -222,11 +219,9 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
                             .concat(getDesinationNameByPosition(pos))
                             : "",
                     bpaApplication.getApplicationNumber() }, LocaleContextHolder.getLocale());
-            if(bpaApplication.getIsOneDayPermitApplication()){
-            	SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-            	/*message.concat(DISCLIMER_MESSAGE_ONEDAYPERMIT_ONSAVE).concat( messageSource.getMessage("msg.onedaypermit.schedule.details", new String[] {
-                    sdf.format(bpaApplication.getSlotApplications().get(0).getSlotDetail().getSlot().getAppointmentDate()), bpaApplication.getSlotApplications().get(0).getSlotDetail().getAppointmentTime() }, LocaleContextHolder.getLocale()));*/
+            if(bpaApplication.getIsOneDayPermitApplication()) {
             	message = message.concat(DISCLIMER_MESSAGE_ONEDAYPERMIT_ONSAVE);
+                getAppointmentMsgForOnedayPermit(bpaApplication, model);
             } else {
             	message = message.concat(DISCLIMER_MESSAGE_ONSAVE);
             }

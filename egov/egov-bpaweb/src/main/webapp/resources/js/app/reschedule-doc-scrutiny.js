@@ -189,7 +189,7 @@ $(document).ready(function() {
             var selectedAppointmentTime = getAppointmentTime($(this).val());
             if(previousAppointmentDate >= selectedAppointmentDate && previousAppointmentTime >= selectedAppointmentTime) {
                 $(this).val('');
-                bootbox.alert('Re-Schedule Date and Time should be greater than the ealier scheduled Date and Time');
+                bootbox.alert('Re-Schedule Date and Time should be greater than the earlier scheduled Date and Time');
             }
         }
     });

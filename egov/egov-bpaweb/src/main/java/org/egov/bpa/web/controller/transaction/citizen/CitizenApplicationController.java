@@ -318,11 +318,9 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
                                 .concat(getDesinationNameByPosition(pos))
                                 : "",
                         bpaApplicationRes.getApplicationNumber() }, LocaleContextHolder.getLocale());
-                if(bpaApplication.getIsOneDayPermitApplication()){
-                	SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-                	/*message.concat(DISCLIMER_MESSAGE_ONEDAYPERMIT_ONSAVE).concat( messageSource.getMessage("msg.onedaypermit.schedule.details", new String[] {
-                        sdf.format(bpaApplication.getSlotApplications().get(0).getSlotDetail().getSlot().getAppointmentDate()), bpaApplication.getSlotApplications().get(0).getSlotDetail().getAppointmentTime() }, LocaleContextHolder.getLocale()));*/
+                if(bpaApplicationRes.getIsOneDayPermitApplication()) {
                 	message = message.concat(DISCLIMER_MESSAGE_ONEDAYPERMIT_ONSAVE);
+                    getAppointmentMsgForOnedayPermit(bpaApplicationRes, model);
                 } else {
                 	message = message.concat(DISCLIMER_MESSAGE_ONSAVE);
                 }

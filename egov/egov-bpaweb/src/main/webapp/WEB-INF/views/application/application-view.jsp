@@ -53,7 +53,7 @@
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 <div class="row">
 	<div class="col-md-12">
-		<form:form role="form" method="post" modelAttribute="bpaApplication"
+		<form:form role="form" action="/bpa/application/update-submit/${bpaApplication.applicationNumber}" method="post" modelAttribute="bpaApplication"
 			id="viewBpaApplicationForm"
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
@@ -254,12 +254,12 @@
 						href="/bpa/application/scheduleappointment/${bpaApplication.applicationNumber}"
 						class="btn btn-primary"> New Appointment </a>
 				</c:if>
-				<c:if test="${mode eq 'initialtedApprove'}">
+				<%--<c:if test="${mode eq 'initialtedApprove'}">
 					<a
 						href="/bpa/application/calculateFee/${bpaApplication.applicationNumber}"
 						class="btn btn-primary">Modify Fee </a>
 
-				</c:if>
+				</c:if>--%>
 				<c:if test="${bpaApplication.state.value ne 'Field Inspection completed' && bpaApplication.status.code eq 'Field Inspected'}">
 					<input type="button" name="save" id="btnSave" value="Save"
 						   class="btn btn-primary"/>

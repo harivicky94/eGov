@@ -169,9 +169,10 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
     }
     
     private void buildRejectionReasons(Model model, BpaApplication application) {
-		if (APPLICATION_STATUS_NOCUPDATED.equals(application.getStatus().getCode())
-				|| APPLICATION_STATUS_REJECTED.equalsIgnoreCase(application.getStatus().getCode())
-				|| APPLICATION_STATUS_SCHEDULED.equalsIgnoreCase(application.getStatus().getCode())
+		if ((application.getIsOneDayPermitApplication() && APPLICATION_STATUS_FIELD_INS.equalsIgnoreCase(application.getStatus().getCode()))
+			|| APPLICATION_STATUS_NOCUPDATED.equals(application.getStatus().getCode())
+			|| APPLICATION_STATUS_REJECTED.equalsIgnoreCase(application.getStatus().getCode())
+			|| APPLICATION_STATUS_SCHEDULED.equalsIgnoreCase(application.getStatus().getCode())
 			|| APPLICATION_STATUS_RESCHEDULED.equalsIgnoreCase(application.getStatus().getCode())) {
 			model.addAttribute("showRejectionReasons", true);
 			model.addAttribute("additionalPermitCondition", permitConditionsService
@@ -272,7 +273,7 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
         String approvalComent = request.getParameter(APPROVAL_COMENT);
         if (request.getParameter(APPRIVALPOSITION) != null) { 
         	// In case of one day permit, on reject from clerk should be sent to AE
-            if(workFlowAction.equalsIgnoreCase(WF_INITIATE_REJECTION_BUTTON) && bpaApplication.getIsOneDayPermitApplication() && bpaApplication.getCurrentState().getValue().equalsIgnoreCase(APPLICATION_STATUS_REGISTERED)){
+            if(workFlowAction.equalsIgnoreCase(WF_INITIATE_REJECTION_BUTTON) && bpaApplication.getIsOneDayPermitApplication() && bpaApplication.getCurrentState().getValue().equalsIgnoreCase(APPLICATION_STATUS_SCHEDULED)){
             	approvalPosition =  bpaUtils.getUserPositionIdByZone(DESIGNATION_AE,
             			bpaApplication.getSiteDetail().get(0) != null
                         ? bpaApplication.getSiteDetail().get(0).getElectionBoundary().getId() : null);  
@@ -285,13 +286,11 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
             BpaApplication bpaAppln = applicationBpaService.updateApplication(bpaApplication, approvalPosition, workFlowAction,
                     amountRule); 
             String message;
-            if (WF_INITIATE_REJECTION_BUTTON.equalsIgnoreCase(workFlowAction)) {
+            if (WF_INITIATE_REJECTION_BUTTON.equalsIgnoreCase(workFlowAction) && !bpaApplication.getIsOneDayPermitApplication()) {
 				User userObj = bpaThirdPartyService.getUserPositionByPassingPosition(bpaAppln.getCurrentState().getOwnerPosition().getId());
-				message = messageSource.getMessage(MSG_INITIATE_REJECTION, new String[] {
-						userObj != null ? userObj.getUsername().concat("~")
-										   .concat(getDesinationNameByPosition(bpaAppln.getCurrentState().getOwnerPosition()))
-									 : "",
-						bpaAppln.getApplicationNumber(), approvalComent }, LocaleContextHolder.getLocale());
+				message = getMessageOnRejectionInitiation(approvalComent, bpaAppln, userObj, MSG_INITIATE_REJECTION, bpaAppln.getCurrentState().getOwnerPosition());
+			} else if (WF_INITIATE_REJECTION_BUTTON.equalsIgnoreCase(workFlowAction) && bpaApplication.getIsOneDayPermitApplication()) {
+				message = getMessageOnRejectionInitiation(approvalComent, bpaAppln, user, MSG_INITIATE_REJECTION, pos);
 			} else
                 message = messageSource.getMessage("msg.update.forward.documentscrutiny", new String[] {
                     user != null ? user.getUsername().concat("~")
@@ -303,7 +302,15 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
         return BPA_APPLICATION_RESULT;
     }
 
-    private void loadViewdata(final Model model, final BpaApplication application) {
+	private String getMessageOnRejectionInitiation(String approvalComent, BpaApplication bpaAppln, User userObj, String msgInitiateRejection, Position ownerPosition) {
+		return messageSource.getMessage(msgInitiateRejection, new String[]{
+				userObj != null ? userObj.getUsername().concat("~")
+										 .concat(getDesinationNameByPosition(ownerPosition))
+								: "",
+				bpaAppln.getApplicationNumber(), approvalComent}, LocaleContextHolder.getLocale());
+	}
+
+	private void loadViewdata(final Model model, final BpaApplication application) {
         applicationBpaService.buildExistingAndProposedBuildingDetails(application);
         model.addAttribute("stateType", application.getClass().getSimpleName());
         final WorkflowContainer workflowContainer = new WorkflowContainer();  
@@ -397,7 +404,7 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
         return amountRule;
     }
 
-    @RequestMapping(value = "/update/{applicationNumber}", method = RequestMethod.POST)
+    @RequestMapping(value = "/update-submit/{applicationNumber}", method = RequestMethod.POST)
     public String updateApplication(@Valid @ModelAttribute(BPA_APPLICATION) BpaApplication bpaApplication,
             @PathVariable final String applicationNumber,
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
@@ -467,11 +474,7 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
         }
         User user = bpaThirdPartyService.getUserPositionByPassingPosition(approvalPosition);
         if (WF_REJECT_BUTTON.equalsIgnoreCase(workFlowAction)) {
-            message = messageSource.getMessage(MSG_REJECT_FORWARD_REGISTRATION, new String[] {
-                    user != null ? user.getUsername().concat("~")
-                            .concat(getDesinationNameByPosition(pos))
-                            : "",
-                    bpaAppln.getApplicationNumber(), approvalComent }, LocaleContextHolder.getLocale());
+			message = getMessageOnRejectionInitiation(approvalComent, bpaAppln, user, MSG_REJECT_FORWARD_REGISTRATION, pos);
         } else if (WF_SAVE_BUTTON.equalsIgnoreCase(workFlowAction)) {
             message = messageSource.getMessage("msg.noc.update.success", new String[] {}, LocaleContextHolder.getLocale());
         } else {

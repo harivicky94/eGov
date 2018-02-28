@@ -72,15 +72,17 @@ import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.infra.utils.FileStoreUtils;
+import org.egov.infra.utils.*;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.i18n.*;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
+import javax.validation.*;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -320,7 +322,17 @@ public abstract class BpaGenericApplicationController extends GenericWorkFlowCon
         return pos.getDeptDesig() != null && pos.getDeptDesig().getDesignation() != null
                 ? pos.getDeptDesig().getDesignation().getName() : "";
     }
-   
+
+    protected void getAppointmentMsgForOnedayPermit(final BpaApplication bpaApplication, Model model) {
+        if (bpaApplication.getIsOneDayPermitApplication() && !bpaApplication.getSlotApplications().isEmpty()) {
+            String appmntDetailsMsg = messageSource.getMessage("msg.one.permit.schedule", new String[]{
+                    bpaApplication.getOwner().getUser().getName(),
+                    DateUtils.getDefaultFormattedDate(bpaApplication.getSlotApplications().get(0).getSlotDetail().getSlot().getAppointmentDate()),
+                    bpaApplication.getSlotApplications().get(0).getSlotDetail().getAppointmentTime()}, LocaleContextHolder.getLocale());
+            model.addAttribute("appmntDetailsMsg", appmntDetailsMsg);
+        }
+    }
+
     @ModelAttribute("serviceTypeEnumList") 
     public List<ApplicationType>  showSearchApprovedforFee() {
 		return Arrays.asList(ApplicationType.values());

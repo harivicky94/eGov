@@ -54,7 +54,7 @@
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 <div class="row">
 	<div class="col-md-12">
-		<form:form role="form" method="post" modelAttribute="bpaApplication"
+		<form:form role="form" action="/bpa/application/update-submit/${bpaApplication.applicationNumber}" method="post" modelAttribute="bpaApplication"
 			id="editBpaApplicationForm"
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">

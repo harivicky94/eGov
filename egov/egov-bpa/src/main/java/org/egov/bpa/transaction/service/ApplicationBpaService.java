@@ -197,12 +197,16 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
           bpaUtils.redirectToBpaWorkFlow(approvalPosition, application, WF_NEW_STATE,
                     application.getApprovalComent(), null, null);
         }
-        if(application.getIsOneDayPermitApplication() && application.getStatus().getCode().equalsIgnoreCase(BpaConstants.APPLICATION_STATUS_REGISTERED)) {
+        scheduleAppointmentForOnePermit(application);
+        return applicationBpaRepository.save(application);
+    }
+
+    public void scheduleAppointmentForOnePermit(BpaApplication application) {
+        if(application.getIsOneDayPermitApplication() && application.getStatus().getCode().equalsIgnoreCase(BpaConstants.APPLICATION_STATUS_SCHEDULED)) {
         	SlotDetail slotDetail = slotOpeningForAppointmentService.openSlotsForDocumentScrutiny(application.getSiteDetail().get(0).getAdminBoundary().getParent(),
         			application.getSiteDetail().get(0).getAdminBoundary(), application.getSiteDetail().get(0).getElectionBoundary());
         	scheduleAppointmentForDocumentScrutinyService.scheduleOneDayPermitApplicationsForDocumentScrutiny(application, slotDetail);
         }
-        return applicationBpaRepository.save(application);
     }
 
     private void setSource(final BpaApplication application) {
@@ -236,10 +240,10 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
     }
 
     private void buildRejectionReasons(final BpaApplication application) {
-        bpaApplicationPermitConditionsService.delete(application.getAdditionalPermitConditions());
+        bpaApplicationPermitConditionsService.delete(application.getRejectionReasons());
         bpaApplicationPermitConditionsService.delete(application.getAdditionalPermitConditions());
         application.getAdditionalPermitConditions().clear();
-        application.getAdditionalPermitConditions().clear();
+        application.getRejectionReasons().clear();
         application.setRejectionReasons(application.getRejectionReasonsTemp());
         application.setAdditionalPermitConditions(application.getAdditionalPermitConditionsTemp());
     }
