@@ -108,7 +108,7 @@ public class Rule31 extends GeneralRule {
                         "Should be less than "+four.toString(),
                         floorAreaRatio.toString(), Result.Not_Accepted, null));
 
-            // 4) If occupany is A2, FAR should be less than 4, with additional fee of @ Rs.5000 x (FAR-2.5)*Plot area
+            /*// 4) If occupany is A2, FAR should be less than 4, with additional fee of @ Rs.5000 x (FAR-2.5)*Plot area
             if (floorAreaRatio.compareTo(four) == -1) {
                 additionalFee = fiveThousand.multiply(floorAreaRatio.subtract(twoPointFive).multiply(plotArea));
                 planDetail.reportOutput.add(buildRuleOutputWithSubRule(DcrConstants.RULE31, SUB_RULE_31_1,
@@ -119,7 +119,7 @@ public class Rule31 extends GeneralRule {
                 planDetail.reportOutput.add(buildRuleOutputWithSubRule(DcrConstants.RULE31, SUB_RULE_31_1,
                         SUB_RULE_31_1_DESCRIPTION, DcrConstants.FAR,
                         "Should be less than "+four.toString(),
-                        floorAreaRatio.toString(), Result.Not_Accepted, null));
+                        floorAreaRatio.toString(), Result.Not_Accepted, null));*/
 
 /*            // 5) If occupany is B, FAR should be less than 3, with additional fee of @ Rs.5000 x (FAR-2.5)*Plot
             // area
@@ -277,7 +277,7 @@ public class Rule31 extends GeneralRule {
                             "should less than " + sixtyFive.toString(),
                             coverage.toString(), Result.Not_Accepted, null));
 
-                // 3) If occupany is A2, Coverage should be less than 65
+              /*  // 3) If occupany is A2, Coverage should be less than 65
                 if (coverage.compareTo(sixtyFive) == -1) {
                     planDetail.reportOutput.add(buildRuleOutputWithSubRule(DcrConstants.RULE31, SUB_RULE_31_2,
                             SUB_RULE_31_2_DESCRIPTION, DcrConstants.COVERAGE,
@@ -288,7 +288,7 @@ public class Rule31 extends GeneralRule {
                             SUB_RULE_31_2_DESCRIPTION, DcrConstants.COVERAGE,
                             "should less than " + sixtyFive.toString(),
                             coverage.toString(), Result.Not_Accepted, null));
-
+*/
                 /*// 4) If occupany is B, Coverage should be less than 35
                 if (coverage.compareTo(thirtyFive) == -1) {
                     planDetail.reportOutput.add(buildRuleOutputWithSubRule(DcrConstants.RULE31, SUB_RULE_31_2,
