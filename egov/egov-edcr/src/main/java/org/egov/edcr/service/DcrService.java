@@ -155,7 +155,7 @@ public class DcrService {
 
         }
 
-        if (planDetail.getErrors() != null) {
+        if (planDetail.getErrors() != null && planDetail.getErrors().size()>0) {
 
             for (Map.Entry<String, String> entry : planDetail.getErrors().entrySet()) {
                 errorOutput.append(entry.getValue());
