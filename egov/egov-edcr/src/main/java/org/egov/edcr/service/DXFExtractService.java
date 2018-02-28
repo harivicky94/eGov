@@ -258,7 +258,7 @@ public class DXFExtractService {
                 for (DXFLWPolyline pline : cvDeductPlines)
                     cvDeduct.add(Util.getPolyLineArea(pline));
             }
-            BigDecimal coverage;
+            BigDecimal coverage=BigDecimal.valueOf(100);
 
             if (buildingFootPrintArea != null && pl.getPlanInformation().getPlotArea() != null
                     && pl.getPlanInformation().getPlotArea().intValue() > 0) {
