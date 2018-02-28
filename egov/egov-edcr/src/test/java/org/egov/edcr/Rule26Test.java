@@ -11,12 +11,12 @@ import org.egov.edcr.entity.measurement.NonNotifiedRoad;
 import org.egov.edcr.entity.measurement.NotifiedRoad;
 import org.egov.edcr.entity.measurement.WasteDisposal;
 import org.egov.edcr.entity.measurement.Yard;
-import org.egov.edcr.rule.Rule62;
+import org.egov.edcr.rule.Rule33;
 
 public class Rule26Test {
 
     public static void main(String[] args) {
-        Rule62 rule23= new Rule62();
+        Rule33 rule23= new Rule33();
         PlanDetail planDetail= new PlanDetail();
         NotifiedRoad notifiedRoad= new NotifiedRoad();
         NonNotifiedRoad nonNotifiedRoad= new NonNotifiedRoad();

@@ -39,6 +39,7 @@ public class DxfFileConstants {
     public static final String OPENING_BELOW_2_1_ON_REAR_LESS_1M="OPENING_BELOW_2.1_ON_REAR_LESS_1M";
     public static final String NOC_TO_ABUT_SIDE="NOC_TO_ABUT_SIDE";
     public static final String NOC_TO_ABUT_REAR="NOC_TO_ABUT_REAR";
+    public static final String MAX_HEIGHT_CAL="MAX_HEIGHT_CAL";
     
 
 }

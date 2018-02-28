@@ -60,7 +60,7 @@ public class DcrConstants {
     public static final String BUILDING_HEIGHT = "BUILDING_HEIGHT";
     public static final String BUILDING_TOP_MOST_HEIGHT = "BUILDING_TOP_MOST_HEIGHT";
     public static final String MAX_HEIGHT_CAL = "MAX_HEIGHT_CAL";
-    public static final String SECURITY_ZONE = "SECURITY Zone";
+    public static final String SECURITY_ZONE = "Security Zone";
 
     public static final String IN_METER_SQR = "(MTRSQ)";
     public static final String RESIDENTIAL = "RESIDENTIAL";
@@ -75,6 +75,9 @@ public class DcrConstants {
     public static final RoundingMode ROUNDMODE_MEASUREMENTS = RoundingMode.HALF_UP;
     public static final String YES = "YES";
     public static final String NO = "NO";
+
     public static final String PLAN_DETAIL = "Plan Detail";
+
+    public static final String SHORTESTDISTINACETOBUILDINGFOOTPRINT = "Shortest distance between the building foot print from wider road";
 
 }

@@ -36,6 +36,8 @@ public class Building extends Measurement {
 
     private BigDecimal floorsAboveGround;
 
+    private BigDecimal distanceFromBuildingFootPrintToRoadEnd;
+    
     public BigDecimal getBuildingHeight() {
         return buildingHeight;
     }
@@ -152,5 +154,14 @@ public class Building extends Measurement {
         .append("open stairs").append(this.openStairs);
         return str.toString();
     }
+
+    public BigDecimal getDistanceFromBuildingFootPrintToRoadEnd() {
+        return distanceFromBuildingFootPrintToRoadEnd;
+    }
+
+    public void setDistanceFromBuildingFootPrintToRoadEnd(BigDecimal distanceFromBuildingFootPrintToRoadEnd) {
+        this.distanceFromBuildingFootPrintToRoadEnd = distanceFromBuildingFootPrintToRoadEnd;
+    }
+    
 
 }

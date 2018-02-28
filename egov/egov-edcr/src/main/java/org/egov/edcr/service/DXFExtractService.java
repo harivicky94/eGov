@@ -445,6 +445,12 @@ public class DXFExtractService {
             pl.getNonNotifiedRoads().add(road);
 
         }
+        
+        BigDecimal dimension = Util.getSingleDimensionValueByLayer(doc, DxfFileConstants.MAX_HEIGHT_CAL, pl);
+        if (dimension != null) {
+            pl.getBuilding().setDistanceFromBuildingFootPrintToRoadEnd(dimension);
+        }
+        
 
         return pl;
 
