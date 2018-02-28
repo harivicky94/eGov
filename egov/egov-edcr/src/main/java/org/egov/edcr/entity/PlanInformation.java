@@ -51,9 +51,6 @@ public class PlanInformation extends AbstractAuditable {
     @Transient
     private Boolean openingOnRear;
 
-    @Transient
-    private Boolean openingPresent;
-
     @Override
     public Long getId() {
         return id;
@@ -177,11 +174,4 @@ public class PlanInformation extends AbstractAuditable {
         this.openingOnRear = openingOnRear;
     }
 
-    public Boolean getOpeningPresent() {
-        return openingPresent;
-    }
-
-    public void setOpeningPresent(Boolean openingPresent) {
-        this.openingPresent = openingPresent;
-    }
 }

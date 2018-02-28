@@ -33,8 +33,7 @@ public class Rule24 extends GeneralRule {
     private static final BigDecimal REARYARDMINIMUM_DISTANCE_WITHOUTOPENING = BigDecimal.valueOf(1);
     private static final BigDecimal REARYARDMEAN_DISTANCE_WITHOUTOPENING = BigDecimal.valueOf(1.5);
 
-    private static final BigDecimal REARYARDMINIMUM_DISTANCE_WITHOUTOPENING_CORRESPONDINGFLOOR = BigDecimal.valueOf(1);
-    private static final BigDecimal REARYARDMEAN_DISTANCE_WITHOUTOPENING_CORRESPONDINGFLOOR = BigDecimal.valueOf(1.5);
+    private static final BigDecimal REARYARDMINIMUM_DISTANCE_WITHOUTOPENING_CORRESPONDINGFLOOR = BigDecimal.valueOf(0.75);
 
     private static final BigDecimal REARYARDMINIMUM_DISTANCE_WITHOUTOPENING_NOC = BigDecimal.ZERO;
 
@@ -111,13 +110,13 @@ public class Rule24 extends GeneralRule {
         if (planDetail.getBuilding() != null && planDetail.getBuilding().getBuildingHeight() != null
                 && planDetail.getBuilding().getBuildingHeight().compareTo(new BigDecimal(7)) < 0)
             // OPENING PRESENT
-            if (planDetail.getPlanInformation() != null && planDetail.getPlanInformation().getOpeningPresent()) {
-                rule24_4(planDetail, SIDE1MINIMUM_DISTANCE_LESSTHAN7_WITHOPENING, SIDE2MINIMUM_DISTANCE_LESSTHAN7_WITHOPENING);
+            if (planDetail.getPlanInformation() != null && planDetail.getPlanInformation().getOpeningOnRear()) {
                 rule24_5(planDetail, REARYARDMINIMUM_DISTANCE_WITHOPENING, REARYARDMEAN_DISTANCE_WITHOPENING);
             } else {
+
+                rule24_4(planDetail, SIDE1MINIMUM_DISTANCE_LESSTHAN7_WITHOPENING, SIDE2MINIMUM_DISTANCE_LESSTHAN7_WITHOPENING);
                 rule24_5(planDetail, REARYARDMINIMUM_DISTANCE_WITHOUTOPENING, REARYARDMEAN_DISTANCE_WITHOUTOPENING);
-                rule24_5(planDetail, REARYARDMINIMUM_DISTANCE_WITHOUTOPENING_CORRESPONDINGFLOOR,
-                        REARYARDMEAN_DISTANCE_WITHOUTOPENING_CORRESPONDINGFLOOR);
+                rule24_5_LessThan7_WithoutOpeningCorrespondingFloor(planDetail);
 
                 // WITHOUT OPENING AND NOC PRESENT
                 if (planDetail.getPlanInformation() != null && planDetail.getPlanInformation().getNocToAbutSide()) {
@@ -125,6 +124,7 @@ public class Rule24 extends GeneralRule {
                 }
 
                 rule24_5_LessThan7WithoutOpeningNoc(planDetail, SIDE1MINIMUM_DISTANCE_LESSTHAN7_WITHOUTOPENING);
+
             }
         return planDetail;
     }
@@ -294,4 +294,33 @@ public class Rule24 extends GeneralRule {
             }
         }
     }
+
+    private void rule24_5_LessThan7_WithoutOpeningCorrespondingFloor(PlanDetail planDetail) {
+
+        if (planDetail.getPlot() != null && planDetail.getPlot().getRearYard() != null &&
+                planDetail.getPlot().getRearYard().getPresentInDxf()
+                && planDetail.getPlot().getRearYard().getMinimumDistance() != null
+                && planDetail.getPlot().getRearYard().getMean() != null) {
+
+            if (planDetail.getPlot().getRearYard().getMinimumDistance().compareTo(REARYARDMINIMUM_DISTANCE_WITHOUTOPENING_CORRESPONDINGFLOOR) <= 0) {
+                planDetail.reportOutput
+                        .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_5, SUB_RULE_24_5_DESCRIPTION, DcrConstants.REAR_YARD_DESC,
+                                "Minimum" + "(" + REARYARDMINIMUM_DISTANCE_WITHOUTOPENING_CORRESPONDINGFLOOR.toString(),
+                                "(" + planDetail.getPlot().getRearYard().getMinimumDistance().toString() +
+                                        planDetail.getPlot().getRearYard().getMean().toString() + ")" + DcrConstants.IN_METER,
+                                Result.Accepted, null));
+
+
+            } else {
+                planDetail.reportOutput
+                        .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_5, SUB_RULE_24_5_DESCRIPTION, DcrConstants.REAR_YARD_DESC,
+                                "Minimum" + "(" + REARYARDMINIMUM_DISTANCE_WITHOUTOPENING_CORRESPONDINGFLOOR.toString(),
+                                "(" + planDetail.getPlot().getRearYard().getMinimumDistance().toString() +
+                                        planDetail.getPlot().getRearYard().getMean().toString() + ")" + DcrConstants.IN_METER,
+                                Result.Not_Accepted, null));
+
+            }
+        }
+    }
+
 }
