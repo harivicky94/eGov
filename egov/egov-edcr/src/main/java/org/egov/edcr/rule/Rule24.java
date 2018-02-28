@@ -1,13 +1,13 @@
 package org.egov.edcr.rule;
 
-import java.math.BigDecimal;
-import java.util.HashMap;
-
 import org.egov.edcr.entity.PlanDetail;
 import org.egov.edcr.entity.Result;
 import org.egov.edcr.utility.DcrConstants;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.util.HashMap;
 
 @Service
 public class Rule24 extends GeneralRule {
@@ -87,7 +87,7 @@ public class Rule24 extends GeneralRule {
 
     private String prepareMessage(String code, String args) {
         return edcrMessageSource.getMessage(code,
-                new String[] { args }, LocaleContextHolder.getLocale());
+                new String[]{args}, LocaleContextHolder.getLocale());
     }
 
     @Override
@@ -121,11 +121,10 @@ public class Rule24 extends GeneralRule {
 
                 // WITHOUT OPENING AND NOC PRESENT
                 if (planDetail.getPlanInformation() != null && planDetail.getPlanInformation().getNocPresent()) {
-                    rule24_4(planDetail, SIDE1MINIMUM_DISTANCE_LESSTHAN7_WITHOUTOPENING,
-                            SIDE2MINIMUM_DISTANCE_LESSTHAN7_WITHOUTOPENING);
-                    rule24_5(planDetail, REARYARDMINIMUM_DISTANCE_WITHOUTOPENING_NOC,
-                            REARYARDMINIMUM_DISTANCE_WITHOUTOPENING_NOC);
+                    rule24_4(planDetail, SIDE1MINIMUM_DISTANCE_LESSTHAN7_WITHOUTOPENING, SIDE2MINIMUM_DISTANCE_LESSTHAN7_WITHOUTOPENING);
                 }
+
+                rule24_5_LessThan7WithoutOpeningNoc(planDetail, SIDE1MINIMUM_DISTANCE_LESSTHAN7_WITHOUTOPENING);
             }
         return planDetail;
     }
@@ -269,4 +268,30 @@ public class Rule24 extends GeneralRule {
                                 Result.Not_Accepted, null));
     }
 
+    private void rule24_5_LessThan7WithoutOpeningNoc(PlanDetail planDetail, BigDecimal rearYardMin) {
+
+        if (planDetail.getPlot() != null && planDetail.getPlot().getRearYard() != null &&
+                planDetail.getPlot().getRearYard().getPresentInDxf()
+                && planDetail.getPlot().getRearYard().getMinimumDistance() != null) {
+
+            if (planDetail.getPlot().getRearYard().getMinimumDistance().compareTo(rearYardMin) >= 0
+                    && planDetail.getPlanInformation().getNocPresent()) {
+                planDetail.reportOutput
+                        .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_5, SUB_RULE_24_5_DESCRIPTION, DcrConstants.REAR_YARD_DESC,
+                                "Minimum " + "(" + rearYardMin.toString() + ")"
+                                        + DcrConstants.IN_METER,
+                                "(" + planDetail.getPlot().getRearYard().getMinimumDistance().toString() + "," +
+                                        planDetail.getPlot().getRearYard().getMean().toString() + ")" + DcrConstants.IN_METER,
+                                Result.Accepted, null));
+            } else {
+                planDetail.reportOutput
+                        .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_5, SUB_RULE_24_5_DESCRIPTION, DcrConstants.REAR_YARD_DESC,
+                                "Minimum " + "(" + REARYARDMINIMUM_DISTANCE_WITHOUTOPENING_NOC.toString() + ")"
+                                        + DcrConstants.IN_METER + "NOC is not present ",
+                                "(" + planDetail.getPlot().getRearYard().getMinimumDistance().toString() + "," +
+                                        planDetail.getPlot().getRearYard().getMean().toString() + ")" + DcrConstants.IN_METER,
+                                Result.Not_Accepted, null));
+            }
+        }
+    }
 }
