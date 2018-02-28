@@ -1,13 +1,20 @@
 package org.egov.edcr.rule;
 
+import org.egov.edcr.constants.DxfFileConstants;
 import org.egov.edcr.entity.PlanDetail;
 import org.egov.edcr.entity.Result;
+import org.egov.edcr.service.MinDistance;
 import org.egov.edcr.utility.DcrConstants;
+import org.egov.edcr.utility.math.RayCast;
+import org.kabeja.dxf.DXFLWPolyline;
+import org.kabeja.dxf.DXFVertex;
+import org.kabeja.dxf.helpers.Point;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
+import java.util.Iterator;
 
 @Service
 public class Rule24 extends GeneralRule {
@@ -43,6 +50,8 @@ public class Rule24 extends GeneralRule {
     private static final String SUB_RULE_24_4_DESCRIPTION = "Rear yard distance";
     private static final String SUB_RULE_24_5 = "23(5)";
     private static final String SUB_RULE_24_5_DESCRIPTION = "Side yard distance";
+    private static final String SUB_RULE_24_10 = "23(10)";
+    private static final String SUB_RULE_24_10_DESCRIPTION = "No construction or hangings outside the boundaries of the site";
     private String MEAN_MINIMUM = "(Minimum distance,Mean distance) ";
 
     @Override
@@ -86,7 +95,7 @@ public class Rule24 extends GeneralRule {
 
     private String prepareMessage(String code, String args) {
         return edcrMessageSource.getMessage(code,
-                new String[]{args}, LocaleContextHolder.getLocale());
+                new String[] { args }, LocaleContextHolder.getLocale());
     }
 
     @Override
@@ -120,12 +129,15 @@ public class Rule24 extends GeneralRule {
 
                 // WITHOUT OPENING AND NOC PRESENT
                 if (planDetail.getPlanInformation() != null && planDetail.getPlanInformation().getNocToAbutSide()) {
-                    rule24_4(planDetail, SIDE1MINIMUM_DISTANCE_LESSTHAN7_WITHOUTOPENING, SIDE2MINIMUM_DISTANCE_LESSTHAN7_WITHOUTOPENING);
+                    rule24_4(planDetail, SIDE1MINIMUM_DISTANCE_LESSTHAN7_WITHOUTOPENING,
+                            SIDE2MINIMUM_DISTANCE_LESSTHAN7_WITHOUTOPENING);
                 }
 
                 rule24_5_LessThan7WithoutOpeningNoc(planDetail, SIDE1MINIMUM_DISTANCE_LESSTHAN7_WITHOUTOPENING);
+              
 
             }
+        rule24_10(planDetail);
         return planDetail;
     }
 
@@ -277,7 +289,8 @@ public class Rule24 extends GeneralRule {
             if (planDetail.getPlot().getRearYard().getMinimumDistance().compareTo(rearYardMin) >= 0
                     && planDetail.getPlanInformation().getNocToAbutRear()) {
                 planDetail.reportOutput
-                        .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_5, SUB_RULE_24_5_DESCRIPTION, DcrConstants.REAR_YARD_DESC,
+                        .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_5, SUB_RULE_24_5_DESCRIPTION,
+                                DcrConstants.REAR_YARD_DESC,
                                 "Minimum " + "(" + rearYardMin.toString() + ")"
                                         + DcrConstants.IN_METER,
                                 "(" + planDetail.getPlot().getRearYard().getMinimumDistance().toString() + "," +
@@ -285,7 +298,8 @@ public class Rule24 extends GeneralRule {
                                 Result.Accepted, null));
             } else {
                 planDetail.reportOutput
-                        .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_5, SUB_RULE_24_5_DESCRIPTION, DcrConstants.REAR_YARD_DESC,
+                        .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_5, SUB_RULE_24_5_DESCRIPTION,
+                                DcrConstants.REAR_YARD_DESC,
                                 "Minimum " + "(" + REARYARDMINIMUM_DISTANCE_WITHOUTOPENING_NOC.toString() + ")"
                                         + DcrConstants.IN_METER + "NOC is not present ",
                                 "(" + planDetail.getPlot().getRearYard().getMinimumDistance().toString() + "," +
@@ -302,18 +316,20 @@ public class Rule24 extends GeneralRule {
                 && planDetail.getPlot().getRearYard().getMinimumDistance() != null
                 && planDetail.getPlot().getRearYard().getMean() != null) {
 
-            if (planDetail.getPlot().getRearYard().getMinimumDistance().compareTo(REARYARDMINIMUM_DISTANCE_WITHOUTOPENING_CORRESPONDINGFLOOR) <= 0) {
+            if (planDetail.getPlot().getRearYard().getMinimumDistance()
+                    .compareTo(REARYARDMINIMUM_DISTANCE_WITHOUTOPENING_CORRESPONDINGFLOOR) <= 0) {
                 planDetail.reportOutput
-                        .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_5, SUB_RULE_24_5_DESCRIPTION, DcrConstants.REAR_YARD_DESC,
+                        .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_5, SUB_RULE_24_5_DESCRIPTION,
+                                DcrConstants.REAR_YARD_DESC,
                                 "Minimum" + "(" + REARYARDMINIMUM_DISTANCE_WITHOUTOPENING_CORRESPONDINGFLOOR.toString(),
                                 "(" + planDetail.getPlot().getRearYard().getMinimumDistance().toString() +
                                         planDetail.getPlot().getRearYard().getMean().toString() + ")" + DcrConstants.IN_METER,
                                 Result.Accepted, null));
 
-
             } else {
                 planDetail.reportOutput
-                        .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_5, SUB_RULE_24_5_DESCRIPTION, DcrConstants.REAR_YARD_DESC,
+                        .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_5, SUB_RULE_24_5_DESCRIPTION,
+                                DcrConstants.REAR_YARD_DESC,
                                 "Minimum" + "(" + REARYARDMINIMUM_DISTANCE_WITHOUTOPENING_CORRESPONDINGFLOOR.toString(),
                                 "(" + planDetail.getPlot().getRearYard().getMinimumDistance().toString() +
                                         planDetail.getPlot().getRearYard().getMean().toString() + ")" + DcrConstants.IN_METER,
@@ -321,6 +337,74 @@ public class Rule24 extends GeneralRule {
 
             }
         }
+    }
+
+    private void rule24_10(PlanDetail pl) {
+        if (pl.getBuilding().getPolyLine() == null) {
+            pl.addError("24-10", prepareMessage(DcrConstants.OBJECTNOTDEFINED, DcrConstants.BUILDING_FOOT_PRINT));
+            return;
+        }
+        if (pl.getPlot().getPolyLine() == null) {
+            pl.addError("24-10", prepareMessage(DcrConstants.OBJECTNOTDEFINED, DcrConstants.PLOT_BOUNDARY));
+            return;
+        }
+
+        if (pl.getBuilding().getShade().getPolyLine() == null) {
+            pl.addError("24-10", prepareMessage(DcrConstants.OBJECTNOTDEFINED, DcrConstants.SHADE));
+            return;
+        }
+
+        double[][] pointsOfPlot = MinDistance.pointsOfPolygon(pl.getPlot().getPolyLine());
+        Iterator buildingIterator = pl.getBuilding().getPolyLine().getVertexIterator();
+        Boolean buildingOutSideBoundary = false;
+        while (buildingIterator.hasNext()) {
+            DXFVertex dxfVertex = (DXFVertex) buildingIterator.next();
+            Point point = dxfVertex.getPoint();
+            if (RayCast.contains(pointsOfPlot, new double[] { point.getX(), point.getY() }) == false) {
+                buildingOutSideBoundary = true;
+            }
+
+        }
+        if (buildingOutSideBoundary) {
+            pl.reportOutput
+                    .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_10, SUB_RULE_24_10_DESCRIPTION,
+                            DcrConstants.BUILDING_FOOT_PRINT,
+                            DcrConstants.BUILDING_FOOT_PRINT + " Should be inside Plot Boundary",
+                            DcrConstants.BUILDING_FOOT_PRINT + " is outside Plot Boundary",
+                            Result.Not_Accepted, null));
+
+        }
+
+        buildingIterator = pl.getBuilding().getShade().getPolyLine().getVertexIterator();
+        Boolean shadeOutSideBoundary = false;
+        while (buildingIterator.hasNext()) {
+            DXFVertex dxfVertex = (DXFVertex) buildingIterator.next();
+            Point point = dxfVertex.getPoint();
+            if (RayCast.contains(pointsOfPlot, new double[] { point.getX(), point.getY() }) == false) {
+                shadeOutSideBoundary = true;
+            }
+
+        }
+        if (shadeOutSideBoundary) {
+            pl.reportOutput
+                    .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_10, SUB_RULE_24_10_DESCRIPTION,
+                            DcrConstants.SHADE,
+                            DcrConstants.SHADE + " Should be inside Plot Boundary",
+                            DcrConstants.SHADE + " is outside Plot Boundary",
+                            Result.Not_Accepted, null));
+
+        }
+
+        if (!shadeOutSideBoundary && !buildingOutSideBoundary) {
+
+            pl.reportOutput
+                    .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_10, SUB_RULE_24_10_DESCRIPTION,
+                            DcrConstants.BUILDING_FOOT_PRINT,
+                            DcrConstants.SHADE + "," + DcrConstants.BUILDING_FOOT_PRINT + "  Should be inside Plot Boundary",
+                            DcrConstants.SHADE + "," + DcrConstants.BUILDING_FOOT_PRINT + "  are  inside Plot Boundary",
+                            Result.Accepted, null));
+        }
+
     }
 
 }

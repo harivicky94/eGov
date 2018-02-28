@@ -79,5 +79,9 @@ public class DcrConstants {
     public static final String PLAN_DETAIL = "Plan Detail";
 
     public static final String SHORTESTDISTINACETOBUILDINGFOOTPRINT = "Shortest distance between the building foot print from wider road";
+    public static final String SHADE = "Shades or Overhangs";
+    public static final String PLOT_BOUNDARY = "Plot boundary";
+    
+    
 
 }

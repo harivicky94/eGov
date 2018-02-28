@@ -18,7 +18,9 @@ public class GeneralRule {
     protected MessageSource edcrMessageSource;
 
     public PlanDetail validate(PlanDetail planDetail) {
-        System.out.println("validate Generalrule");
+       
+        
+        
         return planDetail;
     }
 

@@ -67,16 +67,21 @@ public class DcrService {
         // BASIC VALIDATION
 
         // File dxfFile = new File("/home/mani/Desktop/BPA/kozhi/SAMPLE 4.dxf");
-
+      
+        
         generalRule.validate(planDetail);
-
+      
         // dxfFile.getf
         // EXTRACT DATA FROM DXFFILE TO planDetail;
 
         // planDetail= generalRule.validate(planDetail);
         // EXTRACT DATA FROM DXFFILE TO planDetail;
         planDetail = extractService.extract(dxf1File, dcrApplication);
-
+        if(planDetail.getBuilding().getBuildingHeight().intValue()>10)
+        {
+            planDetail.addError("Cannot Process", " This report is not complete . Not all rules are not processed. Only Buildings up to 10 Mtr height will be considered for  processing");
+           // return planDetail;
+        }
         // USING PLANDETAIL OBJECT, FINDOUT RULES.
         // ITERATE EACH RULE.CHECK CONDITIONS.
 

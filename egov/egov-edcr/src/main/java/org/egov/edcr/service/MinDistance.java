@@ -48,9 +48,9 @@ public class MinDistance {
         List<Point> yardOutSidePoints = new ArrayList<>();
         List<Point> yardInSidePoints = new ArrayList<>();
         List<Double> distanceList = new ArrayList<>();
-        int i = 0;
-        int count = plotBoundary.getVertexCount();
-        double[][] shape = pointsOnPolygon(i, plotBoundary, count);
+      //  int i = 0;
+     //   int count = plotBoundary.getVertexCount();
+        double[][] shape = pointsOfPolygon(plotBoundary);
 
         while (vertexIterator.hasNext()) {
             DXFVertex next = (DXFVertex) vertexIterator.next();
@@ -154,7 +154,13 @@ public class MinDistance {
 
     }
 
-    private static double[][] pointsOnPolygon(int i, DXFLWPolyline plotBoundary, int count) {
+    public static double[][] pointsOfPolygon(DXFLWPolyline plotBoundary) {
+       if(plotBoundary==null)
+       {
+           return null;
+       }
+       int i=0;
+       int count=plotBoundary.getVertexCount();
         double[][] shape = new double[count + 1][2];
         Iterator plotBIterator1 = plotBoundary.getVertexIterator();
         while (plotBIterator1.hasNext()) {
