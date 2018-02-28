@@ -37,7 +37,9 @@ public class Floor extends Measurement {
 
     @Override
     public String toString() {
+
         return "Floor [habitableRooms Count" + habitableRooms.size() + "\n exterior=" + exterior + "\n openSpaces Count=" + openSpaces.size() + "]";
+
     }
 
 }

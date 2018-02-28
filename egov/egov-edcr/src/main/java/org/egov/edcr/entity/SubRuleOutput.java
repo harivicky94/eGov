@@ -35,4 +35,52 @@ public class SubRuleOutput {
         this.ruleReportOutputs = ruleReportOutputs;
     }
 
+
+	public String getKey() {
+		return key;
+	}
+
+
+
+	public void setKey(String key) {
+		this.key = key;
+	}
+
+
+
+	public String getMessage() {
+		return message;
+	}
+
+
+
+	public void setMessage(String message) {
+		this.message = message;
+	}
+
+
+
+	public Result getResult() {
+		return result;
+	}
+
+
+
+	public void setResult(Result result) {
+		this.result = result;
+	}
+
+
+
+	public String getRuleDescription() {
+		return ruleDescription;
+	}
+
+
+
+	public void setRuleDescription(String ruleDescription) {
+		this.ruleDescription = ruleDescription;
+	}
+    
+
 }

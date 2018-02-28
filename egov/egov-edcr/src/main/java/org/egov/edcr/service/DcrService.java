@@ -1,31 +1,46 @@
 package org.egov.edcr.service;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
+
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.edcr.entity.EdcrApplication;
 import org.egov.edcr.entity.PlanDetail;
 import org.egov.edcr.entity.PlanRule;
-import org.egov.edcr.entity.Result;
-import org.egov.edcr.entity.RuleOutput;
-import org.egov.edcr.entity.SubRuleOutput;
-import org.egov.edcr.entity.utility.RuleReportOutput;
 import org.egov.edcr.rule.GeneralRule;
 import org.egov.edcr.utility.DcrConstants;
 import org.egov.edcr.utility.Util;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.reporting.engine.ReportOutput;
-import org.egov.infra.reporting.engine.ReportRequest;
-import org.egov.infra.reporting.engine.ReportService;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
+
+import ar.com.fdvs.dj.core.DynamicJasperHelper;
+import ar.com.fdvs.dj.core.layout.ClassicLayoutManager;
+import ar.com.fdvs.dj.domain.DynamicReport;
+import ar.com.fdvs.dj.domain.Style;
+import ar.com.fdvs.dj.domain.builders.FastReportBuilder;
+import ar.com.fdvs.dj.domain.constants.Border;
+import ar.com.fdvs.dj.domain.constants.Font;
+import ar.com.fdvs.dj.domain.constants.HorizontalAlign;
+import ar.com.fdvs.dj.domain.constants.Page;
+import net.sf.jasperreports.engine.JRDataSource;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.engine.export.oasis.StyleBuilder;
 
 /*General rule class contains validations which are required for all types of building plans*/
 @Service
@@ -141,146 +156,120 @@ public class DcrService {
     }
 
     public ReportOutput generateDCRReport(PlanDetail planDetail, EdcrApplication dcrApplication) {
-
-        Map<String, Object> params = new HashMap<>();
-        org.egov.edcr.entity.ReportOutput planReportOutput = planDetail.getReportOutput();
-        StringBuffer resultOutput = new StringBuffer();
-        StringBuffer errorOutput = new StringBuffer();
-        boolean reportStatus = true;
-        if (dcrApplication != null) {
-            if (dcrApplication.getApplicationNumber() != null)
-                params.put("applicationNumber", dcrApplication.getApplicationNumber());
-            if (dcrApplication.getApplicationDate() != null)
-                params.put("applicationDate", dcrApplication.getApplicationDate().toString());
-            if (dcrApplication.getPlanInformation() != null && dcrApplication.getPlanInformation().getOccupancy() != null)
-                params.put("occupancy", dcrApplication.getPlanInformation().getOccupancy());
-            if (dcrApplication.getPlanInformation() != null
-                    && dcrApplication.getPlanInformation().getArchitectInformation() != null)
-                params.put("architect", dcrApplication.getPlanInformation().getArchitectInformation());
-
-        }
-
-        if (planDetail.getErrors() != null && planDetail.getErrors().size()>0) {
-
-            for (Map.Entry<String, String> entry : planDetail.getErrors().entrySet()) {
-                errorOutput.append(entry.getValue());
-                errorOutput.append("\n");
-
-            }
-            params.put("errorOutput", errorOutput.toString());
-            reportStatus = false;
-        }
-
-        resultOutput.append("Rules Verified : \n\n");
-
-        for (RuleOutput ruleOutput : planReportOutput.getRuleOutPuts()) {
-            resultOutput.append("\n");
-            resultOutput.append(ruleOutput.key);
-
-            if (ruleOutput.getSubRuleOutputs() != null && ruleOutput.getSubRuleOutputs().size() > 0) {
-                for (SubRuleOutput subRuleOutputs : ruleOutput.getSubRuleOutputs())
-                    if (subRuleOutputs.ruleReportOutputs != null && subRuleOutputs.ruleReportOutputs.size() > 0) {
-                        resultOutput.append("\n\b");
-                        resultOutput.append(subRuleOutputs.key);
-                        if (subRuleOutputs.ruleDescription != null) {
-                            resultOutput.append(" :: ");
-                            resultOutput.append("\b");
-                            resultOutput.append(subRuleOutputs.ruleDescription);
-                        }
-                        resultOutput.append("\b\n");
-
-                        for (RuleReportOutput ruleReportOutput : subRuleOutputs.ruleReportOutputs) {
-                            resultOutput.append("\b \n");
-                            resultOutput.append(ruleReportOutput.fieldVerified);
-                            if (ruleReportOutput.expectedResult != null) {
-                                resultOutput.append("\nExpected : ");
-                                resultOutput.append("\b");
-                                resultOutput.append(ruleReportOutput.expectedResult);
-                            }
-                            if (ruleReportOutput.actualResult != null) {
-                                resultOutput.append("\nActual Result : ");
-                                resultOutput.append("\b");
-                                resultOutput.append(ruleReportOutput.actualResult);
-                            }
-                            if (ruleReportOutput.status != null) {
-                                resultOutput.append("\nResult : ");
-                                resultOutput.append("\b");
-                                resultOutput.append(ruleReportOutput.status);
-                                if (ruleReportOutput.status.equals("NotAccepted"))
-                                    reportStatus = false;
-
-                            }
-                            resultOutput.append("\b\n");
-                        }
-                    } else {
-                        resultOutput.append("\n\b");
-                        resultOutput.append(subRuleOutputs.key);
-                        if (subRuleOutputs.ruleDescription != null) {
-                            resultOutput.append(" :: ");
-                            resultOutput.append("\b");
-                            resultOutput.append(subRuleOutputs.ruleDescription);
-                        }
-                        resultOutput.append("\b\n");
-
-                        if (subRuleOutputs.message != null) {
-                            resultOutput.append("\tMessage: ");
-                            resultOutput.append("\b");
-                            resultOutput.append(subRuleOutputs.message);
-                        }
-                        if (subRuleOutputs.result != null) {
-                            resultOutput.append("\n");
-                            resultOutput.append("\tResult : ");
-                            resultOutput.append("\b");
-                            resultOutput.append(subRuleOutputs.result);
-                            resultOutput.append("\n");
-                            if (subRuleOutputs.result.equals("NotAccepted"))
-                                reportStatus = false;
-
-                        }
-                    }
-            } else {
-                resultOutput.append("\n\b");
-                if (ruleOutput.ruleDescription != null && !ruleOutput.ruleDescription.equals(""))
-                    resultOutput.append(ruleOutput.ruleDescription);
-
-                if (ruleOutput.message != null) {
-                    resultOutput.append("\b\n");
-                    resultOutput.append("\tMessage: ");
-                    resultOutput.append("\b");
-                    resultOutput.append(ruleOutput.message);
-                }
-                if (ruleOutput.result != null) {
-                    resultOutput.append("\n");
-                    resultOutput.append("\tResult : ");
-                    resultOutput.append("\b");
-                    resultOutput.append(ruleOutput.result);
-                    resultOutput.append("\n");
-                }
-
-            }
-        }
-
-        params.put("resultOutput", resultOutput.toString());
-        final ReportRequest reportInput = new ReportRequest("edcr_report", planDetail,
-                params);
-
-        if (reportStatus)
-            params.put("reportStatus", Result.Accepted.toString());
-        else
-            params.put("reportStatus", Result.Not_Accepted.toString());
-
-        final ReportOutput reportOutput = reportService.createReport(reportInput);
-        FileStoreMapper fileStoreId = fileStoreService.store(new ByteArrayInputStream(reportOutput.getReportOutputData()), "EDCR",
-                "application/pdf", DcrConstants.FILESTORE_MODULECODE);
-
-        if (fileStoreId != null)
+    	
+    	final ReportOutput reportOutput= null;
+        JasperPrint jasper;
+        InputStream reportStream = null;
+		try {
+			jasper = prepareReportData(planDetail, dcrApplication);
+			reportStream = reportService.exportPdf(jasper);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} 
+        
+        FileStoreMapper fileStoreId = fileStoreService.store(reportStream, "EDCR", "application/pdf",DcrConstants.FILESTORE_MODULECODE);
+        
+        if(fileStoreId!=null)
             dcrApplication.getSavedDcrDocument().setReportOutputId(fileStoreId);
-
+        
         return reportOutput;
 
     }
 
-    public byte[] generatePlanScrutinyReport(PlanDetail planDetail) {
+    private JasperPrint prepareReportData(PlanDetail planDetail2, EdcrApplication dcrApplication) throws JRException {
+    	FastReportBuilder drb = new FastReportBuilder();
+    	SimpleDateFormat FORMATDDMMYYYY = new SimpleDateFormat("dd/MM/yyyy");
+    	//final Style columnStyle = getConcurrenceColumnStyle();
+    	StringBuilder reportBuilder = new StringBuilder();
+   
+        drb = drb;
+        final Style titleStyle = new Style("titleStyle");
+        titleStyle.setFont(new Font(50, Font._FONT_TIMES_NEW_ROMAN, true));
+        titleStyle.setHorizontalAlign(HorizontalAlign.CENTER); 
+        
+        
+        final Style subTitleStyle = new Style("subtitleStyle");
+        titleStyle.setFont(new Font(2, Font._FONT_TIMES_NEW_ROMAN, false));
+        String applicationNumber = StringUtils.isNotBlank(dcrApplication.getApplicationNumber()) ? dcrApplication.getApplicationNumber() : "NA" ;
+        BigDecimal plotArea = planDetail2.getPlanInformation().getPlotArea() != null ? planDetail2.getPlanInformation().getPlotArea() : BigDecimal.ZERO;
+        String applicationDate = FORMATDDMMYYYY.format(dcrApplication.getApplicationDate());
+        String occupancy = dcrApplication.getPlanInformation().getOccupancy() != null ? dcrApplication.getPlanInformation().getOccupancy() : "NA";
+        String architectName = StringUtils.isNotBlank(dcrApplication.getPlanInformation().getArchitectInformation()) ? dcrApplication.getPlanInformation().getArchitectInformation() : "NA";
+        reportBuilder.append("\\n").append("Application Details").append("\\n").append("\\n")
+           .append("Application Number :   ").append(applicationNumber).append("                                                ")
+           .append("Plot Area          :   ").append(plotArea).append("\\n").append("\\n")
+           .append("Application Date   :   ").append(applicationDate).append("                                                ")
+           .append("Occupancy          :   ").append(occupancy).append("\\n").append("\\n")
+           .append("Architect name     :   ").append(architectName);
+        
+
+        if (planDetail.getErrors() != null && planDetail.getErrors().size()>0) {
+        	int i =1;
+        	reportBuilder.append("\\n").append("\\n").append("Errors").append("\\n");
+            for (Map.Entry<String, String> entry : planDetail.getErrors().entrySet()) {
+            	reportBuilder.append(String.valueOf(i)).append(". ");
+            	reportBuilder.append(entry.getValue());
+            	reportBuilder.append("\\n");
+                i++;
+            }
+        }
+
+        drb.setTitle("EDCR Report")
+        .setSubtitle(reportBuilder.toString())
+        .setPrintBackgroundOnOddRows(false)
+        .setSubtitleStyle(subTitleStyle)
+        .setTitleHeight(30).setSubtitleHeight(10).setUseFullPageWidth(true);
+       
+        
+        
+        List<Map<String, String>> errors = new ArrayList<Map<String, String>>();
+        errors.add(planDetail.getErrors());
+        
+           
+        drb.setPageSizeAndOrientation(new Page(842, 595, true));
+        
+        final JRDataSource ds = new JRBeanCollectionDataSource(planDetail.getReportOutput().getRuleOutPuts());
+        final JRDataSource ds1 = new JRBeanCollectionDataSource(planDetail.getReportOutput().getRuleOutPuts());
+        
+        
+        final Map valuesMap = new HashMap();
+        valuesMap.put("ruleOutput", ds1);
+        
+        List<PlanRule> planRules = planRuleService.findRulesByPlanDetail(planDetail);
+
+        for (PlanRule pl : planRules) {
+            String rules = pl.getRules();
+            String[] ruleSet = rules.split(",");
+            for (String s : ruleSet) {
+                String ruleName = "rule" + s;
+                LOG.info(s);
+                Object ruleBean = getRuleBean(ruleName);
+                if(ruleBean!=null)
+                {
+                GeneralRule bean = (GeneralRule) ruleBean;
+                if(bean!=null)
+                {
+                    bean.generateRuleReport(planDetail, drb, valuesMap);
+                }
+                }else
+                {
+                    LOG.error("Skipping rule "+ruleName+ "Since rule cannot be injected");
+                }
+              
+
+            }
+        }
+        
+        drb.setMargins(20, 20, 20, 20);
+       
+        final DynamicReport dr = drb.build();
+       
+        return DynamicJasperHelper.generateJasperPrint(dr, new ClassicLayoutManager(), ds, valuesMap);
+        
+	}
+
+	public byte[] generatePlanScrutinyReport(PlanDetail planDetail) {
         // TODO Auto-generated method stub
         return null;
     }

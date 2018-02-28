@@ -1,5 +1,7 @@
 package org.egov.edcr.rule;
 
+import java.util.Map;
+
 import org.egov.edcr.entity.PlanDetail;
 import org.egov.edcr.entity.Result;
 import org.egov.edcr.entity.RuleOutput;
@@ -9,6 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
+
+import ar.com.fdvs.dj.domain.builders.FastReportBuilder;
 
 @Service
 public class GeneralRule {
@@ -27,6 +31,10 @@ public class GeneralRule {
     public PlanDetail process(PlanDetail planDetail) {
         return planDetail;
 
+    }
+    
+    public void generateRuleReport(PlanDetail planDetail, FastReportBuilder drb, Map map) {
+        
     }
 
     protected RuleOutput buildRuleOutputWithSubRule(String mainRule, String subRule, String ruleDescription, String fieldVerified,
