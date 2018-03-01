@@ -159,7 +159,7 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
             return CITIZEN_VIEW;
     }
 
-    @RequestMapping(value = "/citizen/update/{applicationNumber}", method = RequestMethod.POST)
+    @RequestMapping(value = "/citizen/update-submit/{applicationNumber}", method = RequestMethod.POST)
     public String updateApplication(@Valid @ModelAttribute("") BpaApplication bpaApplication,
             @PathVariable final String applicationNumber, final BindingResult resultBinder,
             final HttpServletRequest request, final Model model,
