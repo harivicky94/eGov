@@ -135,8 +135,8 @@ public class Rule24 extends GeneralRule {
         if (planDetail.getBuilding() != null && planDetail.getBuilding().getBuildingHeight() != null
                 && planDetail.getBuilding().getBuildingHeight().compareTo(new BigDecimal(7)) > 0
                 && planDetail.getBuilding().getBuildingHeight().compareTo(new BigDecimal(10)) <= 0) {
-            rule24_4(planDetail, SIDE1MINIMUM_DISTANCE, SIDE2MINIMUM_DISTANCE);
-            rule24_5(planDetail, REARYARDMINIMUM_DISTANCE, REARYARDMEAN_DISTANCE);
+            rule24_5(planDetail, SIDE1MINIMUM_DISTANCE, SIDE2MINIMUM_DISTANCE);
+            rule24_4(planDetail, REARYARDMINIMUM_DISTANCE, REARYARDMEAN_DISTANCE);
         }
 
         // Building Height less than 7
@@ -144,11 +144,11 @@ public class Rule24 extends GeneralRule {
                 && planDetail.getBuilding().getBuildingHeight().compareTo(new BigDecimal(7)) < 0)
             // OPENING PRESENT
             if (planDetail.getPlanInformation() != null && planDetail.getPlanInformation().getOpeningOnRear()) {
-                rule24_5(planDetail, REARYARDMINIMUM_DISTANCE_WITHOPENING, REARYARDMEAN_DISTANCE_WITHOPENING);
+                rule24_4(planDetail, REARYARDMINIMUM_DISTANCE_WITHOPENING, REARYARDMEAN_DISTANCE_WITHOPENING);
             } else {
 
-                rule24_4(planDetail, SIDE1MINIMUM_DISTANCE_LESSTHAN7_WITHOPENING, SIDE2MINIMUM_DISTANCE_LESSTHAN7_WITHOPENING);
-                rule24_5(planDetail, REARYARDMINIMUM_DISTANCE_WITHOUTOPENING, REARYARDMEAN_DISTANCE_WITHOUTOPENING);
+                rule24_5(planDetail, SIDE1MINIMUM_DISTANCE_LESSTHAN7_WITHOPENING, SIDE2MINIMUM_DISTANCE_LESSTHAN7_WITHOPENING);
+                rule24_4(planDetail, REARYARDMINIMUM_DISTANCE_WITHOUTOPENING, REARYARDMEAN_DISTANCE_WITHOUTOPENING);
                 rule24_4_LessThan7_WithoutOpeningCorrespondingFloor(planDetail);
 
                 // WITHOUT OPENING AND NOC PRESENT
