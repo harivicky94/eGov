@@ -39,44 +39,86 @@
  */
 package org.egov.bpa.transaction.service;
 
-import org.apache.commons.lang3.*;
-import org.egov.bpa.autonumber.*;
-import org.egov.bpa.master.entity.*;
-import org.egov.bpa.master.service.*;
-import org.egov.bpa.transaction.entity.*;
-import org.egov.bpa.transaction.repository.*;
-import org.egov.bpa.transaction.service.collection.*;
-import org.egov.bpa.utils.*;
-import org.egov.commons.entity.*;
-import org.egov.demand.model.*;
-import org.egov.infra.admin.master.entity.*;
-import org.egov.infra.admin.master.service.*;
-import org.egov.infra.config.core.*;
-import org.egov.infra.exception.*;
-import org.egov.infra.filestore.entity.*;
-import org.egov.infra.filestore.service.*;
-import org.egov.infra.persistence.entity.enums.*;
-import org.egov.infra.security.utils.*;
-import org.egov.infra.utils.*;
-import org.egov.infra.utils.autonumber.*;
-import org.egov.infra.workflow.matrix.entity.*;
-import org.hibernate.*;
-import org.hibernate.criterion.*;
-import org.springframework.beans.factory.annotation.*;
-import org.springframework.context.*;
-import org.springframework.security.crypto.password.*;
-import org.springframework.stereotype.*;
-import org.springframework.transaction.annotation.*;
-import org.springframework.ui.*;
-import org.springframework.web.multipart.*;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_APPROVED;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CREATED;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_DIGI_SIGNED;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_FIELD_INS;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_NOCUPDATED;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_REJECTED;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_TS_INS_INITIATED;
+import static org.egov.bpa.utils.BpaConstants.BPAFEETYPE;
+import static org.egov.bpa.utils.BpaConstants.BPASTATUS_MODULETYPE;
+import static org.egov.bpa.utils.BpaConstants.FILESTORE_MODULECODE;
+import static org.egov.bpa.utils.BpaConstants.FWDINGTOLPINITIATORPENDING;
+import static org.egov.bpa.utils.BpaConstants.ROLE_CITIZEN;
+import static org.egov.bpa.utils.BpaConstants.WF_APPROVE_BUTTON;
+import static org.egov.bpa.utils.BpaConstants.WF_INITIATE_REJECTION_BUTTON;
+import static org.egov.bpa.utils.BpaConstants.WF_LBE_SUBMIT_BUTTON;
+import static org.egov.bpa.utils.BpaConstants.WF_NEW_STATE;
+import static org.egov.bpa.utils.BpaConstants.WF_REJECT_BUTTON;
+import static org.egov.bpa.utils.BpaConstants.WF_REVERT_BUTTON;
+import static org.egov.bpa.utils.BpaConstants.WF_SAVE_BUTTON;
 
-import javax.persistence.*;
-import java.io.*;
-import java.math.*;
-import java.util.*;
-import java.util.stream.*;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
-import static org.egov.bpa.utils.BpaConstants.*;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import org.apache.commons.lang3.ArrayUtils;
+import org.egov.bpa.autonumber.PlanPermissionNumberGenerator;
+import org.egov.bpa.master.entity.BpaFeeDetail;
+import org.egov.bpa.master.entity.ServiceType;
+import org.egov.bpa.master.service.BpaSchemeLandUsageService;
+import org.egov.bpa.master.service.CheckListDetailService;
+import org.egov.bpa.master.service.PostalAddressService;
+import org.egov.bpa.master.service.RegistrarOfficeVillageService;
+import org.egov.bpa.transaction.entity.ApplicationDocument;
+import org.egov.bpa.transaction.entity.ApplicationNocDocument;
+import org.egov.bpa.transaction.entity.BpaApplication;
+import org.egov.bpa.transaction.entity.BpaStatus;
+import org.egov.bpa.transaction.entity.SlotDetail;
+import org.egov.bpa.transaction.repository.ApplicationBpaRepository;
+import org.egov.bpa.transaction.service.collection.ApplicationBpaBillService;
+import org.egov.bpa.transaction.service.collection.BpaDemandService;
+import org.egov.bpa.transaction.service.collection.GenericBillGeneratorService;
+import org.egov.bpa.utils.BpaConstants;
+import org.egov.bpa.utils.BpaUtils;
+import org.egov.commons.entity.Source;
+import org.egov.demand.model.EgDemand;
+import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.RoleService;
+import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.config.core.EnvironmentSettings;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.infra.persistence.entity.enums.UserType;
+import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.utils.ApplicationNumberGenerator;
+import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
+import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
+import org.hibernate.Criteria;
+import org.hibernate.Session;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.MessageSource;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.ui.Model;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @Transactional(readOnly = true)
@@ -524,16 +566,19 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
 
 	public List<BpaApplication> getBpaApplicationsByCriteria(List<BpaStatus> bpaStatusList, List<Boundary> boundaryList,
 			Integer totalAvailableSlots) {
-		final Criteria criteria = entityManager.unwrap(Session.class)
-				.createCriteria(BpaApplication.class, "application")
-				.createAlias("application.siteDetail", "siteDetail");
-		criteria.add(Restrictions.in("application.status", bpaStatusList));
-		criteria.add(Restrictions.in("siteDetail.adminBoundary", boundaryList));
-		criteria.addOrder(Order.desc("application.status"));
-		criteria.addOrder(Order.asc("application.applicationDate"));
-		criteria.addOrder(Order.asc("application.createdDate"));
-		criteria.setMaxResults(totalAvailableSlots);
-		return criteria.list();
+        final Criteria criteria = entityManager.unwrap(Session.class)
+                .createCriteria(BpaApplication.class, "application")
+                .createAlias("application.siteDetail", "siteDetail")
+                .createAlias("application.demand", "demand");
+        criteria.add(Restrictions.in("application.status", bpaStatusList));
+        criteria.add(Restrictions.in("siteDetail.adminBoundary", boundaryList));
+        criteria.add(Restrictions.eq("application.isOneDayPermitApplication", false));
+        criteria.add(Restrictions.leProperty("demand.baseDemand", "demand.amtCollected"));
+        criteria.addOrder(Order.desc("application.status"));
+        criteria.addOrder(Order.asc("application.applicationDate"));
+        criteria.addOrder(Order.asc("application.createdDate"));
+        criteria.setMaxResults(totalAvailableSlots);
+        return criteria.list();
 
 	}
 
