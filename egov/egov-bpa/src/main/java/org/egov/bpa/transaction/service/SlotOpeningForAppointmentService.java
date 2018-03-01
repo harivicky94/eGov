@@ -226,7 +226,17 @@ public class SlotOpeningForAppointmentService {
 								}
 							}
 						}
-					} // Create New Slot
+						// If current week slots are full. Pick next week.
+						if(slotDetailToBeUsed == null) {
+							flag = true;
+							weekOfyear = weekOfyear + 1;
+							weekStartDate = new DateTime().withWeekOfWeekyear(weekOfyear);
+							// Fetch Specific Days for given week
+							weekDateTime = weekStartDate.withDayOfWeek(Integer.parseInt(slotMapping.get(0).getDay().toString()));
+							continue;
+						}
+					}
+					// Create New Slot
 					if (slotDetailToBeUsed == null) {
 						if (slotMapping.get(0).getMaxSlotsAllowed() != null && slotMapping.get(0).getMaxSlotsAllowed() > 0) {
 							if (slotMapping.get(0).getMaxSlotsAllowed() % 2 == 0) {
