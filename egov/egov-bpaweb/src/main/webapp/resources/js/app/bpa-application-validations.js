@@ -560,7 +560,6 @@ $(document).ready(function() {
 		$("#extentinsqmts").val(convertExtendOfLandToSqmts(extentOfLand, $("#unitOfMeasurement").val()));
 		$("#extentinsqmtshdn").val(convertExtendOfLandToSqmts(extentOfLand, $("#unitOfMeasurement").val()));
 	});
-    $('.for-calculation').trigger('change');
 	
 	// multi-select without pressing ctrl key
 	$("select.tick-indicator").mousedown(function(e){
