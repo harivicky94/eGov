@@ -40,6 +40,10 @@ public class DxfFileConstants {
     public static final String NOC_TO_ABUT_SIDE="NOC_TO_ABUT_SIDE";
     public static final String NOC_TO_ABUT_REAR="NOC_TO_ABUT_REAR";
     public static final String MAX_HEIGHT_CAL="MAX_HEIGHT_CAL";
-    
+    public static final String BSMNT_REAR_YARD = "BSMNT_REAR_YARD";
+    public static final String BSMNT_FOOT_PRINT = "BSMNT_FOOT_PRINT";
+    public static final String BSMNT_SIDE_YARD_1 = "BSMNT_SIDE_YARD_1";
+    public static final String BSMNT_SIDE_YARD_2 = "BSMNT_SIDE_YARD_2";
+    public static final String BSMNT_FRONT_YARD = "BSMNT_FRONT_YARD";
 
 }

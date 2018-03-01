@@ -1,36 +1,12 @@
 package org.egov.edcr.service;
 
-import java.io.File;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.apache.log4j.Logger;
 import org.egov.edcr.constants.DxfFileConstants;
-import org.egov.edcr.entity.Building;
-import org.egov.edcr.entity.EdcrApplication;
-import org.egov.edcr.entity.ElectricLine;
-import org.egov.edcr.entity.Floor;
-import org.egov.edcr.entity.PlanDetail;
-import org.egov.edcr.entity.PlanInformation;
-import org.egov.edcr.entity.Plot;
-import org.egov.edcr.entity.Room;
-import org.egov.edcr.entity.measurement.Measurement;
-import org.egov.edcr.entity.measurement.NonNotifiedRoad;
-import org.egov.edcr.entity.measurement.NotifiedRoad;
-import org.egov.edcr.entity.measurement.WasteDisposal;
-import org.egov.edcr.entity.measurement.Yard;
+import org.egov.edcr.entity.*;
+import org.egov.edcr.entity.measurement.*;
 import org.egov.edcr.utility.DcrConstants;
 import org.egov.edcr.utility.Util;
-import org.kabeja.dxf.DXFConstants;
-import org.kabeja.dxf.DXFDimension;
-import org.kabeja.dxf.DXFDocument;
-import org.kabeja.dxf.DXFLWPolyline;
-import org.kabeja.dxf.DXFLayer;
-import org.kabeja.dxf.DXFLine;
+import org.kabeja.dxf.*;
 import org.kabeja.parser.DXFParser;
 import org.kabeja.parser.ParseException;
 import org.kabeja.parser.Parser;
@@ -39,6 +15,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
+
+import java.io.File;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Service
 public class DXFExtractService {
@@ -64,6 +48,7 @@ public class DXFExtractService {
             extractPlotDetails(pl, doc);
             extractBuildingDetails(pl, doc);
             extractTotalFloorArea(doc, pl);
+            extractBasementDetails(pl, doc);
 
             pl.getPlot().setFrontYard(getYard(pl, doc, DxfFileConstants.FRONT_YARD));
             pl.getPlot().setRearYard(getYard(pl, doc, DxfFileConstants.REAR_YARD));
@@ -74,6 +59,16 @@ public class DXFExtractService {
             pl.getPlot().getSideYard1().setMinimumDistance(MinDistance.getYardMinDistance(pl, DxfFileConstants.SIDE_YARD_1));
             pl.getPlot().getSideYard2().setMinimumDistance(MinDistance.getYardMinDistance(pl, DxfFileConstants.SIDE_YARD_2));
             pl.getPlot().getRearYard().setMinimumDistance(MinDistance.getYardMinDistance(pl, DxfFileConstants.REAR_YARD));
+
+            pl.getPlot().setBsmtFrontYard(getYard(pl, doc, DxfFileConstants.BSMNT_FRONT_YARD));
+            pl.getPlot().setBsmtRearYard(getYard(pl, doc, DxfFileConstants.BSMNT_REAR_YARD));
+            pl.getPlot().setBsmtSideYard1(getYard(pl, doc, DxfFileConstants.BSMNT_SIDE_YARD_1));
+            pl.getPlot().setBsmtSideYard2(getYard(pl, doc, DxfFileConstants.BSMNT_SIDE_YARD_2));
+
+            pl.getPlot().getBsmtFrontYard().setMinimumDistance(MinDistance.getYardMinDistance(pl, DxfFileConstants.BSMNT_FRONT_YARD));
+            pl.getPlot().getBsmtSideYard1().setMinimumDistance(MinDistance.getYardMinDistance(pl, DxfFileConstants.BSMNT_SIDE_YARD_1));
+            pl.getPlot().getBsmtSideYard2().setMinimumDistance(MinDistance.getYardMinDistance(pl, DxfFileConstants.BSMNT_SIDE_YARD_2));
+            pl.getPlot().getBsmtRearYard().setMinimumDistance(MinDistance.getYardMinDistance(pl, DxfFileConstants.BSMNT_REAR_YARD));
 
             pl = extractRoadDetails(doc, pl);
             pl.setNotifiedRoads(new ArrayList<>());
@@ -177,7 +172,7 @@ public class DXFExtractService {
             building.setPresentInDxf(true);
         } else
             pl.addError(DxfFileConstants.BUILDING_FOOT_PRINT, edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
-                    new String[] { DxfFileConstants.BUILDING_FOOT_PRINT }, null));
+                    new String[]{DxfFileConstants.BUILDING_FOOT_PRINT}, null));
 
         polyLinesByLayer = Util.getPolyLinesByLayer(doc, DxfFileConstants.SHADE_OVERHANG);
 
@@ -200,6 +195,22 @@ public class DXFExtractService {
 
     }
 
+    private void extractBasementDetails(PlanDetail pl, DXFDocument doc) {
+        List<DXFLWPolyline> polyLinesByLayer;
+        Basement basement = new Basement();
+        polyLinesByLayer = Util.getPolyLinesByLayer(doc, DxfFileConstants.BSMNT_FOOT_PRINT);
+
+        if (polyLinesByLayer.size() > 0) {
+            basement.setPolyLine(polyLinesByLayer.get(0));
+            basement.setPresentInDxf(true);
+        } else
+            pl.addError(DxfFileConstants.BSMNT_FOOT_PRINT, edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
+                    new String[]{DxfFileConstants.BSMNT_FOOT_PRINT}, null));
+
+        pl.setBasement(basement);
+
+    }
+
     private void extractPlotDetails(PlanDetail pl, DXFDocument doc) {
         List<DXFLWPolyline> polyLinesByLayer;
         Plot plot = new Plot();
@@ -210,7 +221,7 @@ public class DXFExtractService {
             plot.setPresentInDxf(true);
         } else
             pl.addError(DxfFileConstants.PLOT_BOUNDARY, edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
-                    new String[] { DxfFileConstants.PLOT_BOUNDARY }, null));
+                    new String[]{DxfFileConstants.PLOT_BOUNDARY}, null));
         pl.setPlot(plot);
     }
 
@@ -222,7 +233,6 @@ public class DXFExtractService {
     }
 
     /**
-     *
      * @param doc
      * @param pl
      * @return 1) Floor area = (sum of areas of all polygon in Building_exterior_wall layer) - (sum of all polygons in FAR_deduct
@@ -292,14 +302,13 @@ public class DXFExtractService {
             yard.setPresentInDxf(true);
 
         } else
-            pl.addError("", edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED, new String[] { yardName }, null));
+            pl.addError("", edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED, new String[]{yardName}, null));
 
         return yard;
 
     }
 
     /**
-     *
      * @param doc
      * @return add condition for what are mandatory
      */
@@ -349,43 +358,43 @@ public class DXFExtractService {
                 pi.setCrzZoneArea(false);
         }
 
-        if (planInfoProperties.get(DxfFileConstants.SECURITY_ZONE) != null){
+        if (planInfoProperties.get(DxfFileConstants.SECURITY_ZONE) != null) {
             String securityZone = planInfoProperties.get(DxfFileConstants.SECURITY_ZONE);
             if (securityZone.equalsIgnoreCase(DcrConstants.YES))
                 pi.setSecurityZone(true);
             else
                 pi.setSecurityZone(false);
         }
-        if (planInfoProperties.get(DxfFileConstants.OPENING_BELOW_2_1_ON_SIDE_LESS_1M) != null){
+        if (planInfoProperties.get(DxfFileConstants.OPENING_BELOW_2_1_ON_SIDE_LESS_1M) != null) {
             String openingBelow2mside = planInfoProperties.get(DxfFileConstants.OPENING_BELOW_2_1_ON_SIDE_LESS_1M);
             if (openingBelow2mside.equalsIgnoreCase(DcrConstants.YES))
                 pi.setOpeningOnSide(true);
             else
                 pi.setOpeningOnSide(false);
         }
-        if (planInfoProperties.get(DxfFileConstants.OPENING_BELOW_2_1_ON_REAR_LESS_1M) != null){
+        if (planInfoProperties.get(DxfFileConstants.OPENING_BELOW_2_1_ON_REAR_LESS_1M) != null) {
             String openingBelow2mrear = planInfoProperties.get(DxfFileConstants.OPENING_BELOW_2_1_ON_REAR_LESS_1M);
             if (openingBelow2mrear.equalsIgnoreCase(DcrConstants.YES))
                 pi.setOpeningOnRear(true);
             else
                 pi.setOpeningOnRear(false);
         }
-        if (planInfoProperties.get(DxfFileConstants.NOC_TO_ABUT_SIDE) != null){
+        if (planInfoProperties.get(DxfFileConstants.NOC_TO_ABUT_SIDE) != null) {
             String nocAbutSide = planInfoProperties.get(DxfFileConstants.NOC_TO_ABUT_SIDE);
             if (nocAbutSide.equalsIgnoreCase(DcrConstants.YES))
                 pi.setNocToAbutSide(true);
             else
                 pi.setNocToAbutSide(false);
         }
-        if (planInfoProperties.get(DxfFileConstants.NOC_TO_ABUT_REAR) != null){
+        if (planInfoProperties.get(DxfFileConstants.NOC_TO_ABUT_REAR) != null) {
             String nocAbutRear = planInfoProperties.get(DxfFileConstants.NOC_TO_ABUT_REAR);
             if (nocAbutRear.equalsIgnoreCase(DcrConstants.YES))
                 pi.setNocToAbutRear(true);
             else
                 pi.setNocToAbutRear(false);
         }
-        
-        
+
+
         if (planInfoProperties.get(DxfFileConstants.ARCHITECT_NAME) != null)
             pi.setArchitectInformation(planInfoProperties.get(DxfFileConstants.ARCHITECT_NAME));
 
@@ -445,12 +454,12 @@ public class DXFExtractService {
             pl.getNonNotifiedRoads().add(road);
 
         }
-        
+
         BigDecimal dimension = Util.getSingleDimensionValueByLayer(doc, DxfFileConstants.MAX_HEIGHT_CAL, pl);
         if (dimension != null) {
             pl.getBuilding().setDistanceFromBuildingFootPrintToRoadEnd(dimension);
         }
-        
+
 
         return pl;
 

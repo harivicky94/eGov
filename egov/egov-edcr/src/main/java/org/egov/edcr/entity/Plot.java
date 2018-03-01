@@ -11,6 +11,11 @@ public class Plot extends Measurement {
     private Yard sideYard1;
     private Yard sideYard2;
 
+    private Yard bsmtFrontYard;
+    private Yard bsmtRearYard;
+    private Yard bsmtSideYard1;
+    private Yard bsmtSideYard2;
+
     public Yard getFrontYard() {
         return frontYard;
     }
@@ -43,4 +48,35 @@ public class Plot extends Measurement {
         this.sideYard2 = sideYard2;
     }
 
+    public Yard getBsmtFrontYard() {
+        return bsmtFrontYard;
+    }
+
+    public void setBsmtFrontYard(Yard bsmtFrontYard) {
+        this.bsmtFrontYard = bsmtFrontYard;
+    }
+
+    public Yard getBsmtRearYard() {
+        return bsmtRearYard;
+    }
+
+    public void setBsmtRearYard(Yard bsmtRearYard) {
+        this.bsmtRearYard = bsmtRearYard;
+    }
+
+    public Yard getBsmtSideYard1() {
+        return bsmtSideYard1;
+    }
+
+    public void setBsmtSideYard1(Yard bsmtSideYard1) {
+        this.bsmtSideYard1 = bsmtSideYard1;
+    }
+
+    public Yard getBsmtSideYard2() {
+        return bsmtSideYard2;
+    }
+
+    public void setBsmtSideYard2(Yard bsmtSideYard2) {
+        this.bsmtSideYard2 = bsmtSideYard2;
+    }
 }

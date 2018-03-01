@@ -1,5 +1,9 @@
 package org.egov.edcr.entity;
 
+import org.egov.edcr.entity.measurement.NonNotifiedRoad;
+import org.egov.edcr.entity.measurement.NotifiedRoad;
+import org.egov.edcr.entity.utility.Utility;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -7,14 +11,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.egov.edcr.entity.measurement.NonNotifiedRoad;
-import org.egov.edcr.entity.measurement.NotifiedRoad;
-import org.egov.edcr.entity.utility.Utility;
-
 /*All the details extracted from the plan are referred in this object*/
 public class PlanDetail {
 
-    private Utility utility=new Utility();
+    private Utility utility = new Utility();
     private PlanInformation planInformation;
     private Plot plot;
     private Building building;
@@ -26,6 +26,7 @@ public class PlanDetail {
 
     private HashMap<String, String> errors = new HashMap<>();
     private HashMap<String, String> generalInformation = new HashMap<>();
+    private Basement basement;
 
     public ElectricLine getElectricLine() {
         return electricLine;
@@ -132,4 +133,11 @@ public class PlanDetail {
         this.utility = utility;
     }
 
+    public Basement getBasement() {
+        return basement;
+    }
+
+    public void setBasement(Basement basement) {
+        this.basement = basement;
+    }
 }
