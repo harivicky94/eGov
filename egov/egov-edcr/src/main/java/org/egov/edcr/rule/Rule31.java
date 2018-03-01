@@ -70,34 +70,33 @@ public class Rule31 extends GeneralRule {
         System.out.println("validate 31");
         if(planDetail != null) {
             if ( planDetail.getBuilding().getFar() == null) {
-                errors.put(DcrConstants.FAR, edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
-                        new String[]{DcrConstants.FAR}, LocaleContextHolder.getLocale()));
+                errors.put(DcrConstants.FAR, prepareMessage(DcrConstants.OBJECTNOTDEFINED, DcrConstants.FAR));
                 planDetail.addErrors(errors);
             }
 
             if ( planDetail.getPlanInformation() == null
                     || planDetail.getPlanInformation().getOccupancy() == null) {
-                errors.put(DcrConstants.OCCUPANCY, edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
-                        new String[]{DcrConstants.OCCUPANCY}, LocaleContextHolder.getLocale()));
+                      errors.put(DcrConstants.OCCUPANCY, prepareMessage(DcrConstants.OBJECTNOTDEFINED, DcrConstants.OCCUPANCY));
                 planDetail.addErrors(errors);
             }
 
             if ( planDetail.getBuilding().getFar() == null
                     || planDetail.getPlanInformation().getOccupancy() == null) {
-                errors.put(DcrConstants.FAR, edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
-                        new String[]{DcrConstants.FAR}, LocaleContextHolder.getLocale()));
+                errors.put(DcrConstants.FAR, prepareMessage(DcrConstants.OBJECTNOTDEFINED, DcrConstants.FAR));
                 planDetail.addErrors(errors);
             }
         }else {
-            errors.put(DcrConstants.PLAN_DETAIL, edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
-                    new String[]{DcrConstants.PLAN_DETAIL}, LocaleContextHolder.getLocale()));
+            errors.put(DcrConstants.PLAN_DETAIL, prepareMessage(DcrConstants.OBJECTNOTDEFINED, DcrConstants.PLAN_DETAIL));
             planDetail.addErrors(errors);
         }
 
         return planDetail;
 
     }
-
+    private String prepareMessage(String code, String args) {
+     /*   return edcrMessageSource.getMessage(code,
+                new String[] { args }, LocaleContextHolder.getLocale());*/ return args;
+    }
     @Override
     public PlanDetail process(PlanDetail planDetail) {
         rule_31_1(planDetail);
@@ -109,13 +108,12 @@ public class Rule31 extends GeneralRule {
     private void rule_31_1(PlanDetail planDetail) {
 
         floorAreaRatio = planDetail.getBuilding().getFar();
-        if (floorAreaRatio == null)
-            floorAreaRatio = BigDecimal.ZERO;
+        
         // currently we arer using  occupany as  RESIDENTIAL,
-        if (planDetail.getPlanInformation().getOccupancy().toUpperCase().equals(DcrConstants.RESIDENTIAL)) {
+        if (floorAreaRatio.compareTo(BigDecimal.ZERO) > 0 && planDetail.getPlanInformation().getOccupancy()!=null && planDetail.getPlanInformation().getOccupancy().toUpperCase().equals(DcrConstants.RESIDENTIAL)) {
 
             // 3) If occupany is A1 FAR should be less than 4, with additional fee of @ Rs.5000 x (FAR-3)*PLot area
-            if (floorAreaRatio.compareTo(four) == -1) {
+            if (floorAreaRatio.compareTo(four) <=0) {
                 additionalFee = fiveThousand.multiply(floorAreaRatio.subtract(three).multiply(plotArea));
                 planDetail.reportOutput.add(buildRuleOutputWithSubRule(DcrConstants.RULE31, SUB_RULE_31_1,
                         SUB_RULE_31_1_DESCRIPTION, DcrConstants.FAR,
@@ -278,14 +276,15 @@ public class Rule31 extends GeneralRule {
     /* need to set coverage data and occupency type and future change condition on basis of occupancy types */
     private void rule_31_2(PlanDetail planDetail) {
         // Occpancy RECIDENTIAL
-        if (planDetail.getPlanInformation().getOccupancy().toUpperCase().equals( DcrConstants.RESIDENTIAL)) {
+        if (planDetail.getPlanInformation().getOccupancy()!=null && planDetail.getBuilding().getCoverage()!=null &&
+                planDetail.getPlanInformation().getOccupancy().toUpperCase().equals( DcrConstants.RESIDENTIAL)) {
 
             // 1)Coverage =( (Area of building_footprint polygon ) - (Sum of areas of polygons in coverage_deduct layer)) x 100 / plot area
             coverage = planDetail.getBuilding().getCoverage();
 
             // 2) If occupany is A1 , Coverage should be less than 65
             if (coverage.compareTo(BigDecimal.ZERO) > 0) {
-                if (coverage.compareTo(sixtyFive) == -1) {
+                if (coverage.compareTo(sixtyFive)<=0) {
                     planDetail.reportOutput.add(buildRuleOutputWithSubRule(DcrConstants.RULE31, SUB_RULE_31_2,
                             SUB_RULE_31_2_DESCRIPTION, DcrConstants.COVERAGE,
                             "should less than " + sixtyFive.toString(),
