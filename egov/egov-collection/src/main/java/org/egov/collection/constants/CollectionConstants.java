@@ -549,7 +549,7 @@ public final class CollectionConstants {
     public static final String SBIMOPS_BANK_AMOUNT = "bankamount";
     public static final String SBIMOPS_BANK_NAME = "bankname";
     public static final String SBIMOPS_UAMOUNT = "uamount";
-
+    
     // This is an array for creating hex chars
     public static final char[] AXIS_HEX_TABLE = new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A',
             'B', 'C', 'D', 'E', 'F' };
@@ -664,4 +664,17 @@ public final class CollectionConstants {
         } 
     };
 
+    public static final String PNB_MERCHANT_REQUEST = "merchantRequest";
+    public static final String PNB_MID = "MID";
+    public static final String PNB_TRANSACTION_REFERENCE_NO = "Transaction Reference No";
+    public static final String PNB_ORDER_ID = "Order ID";
+    public static final String PNB_AMOUNT = "Amount";
+    public static final String PNB_STATUS_CODE = "Status Code";
+    public static final String PNB_STATUS_DESCRIPTION = "Status Description";
+    public static final String PNB_RESPONSE_CODE = "Response code";
+    public static final String PNB_TRANSACTION_DATE = "Transaction Date Time";
+    public static final String PNB_ADDL_FIELD_ONE  = "Addl Field 1";
+    public static final String PNB_ADDL_FIELD_TWO = "Addl Field 2";
+    public static final String PNB_TRANSACTION_STATUS_DESC = "Success";
+    
 }

@@ -54,129 +54,149 @@ import org.springframework.core.env.Environment;
 
 @Configuration
 @PropertySource(name = "collectionApplicationProperties", value = {
-        "classpath:config/application-config-collection.properties",
-        "classpath:config/payment-gateway.properties",
-        "classpath:config/egov-erp-${user.name}.properties",
-        "classpath:config/application-config-${client.id}.properties",
-        "classpath:config/egov-erp-override.properties" }, ignoreResourceNotFound = true)
+		"classpath:config/application-config-collection.properties", "classpath:config/payment-gateway.properties",
+		"classpath:config/egov-erp-${user.name}.properties",
+		"classpath:config/application-config-${client.id}.properties",
+		"classpath:config/egov-erp-override.properties" }, ignoreResourceNotFound = true)
 public class CollectionApplicationProperties {
 
-    @Autowired
-    private Environment environment;
+	@Autowired
+	private Environment environment;
 
-    public String axisTransactionMessage() {
-        return environment.getProperty("AXIS.transactionmessage");
-    }
+	public String axisTransactionMessage() {
+		return environment.getProperty("AXIS.transactionmessage");
+	}
 
-    public String axisVersion() {
-        return environment.getProperty("axis.version", String.class);
-    }
+	public String axisVersion() {
+		return environment.getProperty("axis.version", String.class);
+	}
 
-    public String axisCommand() {
-        return environment.getProperty("axis.command");
-    }
+	public String axisCommand() {
+		return environment.getProperty("axis.command");
+	}
 
-    public String axisCommandQuery() {
-        return environment.getProperty("axis.command.query");
-    }
+	public String axisCommandQuery() {
+		return environment.getProperty("axis.command.query");
+	}
 
-    public String axisAccessCode() {
-        return environment.getProperty("axis.access.code");
-    }
+	public String axisAccessCode() {
+		return environment.getProperty("axis.access.code");
+	}
 
-    public String axisMerchant() {
-        return environment.getProperty("axis.merchant");
-    }
+	public String axisMerchant() {
+		return environment.getProperty("axis.merchant");
+	}
 
-    public String axisLocale() {
-        return environment.getProperty("axis.locale");
-    }
+	public String axisLocale() {
+		return environment.getProperty("axis.locale");
+	}
 
-    public String axisOperator() {
-        return environment.getProperty("axis.operator.id");
-    }
+	public String axisOperator() {
+		return environment.getProperty("axis.operator.id");
+	}
 
-    public String axisPassword() {
-        return environment.getProperty("axis.password");
-    }
+	public String axisPassword() {
+		return environment.getProperty("axis.password");
+	}
 
-    public String axisReconcileUrl() {
-        return environment.getProperty("axis.reconcile.url");
-    }
+	public String axisReconcileUrl() {
+		return environment.getProperty("axis.reconcile.url");
+	}
 
-    public String axisSecureSecret() {
-        return environment.getProperty("axis.secure.secret");
-    }
+	public String axisSecureSecret() {
+		return environment.getProperty("axis.secure.secret");
+	}
 
-    public String getEmailSubject() {
-        return environment.getProperty("email.subject.message");
-    }
+	public String getEmailSubject() {
+		return environment.getProperty("email.subject.message");
+	}
 
-    public String getEmailBody() {
-        return environment.getProperty("email.body.message");
-    }
+	public String getEmailBody() {
+		return environment.getProperty("email.body.message");
+	}
 
-    public String getValue(final String key) {
-        return environment.getProperty(key);
-    }
+	public String getValue(final String key) {
+		return environment.getProperty(key);
+	}
 
-    public String sbimopsDdocode(final String cityCode) {
-        return environment.getProperty(cityCode.concat(".sbimops.ddocode"));
-    }
+	public String sbimopsDdocode(final String cityCode) {
+		return environment.getProperty(cityCode.concat(".sbimops.ddocode"));
+	}
 
-    public String sbimopsHoa(final String cityCode) {
-        return environment.getProperty(cityCode.concat(".sbimops.hoa"));
-    }
+	public String sbimopsHoa(final String cityCode) {
+		return environment.getProperty(cityCode.concat(".sbimops.hoa"));
+	}
 
-    public String getUpdateDemandUrl(final String serviceCode) {
-        return environment.getProperty(serviceCode.concat(".updatedemand.url"));
-    }
+	public String getUpdateDemandUrl(final String serviceCode) {
+		return environment.getProperty(serviceCode.concat(".updatedemand.url"));
+	}
 
-    public String getLamsServiceUrl() {
-        return environment.getProperty("egov.services.lams.hostname");
-    }
+	public String getLamsServiceUrl() {
+		return environment.getProperty("egov.services.lams.hostname");
+	}
 
-    public String atomProdid() {
-        return environment.getProperty("atom.prodid", String.class);
-    }
+	public String atomProdid() {
+		return environment.getProperty("atom.prodid", String.class);
+	}
 
-    public String atomPass() {
-        return environment.getProperty("atom.pass", String.class);
-    }
+	public String atomPass() {
+		return environment.getProperty("atom.pass", String.class);
+	}
 
-    public String atomTtype() {
-        return environment.getProperty("atom.ttype", String.class);
-    }
+	public String atomTtype() {
+		return environment.getProperty("atom.ttype", String.class);
+	}
 
-    public String atomClientcode() {
-        return environment.getProperty("atom.clientcode", String.class);
-    }
+	public String atomClientcode() {
+		return environment.getProperty("atom.clientcode", String.class);
+	}
 
-    public String atomCustacc() {
-        return environment.getProperty("atom.custacc", String.class);
-    }
+	public String atomCustacc() {
+		return environment.getProperty("atom.custacc", String.class);
+	}
 
-    public String atomMdd() {
-        return environment.getProperty("atom.mdd", String.class);
-    }
+	public String atomMdd() {
+		return environment.getProperty("atom.mdd", String.class);
+	}
 
-    public String atomTxncurr() {
-        return environment.getProperty("atom.txncurr", String.class);
-    }
+	public String atomTxncurr() {
+		return environment.getProperty("atom.txncurr", String.class);
+	}
 
-    public String atomLogin() {
-        return environment.getProperty("atom.login", String.class);
-    }
+	public String atomLogin() {
+		return environment.getProperty("atom.login", String.class);
+	}
 
-    public String atomTxnscamt() {
-        return environment.getProperty("atom.txnscamt", String.class);
-    }
+	public String atomTxnscamt() {
+		return environment.getProperty("atom.txnscamt", String.class);
+	}
 
-    public String atomTransactionMessage() {
-        return environment.getProperty("ATOM.transactionmessage");
-    }
+	public String atomTransactionMessage() {
+		return environment.getProperty("ATOM.transactionmessage");
+	}
 
-    public String atomReconcileUrl() {
-        return environment.getProperty("atom.reconcile.url");
-    }
+	public String atomReconcileUrl() {
+		return environment.getProperty("atom.reconcile.url");
+	}
+
+	public String pnbMid() {
+		return environment.getProperty("pnb.mid");
+	}
+
+	public String pnbEncryptionKey() {
+		return environment.getProperty("pnb.encryption.key");
+	}
+
+	public String pnbTransactionCurrency() {
+		return environment.getProperty("pnb.transaction.currency");
+	}
+
+	public String pnbTransactionRequestType() {
+		return environment.getProperty("pnb.transaction.request.type");
+	}
+	
+	public String pnbTransactionMessage() {
+		return environment.getProperty("pnb.transactionmessage");
+	}
+	
 }
