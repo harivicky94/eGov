@@ -60,7 +60,7 @@
 			<div class="panel-heading">
 				<div class="panel-title text-center no-float">
 							<c:if test="${not empty message}">
-                    			<strong><spring:message code="${message}"/></strong>
+                    			<strong>${message}</strong>
                 			</c:if>
 				</div>
 			</div>

@@ -40,14 +40,15 @@
 
 $(document)
 		.ready(
-				function() { 
-					
+				function() {
+
+                    $("#toDate").datepicker().datepicker("setDate", new Date());
 					$('#serviceTypeEnum').on('change', function() {
-						if($("#serviceTypeEnum option:selected" ).text() == 'ALL_OTHER_SERVICES'){
+						if($("#serviceTypeEnum option:selected" ).text() == 'ALL_OTHER_SERVICES') {
 							$("#toDate").datepicker().datepicker("setDate", new Date());
 							$("#toDate").prop('disabled', true);
 							
-						}else{
+						} else {
 							$("#toDate").prop('disabled', false);
 						}
 					}); 
@@ -57,6 +58,7 @@ $(document)
 					
 					
 					var documentscrutinyurl = '/bpa/application/documentscrutiny/';
+					var rescheduleUrl = '/bpa/application/scrutiny/reschedule/';
 					$('#btnSearch').click(function() { 
 						callAjaxSearch();
 					});
@@ -101,6 +103,14 @@ $(document)
 														"sClass" : "text-left"
 													},
 													{
+														"data" : "appointmentDate",
+														"sClass" : "text-left"
+													},
+													{
+														"data" : "appointmentTime",
+														"sClass" : "text-left"
+													},
+													{
 														"data" : "applicationDate",
 														"sClass" : "text-left"
 													},
@@ -139,10 +149,15 @@ $(document)
 														"render" : function(
 																data, type,
 																row, meta) {
-																if(row.isFeeCollected){
-																	return '<button type="button" class="btn btn-xs btn-secondary dropchange" value="feePending"><span class="glyphicon glyphicon-view"></span>&nbsp;Document Scrutiny</button>';
-																}else{
-																	return '<button type="button" class="btn btn-xs btn-secondary dropchange" value='
+																if(!row.isFeeCollected && !row.rescheduledByEmployee && !row.onePermitApplication){
+                                                                    return '<button type="button" class="btn btn-xs btn-secondary documentScrutiny" value='
+                                                                        + documentscrutinyurl
+                                                                        + row.applicationNumber
+                                                                        + '><span class="glyphicon glyphicon-view"></span>&nbsp;Document Scrutiny</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button type="button" class="btn btn-xs btn-secondary ReSchedule" value='+rescheduleUrl+row.applicationNumber+'><span class="glyphicon glyphicon-view"></span>&nbsp;Re-Schedule</button>';
+																} else if(row.isFeeCollected){
+                                                                    return '<button type="button" class="btn btn-xs btn-secondary documentScrutiny" value="feePending"><span class="glyphicon glyphicon-view"></span>&nbsp;Document Scrutiny</button>';
+                                                                } else {
+																	return '<button type="button" class="btn btn-xs btn-secondary documentScrutiny" value='
 																	+ documentscrutinyurl
 																	+ row.applicationNumber
 																	+ '><span class="glyphicon glyphicon-view"></span>&nbsp;Document Scrutiny</button>';
@@ -153,21 +168,24 @@ $(document)
 					}
 					
 					
-					$(document).on('click','.dropchange',function(){ 
+					$(document).on('click','.documentScrutiny',function(){
 					    var url = $(this).val();
-					    if(url=='feePending'){
+					    if(url=='feePending') {
 					    	bootbox.alert("Please Collect Application Fees to Process Application.");
-					    }
-					    else{
+					    } else {
 					    	openPopup(url);
 					    }
 					    
 					});
+                    $(document).on('click','.ReSchedule',function(){
+                    	 var url = $(this).val();
+                            openPopup(url);
+                    });
 
 					function openPopup(url)
 					{
-						window.open(url,'window','scrollbars=yes,resizable=yes,height=700,width=800,status=yes');
-					}
+                        window.open(url,'window','scrollbars=yes,resizable=yes,height=700,width=800,status=yes');
+                    }
 
 				});
 

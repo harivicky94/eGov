@@ -72,7 +72,7 @@
 					</div>
 				</div>
 
-				<div class="form-group">
+				<%--<div class="form-group">
 					<label class="col-sm-3 control-label text-right"> <spring:message
 							code="lbl.zone" />
 					</label>
@@ -86,7 +86,7 @@
 						</form:select>
 						<form:errors path="zoneId" cssClass="add-margin error-msg" />
 					</div>
-					<label class="col-sm-2 control-label text-right"><spring:message
+					<label class="col-sm-3 control-label text-right"><spring:message
 							code="lbl.rvn.ward" /> </label>
 					<div class="col-sm-3 add-margin">
 						<form:select path="wardId" data-first-option="false" id="wardId"
@@ -94,11 +94,11 @@
 							<form:option value="">
 								<spring:message code="lbl.select" />
 							</form:option>
-							<form:options items="${wards}" itemValue="id" itemLabel="name" />
+							<form:options items="${employeeRevMappedBndries}" itemValue="id" itemLabel="name" />
 						</form:select>
 						<form:errors path="wardId" cssClass="add-margin error-msg" />
 					</div>
-				</div>
+				</div>--%>
 				
 				<div class="form-group">
 					<label class="col-sm-3 control-label text-right"><spring:message
@@ -109,7 +109,7 @@
 							<form:option value="">
 								<spring:message code="lbl.select" />
 							</form:option>
-							<form:options items="${electionwards}" itemValue="id"
+							<form:options items="${employeeRevMappedBndries}" itemValue="id"
 								itemLabel="name" />
 						</form:select>
 						<form:errors path="electionWardId" cssClass="add-margin error-msg" />
@@ -123,9 +123,9 @@
 		<button type='button' class='btn btn-primary' id="btnSearch">
 			<spring:message code='lbl.search' />
 		</button>
-		<button type="reset" id="resetbutton" class="btn btn-danger">
+		<%--<button type="reset" id="resetbutton" class="btn btn-danger">
 			<spring:message code="lbl.reset" />
-		</button>
+		</button>--%>
 		<a href='javascript:void(0)' class='btn btn-default'
 			onclick='self.close()'><spring:message code='lbl.close' /></a>
 	</div> 
@@ -140,6 +140,8 @@
 				<tr>
 					<th><spring:message code="lbl.applicant.name" /></th>
 					<th><spring:message code="lbl.application.no" /></th>
+					<th><spring:message code="lbl.appmnt.date" /></th>
+					<th><spring:message code="lbl.appmnt.time" /></th>
 					<th><spring:message code="lbl.appln.date" /></th>
 					<th><spring:message code="lbl.service.type" /></th>
 					<th><spring:message code="lbl.occupancy" /></th>
@@ -154,6 +156,7 @@
 		</table>
 	</div>
 </div>
+
 <script
 	src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>	
 <link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>

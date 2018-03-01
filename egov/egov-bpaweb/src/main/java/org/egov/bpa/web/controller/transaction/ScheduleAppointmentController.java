@@ -94,6 +94,7 @@ public class ScheduleAppointmentController extends BpaGenericApplicationControll
     public static final String SCHEDULED_SCRUTINY_DETAILS_RESULT = "view-scheduled-scrutiny-details-result";
     public static final String CITIZEN_SUCEESS = "citizen_suceess";
     private static final String RESCHEDULE_DOC_SCRUTINY = "reschedule-document-scrutiny";
+    public static final String COMMON_ERROR = "common-error";
 
     @Autowired
     private BpaAppointmentScheduleService bpaAppointmentScheduleService;
@@ -205,6 +206,10 @@ public class ScheduleAppointmentController extends BpaGenericApplicationControll
     @GetMapping("/scrutiny/reschedule/{applicationNumber}")
     public String showReScheduleDcoumentScrutiny(@PathVariable final String applicationNumber, final Model model) {
         BpaApplication application = applicationBpaService.findByApplicationNumber(applicationNumber);
+        if(application.getIsRescheduledByEmployee()) {
+            model.addAttribute(MESSAGE, "Re-Schedule appointment by employee already completed, employee can re-schedule appointment only once.");
+            return COMMON_ERROR;
+        }
 		List<SlotDetail> slotDetails = rescheduleAppnmtsForDocScrutinyService
 				.searchAvailableSlotsForReschedule(application.getId());
 		Set<Date> appointmentDates = new LinkedHashSet<>();

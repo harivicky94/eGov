@@ -73,6 +73,10 @@ public class SearchBpaApplicationForm {
     private String locality;
     private String reSurveyNumber;
     private String serviceTypeEnum;
+    private String appointmentDate;
+    private String appointmentTime;
+    private Boolean isRescheduledByEmployee;
+    private Boolean isOnePermitApplication;
 
     public String getServiceTypeEnum() {
 		return serviceTypeEnum;
@@ -312,5 +316,37 @@ public class SearchBpaApplicationForm {
 
     public void setReSurveyNumber(String reSurveyNumber) {
         this.reSurveyNumber = reSurveyNumber;
+    }
+
+    public String getAppointmentDate() {
+        return appointmentDate;
+    }
+
+    public void setAppointmentDate(String appointmentDate) {
+        this.appointmentDate = appointmentDate;
+    }
+
+    public String getAppointmentTime() {
+        return appointmentTime;
+    }
+
+    public void setAppointmentTime(String appointmentTime) {
+        this.appointmentTime = appointmentTime;
+    }
+
+    public Boolean getRescheduledByEmployee() {
+        return isRescheduledByEmployee;
+    }
+
+    public void setRescheduledByEmployee(Boolean rescheduledByEmployee) {
+        isRescheduledByEmployee = rescheduledByEmployee;
+    }
+
+    public Boolean getOnePermitApplication() {
+        return isOnePermitApplication;
+    }
+
+    public void setOnePermitApplication(Boolean onePermitApplication) {
+        isOnePermitApplication = onePermitApplication;
     }
 }

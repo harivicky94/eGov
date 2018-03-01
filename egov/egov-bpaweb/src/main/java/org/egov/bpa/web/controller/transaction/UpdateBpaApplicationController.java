@@ -80,7 +80,7 @@ import static org.egov.bpa.utils.BpaConstants.*;
 @RequestMapping(value = "/application")
 public class UpdateBpaApplicationController extends BpaGenericApplicationController {
 
-    private static final String COLLECT_FEE_VALIDATE = "collectFeeValidate";
+	private static final String COLLECT_FEE_VALIDATE = "collectFeeValidate";
     private static final String WORK_FLOW_ACTION = "workFlowAction";
     private static final String AMOUNT_RULE = "amountRule";
     private static final String APPRIVALPOSITION = "approvalPosition";
@@ -98,9 +98,10 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
     private static final String DOCUMENTSCRUTINY_FORM = "documentscrutiny-form";
     private static final String BPAAPPLICATION_FORM = "bpaapplication-Form";
     private static final String BPA_APPLICATION_RESULT = "bpa-application-result";
+	public static final String COMMON_ERROR = "common-error";
 
 
-    @Autowired
+	@Autowired
     private InspectionService inspectionService;
     @Autowired
     private PositionMasterService positionMasterService;
@@ -249,12 +250,19 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
     public String documentScrutinyForm(final Model model, @PathVariable final String applicationNumber,
             final HttpServletRequest request) {
 		final BpaApplication application = getBpaApplication(applicationNumber);
+		if(BpaConstants.APPLICATION_STATUS_DOC_VERIFIED.equals(application.getStatus().getCode())) {
+			model.addAttribute(MESSAGE, "Document verification of application is already completed.");
+			return COMMON_ERROR;
+		}
+		if(BpaConstants.WF_REJECT_STATE.equals(application.getStatus().getCode())) {
+			model.addAttribute(MESSAGE, "Application is already initiated for rejection.");
+			return COMMON_ERROR;
+		}
 		buildRejectionReasons(model, application);
 		loadViewdata(model, application);
 		model.addAttribute("loginUser", securityUtils.getCurrentUser());
 		model.addAttribute(APPLICATION_HISTORY,
 				bpaThirdPartyService.getHistory(application));
-		// return to error page if status is not superindent approved.
 		return CREATEDOCUMENTSCRUTINY_FORM;
     }
 

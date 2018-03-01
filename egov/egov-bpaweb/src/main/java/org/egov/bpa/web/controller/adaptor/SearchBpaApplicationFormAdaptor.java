@@ -47,6 +47,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import org.egov.bpa.utils.*;
 
 public class SearchBpaApplicationFormAdaptor implements JsonSerializer<SearchBpaApplicationForm> {
     @Override
@@ -79,6 +80,13 @@ public class SearchBpaApplicationFormAdaptor implements JsonSerializer<SearchBpa
             jsonObject.addProperty("zone", org.apache.commons.lang.StringUtils.defaultString(searchFormObj.getZone()));
             jsonObject.addProperty("isFeeCollected", searchFormObj.isFeeCollected());
             jsonObject.addProperty("status", searchFormObj.getStatus());
+            jsonObject.addProperty("rescheduledByEmployee", searchFormObj.getRescheduledByEmployee());
+            jsonObject.addProperty("onePermitApplication", searchFormObj.getOnePermitApplication());
+            if(BpaConstants.APPLICATION_STATUS_RESCHEDULED.equals(searchFormObj.getStatus())
+               || BpaConstants.APPLICATION_STATUS_SCHEDULED.equals(searchFormObj.getStatus())) {
+                jsonObject.addProperty("appointmentDate", searchFormObj.getAppointmentDate());
+                jsonObject.addProperty("appointmentTime", searchFormObj.getAppointmentTime());
+            }
             jsonObject.addProperty("id", searchFormObj.getId());
         }
         return jsonObject;

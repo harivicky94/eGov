@@ -56,7 +56,12 @@
 		<put-attribute name="body"
 			value="/WEB-INF/views/application/collecttax-redirection.jsp" />
 	</definition>
-
+	<definition name="common-error" extends="base_layout">
+		<put-attribute name="page-title" value="title.common.msg"
+					   cascade="true" />
+		<put-attribute name="body"
+					   value="/WEB-INF/views/common/common-error.jsp" />
+	</definition>
 	<definition name="newapplication-form" extends="base_layout">
 		<put-attribute name="page-title" value="title.new.appln.header"
 			cascade="true" />

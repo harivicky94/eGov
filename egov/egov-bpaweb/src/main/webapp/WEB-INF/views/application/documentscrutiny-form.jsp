@@ -113,13 +113,13 @@
 			</div>
 
 			<div align="center">
-				<c:if test="${ bpaApplication.status.code eq 'Scheduled For Document Scrutiny'
+				<%--<c:if test="${ bpaApplication.status.code eq 'Scheduled For Document Scrutiny'
 								|| bpaApplication.status.code eq 'Pending For Rescheduling For Document Scrutiny'
 								|| bpaApplication.status.code eq 'Rescheduled For Document Scrutiny'}">
 					<a
 							href="/bpa/application/scrutiny/view/${bpaApplication.applicationNumber}"
 							class="btn btn-primary"> View Scheduled Appointment Details </a>
-				</c:if>
+				</c:if>--%>
 				<c:if test="${collectFeeValidate eq ''}">
 					<%--<c:if test="${ bpaApplication.status.code eq 'Registered'}">
 						<a
@@ -127,11 +127,11 @@
 								class="btn btn-primary"> New Appointment </a>
 					</c:if>--%>
 					<!-- Reschedule appointment not supported for one day permit application -->
-					<c:if test="${ mode eq 'showRescheduleToEmployee' && !bpaApplication.isOneDayPermitApplication}">
+					<%--<c:if test="${ mode eq 'showRescheduleToEmployee' && !bpaApplication.isOneDayPermitApplication}">
 						<a
 								href="/bpa/application/scrutiny/reschedule/${bpaApplication.applicationNumber}"
 								class="btn btn-primary"> Reschedule Appointment </a>
-					</c:if>
+					</c:if>--%>
 				<%-- 	<c:if test="${ bpaApplication.status.code eq 'Scheduled For Document Scrutiny' || bpaApplication.status.code eq 'Rescheduled For Document Scrutiny'}">
 						<a
 								href="/bpa/application/documentscrutiny/${bpaApplication.applicationNumber}"
