@@ -1,15 +1,15 @@
 package org.egov.edcr.entity;
 
-import org.egov.edcr.entity.measurement.NonNotifiedRoad;
-import org.egov.edcr.entity.measurement.NotifiedRoad;
-import org.egov.edcr.entity.utility.Utility;
-
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import org.egov.edcr.entity.measurement.Measurement;
+import org.egov.edcr.entity.measurement.NonNotifiedRoad;
+import org.egov.edcr.entity.measurement.NotifiedRoad;
+import org.egov.edcr.entity.utility.Utility;
 
 /*All the details extracted from the plan are referred in this object*/
 public class PlanDetail {
@@ -27,6 +27,17 @@ public class PlanDetail {
     private HashMap<String, String> errors = new HashMap<>();
     private HashMap<String, String> generalInformation = new HashMap<>();
     private Basement basement;
+    private List<Measurement> parkingSlots= new ArrayList<>();
+    private List<FloorUnit> floorUnits= new ArrayList<>();
+    
+
+    public List<FloorUnit> getFloorUnits() {
+        return floorUnits;
+    }
+
+    public void setFloorUnits(List<FloorUnit> floorUnits) {
+        this.floorUnits = floorUnits;
+    }
 
     public ElectricLine getElectricLine() {
         return electricLine;
@@ -140,4 +151,13 @@ public class PlanDetail {
     public void setBasement(Basement basement) {
         this.basement = basement;
     }
+
+    public List<Measurement> getParkingSlots() {
+        return parkingSlots;
+    }
+
+    public void setParkingSlots(List<Measurement> parkingSlots) {
+        this.parkingSlots = parkingSlots;
+    }
+    
 }

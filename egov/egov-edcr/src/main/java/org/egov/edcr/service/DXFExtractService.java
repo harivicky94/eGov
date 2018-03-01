@@ -1,12 +1,42 @@
 package org.egov.edcr.service;
 
+import java.io.File;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.log4j.Logger;
 import org.egov.edcr.constants.DxfFileConstants;
-import org.egov.edcr.entity.*;
-import org.egov.edcr.entity.measurement.*;
+import org.egov.edcr.entity.Basement;
+import org.egov.edcr.entity.Building;
+import org.egov.edcr.entity.EdcrApplication;
+import org.egov.edcr.entity.ElectricLine;
+import org.egov.edcr.entity.Floor;
+import org.egov.edcr.entity.FloorUnit;
+import org.egov.edcr.entity.PlanDetail;
+import org.egov.edcr.entity.PlanInformation;
+import org.egov.edcr.entity.Plot;
+import org.egov.edcr.entity.Room;
+import org.egov.edcr.entity.measurement.Measurement;
+import org.egov.edcr.entity.measurement.NonNotifiedRoad;
+import org.egov.edcr.entity.measurement.NotifiedRoad;
+import org.egov.edcr.entity.measurement.WasteDisposal;
+import org.egov.edcr.entity.measurement.Yard;
 import org.egov.edcr.utility.DcrConstants;
 import org.egov.edcr.utility.Util;
-import org.kabeja.dxf.*;
+import org.egov.edcr.utility.math.RayCast;
+import org.kabeja.dxf.DXFConstants;
+import org.kabeja.dxf.DXFDocument;
+import org.kabeja.dxf.DXFLWPolyline;
+import org.kabeja.dxf.DXFLayer;
+import org.kabeja.dxf.DXFLine;
+import org.kabeja.dxf.DXFVertex;
+import org.kabeja.dxf.helpers.Point;
 import org.kabeja.parser.DXFParser;
 import org.kabeja.parser.ParseException;
 import org.kabeja.parser.Parser;
@@ -15,14 +45,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
-
-import java.io.File;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 @Service
 public class DXFExtractService {
@@ -77,6 +99,7 @@ public class DXFExtractService {
             pl = extractOverheadElectricLines(doc, pl);
             pl = extractHeights(doc, pl);
             extractFloorDetails(doc, pl);
+            extractParkingDetails(doc, pl);
 
         } catch (ParseException e) {
             // TODO Auto-generated catch block
@@ -84,6 +107,88 @@ public class DXFExtractService {
         }
 
         return pl;
+    }
+
+    private void extractParkingDetails(DXFDocument doc, PlanDetail pl) {
+
+        List<DXFLWPolyline> residentialUnit = new ArrayList<DXFLWPolyline>();
+        List<DXFLWPolyline> residentialUnitDeduction = new ArrayList<DXFLWPolyline>();
+        List<DXFLWPolyline> removeDeduction = new ArrayList<DXFLWPolyline>();
+        boolean layerPresent = true;
+
+        layerPresent = doc.containsDXFLayer(DxfFileConstants.RESI_UNIT);
+
+        if (layerPresent) {
+            List<DXFLWPolyline> bldgext = Util.getPolyLinesByLayer(doc, DxfFileConstants.RESI_UNIT);
+
+            if (!bldgext.isEmpty())
+                for (DXFLWPolyline pline : bldgext) {
+                    residentialUnit.add(pline);
+                }
+        }
+        layerPresent = doc.containsDXFLayer(DxfFileConstants.RESI_UNIT_DEDUCT);
+        if (layerPresent) {
+            List<DXFLWPolyline> bldDeduct = Util.getPolyLinesByLayer(doc, DxfFileConstants.RESI_UNIT_DEDUCT);
+            if (!bldDeduct.isEmpty())
+                for (DXFLWPolyline pline : bldDeduct) {
+                    residentialUnitDeduction.add(pline);
+                }
+        }
+
+        int i = 0;
+        for (DXFLWPolyline resUnit : residentialUnit) {
+
+            FloorUnit floorUnit = new FloorUnit();
+            floorUnit.setPolyLine(resUnit);
+
+            i++;
+            double[][] pointsOfPlot = MinDistance.pointsOfPolygon(resUnit);
+
+            BigDecimal deduction = BigDecimal.ZERO;
+            for (DXFLWPolyline residentialDeduct : residentialUnitDeduction) {
+                boolean contains = false;
+                Iterator buildingIterator = residentialDeduct.getVertexIterator();
+                while (buildingIterator.hasNext()) {
+                    DXFVertex dxfVertex = (DXFVertex) buildingIterator.next();
+                    Point point = dxfVertex.getPoint();
+                    if (RayCast.contains(pointsOfPlot, new double[] { point.getX(), point.getY() }) == true) {
+                        contains = true;
+                        removeDeduction.add(residentialDeduct);
+                        Measurement measurement = new Measurement();
+                        measurement.setPolyLine(residentialDeduct);
+                        floorUnit.getDeductions().add(measurement);
+                    }
+                }
+                if (contains) {
+                    /*
+                     * System.out.println("current deduct " + deduction + "    :add deduct for rest unit " + i + " area added" +
+                     * Util.getPolyLineArea(residentialDeduct));
+                     */
+                    deduction = deduction.add(Util.getPolyLineArea(residentialDeduct));
+                }
+
+            }
+            // Each blocks are adjecent to each other. Raycast repeat the same points in each block.
+            if (removeDeduction.size() > 0) {
+                residentialUnitDeduction.removeAll(removeDeduction);
+                removeDeduction = new ArrayList<DXFLWPolyline>();
+            }
+            floorUnit.setTotalUnitDeduction(deduction);
+            pl.getFloorUnits().add(floorUnit);
+        }
+
+        layerPresent = doc.containsDXFLayer(DxfFileConstants.PARKING_SLOT);
+
+        if (layerPresent) {
+            List<DXFLWPolyline> bldparking = Util.getPolyLinesByLayer(doc, DxfFileConstants.PARKING_SLOT);
+            if (!bldparking.isEmpty())
+                for (DXFLWPolyline pline : bldparking) {
+                    Measurement measurement = new Measurement();
+                    measurement.setPolyLine(pline);
+                    pl.getParkingSlots().add(measurement);
+                    // System.out.println("parking " + Util.getPolyLineArea(pline));
+                }
+        }
     }
 
     private void extractFloorDetails(DXFDocument doc, PlanDetail pl) {

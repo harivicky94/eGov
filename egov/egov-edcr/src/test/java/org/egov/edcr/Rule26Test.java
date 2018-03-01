@@ -11,23 +11,27 @@ import org.egov.edcr.entity.measurement.NonNotifiedRoad;
 import org.egov.edcr.entity.measurement.NotifiedRoad;
 import org.egov.edcr.entity.measurement.WasteDisposal;
 import org.egov.edcr.entity.measurement.Yard;
-import org.egov.edcr.rule.Rule33;
+import org.egov.edcr.rule.Rule31;
 
 public class Rule26Test {
 
     public static void main(String[] args) {
-        Rule33 rule23= new Rule33();
+        Rule31 rule23= new Rule31();
         PlanDetail planDetail= new PlanDetail();
         NotifiedRoad notifiedRoad= new NotifiedRoad();
         NonNotifiedRoad nonNotifiedRoad= new NonNotifiedRoad();
         notifiedRoad.setShortestDistanceToRoad(BigDecimal.valueOf(2));
         
         nonNotifiedRoad.setShortestDistanceToRoad(BigDecimal.valueOf(2));
+     
         
         
         planDetail.setNonNotifiedRoads(java.util.Arrays.asList(nonNotifiedRoad));
         planDetail.setNotifiedRoads(java.util.Arrays.asList(notifiedRoad));
         Building buildingDetail= new Building ();
+        buildingDetail.setFar(BigDecimal.valueOf(3.2));
+        buildingDetail.setCoverage(BigDecimal.valueOf(65.3));
+
         Plot landDetail= new Plot();
         landDetail.setArea(BigDecimal.valueOf(33000));
         WasteDisposal wasteDisposal= new WasteDisposal();
@@ -59,8 +63,11 @@ public class Rule26Test {
 
         PlanInformation planinformation= new PlanInformation();
         planinformation.setCrzZoneArea(true);
+        planinformation.setSecurityZone(true);
         ElectricLine electricline= new ElectricLine();
         electricline.setPresentInDxf(true);
+        
+        planinformation.setOccupancy("Residential");
         
         electricline.setVoltage(BigDecimal.valueOf(33000));
         electricline.setHorizontalDistance(BigDecimal.valueOf(1.85));
@@ -72,6 +79,8 @@ public class Rule26Test {
         //wasteDisposal.setPresentInDxf(true);
         planDetail.getUtility().getWasteDisposalUnits().add(wasteDisposal);
         buildingDetail.setMaxFloor(BigDecimal.valueOf(3));
+        buildingDetail.setDistanceFromBuildingFootPrintToRoadEnd(BigDecimal.valueOf(12));
+        buildingDetail.setBuildingHeight(BigDecimal.valueOf(10));
         planDetail.setBuilding(buildingDetail);
         planDetail.setPlot(landDetail);
         

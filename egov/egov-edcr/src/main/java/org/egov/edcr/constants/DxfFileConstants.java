@@ -45,5 +45,9 @@ public class DxfFileConstants {
     public static final String BSMNT_SIDE_YARD_1 = "BSMNT_SIDE_YARD_1";
     public static final String BSMNT_SIDE_YARD_2 = "BSMNT_SIDE_YARD_2";
     public static final String BSMNT_FRONT_YARD = "BSMNT_FRONT_YARD";
+    public static final String RESI_UNIT="RESI_UNIT";
+    public static final String RESI_UNIT_DEDUCT="RESI_UNIT_DEDUCT";
+    public static final String PARKING_SLOT="PARKING_SLOT";
+    
 
 }

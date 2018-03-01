@@ -78,12 +78,8 @@ public class Rule31 extends GeneralRule {
                 planDetail.addErrors(errors);
             }
 
-            if (planDetail.getBuilding().getFar() == null
-                || planDetail.getPlanInformation().getOccupancy() == null) {
-                errors.put(DcrConstants.FAR, prepareMessage(DcrConstants.OBJECTNOTDEFINED, DcrConstants.FAR));
-                planDetail.addErrors(errors);
-            }
         } else {
+
             errors.put(DcrConstants.PLAN_DETAIL, prepareMessage(DcrConstants.OBJECTNOTDEFINED, DcrConstants.PLAN_DETAIL));
             planDetail.addErrors(errors);
         }

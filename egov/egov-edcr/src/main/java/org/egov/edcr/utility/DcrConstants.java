@@ -19,6 +19,7 @@ public class DcrConstants {
     public static final String RULE61 = "RULE61";
     public static final String RULE62 = "RULE62";
     public static final String RULE24 = "RULE24";
+    public static final String RULE34 = "RULE34";
     public static final String OBJECTDEFINED_DESC = " Defined in the plan.";
     public static final String WASTEDISPOSAL_DEFINED_KEY = "WASTEDISPOSAL_DEFINED";
     public static final String OBJECTNOTDEFINED_DESC = " Not defined in the plan.";
@@ -29,6 +30,9 @@ public class DcrConstants {
     public static final String WASTEDISPOSAL = "Waste disposal";
     public static final String CRZZONE = "CRZ Zone";
     public static final String ROAD = "Road";
+    public static final String PARKINGSLOT_UNIT = "Parking slot or Units ";
+    public static final String PARKINGSLOT = "Parking slot";
+
     public static final String PLOT_AREA = "Plot Area ";
     public static final String BUILDING_HEIGHT_DESC = "Building height";
     public static final String BUILDING_FOOT_PRINT = "Building foot print";
