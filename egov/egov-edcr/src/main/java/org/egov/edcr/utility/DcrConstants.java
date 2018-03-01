@@ -36,7 +36,14 @@ public class DcrConstants {
     public static final String REAR_YARD_DESC = "Rear Yard";
     public static final String SIDE_YARD1_DESC = "Side Yard1";
     public static final String SIDE_YARD2_DESC = "Side Yard2";
+    public static final String BSMT_FRONT_YARD_DESC = "Basement Front Yard";
+    public static final String BSMT_REAR_YARD_DESC = "Basement Rear Yard";
+    public static final String BSMT_SIDE_YARD1_DESC = "Basement Side Yard1";
+    public static final String BSMT_SIDE_YARD2_DESC = "Basement Side Yard2";
+    public static final String BSMT_SIDE_YARD_DESC = "Basement Side Yard";
     public static final String SIDE_YARD_DESC = "Side Yard";
+    public static final String BASEMENT = "Basement";
+    public static final String NON_BASEMENT = "Non Basement";
     public static final String VOLTAGE = "Voltage";
     public static final String ELECTRICLINE_DISTANCE = "Horizontal/Vertical line distance from electric line ";
     public static final String HORIZONTAL_ELECTRICLINE_DISTANCE = "Horizontal line distance from electric line ";
@@ -81,7 +88,6 @@ public class DcrConstants {
     public static final String SHORTESTDISTINACETOBUILDINGFOOTPRINT = "Shortest distance between the building foot print from wider road";
     public static final String SHADE = "Shades or Overhangs";
     public static final String PLOT_BOUNDARY = "Plot boundary";
-    
-    
+
 
 }
