@@ -1,12 +1,10 @@
 package org.egov.edcr.service;
 
 import java.io.File;
-
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,7 +30,6 @@ import ar.com.fdvs.dj.core.layout.ClassicLayoutManager;
 import ar.com.fdvs.dj.domain.DynamicReport;
 import ar.com.fdvs.dj.domain.Style;
 import ar.com.fdvs.dj.domain.builders.FastReportBuilder;
-import ar.com.fdvs.dj.domain.constants.Border;
 import ar.com.fdvs.dj.domain.constants.Font;
 import ar.com.fdvs.dj.domain.constants.HorizontalAlign;
 import ar.com.fdvs.dj.domain.constants.Page;
@@ -40,7 +37,6 @@ import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-import net.sf.jasperreports.engine.export.oasis.StyleBuilder;
 
 /*General rule class contains validations which are required for all types of building plans*/
 @Service
@@ -82,23 +78,19 @@ public class DcrService {
         // BASIC VALIDATION
 
         // File dxfFile = new File("/home/mani/Desktop/BPA/kozhi/SAMPLE 4.dxf");
-      
-        
+
         generalRule.validate(planDetail);
-      
+
         // dxfFile.getf
         // EXTRACT DATA FROM DXFFILE TO planDetail;
 
         // planDetail= generalRule.validate(planDetail);
         // EXTRACT DATA FROM DXFFILE TO planDetail;
         planDetail = extractService.extract(dxf1File, dcrApplication);
-        if(planDetail.getBuilding().getBuildingHeight().intValue()>10)
-        {
-            planDetail.addError("Cannot Process", " This report is not complete . Not all rules are not processed. Only Buildings up to 10 Mtr height will be considered for  processing");
-           // return planDetail;
-        }
-        // USING PLANDETAIL OBJECT, FINDOUT RULES.
-        // ITERATE EACH RULE.CHECK CONDITIONS.
+        if (planDetail.getBuilding().getBuildingHeight().intValue() > 10)
+            planDetail.addError("Cannot Process",
+                    " This report is not complete . Not all rules are not processed. Only Buildings up to 10 Mtr height will be considered for  processing");
+        // return planDetail;
 
         List<PlanRule> planRules = planRuleService.findRulesByPlanDetail(planDetail);
 
@@ -156,86 +148,87 @@ public class DcrService {
     }
 
     public ReportOutput generateDCRReport(PlanDetail planDetail, EdcrApplication dcrApplication) {
-    	
-    	final ReportOutput reportOutput= null;
+
+        final ReportOutput reportOutput = null;
         JasperPrint jasper;
         InputStream reportStream = null;
-		try {
-			jasper = prepareReportData(planDetail, dcrApplication);
-			reportStream = reportService.exportPdf(jasper);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} 
-        
-        FileStoreMapper fileStoreId = fileStoreService.store(reportStream, "EDCR", "application/pdf",DcrConstants.FILESTORE_MODULECODE);
-        
-        if(fileStoreId!=null)
+        try {
+            jasper = prepareReportData(planDetail, dcrApplication);
+            reportStream = reportService.exportPdf(jasper);
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        FileStoreMapper fileStoreId = fileStoreService.store(reportStream, "EDCR", "application/pdf",
+                DcrConstants.FILESTORE_MODULECODE);
+
+        if (fileStoreId != null)
             dcrApplication.getSavedDcrDocument().setReportOutputId(fileStoreId);
-        
+
         return reportOutput;
 
     }
 
     private JasperPrint prepareReportData(PlanDetail planDetail2, EdcrApplication dcrApplication) throws JRException {
-    	FastReportBuilder drb = new FastReportBuilder();
-    	SimpleDateFormat FORMATDDMMYYYY = new SimpleDateFormat("dd/MM/yyyy");
-    	//final Style columnStyle = getConcurrenceColumnStyle();
-    	StringBuilder reportBuilder = new StringBuilder();
-   
-        drb = drb;
+        FastReportBuilder drb = new FastReportBuilder();
+        SimpleDateFormat FORMATDDMMYYYY = new SimpleDateFormat("dd/MM/yyyy");
+
+        StringBuilder reportBuilder = new StringBuilder();
+
         final Style titleStyle = new Style("titleStyle");
         titleStyle.setFont(new Font(50, Font._FONT_TIMES_NEW_ROMAN, true));
-        titleStyle.setHorizontalAlign(HorizontalAlign.CENTER); 
-        
-        
+        titleStyle.setHorizontalAlign(HorizontalAlign.CENTER);
+
         final Style subTitleStyle = new Style("subtitleStyle");
         titleStyle.setFont(new Font(2, Font._FONT_TIMES_NEW_ROMAN, false));
-        String applicationNumber = StringUtils.isNotBlank(dcrApplication.getApplicationNumber()) ? dcrApplication.getApplicationNumber() : "NA" ;
-        BigDecimal plotArea = planDetail2.getPlanInformation().getPlotArea() != null ? planDetail2.getPlanInformation().getPlotArea() : BigDecimal.ZERO;
+        String applicationNumber = StringUtils.isNotBlank(dcrApplication.getApplicationNumber())
+                ? dcrApplication.getApplicationNumber() : "NA";
+        BigDecimal plotArea = planDetail2.getPlanInformation().getPlotArea() != null
+                ? planDetail2.getPlanInformation().getPlotArea() : BigDecimal.ZERO;
         String applicationDate = FORMATDDMMYYYY.format(dcrApplication.getApplicationDate());
-        String occupancy = dcrApplication.getPlanInformation().getOccupancy() != null ? dcrApplication.getPlanInformation().getOccupancy() : "NA";
-        String architectName = StringUtils.isNotBlank(dcrApplication.getPlanInformation().getArchitectInformation()) ? dcrApplication.getPlanInformation().getArchitectInformation() : "NA";
+        String occupancy = dcrApplication.getPlanInformation().getOccupancy() != null
+                ? dcrApplication.getPlanInformation().getOccupancy() : "NA";
+        String architectName = StringUtils.isNotBlank(dcrApplication.getPlanInformation().getArchitectInformation())
+                ? dcrApplication.getPlanInformation().getArchitectInformation() : "NA";
         reportBuilder.append("\\n").append("Application Details").append("\\n").append("\\n")
-           .append("Application Number :   ").append(applicationNumber).append("                                                ")
-           .append("Plot Area          :   ").append(plotArea).append("\\n").append("\\n")
-           .append("Application Date   :   ").append(applicationDate).append("                                                ")
-           .append("Occupancy          :   ").append(occupancy).append("\\n").append("\\n")
-           .append("Architect name     :   ").append(architectName);
-        
+                .append("Application Number :   ").append(applicationNumber)
+                .append("                                                ")
+                .append("Plot Area          :   ").append(plotArea).append("\\n").append("\\n")
+                .append("Application Date   :   ").append(applicationDate)
+                .append("                                                ")
+                .append("Occupancy          :   ").append(occupancy).append("\\n").append("\\n")
+                .append("Architect name     :   ").append(architectName);
 
-        if (planDetail.getErrors() != null && planDetail.getErrors().size()>0) {
-        	int i =1;
-        	reportBuilder.append("\\n").append("\\n").append("Errors").append("\\n");
+        if (planDetail.getErrors() != null && planDetail.getErrors().size() > 0) {
+            int i = 1;
+            reportBuilder.append("\\n").append("\\n").append("Errors").append("\\n");
             for (Map.Entry<String, String> entry : planDetail.getErrors().entrySet()) {
-            	reportBuilder.append(String.valueOf(i)).append(". ");
-            	reportBuilder.append(entry.getValue());
-            	reportBuilder.append("\\n");
+                reportBuilder.append(String.valueOf(i)).append(". ");
+                reportBuilder.append(entry.getValue());
+                reportBuilder.append("\\n");
                 i++;
             }
         }
 
-        drb.setTitle("EDCR Report")
-        .setSubtitle(reportBuilder.toString())
-        .setPrintBackgroundOnOddRows(false)
-        .setSubtitleStyle(subTitleStyle)
-        .setTitleHeight(30).setSubtitleHeight(10).setUseFullPageWidth(true);
-       
-        
-        
+        drb.setTitle("Building Plan Approval" + "\\n" + "EDCR Report")
+                .setSubtitle(reportBuilder.toString())
+                .setPrintBackgroundOnOddRows(false)
+                .setSubtitleStyle(subTitleStyle)
+                .setTitleHeight(40).setSubtitleHeight(20).setUseFullPageWidth(true);
+
         List<Map<String, String>> errors = new ArrayList<Map<String, String>>();
         errors.add(planDetail.getErrors());
-        
-           
+
         drb.setPageSizeAndOrientation(new Page(842, 595, true));
-        
+
         final JRDataSource ds = new JRBeanCollectionDataSource(planDetail.getReportOutput().getRuleOutPuts());
         final JRDataSource ds1 = new JRBeanCollectionDataSource(planDetail.getReportOutput().getRuleOutPuts());
-        
-        
+
         final Map valuesMap = new HashMap();
         valuesMap.put("ruleOutput", ds1);
-        
+        valuesMap.put("dcrApplication", dcrApplication);
+
         List<PlanRule> planRules = planRuleService.findRulesByPlanDetail(planDetail);
 
         for (PlanRule pl : planRules) {
@@ -245,31 +238,25 @@ public class DcrService {
                 String ruleName = "rule" + s;
                 LOG.info(s);
                 Object ruleBean = getRuleBean(ruleName);
-                if(ruleBean!=null)
-                {
-                GeneralRule bean = (GeneralRule) ruleBean;
-                if(bean!=null)
-                {
-                    bean.generateRuleReport(planDetail, drb, valuesMap);
-                }
-                }else
-                {
-                    LOG.error("Skipping rule "+ruleName+ "Since rule cannot be injected");
-                }
-              
+                if (ruleBean != null) {
+                    GeneralRule bean = (GeneralRule) ruleBean;
+                    if (bean != null)
+                        bean.generateRuleReport(planDetail, drb, valuesMap);
+                } else
+                    LOG.error("Skipping rule " + ruleName + "Since rule cannot be injected");
 
             }
         }
-        
-        drb.setMargins(20, 20, 20, 20);
-       
-        final DynamicReport dr = drb.build();
-       
-        return DynamicJasperHelper.generateJasperPrint(dr, new ClassicLayoutManager(), ds, valuesMap);
-        
-	}
 
-	public byte[] generatePlanScrutinyReport(PlanDetail planDetail) {
+        drb.setMargins(20, 20, 20, 20);
+
+        final DynamicReport dr = drb.build();
+
+        return DynamicJasperHelper.generateJasperPrint(dr, new ClassicLayoutManager(), ds, valuesMap);
+
+    }
+
+    public byte[] generatePlanScrutinyReport(PlanDetail planDetail) {
         // TODO Auto-generated method stub
         return null;
     }
