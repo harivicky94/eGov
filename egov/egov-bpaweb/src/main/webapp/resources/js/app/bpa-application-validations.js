@@ -594,7 +594,7 @@ $(document).ready(function() {
 	if('Addition or Extension' == serviceTypeName || 'Alteration' == serviceTypeName || 'New Construction' == serviceTypeName
 			|| 'Amenities' == serviceTypeName) {
         showOnePermitOnPageLoad();
-		$('.occupancyapplnlevel').on('change', function() {
+		$('#occupancyapplnlevel').on('change', function() {
 			if($("#occupancyapplnlevel option:selected" ).text() == 'Residential'){
 				$('#oneDayPermitSec').show(); 
 				$('#isOneDayPermitApplication').prop('checked', false); 
