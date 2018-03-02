@@ -33,8 +33,8 @@ public class GeneralRule {
 
     }
     
-    public void generateRuleReport(PlanDetail planDetail, FastReportBuilder drb, Map map) {
-        
+    public boolean generateRuleReport(PlanDetail planDetail, FastReportBuilder drb, Map map, boolean status) {
+        return true;
     }
 
     protected RuleOutput buildRuleOutputWithSubRule(String mainRule, String subRule, String ruleDescription, String fieldVerified,

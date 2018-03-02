@@ -192,14 +192,15 @@ public class DcrService {
         String architectName = StringUtils.isNotBlank(dcrApplication.getPlanInformation().getArchitectInformation())
                                ? dcrApplication.getPlanInformation().getArchitectInformation() : "NA";
         reportBuilder.append("\\n").append("Application Details").append("\\n").append("\\n")
-                     .append("Application Number :   ").append(applicationNumber)
-                     .append("                                                ")
+                     .append("Application Number  :   ").append(applicationNumber)
+                     .append("                                                    ")
                      .append("Plot Area          :   ").append(plotArea).append("\\n").append("\\n")
-                     .append("Application Date   :   ").append(applicationDate)
-                     .append("                                                ")
-                     .append("Occupancy          :   ").append(occupancy).append("\\n").append("\\n")
-                     .append("Architect name     :   ").append(architectName);
+                     .append("Application Date       :   ").append(applicationDate)
+                     .append("                                                           ")
+                     .append("Occupancy       :   ").append(occupancy).append("\\n").append("\\n")
+                     .append("Architect name         :   ").append(architectName);
 
+        boolean reportStatus = false;
         if (planDetail.getErrors() != null && planDetail.getErrors().size() > 0) {
             int i = 1;
             reportBuilder.append("\\n").append("\\n").append("Errors").append("\\n");
@@ -209,13 +210,11 @@ public class DcrService {
                 reportBuilder.append("\\n");
                 i++;
             }
-        }
-
-        drb.setTitle("Building Plan Approval" + "\\n" + "EDCR Report")
-           .setSubtitle(reportBuilder.toString())
-           .setPrintBackgroundOnOddRows(false)
-           .setSubtitleStyle(subTitleStyle)
-           .setTitleHeight(40).setSubtitleHeight(20).setUseFullPageWidth(true);
+            reportBuilder.append("\\n");
+        } else  
+            reportStatus = true;
+        
+        
 
         List<Map<String, String>> errors = new ArrayList<Map<String, String>>();
         errors.add(planDetail.getErrors());
@@ -226,9 +225,6 @@ public class DcrService {
         final JRDataSource ds1 = new JRBeanCollectionDataSource(planDetail.getReportOutput().getRuleOutPuts());
 
         final Map valuesMap = new HashMap();
-        valuesMap.put("ruleOutput", ds1);
-        valuesMap.put("dcrApplication", dcrApplication);
-
         List<PlanRule> planRules = planRuleService.findRulesByPlanDetail(planDetail);
 
         for (PlanRule pl : planRules) {
@@ -241,13 +237,20 @@ public class DcrService {
                 if (ruleBean != null) {
                     GeneralRule bean = (GeneralRule) ruleBean;
                     if (bean != null)
-                        bean.generateRuleReport(planDetail, drb, valuesMap);
+                        reportStatus = bean.generateRuleReport(planDetail, drb, valuesMap, reportStatus);
                 } else
                     LOG.error("Skipping rule " + ruleName + "Since rule cannot be injected");
 
             }
         }
+        reportBuilder.append("Report Status : " + (reportStatus ? "Accepted" : "NotAccepted")).append("\\n").append("\\n");
+        reportBuilder.append("Rules Verified : ").append("\\n");
 
+        drb.setTitle("Building Plan Approval" + "\\n" + "EDCR Report")
+           .setSubtitle(reportBuilder.toString())
+           .setPrintBackgroundOnOddRows(false)
+           .setSubtitleStyle(subTitleStyle)
+           .setTitleHeight(40).setSubtitleHeight(20).setUseFullPageWidth(true);
         drb.setMargins(20, 20, 20, 20);
 
         final DynamicReport dr = drb.build();

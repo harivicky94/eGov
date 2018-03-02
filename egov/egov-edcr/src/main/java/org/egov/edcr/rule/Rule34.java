@@ -163,12 +163,11 @@ public class Rule34 extends GeneralRule {
     }
 
     @Override
-    public void generateRuleReport(PlanDetail planDetail, FastReportBuilder drb2, Map valuesMap) {
+    public boolean generateRuleReport(PlanDetail planDetail, FastReportBuilder drb2, Map valuesMap, boolean reportStatus) {
         List<RuleOutput> rules = planDetail.getReportOutput().getRuleOutPuts();
         for (RuleOutput ruleOutput : rules)
             if (ruleOutput.getKey().equalsIgnoreCase(DcrConstants.RULE34)) {
                 FastReportBuilder drb = new FastReportBuilder();
-
                 StringBuilder stringBuilder = new StringBuilder();
                 if (ruleOutput.getMessage() != null)
                     stringBuilder.append("Message : ").append(ruleOutput.getMessage()).append("\\n");
@@ -176,11 +175,11 @@ public class Rule34 extends GeneralRule {
                     stringBuilder.append("Description : ").append(ruleOutput.getRuleDescription()).append("\\n");
                 drb.setMargins(5, 0, 10, 10);
                 drb.setTitle("Rule : " + ruleOutput.getKey() + "\\n")
-                        .setSubtitle(stringBuilder.toString())
-                        .setPrintBackgroundOnOddRows(false).setWhenNoData("", null)
-                        .setTitleStyle(reportService.getTitleStyle())
-                        .setSubtitleStyle(reportService.getSubTitleStyle())
-                        .setSubtitleHeight(30);
+                   .setSubtitle(stringBuilder.toString())
+                   .setPrintBackgroundOnOddRows(false).setWhenNoData("", null)
+                   .setTitleStyle(reportService.getTitleStyle())
+                   .setSubtitleStyle(reportService.getSubTitleStyle())
+                   .setSubtitleHeight(30);
 
                 new JRBeanCollectionDataSource(ruleOutput.getSubRuleOutputs());
                 final DJDataSource djds = new DJDataSource(ruleOutput.getKey(), DJConstants.DATA_SOURCE_ORIGIN_PARAMETER,
@@ -191,12 +190,13 @@ public class Rule34 extends GeneralRule {
                 subRep.setDynamicReport(drb.build());
                 subRep.setDatasource(djds);
                 subRep.setUseParentReportParameters(true);
-
+                subRep.setSplitAllowed(true);
                 drb2.addConcatenatedReport(subRep);
-                // return subRep;
+                valuesMap.put(ruleOutput.getKey(), new JRBeanCollectionDataSource(ruleOutput.getSubRuleOutputs()));
                 if (ruleOutput != null && !ruleOutput.getSubRuleOutputs().isEmpty())
                     for (SubRuleOutput subRuleOutput : ruleOutput.getSubRuleOutputs())
                         try {
+                            reportStatus = reportService.getReportStatus(subRuleOutput.getRuleReportOutputs(), reportStatus);
                             valuesMap.put(subRuleOutput.getKey() + "DataSource",
                                     new JRBeanCollectionDataSource(subRuleOutput.getRuleReportOutputs()));
                             drb2.addConcatenatedReport(generateSubRuleReport(subRuleOutput, drb2, valuesMap));
@@ -206,6 +206,7 @@ public class Rule34 extends GeneralRule {
                         }
                 break;
             }
+       return reportStatus;
     }
 
     public Subreport generateSubRuleReport(final SubRuleOutput subRuleOutput, FastReportBuilder drb2, Map valuesMap)
@@ -222,16 +223,18 @@ public class Rule34 extends GeneralRule {
 
         drb.setMargins(0, 10, 10, 10);
         drb.setTitle("SubRule : " + subRuleOutput.getKey())
-                .setSubtitle(stringBuilder.toString())
-                .setPrintBackgroundOnOddRows(false).setWhenNoData("", null)
-                .setTitleStyle(reportService.getTitleStyle())
-                .setSubtitleStyle(reportService.getSubTitleStyle())
-                .setSubtitleHeight(30).setTitleHeight(40);
+           .setSubtitle(stringBuilder.toString())
+           .setPrintBackgroundOnOddRows(false).setWhenNoData("", null)
+           .setTitleStyle(reportService.getTitleStyle())
+           .setSubtitleStyle(reportService.getSubTitleStyle())
+           .setSubtitleHeight(30).setTitleHeight(40);
+
 
         if (subRuleOutput.getRuleReportOutputs() != null && !subRuleOutput.getRuleReportOutputs().isEmpty()) {
 
-            drb.addColumn("Field Verified", "fieldVerified", String.class.getName(), 120, verifiedColumnStyle, columnHeaderStyle);
-            drb.addColumn("Expected Result", "expectedResult", String.class.getName(), 120, columnStyle, columnHeaderStyle);
+            drb.addColumn("Field Verified", "fieldVerified", String.class.getName(), 120, verifiedColumnStyle, columnHeaderStyle,
+                    true);
+            drb.addColumn("Expected Result", "expectedResult", String.class.getName(), 120, columnStyle, columnHeaderStyle, true);
             drb.addColumn("Actual Result", "actualResult", String.class.getName(), 120, columnStyle, columnHeaderStyle);
             drb.addColumn("Status", "status", String.class.getName(), 120, columnStyle, columnHeaderStyle);
         }
@@ -249,5 +252,6 @@ public class Rule34 extends GeneralRule {
         subRep.setSplitAllowed(true);
         return subRep;
     }
+
 
 }

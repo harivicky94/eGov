@@ -226,7 +226,7 @@ public class Rule23 extends GeneralRule {
     }
 
     @Override
-    public void generateRuleReport(PlanDetail planDetail, FastReportBuilder drb2, Map valuesMap) {
+    public boolean generateRuleReport(PlanDetail planDetail, FastReportBuilder drb2, Map valuesMap, boolean reportStatus) {
         List<RuleOutput> rules = planDetail.getReportOutput().getRuleOutPuts();
         for (RuleOutput ruleOutput : rules)
             if (ruleOutput.getKey().equalsIgnoreCase(DcrConstants.RULE23)) {
@@ -236,7 +236,7 @@ public class Rule23 extends GeneralRule {
                     stringBuilder.append("Message : ").append(ruleOutput.getMessage()).append("\\n");
                 if (ruleOutput.getRuleDescription() != null)
                     stringBuilder.append("Description : ").append(ruleOutput.getRuleDescription()).append("\\n");
-                drb.setMargins(5, 0, 10, 10);
+                drb.setMargins(0, 0, 10, 10);
                 drb.setTitle("Rule : " + ruleOutput.getKey() + "\\n")
                    .setSubtitle(stringBuilder.toString())
                    .setPrintBackgroundOnOddRows(false).setWhenNoData("", null)
@@ -255,10 +255,11 @@ public class Rule23 extends GeneralRule {
                 subRep.setUseParentReportParameters(true);
                 subRep.setSplitAllowed(true);
                 drb2.addConcatenatedReport(subRep);
-
+                valuesMap.put(ruleOutput.getKey(), new JRBeanCollectionDataSource(ruleOutput.getSubRuleOutputs()));
                 if (ruleOutput != null && !ruleOutput.getSubRuleOutputs().isEmpty())
                     for (SubRuleOutput subRuleOutput : ruleOutput.getSubRuleOutputs())
                         try {
+                            reportStatus = reportService.getReportStatus(subRuleOutput.getRuleReportOutputs(), reportStatus);
                             valuesMap.put(subRuleOutput.getKey() + "DataSource",
                                     new JRBeanCollectionDataSource(subRuleOutput.getRuleReportOutputs()));
                             drb2.addConcatenatedReport(generateSubRuleReport(subRuleOutput, drb2, valuesMap));
@@ -268,7 +269,7 @@ public class Rule23 extends GeneralRule {
                         }
                 break;
             }
-
+       return reportStatus;
     }
 
     public Subreport generateSubRuleReport(final SubRuleOutput subRuleOutput, FastReportBuilder drb2, Map valuesMap)
@@ -283,7 +284,7 @@ public class Rule23 extends GeneralRule {
         if (subRuleOutput.getRuleDescription() != null)
             stringBuilder.append("Description : ").append(subRuleOutput.getRuleDescription()).append("\\n");
 
-        drb.setMargins(0, 10, 10, 10);
+        drb.setMargins(0, 0, 10, 10);
         drb.setTitle("SubRule : " + subRuleOutput.getKey())
            .setSubtitle(stringBuilder.toString())
            .setPrintBackgroundOnOddRows(false).setWhenNoData("", null)
