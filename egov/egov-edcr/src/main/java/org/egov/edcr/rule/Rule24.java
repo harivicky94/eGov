@@ -166,7 +166,7 @@ public class Rule24 extends GeneralRule {
 
             // Building Height less than 7
             if (planDetail.getBuilding() != null && planDetail.getBuilding().getBuildingHeight() != null
-                && planDetail.getBuilding().getBuildingHeight().compareTo(new BigDecimal(7)) < 0)
+                && planDetail.getBuilding().getBuildingHeight().compareTo(new BigDecimal(7)) <= 0)
                 // OPENING PRESENT
                 if (planDetail.getPlanInformation() != null && planDetail.getPlanInformation().getOpeningOnRear())
                     rule24_4(planDetail, REARYARDMINIMUM_DISTANCE_WITHOPENING, REARYARDMEAN_DISTANCE_WITHOPENING, DcrConstants.NON_BASEMENT);
@@ -207,7 +207,7 @@ public class Rule24 extends GeneralRule {
 
         // Building Height less than 7
         if (planDetail.getBuilding() != null && planDetail.getBuilding().getBuildingHeight() != null
-            && planDetail.getBuilding().getBuildingHeight().compareTo(new BigDecimal(7)) < 0)
+            && planDetail.getBuilding().getBuildingHeight().compareTo(new BigDecimal(7)) <= 0)
             // OPENING PRESENT
             if (planDetail.getPlanInformation() != null && planDetail.getPlanInformation().getOpeningOnRear())
                 rule24_4(planDetail, REARYARDMINIMUM_DISTANCE_WITHOPENING, REARYARDMEAN_DISTANCE_WITHOPENING, DcrConstants.BASEMENT);
