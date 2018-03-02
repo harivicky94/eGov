@@ -82,6 +82,7 @@ public class DXFExtractService {
             pl.getPlot().getSideYard2().setMinimumDistance(MinDistance.getYardMinDistance(pl, DxfFileConstants.SIDE_YARD_2));
             pl.getPlot().getRearYard().setMinimumDistance(MinDistance.getYardMinDistance(pl, DxfFileConstants.REAR_YARD));
 
+            if (pl.getBasement()!=null) {
             pl.getPlot().setBsmtFrontYard(getYard(pl, doc, DxfFileConstants.BSMNT_FRONT_YARD));
             pl.getPlot().setBsmtRearYard(getYard(pl, doc, DxfFileConstants.BSMNT_REAR_YARD));
             pl.getPlot().setBsmtSideYard1(getYard(pl, doc, DxfFileConstants.BSMNT_SIDE_YARD_1));
@@ -91,6 +92,7 @@ public class DXFExtractService {
             pl.getPlot().getBsmtSideYard1().setMinimumDistance(MinDistance.getYardMinDistance(pl, DxfFileConstants.BSMNT_SIDE_YARD_1));
             pl.getPlot().getBsmtSideYard2().setMinimumDistance(MinDistance.getYardMinDistance(pl, DxfFileConstants.BSMNT_SIDE_YARD_2));
             pl.getPlot().getBsmtRearYard().setMinimumDistance(MinDistance.getYardMinDistance(pl, DxfFileConstants.BSMNT_REAR_YARD));
+            }
 
             pl = extractRoadDetails(doc, pl);
             pl.setNotifiedRoads(new ArrayList<>());
@@ -301,19 +303,18 @@ public class DXFExtractService {
     }
 
     private void extractBasementDetails(PlanDetail pl, DXFDocument doc) {
-        List<DXFLWPolyline> polyLinesByLayer;
-        Basement basement = new Basement();
-        polyLinesByLayer = Util.getPolyLinesByLayer(doc, DxfFileConstants.BSMNT_FOOT_PRINT);
-
-        if (polyLinesByLayer.size() > 0) {
-            basement.setPolyLine(polyLinesByLayer.get(0));
-            basement.setPresentInDxf(true);
-        } else
-            pl.addError(DxfFileConstants.BSMNT_FOOT_PRINT, edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
-                    new String[]{DxfFileConstants.BSMNT_FOOT_PRINT}, null));
-
-        pl.setBasement(basement);
-
+        List<DXFLWPolyline> polyLinesByLayer= new ArrayList<>();
+        
+        if (doc.containsDXFLayer(DxfFileConstants.BSMNT_FOOT_PRINT)) {
+            polyLinesByLayer = Util.getPolyLinesByLayer(doc, DxfFileConstants.BSMNT_FOOT_PRINT);
+            if (polyLinesByLayer.size() > 0) {
+                Basement basement = new Basement();
+                basement.setPolyLine(polyLinesByLayer.get(0));
+                basement.setPresentInDxf(true);
+                pl.setBasement(basement);
+            }
+          
+        }
     }
 
     private void extractPlotDetails(PlanDetail pl, DXFDocument doc) {

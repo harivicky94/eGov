@@ -122,7 +122,7 @@ public class Rule34 extends GeneralRule {
                                     Math.floor(totalParkingRequired)
                                             + " Numbers ",
                                     planDetail.getParkingSlots().size()
-                                            + " Numbers " + " for Total floors " + planDetail.getFloorUnits(),
+                                            + " Numbers " + " for Total floors " + planDetail.getFloorUnits().size(),
                                     Result.Accepted, null));
                 }
             }
