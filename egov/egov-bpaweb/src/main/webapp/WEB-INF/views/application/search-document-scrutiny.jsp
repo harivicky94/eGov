@@ -58,8 +58,10 @@
 							code="lbl.service.type" /></label>
 					<div class="col-sm-3 add-margin">
 						<form:select path="serviceTypeEnum" 
-							id="serviceTypeEnum" cssClass="form-control"> 
-							<form:options items="${serviceTypeEnumList}" />
+							id="serviceTypeEnum" cssClass="form-control">
+							<c:forEach items="${serviceTypeEnumList}" var="serviceType">
+								<option value="${serviceType}" >${serviceType.applicationTypeVal}</option>
+							</c:forEach>
 						</form:select>
 					</div>
 					

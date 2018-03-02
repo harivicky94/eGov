@@ -428,7 +428,7 @@ $(document).ready(function() {
 			
 			bootbox
 			.confirm({
-				message : 'If you change occpancy type existing filled floor wise details will be reset.Do you want continue ? ',
+				message : 'If you change occupancy type, filled floor wise details will be reset. Do you want continue ? ',
 				buttons : {
 					'cancel' : {
 						label : 'No',
@@ -452,6 +452,7 @@ $(document).ready(function() {
 						return true;
 					} else {
 						dropdown.target.selectedIndex = previousIndex;
+                        showOnePermitOnPageLoad();
 						return true;
 					}
 				}
@@ -589,37 +590,34 @@ $(document).ready(function() {
 		 $('#oneDayPermitSec').show(); 
 	 }else
 		 $('#oneDayPermitSec').hide(); 
-	var seviceTypeName = $( "#serviceType option:selected" ).text();
-	if('Addition or Extension' == seviceTypeName || 'Alteration' == seviceTypeName || 'New Construction' == seviceTypeName
-			|| 'Amenities' == seviceTypeName) {
-		$('#occupancyapplnlevel').on('change', function() {
+	var serviceTypeName = $( "#serviceType option:selected" ).text();
+	if('Addition or Extension' == serviceTypeName || 'Alteration' == serviceTypeName || 'New Construction' == serviceTypeName
+			|| 'Amenities' == serviceTypeName) {
+        showOnePermitOnPageLoad();
+		$('.occupancyapplnlevel').on('change', function() {
 			if($("#occupancyapplnlevel option:selected" ).text() == 'Residential'){
 				$('#oneDayPermitSec').show(); 
 				$('#isOneDayPermitApplication').prop('checked', false); 
-				$('#oneDayPermitTypeOfLandSec').hide(); 
-				 /* $('#isOneDayPermitApplication').click(function() {
-				        if (!$(this).is(':checked')) {
-				        	$( "#typeOfLand" ).val('')
-				        	$('#oneDayPermitTypeOfLandSec').hide(); 
-				        	$('#isOneDayPermitApplication').prop('checked', false);
-				        	$('#typeOfLand').removeAttr('required');
-				        } else{
-				        	$('#typeOfLand').prop('required', true); 
-				        	$('#oneDayPermitTypeOfLandSec').show();
-				        }
-				  });*/
+				$('#oneDayPermitTypeOfLandSec').hide();
 			} else {
+                $('#typeOfLand').val('');
 				$('#typeOfLand').removeAttr('required');
-				$('#isOneDayPermitApplication').prop('checked', false); 
-	    		$( "#typeOfLand" ).val('');
+				$('#isOneDayPermitApplication').prop('checked', false);
 				$('#oneDayPermitSec').hide();
 			}
-		}); 
+		});
 	}
-	
+
+	function showOnePermitOnPageLoad() {
+        if($("#occupancyapplnlevel option:selected" ).text() == 'Residential'){
+            $('#oneDayPermitSec').show();
+            $('#isOneDayPermitApplication').prop('checked', false);
+            $('#oneDayPermitTypeOfLandSec').hide();
+        }
+	}
 	 $('#isOneDayPermitApplication').click(function() {
 	        if (!$(this).is(':checked')) {
-	        	$( "#typeOfLand" ).val('');
+                $('#typeOfLand').val('');
 	        	$('#oneDayPermitTypeOfLandSec').hide(); 
 	        	$('#isOneDayPermitApplication').prop('checked', false);
 	        	$('#typeOfLand').removeAttr('required');
