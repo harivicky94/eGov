@@ -48,11 +48,11 @@
 <c:choose>
 	<c:when test="${!docketDetailLocList.isEmpty()}">
 		<div class="panel-heading custom_form_panel_heading">
-			<div class="panel-title">Location of the Plot</div>
+			<div class="panel-title">Location of the plot</div>
 		</div>
 		<div class="form-group view-content header-color hidden-xs">
-			<div class="col-sm-5 text-center">Documents</div>
-			<div class="col-sm-3 text-center">Provided</div>
+			<div class="col-sm-5 text-center"><spring:message code="lbl.files" /></div>
+			<div class="col-sm-3 text-center"><spring:message code="lbl.provided" /></div>
 			<div class="col-sm-3 text-center">
 				<spring:message code="lbl.remarks" />
 			</div>
@@ -61,22 +61,18 @@
 			varStatus="status">
 			<div class="form-group">
 				<div class="col-sm-5 add-margin check-text text-center">
-
 					<c:out value="${docs.checkListDetail.description}" />
-
-
 					<form:hidden
 						id="docketDetailLocList${status.index}checkListDetail.id"
 						path="docketDetailLocList[${status.index}].checkListDetail.id"
 						value="${docs.checkListDetail.id}" />
-
 					<form:hidden
 						id="docketDetailLocList${status.index}checkListDetail.description"
 						path="docketDetailLocList[${status.index}].checkListDetail.description"
 						value="${docs.checkListDetail.description}" />
 				</div>
 
-				<div class="col-sm-3 add-margin">
+				<div class="col-sm-3 add-margin text-center">
 					<c:choose>
 						<c:when test="${mode =='editinsp'}">
 							<form:radiobutton class="radioBtnClass"
@@ -101,7 +97,6 @@
 						</c:otherwise>
 					</c:choose>
 				</div>
-
 				<div class="col-sm-3 add-margin text-center">
 					<form:textarea class="form-control patternvalidation"
 						data-pattern="alphanumericspecialcharacters" maxlength="256"
@@ -116,16 +111,14 @@
 	</c:when>
 </c:choose>
 
-
-
 <c:choose>
 	<c:when test="${!docketDetailMeasumentList.isEmpty()}">
 		<div class="panel-heading custom_form_panel_heading">
-			<div class="panel-title">Measurement of the Plot</div>
+			<div class="panel-title">Measurement of the plot</div>
 		</div>
 		<div class="form-group view-content header-color hidden-xs">
-			<div class="col-sm-5 text-center">Documents</div>
-			<div class="col-sm-3 text-center">Provided</div>
+			<div class="col-sm-5 text-center"><spring:message code="lbl.files" /></div>
+			<div class="col-sm-3 text-center"><spring:message code="lbl.provided" /></div>
 			<div class="col-sm-3 text-center">
 				<spring:message code="lbl.remarks" />
 			</div>
@@ -134,22 +127,17 @@
 			varStatus="status">
 			<div class="form-group">
 				<div class="col-sm-5 add-margin check-text text-center">
-
 					<c:out value="${docs.checkListDetail.description}" />
-
-
 					<form:hidden
 						id="docketDetailMeasumentList${status.index}checkListDetail.id"
 						path="docketDetailMeasumentList[${status.index}].checkListDetail.id"
 						value="${docs.checkListDetail.id}" />
-
 					<form:hidden
 						id="docketDetailMeasumentList${status.index}checkListDetail.description"
 						path="docketDetailMeasumentList[${status.index}].checkListDetail.description"
 						value="${docs.checkListDetail.description}" />
 				</div>
-
-				<div class="col-sm-3 add-margin">
+				<div class="col-sm-3 add-margin text-center">
 					<c:choose>
 						<c:when test="${mode =='editinsp'}">
 							<form:radiobutton class="radioBtnClass"
@@ -178,15 +166,12 @@
 								cssClass="add-margin error-msg" />
 						</c:otherwise>
 					</c:choose>
-
 				</div>
-
 				<div class="col-sm-3 add-margin text-center">
 					<form:textarea class="form-control patternvalidation"
 						data-pattern="alphanumericspecialcharacters" maxlength="256"
 						id="docketDetailMeasumentList${status.index}remarks"
 						path="docketDetailMeasumentList[${status.index}].remarks" />
-
 					<form:errors
 						path="docketDetailMeasumentList[${status.index}].remarks"
 						cssClass="add-margin error-msg" />
@@ -199,11 +184,11 @@
 <c:choose>
 	<c:when test="${!docketDetailAccessList.isEmpty()}">
 		<div class="panel-heading custom_form_panel_heading">
-			<div class="panel-title">Access To Plot</div>
+			<div class="panel-title">Access to plot</div>
 		</div>
 		<div class="form-group view-content header-color hidden-xs">
-			<div class="col-sm-5 text-center">Documents</div>
-			<div class="col-sm-3 text-center">Provided</div>
+			<div class="col-sm-5 text-center"><spring:message code="lbl.files" /></div>
+			<div class="col-sm-3 text-center"><spring:message code="lbl.provided" /></div>
 			<div class="col-sm-3 text-center">
 				<spring:message code="lbl.remarks" />
 			</div>
@@ -212,22 +197,17 @@
 			varStatus="status">
 			<div class="form-group">
 				<div class="col-sm-5 add-margin check-text text-center">
-
 					<c:out value="${docs.checkListDetail.description}" />
-
-
 					<form:hidden
 						id="docketDetailAccessList${status.index}checkListDetail.id"
 						path="docketDetailAccessList[${status.index}].checkListDetail.id"
 						value="${docs.checkListDetail.id}" />
-
 					<form:hidden
 						id="docketDetailAccessList${status.index}checkListDetail.description"
 						path="docketDetailAccessList[${status.index}].checkListDetail.description"
 						value="${docs.checkListDetail.description}" />
 				</div>
-
-				<div class="col-sm-3 add-margin">
+				<div class="col-sm-3 add-margin text-center">
 					<c:choose>
 						<c:when test="${mode =='editinsp'}">
 							<form:radiobutton class="radioBtnClass"
@@ -278,8 +258,8 @@
 			</div>
 		</div>
 		<div class="form-group view-content header-color hidden-xs">
-			<div class="col-sm-5 text-center">Documents</div>
-			<div class="col-sm-3 text-center">Provided</div>
+			<div class="col-sm-5 text-center"><spring:message code="lbl.files" /></div>
+			<div class="col-sm-3 text-center"><spring:message code="lbl.provided" /></div>
 			<div class="col-sm-3 text-center">
 				<spring:message code="lbl.remarks" />
 			</div>
@@ -288,22 +268,17 @@
 			varStatus="status">
 			<div class="form-group">
 				<div class="col-sm-5 add-margin check-text text-center">
-
 					<c:out value="${docs.checkListDetail.description}" />
-
-
 					<form:hidden
 						id="docketDetlSurroundingPlotList${status.index}checkListDetail.id"
 						path="docketDetlSurroundingPlotList[${status.index}].checkListDetail.id"
 						value="${docs.checkListDetail.id}" />
-
 					<form:hidden
 						id="docketDetlSurroundingPlotList${status.index}checkListDetail.description"
 						path="docketDetlSurroundingPlotList[${status.index}].checkListDetail.description"
 						value="${docs.checkListDetail.description}" />
 				</div>
-
-				<div class="col-sm-3 add-margin">
+				<div class="col-sm-3 add-margin text-center">
 					<c:choose>
 						<c:when test="${mode =='editinsp'}">
 							<form:radiobutton class="radioBtnClass"
@@ -333,13 +308,11 @@
 						</c:otherwise>
 					</c:choose>
 				</div>
-
 				<div class="col-sm-3 add-margin text-center">
 					<form:textarea class="form-control patternvalidation"
 						data-pattern="alphanumericspecialcharacters" maxlength="256"
 						id="docketDetlSurroundingPlotList${status.index}remarks"
 						path="docketDetlSurroundingPlotList[${status.index}].remarks" />
-
 					<form:errors
 						path="docketDetlSurroundingPlotList[${status.index}].remarks"
 						cssClass="add-margin error-msg" />
@@ -356,8 +329,8 @@
 			<div class="panel-title">Type of land</div>
 		</div>
 		<div class="form-group view-content header-color hidden-xs">
-			<div class="col-sm-5 text-center">Documents</div>
-			<div class="col-sm-3 text-center">Provided</div>
+			<div class="col-sm-5 text-center"><spring:message code="lbl.files" /></div>
+			<div class="col-sm-3 text-center"><spring:message code="lbl.provided" /></div>
 			<div class="col-sm-3 text-center">
 				<spring:message code="lbl.remarks" />
 			</div>
@@ -366,22 +339,17 @@
 			varStatus="status">
 			<div class="form-group">
 				<div class="col-sm-5 add-margin check-text text-center">
-
 					<c:out value="${docs.checkListDetail.description}" />
-
-
 					<form:hidden
 						id="docketDetailLandTypeList${status.index}checkListDetail.id"
 						path="docketDetailLandTypeList[${status.index}].checkListDetail.id"
 						value="${docs.checkListDetail.id}" />
-
 					<form:hidden
 						id="docketDetailLandTypeList${status.index}checkListDetail.description"
 						path="docketDetailLandTypeList[${status.index}].checkListDetail.description"
 						value="${docs.checkListDetail.description}" />
 				</div>
-
-				<div class="col-sm-3 add-margin">
+				<div class="col-sm-3 add-margin text-center">
 					<c:choose>
 						<c:when test="${mode =='editinsp'}">
 							<form:radiobutton class="radioBtnClass"
@@ -411,13 +379,11 @@
 						</c:otherwise>
 					</c:choose>
 				</div>
-
 				<div class="col-sm-3 add-margin text-center">
 					<form:textarea class="form-control patternvalidation"
 						data-pattern="alphanumericspecialcharacters" maxlength="256"
 						id="docketDetailLandTypeList${status.index}remarks"
 						path="docketDetailLandTypeList[${status.index}].remarks" />
-
 					<form:errors
 						path="docketDetailLandTypeList[${status.index}].remarks"
 						cssClass="add-margin error-msg" />
@@ -427,15 +393,14 @@
 	</c:when>
 </c:choose>
 
-
 <c:choose>
 	<c:when test="${!docketDetailProposedWorkList.isEmpty()}">
 		<div class="panel-heading custom_form_panel_heading">
 			<div class="panel-title">Stage of proposed work</div>
 		</div>
 		<div class="form-group view-content header-color hidden-xs">
-			<div class="col-sm-5 text-center">Documents</div>
-			<div class="col-sm-3 text-center">Provided</div>
+			<div class="col-sm-5 text-center"><spring:message code="lbl.files" /></div>
+			<div class="col-sm-3 text-center"><spring:message code="lbl.provided" /></div>
 			<div class="col-sm-3 text-center">
 				<spring:message code="lbl.remarks" />
 			</div>
@@ -444,22 +409,17 @@
 			varStatus="status">
 			<div class="form-group">
 				<div class="col-sm-5 add-margin check-text text-center">
-
 					<c:out value="${docs.checkListDetail.description}" />
-
-
 					<form:hidden
 						id="docketDetailProposedWorkList${status.index}checkListDetail.id"
 						path="docketDetailProposedWorkList[${status.index}].checkListDetail.id"
 						value="${docs.checkListDetail.id}" />
-
 					<form:hidden
 						id="docketDetailProposedWorkList${status.index}checkListDetail.description"
 						path="docketDetailProposedWorkList[${status.index}].checkListDetail.description"
 						value="${docs.checkListDetail.description}" />
 				</div>
-
-				<div class="col-sm-3 add-margin">
+				<div class="col-sm-3 add-margin text-center">
 					<c:choose>
 						<c:when test="${mode =='editinsp'}">
 							<form:radiobutton class="radioBtnClass"
@@ -489,13 +449,11 @@
 						</c:otherwise>
 					</c:choose>
 				</div>
-
 				<div class="col-sm-3 add-margin text-center">
 					<form:textarea class="form-control patternvalidation"
 						data-pattern="alphanumericspecialcharacters" maxlength="256"
 						id="docketDetailProposedWorkList${status.index}remarks"
 						path="docketDetailProposedWorkList[${status.index}].remarks" />
-
 					<form:errors
 						path="docketDetailProposedWorkList[${status.index}].remarks"
 						cssClass="add-margin error-msg" />
@@ -509,11 +467,11 @@
 <c:choose>
 	<c:when test="${!docketDetailWorkAsPerPlanList.isEmpty()}">
 		<div class="panel-heading custom_form_panel_heading">
-			<div class="panel-title">If work Started/completed</div>
+			<div class="panel-title">If work started/completed</div>
 		</div>
 		<div class="form-group view-content header-color hidden-xs">
-			<div class="col-sm-5 text-center">Documents</div>
-			<div class="col-sm-3 text-center">Provided</div>
+			<div class="col-sm-5 text-center"><spring:message code="lbl.files" /></div>
+			<div class="col-sm-3 text-center"><spring:message code="lbl.provided" /></div>
 			<div class="col-sm-3 text-center">
 				<spring:message code="lbl.remarks" />
 			</div>
@@ -522,22 +480,17 @@
 			varStatus="status">
 			<div class="form-group">
 				<div class="col-sm-5 add-margin check-text text-center">
-
 					<c:out value="${docs.checkListDetail.description}" />
-
-
 					<form:hidden
 						id="docketDetailWorkAsPerPlanList${status.index}checkListDetail.id"
 						path="docketDetailWorkAsPerPlanList[${status.index}].checkListDetail.id"
 						value="${docs.checkListDetail.id}" />
-
 					<form:hidden
 						id="docketDetailWorkAsPerPlanList${status.index}checkListDetail.description"
 						path="docketDetailWorkAsPerPlanList[${status.index}].checkListDetail.description"
 						value="${docs.checkListDetail.description}" />
 				</div>
-
-				<div class="col-sm-3 add-margin">
+				<div class="col-sm-3 add-margin text-center">
 					<c:choose>
 						<c:when test="${mode =='editinsp'}">
 							<form:radiobutton class="radioBtnClass"
@@ -567,13 +520,11 @@
 						</c:otherwise>
 					</c:choose>
 				</div>
-
 				<div class="col-sm-3 add-margin text-center">
 					<form:textarea class="form-control patternvalidation"
 						data-pattern="alphanumericspecialcharacters" maxlength="256"
 						id="docketDetailWorkAsPerPlanList${status.index}remarks"
 						path="docketDetailWorkAsPerPlanList[${status.index}].remarks" />
-
 					<form:errors
 						path="docketDetailWorkAsPerPlanList[${status.index}].remarks"
 						cssClass="add-margin error-msg" />
@@ -583,15 +534,14 @@
 	</c:when>
 </c:choose>
 
-
 <c:choose>
 	<c:when test="${!docketDetailHgtAbuttRoadList.isEmpty()}">
 		<div class="panel-heading custom_form_panel_heading">
-			<div class="panel-title">General Provisions regarding Site & Building Requirements</div>
+			<div class="panel-title">General provisions regarding site & building requirements</div>
 		</div>
 		<div class="form-group view-content header-color hidden-xs">
-			<div class="col-sm-5 text-center">Documents</div>
-			<div class="col-sm-3 text-center">Provided</div>
+			<div class="col-sm-5 text-center"><spring:message code="lbl.files" /></div>
+			<div class="col-sm-3 text-center"><spring:message code="lbl.provided" /></div>
 			<div class="col-sm-3 text-center">
 				<spring:message code="lbl.remarks" />
 			</div>
@@ -600,22 +550,17 @@
 			varStatus="status">
 			<div class="form-group">
 				<div class="col-sm-5 add-margin check-text text-center">
-
 					<c:out value="${docs.checkListDetail.description}" />
-
-
 					<form:hidden
 						id="docketDetailHgtAbuttRoadList${status.index}checkListDetail.id"
 						path="docketDetailHgtAbuttRoadList[${status.index}].checkListDetail.id"
 						value="${docs.checkListDetail.id}" />
-
 					<form:hidden
 						id="docketDetailHgtAbuttRoadList${status.index}checkListDetail.description"
 						path="docketDetailHgtAbuttRoadList[${status.index}].checkListDetail.description"
 						value="${docs.checkListDetail.description}" />
 				</div>
-
-				<div class="col-sm-3 add-margin">
+				<div class="col-sm-3 add-margin text-center">
 					<c:choose>
 						<c:when test="${mode =='editinsp'}">
 							<form:radiobutton class="radioBtnClass"
@@ -645,13 +590,11 @@
 						</c:otherwise>
 					</c:choose>
 				</div>
-
 				<div class="col-sm-3 add-margin text-center">
 					<form:textarea class="form-control patternvalidation"
 						data-pattern="alphanumericspecialcharacters" maxlength="256"
 						id="docketDetailHgtAbuttRoadList${status.index}remarks"
 						path="docketDetailHgtAbuttRoadList[${status.index}].remarks" />
-
 					<form:errors
 						path="docketDetailHgtAbuttRoadList[${status.index}].remarks"
 						cssClass="add-margin error-msg" />
@@ -664,11 +607,11 @@
 <c:choose>
 	<c:when test="${!docketDetailAreaLoc.isEmpty()}">
 		<div class="panel-heading custom_form_panel_heading">
-			<div class="panel-title">Extent of Plot</div>
+			<div class="panel-title">Extent of plot</div>
 		</div>
 		<div class="form-group view-content header-color hidden-xs">
-			<div class="col-sm-5 text-center">Documents</div>
-			<div class="col-sm-3 text-center">Value</div>
+			<div class="col-sm-5 text-center"><spring:message code="lbl.files" /></div>
+			<div class="col-sm-3 text-center"><spring:message code="lbl.provided" /></div>
 			<div class="col-sm-3 text-center">
 				<spring:message code="lbl.remarks" />
 			</div>
@@ -677,22 +620,17 @@
 			varStatus="status">
 			<div class="form-group">
 				<div class="col-sm-5 add-margin check-text text-center">
-
 					<c:out value="${docs.checkListDetail.description}" />
-
-
 					<form:hidden
 						id="docketDetailAreaLoc${status.index}checkListDetail.id"
 						path="docketDetailAreaLoc[${status.index}].checkListDetail.id"
 						value="${docs.checkListDetail.id}" />
-
 					<form:hidden
 						id="docketDetailAreaLoc${status.index}checkListDetail.description"
 						path="docketDetailAreaLoc[${status.index}].checkListDetail.description"
 						value="${docs.checkListDetail.description}" />
 				</div>
-
-				<div class="col-sm-3 add-margin">
+				<div class="col-sm-3 add-margin text-center">
 					<c:choose>
 						<c:when test="${mode =='editinsp'}">
 							<form:radiobutton class="radioBtnClass"
@@ -717,7 +655,6 @@
 						</c:otherwise>
 					</c:choose>
 				</div>
-
 				<div class="col-sm-3 add-margin text-center">
 					<form:textarea class="form-control patternvalidation"
 						data-pattern="alphanumericspecialcharacters" maxlength="256"
@@ -732,14 +669,15 @@
 		</c:forEach>
 	</c:when>
 </c:choose>
+
 <c:choose>
 	<c:when test="${!docketDetailLengthOfCompWall.isEmpty()}">
 		<div class="panel-heading custom_form_panel_heading">
-			<div class="panel-title">Length of the Compound Wall</div>
+			<div class="panel-title">Length of the compound wall</div>
 		</div>
 		<div class="form-group view-content header-color hidden-xs">
-			<div class="col-sm-5 text-center">Documents</div>
-			<div class="col-sm-3 text-center">Value</div>
+			<div class="col-sm-5 text-center"><spring:message code="lbl.files" /></div>
+			<div class="col-sm-3 text-center"><spring:message code="lbl.value" /></div>
 			<div class="col-sm-3 text-center">
 				<spring:message code="lbl.remarks" />
 			</div>
@@ -748,22 +686,17 @@
 			varStatus="status">
 			<div class="form-group">
 				<div class="col-sm-5 add-margin check-text text-center">
-
 					<c:out value="${docs.checkListDetail.description}" />
-
-
 					<form:hidden
 						id="docketDetailLengthOfCompWall${status.index}checkListDetail.id"
 						path="docketDetailLengthOfCompWall[${status.index}].checkListDetail.id"
 						value="${docs.checkListDetail.id}" />
-
 					<form:hidden
 						id="docketDetailLengthOfCompWall${status.index}checkListDetail.description"
 						path="docketDetailLengthOfCompWall[${status.index}].checkListDetail.description"
 						value="${docs.checkListDetail.description}" />
 				</div>
-
-				<div class="col-sm-3 add-margin">
+				<div class="col-sm-3 add-margin text-center">
 					<c:choose>
 						<c:when test="${mode =='editinsp'}">
 							<form:radiobutton class="radioBtnClass"
@@ -793,13 +726,11 @@
 						</c:otherwise>
 					</c:choose>
 				</div>
-
 				<div class="col-sm-3 add-margin text-center">
 					<form:textarea class="form-control patternvalidation"
 						data-pattern="alphanumericspecialcharacters" maxlength="256"
 						id="docketDetailLengthOfCompWall${status.index}remarks"
 						path="docketDetailLengthOfCompWall[${status.index}].remarks" />
-
 					<form:errors
 						path="docketDetailMeasumentList[${status.index}].remarks"
 						cssClass="add-margin error-msg" />
@@ -808,14 +739,15 @@
 		</c:forEach>
 	</c:when>
 </c:choose>
+
 <c:choose>
 	<c:when test="${!docketDetailNumberOfWell.isEmpty()}">
 		<div class="panel-heading custom_form_panel_heading">
-			<div class="panel-title">Number of Wells</div>
+			<div class="panel-title">Number of wells</div>
 		</div>
 		<div class="form-group view-content header-color hidden-xs">
-			<div class="col-sm-5 text-center">Documents</div>
-			<div class="col-sm-3 text-center">Value</div>
+			<div class="col-sm-5 text-center"><spring:message code="lbl.files" /></div>
+			<div class="col-sm-3 text-center"><spring:message code="lbl.value" /></div>
 			<div class="col-sm-3 text-center">
 				<spring:message code="lbl.remarks" />
 			</div>
@@ -824,22 +756,17 @@
 			varStatus="status">
 			<div class="form-group">
 				<div class="col-sm-5 add-margin check-text text-center">
-
 					<c:out value="${docs.checkListDetail.description}" />
-
-
 					<form:hidden
 						id="docketDetailNumberOfWell${status.index}checkListDetail.id"
 						path="docketDetailNumberOfWell[${status.index}].checkListDetail.id"
 						value="${docs.checkListDetail.id}" />
-
 					<form:hidden
 						id="docketDetailNumberOfWell${status.index}checkListDetail.description"
 						path="docketDetailNumberOfWell[${status.index}].checkListDetail.description"
 						value="${docs.checkListDetail.description}" />
 				</div>
-
-				<div class="col-sm-3 add-margin">
+				<div class="col-sm-3 add-margin text-center">
 					<c:choose>
 						<c:when test="${mode =='editinsp'}">
 							<form:radiobutton class="radioBtnClass"
@@ -869,13 +796,11 @@
 						</c:otherwise>
 					</c:choose>
 				</div>
-
 				<div class="col-sm-3 add-margin text-center">
 					<form:textarea class="form-control patternvalidation"
 						data-pattern="alphanumericspecialcharacters" maxlength="256"
 						id="docketDetailNumberOfWell${status.index}remarks"
 						path="docketDetailNumberOfWell[${status.index}].remarks" />
-
 					<form:errors
 						path="docketDetailMeasumentList[${status.index}].remarks"
 						cssClass="add-margin error-msg" />
@@ -884,14 +809,15 @@
 		</c:forEach>
 	</c:when>
 </c:choose>
+
 <c:choose>
 	<c:when test="${!docketDetailShutter.isEmpty()}">
 		<div class="panel-heading custom_form_panel_heading">
 			<div class="panel-title">Shutter</div>
 		</div>
 		<div class="form-group view-content header-color hidden-xs">
-			<div class="col-sm-5 text-center">Documents</div>
-			<div class="col-sm-3 text-center">Value</div>
+			<div class="col-sm-5 text-center"><spring:message code="lbl.files" /></div>
+			<div class="col-sm-3 text-center"><spring:message code="lbl.value" /></div>
 			<div class="col-sm-3 text-center">
 				<spring:message code="lbl.remarks" />
 			</div>
@@ -900,22 +826,17 @@
 			varStatus="status">
 			<div class="form-group">
 				<div class="col-sm-5 add-margin check-text text-center">
-
 					<c:out value="${docs.checkListDetail.description}" />
-
-
 					<form:hidden
 						id="docketDetailShutter${status.index}checkListDetail.id"
 						path="docketDetailShutter[${status.index}].checkListDetail.id"
 						value="${docs.checkListDetail.id}" />
-
 					<form:hidden
 						id="docketDetailShutter${status.index}checkListDetail.description"
 						path="docketDetailShutter[${status.index}].checkListDetail.description"
 						value="${docs.checkListDetail.description}" />
 				</div>
-
-				<div class="col-sm-3 add-margin">
+				<div class="col-sm-3 add-margin text-center">
 					<c:choose>
 						<c:when test="${mode =='editinsp'}">
 							<form:radiobutton class="radioBtnClass"
@@ -940,13 +861,11 @@
 						</c:otherwise>
 					</c:choose>
 				</div>
-
 				<div class="col-sm-3 add-margin text-center">
 					<form:textarea class="form-control patternvalidation"
 						data-pattern="alphanumericspecialcharacters" maxlength="256"
 						id="docketDetailShutter${status.index}remarks"
 						path="docketDetailShutter[${status.index}].remarks" />
-
 					<form:errors
 						path="docketDetailMeasumentList[${status.index}].remarks"
 						cssClass="add-margin error-msg" />
@@ -955,14 +874,15 @@
 		</c:forEach>
 	</c:when>
 </c:choose>
+
 <c:choose>
 	<c:when test="${!docketDetailRoofConversion.isEmpty()}">
 		<div class="panel-heading custom_form_panel_heading">
-			<div class="panel-title">Roof Conversion</div>
+			<div class="panel-title">Roof conversion</div>
 		</div>
 		<div class="form-group view-content header-color hidden-xs">
-			<div class="col-sm-5 text-center">Documents</div>
-			<div class="col-sm-3 text-center">Value</div>
+			<div class="col-sm-5 text-center"><spring:message code="lbl.files" /></div>
+			<div class="col-sm-3 text-center"><spring:message code="lbl.value" /></div>
 			<div class="col-sm-3 text-center">
 				<spring:message code="lbl.remarks" />
 			</div>
@@ -971,22 +891,17 @@
 			varStatus="status">
 			<div class="form-group">
 				<div class="col-sm-5 add-margin check-text text-center">
-
 					<c:out value="${docs.checkListDetail.description}" />
-
-
 					<form:hidden
 						id="docketDetailRoofConversion${status.index}checkListDetail.id"
 						path="docketDetailRoofConversion[${status.index}].checkListDetail.id"
 						value="${docs.checkListDetail.id}" />
-
 					<form:hidden
 						id="docketDetailRoofConversion${status.index}checkListDetail.description"
 						path="docketDetailRoofConversion[${status.index}].checkListDetail.description"
 						value="${docs.checkListDetail.description}" />
 				</div>
-
-				<div class="col-sm-3 add-margin">
+				<div class="col-sm-3 add-margin text-center">
 					<c:choose>
 						<c:when test="${mode =='editinsp'}">
 							<form:radiobutton class="radioBtnClass"
@@ -1016,13 +931,11 @@
 						</c:otherwise>
 					</c:choose>
 				</div>
-
 				<div class="col-sm-3 add-margin text-center">
 					<form:textarea class="form-control patternvalidation"
 						data-pattern="alphabetspecialcharacters" maxlength="256"
 						id="docketDetailRoofConversion${status.index}remarks"
 						path="docketDetailRoofConversion[${status.index}].remarks" />
-
 					<form:errors
 						path="docketDetailMeasumentList[${status.index}].remarks"
 						cssClass="add-margin error-msg" />
@@ -1069,7 +982,7 @@
 	<div class="col-sm-6 add-margin text-center">
 		<form:textarea class="form-control patternvalidation"
 			data-pattern="alphanumericspecialcharacters" maxlength="1000"
-			id="inspectionRemarks" path="inspectionRemarks" />
+			id="inspectionRemarks" rows="3" path="inspectionRemarks" />
 
 		<form:errors path="inspectionRemarks" cssClass="add-margin error-msg" />
 	</div>

@@ -120,14 +120,22 @@ jQuery(document)
 						}
                     });
 					
-					$(".staticPermitConditions").change(function(){  
-				    	var $hiddenName=$(this).data('change-to');
-				    	if($(this).is(':checked')){
-				    		$('input[name="'+$hiddenName+'"]').val(true);
-				    	}else{
-				    		$('input[name="'+$hiddenName+'"]').val(false);
-				    	}
+					$(".staticPermitConditions").change(function(){
+                        setCheckBoxValue($(this));
 				    });
+
+                    $(".rejectionReasons").change(function(){
+                        setCheckBoxValue($(this));
+                    });
+
+                    function setCheckBoxValue(currentVal) {
+                        var $hiddenName=currentVal.data('change-to');
+                        if(currentVal.is(':checked')){
+                            $('input[name="'+$hiddenName+'"]').val(true);
+                        }else{
+                            $('input[name="'+$hiddenName+'"]').val(false);
+                        }
+					}
 					
 					// show mandatory fields on select of dynamic permit conditions
 					$(".addremovemandatory").keyup(function(){
