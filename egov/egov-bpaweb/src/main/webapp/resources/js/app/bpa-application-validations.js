@@ -504,9 +504,9 @@ $(document).ready(function() {
 				var numOfTimesAreaPermWitAddnlFee = occpancyObj[0].numOfTimesAreaPermWitAddnlFee;
 				var areaPermissibleWOAddnlFee = parseFloat(extentInSqmts) * parseFloat(numOfTimesAreaPermissible);
 				var areaPermissibleWithAddnlFee = parseFloat(extentInSqmts) * parseFloat(numOfTimesAreaPermWitAddnlFee);
-				totalFloorArea = $("#sumOfFloorArea").val();
+				totalFloorArea = parseFloat($("#sumOfFloorArea").val()).toFixed(2);
 					if(areaPermissibleWithAddnlFee == 0) {
-						if(parseFloat(totalFloorArea) > areaPermissibleWOAddnlFee){
+						if(parseFloat(totalFloorArea) > areaPermissibleWOAddnlFee.toFixed(2)){
 							 bootbox.alert("For the occupancy type of " +occpancyObj[0].description+", maximum permissible area is "+areaPermissibleWOAddnlFee.toFixed(2)+" Sq.Mtrs, beyond of permissible area you are not allowed construct construction.");
 							 $(rowObj).find('.floorArea').val('');
 							 $( ".floorArea" ).trigger( "change" );
@@ -516,17 +516,17 @@ $(document).ready(function() {
 						} else {
 							return true;
 						}
-					} else if(parseFloat(totalFloorArea) > areaPermissibleWithAddnlFee && isCitizenAcceptedForAdditionalFee) {
+					} else if(parseFloat(totalFloorArea) > areaPermissibleWithAddnlFee.toFixed(2) && isCitizenAcceptedForAdditionalFee) {
 						 bootbox.alert("For the occupancy type of " +occpancyObj[0].description+", maximum permissible area allowed with out addtional fee is "+areaPermissibleWOAddnlFee.toFixed(2)+" Sq.Mtrs and with addtional fee is "+areaPermissibleWithAddnlFee.toFixed(2)+" Sq.Mtrs, beyond of maximum permissible area of "+areaPermissibleWithAddnlFee.toFixed(2)+" Sq.Mtrs, you are not allowed construct construction.");
 						 $(rowObj).find('.floorArea').val('');
 						 $( ".floorArea" ).trigger( "change" );
 						 $( ".plinthArea" ).trigger( "change" );
 			    		 $( ".carpetArea" ).trigger( "change" );
 						return false;
-					} else if(parseFloat(totalFloorArea) > areaPermissibleWOAddnlFee && !isCitizenAcceptedForAdditionalFee) {
+					} else if(parseFloat(totalFloorArea) > areaPermissibleWOAddnlFee.toFixed(2) && !isCitizenAcceptedForAdditionalFee) {
 						bootbox
 						.confirm({
-							message : 'For the occupancy type of ' +occpancyObj[0].description+', maximum permissible area allowed with out addtional fee is '+areaPermissibleWOAddnlFee+' Sq.Mtrs, Do you want continue construction in additional area with addtional cost of Rs.5000 per Sq.Mtr.Are you ready pay additional amount ? , please select Yes / No ',
+							message : 'For the occupancy type of ' +occpancyObj[0].description+', maximum permissible area allowed with out addtional fee is '+areaPermissibleWOAddnlFee.toFixed(2)+' Sq.Mtrs, Do you want continue construction in additional area with addtional cost of Rs.5000 per Sq.Mtr.Are you ready pay additional amount ? , please select Yes / No ',
 							buttons : {
 								'cancel' : {
 									label : 'No',
@@ -688,12 +688,12 @@ function validateFloorDetails(plinthArea) {
 				bootbox.alert("Please enter total builtup area value");
 				return false;
 			}*/
-			var inputPlinthArea = $(plinthArea).val();
+			var inputPlinthArea = parseFloat($(plinthArea).val()).toFixed(2);
 			var permissibleAreaInPercentage = occpancyObj[0].permissibleAreaInPercentage;
-			var permissibleAreaForFloor = extentInSqmts * permissibleAreaInPercentage / 100;
+			var permissibleAreaForFloor = parseFloat(extentInSqmts * permissibleAreaInPercentage / 100).toFixed(2);
 			if(parseFloat(inputPlinthArea) > parseFloat(permissibleAreaForFloor)){
 				$(plinthArea).val('');
-				bootbox.alert("For type of " +occpancyObj[0].description+", each floor wise maximum permissable coverage area is " +parseFloat(permissibleAreaForFloor).toFixed(2)+" Sq.Mtrs, so beyond of maximum coverage area permission are not allowed.");
+				bootbox.alert("For type of " +occpancyObj[0].description+", each floor wise maximum permissable coverage area is " +permissibleAreaForFloor+" Sq.Mtrs, so beyond of maximum coverage area permission are not allowed.");
 				 $( ".plinthArea" ).trigger( "change" );
 		   		 $( ".floorArea" ).trigger( "change" );
 		   		 $( ".carpetArea" ).trigger( "change" );
