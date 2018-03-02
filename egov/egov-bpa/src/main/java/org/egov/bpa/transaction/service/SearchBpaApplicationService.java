@@ -260,7 +260,7 @@ public class SearchBpaApplicationService {
 				criteria.add(Restrictions.eq("bpaApplication.isOneDayPermitApplication", true)); 
 		}
 		if (searchBpaApplicationForm.getToDate() != null)
-			criteria.add(Restrictions.le("slot.appointmentDate",
+			criteria.add(Restrictions.eq("slot.appointmentDate",
 					resetToDateTimeStamp(searchBpaApplicationForm.getToDate())));
 
 		criteria.createAlias("bpaApplication.siteDetail", "siteDetail");

@@ -44,10 +44,9 @@ $(document)
 
                     $("#toDate").datepicker().datepicker("setDate", new Date());
 					$('#serviceTypeEnum').on('change', function() {
-						if($("#serviceTypeEnum option:selected" ).text() == 'ALL_OTHER_SERVICES') {
+						if($("#serviceTypeEnum option:selected" ).val() == 'ALL_OTHER_SERVICES') {
 							$("#toDate").datepicker().datepicker("setDate", new Date());
 							$("#toDate").prop('disabled', true);
-							
 						} else {
 							$("#toDate").prop('disabled', false);
 						}
@@ -57,7 +56,7 @@ $(document)
 					}); 
 					
 					
-					var documentscrutinyurl = '/bpa/application/documentscrutiny/';
+					var documentScrutinyUrl = '/bpa/application/documentscrutiny/';
 					var rescheduleUrl = '/bpa/application/scrutiny/reschedule/';
 					$('#btnSearch').click(function() { 
 						callAjaxSearch();
@@ -151,14 +150,14 @@ $(document)
 																row, meta) {
 																if(!row.isFeeCollected && !row.rescheduledByEmployee && !row.onePermitApplication){
                                                                     return '<button type="button" class="btn btn-xs btn-secondary documentScrutiny" value='
-                                                                        + documentscrutinyurl
+                                                                        + documentScrutinyUrl
                                                                         + row.applicationNumber
                                                                         + '><span class="glyphicon glyphicon-view"></span>&nbsp;Document Scrutiny</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button type="button" class="btn btn-xs btn-secondary ReSchedule" value='+rescheduleUrl+row.applicationNumber+'><span class="glyphicon glyphicon-view"></span>&nbsp;Re-Schedule</button>';
 																} else if(row.isFeeCollected){
                                                                     return '<button type="button" class="btn btn-xs btn-secondary documentScrutiny" value="feePending"><span class="glyphicon glyphicon-view"></span>&nbsp;Document Scrutiny</button>';
                                                                 } else {
 																	return '<button type="button" class="btn btn-xs btn-secondary documentScrutiny" value='
-																	+ documentscrutinyurl
+																	+ documentScrutinyUrl
 																	+ row.applicationNumber
 																	+ '><span class="glyphicon glyphicon-view"></span>&nbsp;Document Scrutiny</button>';
 																} 
@@ -175,7 +174,6 @@ $(document)
 					    } else {
 					    	openPopup(url);
 					    }
-					    
 					});
                     $(document).on('click','.ReSchedule',function(){
                     	 var url = $(this).val();
