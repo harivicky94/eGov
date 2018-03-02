@@ -224,8 +224,12 @@ public class Util {
                     if (e.getType().equals(DXFConstants.ENTITY_TYPE_MTEXT)) {
                         DXFMText text = (DXFMText) e;
                         String text2 = text.getText();
-                        text2 = text2.replaceAll("[^\\d.]", "");
-                        ;
+                      //  text2 = text2.replaceAll("[^\\d.]", "");
+                        if (text2.contains(";")) {
+                            text2 = text2.split(";")[1];
+                        } else
+                            text2 = text2.replaceAll("[^\\d.]", "");
+                        
                         if (!text2.isEmpty())
                             value = BigDecimal.valueOf(Double.parseDouble(text2));
 
