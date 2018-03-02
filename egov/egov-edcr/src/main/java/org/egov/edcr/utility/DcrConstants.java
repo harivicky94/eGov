@@ -6,7 +6,9 @@ public class DcrConstants {
     public static final String SITALAREA = "SITALAREA";
     public static final String SHORTESTDISTINCTTOROAD = "Shortest Distance to road ";
     public static final String NOTIFIED_SHORTESTDISTINCTTOROAD = "Notified road, Shortest Distance ";
+    public static final String LANE_SHORTESTDISTINCTTOROAD = "Lane road, Shortest Distance ";
     public static final String NONNOTIFIED_SHORTESTDISTINCTTOROAD = "Non notified road,Shortest Distance ";
+    public static final String CULD_SAC_SHORTESTDISTINCTTOROAD = "Culd sac road,Shortest Distance ";
 
     public static final String RULE23 = "RULE23";
     public static final String RULE25 = "RULE25";
@@ -92,6 +94,10 @@ public class DcrConstants {
     public static final String SHORTESTDISTINACETOBUILDINGFOOTPRINT = "Shortest distance between the building foot print from wider road";
     public static final String SHADE = "Shades or Overhangs";
     public static final String PLOT_BOUNDARY = "Plot boundary";
+
+    public static final String DIST_CL_ROAD = "Distance from center line road to building";
+    public static final String LANE_1 = "Lane Distance";
+    public static final String CULD_DE_SAC = "culd de sac";
 
 
 }
