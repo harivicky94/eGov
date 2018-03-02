@@ -44,11 +44,13 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+
 import org.egov.bpa.master.entity.Holiday;
 import org.egov.bpa.master.entity.SlotMapping;
 import org.egov.bpa.master.entity.enums.ApplicationType;
 import org.egov.bpa.master.repository.HolidayListRepository;
 import org.egov.bpa.master.repository.SlotMappingRepository;
+import org.egov.bpa.master.service.HolidayListService;
 import org.egov.bpa.transaction.entity.Slot;
 import org.egov.bpa.transaction.entity.SlotDetail;
 import org.egov.bpa.transaction.repository.SlotRepository;
@@ -89,6 +91,9 @@ public class SlotOpeningForAppointmentService {
 
 	@Autowired
 	private AppConfigValueService appConfigValuesService;
+	
+        @Autowired
+        private HolidayListService holidayListService;
 
 	/*
 	 * public void ddd(){ LocalDateTime yourDate = LocalDateTime.now();
@@ -101,88 +106,101 @@ public class SlotOpeningForAppointmentService {
 	 * weekStartDate.withDayOfWeek(DateTimeConstants.WEDNESDAY); }
 	 */
 
-	@Transactional
-	public void openSlots() {
-		List<SlotMapping> slotZoneList = zoneSlotRepository.findByApplType(ApplicationType.ALL_OTHER_SERVICES);
-		List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(MODULE_NAME,
-				APP_CONFIG_KEY);
-		String noOfDays = appConfigValue.get(0).getValue();
-		Integer scheduledSlotsAllowedForMorning = 0;
-		Integer scheduledSlotsAllowedForEvening = 0;
-		Integer rescheduledSlotsAllowedForMorning = 0;
-		Integer rescheduledSlotsAllowedForEvening = 0;
-		Calendar calender = Calendar.getInstance();
-		int year = calender.get(Calendar.YEAR);
-		final User user = securityUtils.getCurrentUser();
-		List<Holiday> holidayList = holidayListRepository.findByYearOrderByHolidayDateAsc(String.valueOf(year));
-		List<Slot> slots = new ArrayList<>();
-		for (SlotMapping slotZone : slotZoneList) {
-			calender = Calendar.getInstance();
-			if (slotZone.getMaxSlotsAllowed() != null && slotZone.getMaxSlotsAllowed() > 0) {
-				if (slotZone.getMaxSlotsAllowed() % 2 == 0) {
-					scheduledSlotsAllowedForMorning = slotZone.getMaxSlotsAllowed() / 2;
-					scheduledSlotsAllowedForEvening = slotZone.getMaxSlotsAllowed() / 2;
-				} else {
-					scheduledSlotsAllowedForMorning = (slotZone.getMaxSlotsAllowed() / 2) + 1;
-					scheduledSlotsAllowedForEvening = slotZone.getMaxSlotsAllowed() / 2;
-				}
-			}
-			if (slotZone.getMaxRescheduledSlotsAllowed() != null && slotZone.getMaxRescheduledSlotsAllowed() > 0) {
-				if (slotZone.getMaxRescheduledSlotsAllowed() % 2 == 0) {
-					rescheduledSlotsAllowedForMorning = slotZone.getMaxRescheduledSlotsAllowed() / 2;
-					rescheduledSlotsAllowedForEvening = slotZone.getMaxRescheduledSlotsAllowed() / 2;
-				} else {
-					rescheduledSlotsAllowedForMorning = (slotZone.getMaxRescheduledSlotsAllowed() / 2) + 1;
-					rescheduledSlotsAllowedForEvening = slotZone.getMaxRescheduledSlotsAllowed() / 2;
-				}
-			}
-			for (int i = 1; i <= Integer.valueOf(noOfDays); i++) {
-				calender.add(Calendar.DAY_OF_YEAR, 1);
-				for (Holiday holiday : holidayList) {
-					if (DateUtils.toDefaultDateFormat(convertToLocalDate(holiday.getHolidayDate()))
-							.equals(DateUtils.toDefaultDateFormat(convertToLocalDate(calender.getTime())))) {
-						calender.add(Calendar.DAY_OF_YEAR, 1);
-					}
-				}
-				if (slotRepository.findByZoneAndAppointmentDate(slotZone.getZone(), calender.getTime()).isEmpty()) {
-					Slot slot = new Slot();
-					slot.setZone(slotZone.getZone());
-					slot.setCreatedBy(user);
-					slot.setCreatedDate(new Date());
-					slot.setAppointmentDate(calender.getTime());
-					List<SlotDetail> slotDetailList = new ArrayList<>();
-					for (int j = 1; j <= 2; j++) {
-						SlotDetail slotDetail = new SlotDetail();
-						if (j == 1) {
-							slotDetail.setAppointmentTime(APP_TIME_MORNING);
-							slotDetail.setMaxScheduledSlots(scheduledSlotsAllowedForMorning);
-							slotDetail.setMaxRescheduledSlots(rescheduledSlotsAllowedForMorning);
-						} else {
-							slotDetail.setAppointmentTime(APP_TIME_EVENING);
-							slotDetail.setMaxScheduledSlots(scheduledSlotsAllowedForEvening);
-							slotDetail.setMaxRescheduledSlots(rescheduledSlotsAllowedForEvening);
-						}
-						slotDetail.setUtilizedScheduledSlots(0);
-						slotDetail.setUtilizedRescheduledSlots(0);
-						slotDetail.setCreatedDate(new Date());
-						slotDetail.setCreatedBy(user);
-						slotDetail.setSlot(slot);
-						slotDetailList.add(slotDetail);
-					}
-					slot.setSlotDetail(slotDetailList);
+    @Transactional
+    public void openSlots() {
+        List<SlotMapping> slotZoneList = zoneSlotRepository.findByApplType(ApplicationType.ALL_OTHER_SERVICES);
+        List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(MODULE_NAME,
+                APP_CONFIG_KEY);
+        Calendar calendar = Calendar.getInstance();
+        List<Holiday> listOfAllSatAndSunHolidays = new ArrayList<>();
+        List<Holiday> holidayListOfSundays = holidayListService.listOfSunday(calendar.getTime());
+        List<Holiday> holidayListOfSecondSaturdays = holidayListService.listOfSecondSaturday(calendar.getTime());
+        listOfAllSatAndSunHolidays.addAll(holidayListOfSundays);
+        listOfAllSatAndSunHolidays.addAll(holidayListOfSecondSaturdays);
+        String noOfDays = appConfigValue.get(0).getValue();
+        Integer scheduledSlotsAllowedForMorning = 0;
+        Integer scheduledSlotsAllowedForEvening = 0;
+        Integer rescheduledSlotsAllowedForMorning = 0;
+        Integer rescheduledSlotsAllowedForEvening = 0;
+        final User user = securityUtils.getCurrentUser();
+        List<Slot> slots = new ArrayList<>();
+        for (SlotMapping slotZone : slotZoneList) {
+            Calendar calender = Calendar.getInstance();
+            if (slotZone.getMaxSlotsAllowed() != null && slotZone.getMaxSlotsAllowed() > 0) {
+                if (slotZone.getMaxSlotsAllowed() % 2 == 0) {
+                    scheduledSlotsAllowedForMorning = slotZone.getMaxSlotsAllowed() / 2;
+                    scheduledSlotsAllowedForEvening = slotZone.getMaxSlotsAllowed() / 2;
+                } else {
+                    scheduledSlotsAllowedForMorning = (slotZone.getMaxSlotsAllowed() / 2) + 1;
+                    scheduledSlotsAllowedForEvening = slotZone.getMaxSlotsAllowed() / 2;
+                }
+            }
+            if (slotZone.getMaxRescheduledSlotsAllowed() != null && slotZone.getMaxRescheduledSlotsAllowed() > 0) {
+                if (slotZone.getMaxRescheduledSlotsAllowed() % 2 == 0) {
+                    rescheduledSlotsAllowedForMorning = slotZone.getMaxRescheduledSlotsAllowed() / 2;
+                    rescheduledSlotsAllowedForEvening = slotZone.getMaxRescheduledSlotsAllowed() / 2;
+                } else {
+                    rescheduledSlotsAllowedForMorning = (slotZone.getMaxRescheduledSlotsAllowed() / 2) + 1;
+                    rescheduledSlotsAllowedForEvening = slotZone.getMaxRescheduledSlotsAllowed() / 2;
+                }
+            }
+            for (int i = 1; i <= Integer.valueOf(noOfDays); i++) {
+                calender.add(Calendar.DAY_OF_YEAR, 1);
+                int flag = 0;
+                while (flag != 1) {
+                    List<Holiday> holidayList = new ArrayList<>();
+                    for (Holiday holiday : listOfAllSatAndSunHolidays) {
+                        if (DateUtils.toDefaultDateFormat(convertToLocalDate(holiday.getHolidayDate()))
+                                .equals(DateUtils.toDefaultDateFormat(convertToLocalDate(calender.getTime())))) {
+                            holidayList.add(holiday);
+                            break;
+                        }
+                    }
+                    if (holidayListRepository.findByHolidayDate(calender.getTime()) != null || !holidayList.isEmpty()) {
+                        calender.add(Calendar.DAY_OF_YEAR, 1);
+                    } else {
+                        flag = 1;
+                    }
+                }
+                if (slotRepository.findByZoneAndAppointmentDate(slotZone.getZone(), calender.getTime()).isEmpty()) {
+                    Slot slot = new Slot();
+                    slot.setZone(slotZone.getZone());
+                    slot.setCreatedBy(user);
+                    slot.setCreatedDate(new Date());
+                    slot.setAppointmentDate(calender.getTime());
+                    List<SlotDetail> slotDetailList = new ArrayList<>();
+                    for (int j = 1; j <= 2; j++) {
+                        SlotDetail slotDetail = new SlotDetail();
+                        if (j == 1) {
+                            slotDetail.setAppointmentTime(APP_TIME_MORNING);
+                            slotDetail.setMaxScheduledSlots(scheduledSlotsAllowedForMorning);
+                            slotDetail.setMaxRescheduledSlots(rescheduledSlotsAllowedForMorning);
+                        } else {
+                            slotDetail.setAppointmentTime(APP_TIME_EVENING);
+                            slotDetail.setMaxScheduledSlots(scheduledSlotsAllowedForEvening);
+                            slotDetail.setMaxRescheduledSlots(rescheduledSlotsAllowedForEvening);
+                        }
+                        slotDetail.setUtilizedScheduledSlots(0);
+                        slotDetail.setUtilizedRescheduledSlots(0);
+                        slotDetail.setCreatedDate(new Date());
+                        slotDetail.setCreatedBy(user);
+                        slotDetail.setSlot(slot);
+                        slotDetailList.add(slotDetail);
+                    }
+                    slot.setSlotDetail(slotDetailList);
 
-					slots.add(slot);
-				}
-			}
-		}
-		slotRepository.save(slots);
-	}
+                    slots.add(slot);
+                }
+            }
+        }
+        slotRepository.save(slots);
+    }
 
-	LocalDate convertToLocalDate(Date date) {
-		if (date == null)
-			return null;
-		return new LocalDate(date);
-	}
+    LocalDate convertToLocalDate(Date date) {
+        if (date == null)
+            return null;
+        return new LocalDate(date);
+    }
 
 	@Transactional
 	public SlotDetail openSlotsForDocumentScrutiny(Boundary zone, Boundary revWard, Boundary elecWard) {
