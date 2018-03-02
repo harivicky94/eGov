@@ -2,7 +2,7 @@ package org.egov.edcr.entity.measurement;
 
 import java.math.BigDecimal;
 
-public class NonNotifiedRoad extends Measurement {
+public class Lane extends Measurement {
     private BigDecimal shortestDistanceToRoad;
     private BigDecimal distanceFromCenterToPlot;
 

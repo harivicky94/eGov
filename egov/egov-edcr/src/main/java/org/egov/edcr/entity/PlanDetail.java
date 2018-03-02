@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.egov.edcr.entity.measurement.CulDeSacRoad;
+import org.egov.edcr.entity.measurement.Lane;
 import org.egov.edcr.entity.measurement.Measurement;
 import org.egov.edcr.entity.measurement.NonNotifiedRoad;
 import org.egov.edcr.entity.measurement.NotifiedRoad;
@@ -24,12 +26,31 @@ public class PlanDetail {
     private List<NonNotifiedRoad> nonNotifiedRoads = new ArrayList<>();
     private List<NotifiedRoad> notifiedRoads = new ArrayList<>();
 
+    private List<CulDeSacRoad> culdeSacRoads = new ArrayList<>();
+    private List<Lane> laneRoads = new ArrayList<>();
+    
     private HashMap<String, String> errors = new HashMap<>();
     private HashMap<String, String> generalInformation = new HashMap<>();
     private Basement basement;
     private List<Measurement> parkingSlots= new ArrayList<>();
     private List<FloorUnit> floorUnits= new ArrayList<>();
     
+
+    public List<CulDeSacRoad> getCuldeSacRoads() {
+        return culdeSacRoads;
+    }
+
+    public void setCuldeSacRoads(List<CulDeSacRoad> culdeSacRoads) {
+        this.culdeSacRoads = culdeSacRoads;
+    }
+
+    public List<Lane> getLaneRoads() {
+        return laneRoads;
+    }
+
+    public void setLaneRoads(List<Lane> laneRoads) {
+        this.laneRoads = laneRoads;
+    }
 
     public List<FloorUnit> getFloorUnits() {
         return floorUnits;
