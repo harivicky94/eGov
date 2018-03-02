@@ -4,7 +4,6 @@ import java.io.File;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +20,10 @@ import org.egov.edcr.entity.FloorUnit;
 import org.egov.edcr.entity.PlanDetail;
 import org.egov.edcr.entity.PlanInformation;
 import org.egov.edcr.entity.Plot;
+import org.egov.edcr.entity.RoadOutput;
 import org.egov.edcr.entity.Room;
+import org.egov.edcr.entity.measurement.CulDeSacRoad;
+import org.egov.edcr.entity.measurement.Lane;
 import org.egov.edcr.entity.measurement.Measurement;
 import org.egov.edcr.entity.measurement.NonNotifiedRoad;
 import org.egov.edcr.entity.measurement.NotifiedRoad;
@@ -30,11 +32,15 @@ import org.egov.edcr.entity.measurement.Yard;
 import org.egov.edcr.utility.DcrConstants;
 import org.egov.edcr.utility.Util;
 import org.egov.edcr.utility.math.RayCast;
+import org.kabeja.dxf.DXFBlock;
 import org.kabeja.dxf.DXFConstants;
+import org.kabeja.dxf.DXFDimension;
 import org.kabeja.dxf.DXFDocument;
+import org.kabeja.dxf.DXFEntity;
 import org.kabeja.dxf.DXFLWPolyline;
 import org.kabeja.dxf.DXFLayer;
 import org.kabeja.dxf.DXFLine;
+import org.kabeja.dxf.DXFMText;
 import org.kabeja.dxf.DXFVertex;
 import org.kabeja.dxf.helpers.Point;
 import org.kabeja.parser.DXFParser;
@@ -95,8 +101,8 @@ public class DXFExtractService {
             }
 
             pl = extractRoadDetails(doc, pl);
-            pl.setNotifiedRoads(new ArrayList<>());
-            pl.setNonNotifiedRoads(new ArrayList<>());
+          //  pl.setNotifiedRoads(new ArrayList<>());
+           // pl.setNonNotifiedRoads(new ArrayList<>());
             pl = extractUtilities(doc, pl);
             pl = extractOverheadElectricLines(doc, pl);
             pl = extractHeights(doc, pl);
@@ -539,7 +545,7 @@ public class DXFExtractService {
 
     private PlanDetail extractRoadDetails(DXFDocument doc, PlanDetail pl) {
 
-        // TODO: Find shortest distance for all road polylines
+        // Find shortest distance for all road polylines
 
         // List<DXFLine> distancesToRoads = Util.getLinesByLayer(doc, DxfFileConstants.SHORTEST_DISTANCE_TO_ROAD);
         List<DXFLWPolyline> notifiedRoads = Util.getPolyLinesByLayer(doc, DxfFileConstants.NOTIFIED_ROADS);
@@ -560,15 +566,206 @@ public class DXFExtractService {
             pl.getNonNotifiedRoads().add(road);
 
         }
+        List<DXFLWPolyline> culdSacRoads = Util.getPolyLinesByLayer(doc, DxfFileConstants.CULD_1);
+        for (DXFLWPolyline roadPline : culdSacRoads) {
 
-        BigDecimal dimension = Util.getSingleDimensionValueByLayer(doc, DxfFileConstants.MAX_HEIGHT_CAL, pl);
-        if (dimension != null) {
-            pl.getBuilding().setDistanceFromBuildingFootPrintToRoadEnd(dimension);
+            CulDeSacRoad road = new CulDeSacRoad();
+            road.setPresentInDxf(true);
+            road.setPolyLine(roadPline);
+            pl.getCuldeSacRoads().add(road);
+
         }
+        List<DXFLWPolyline> laneRoads = Util.getPolyLinesByLayer(doc, DxfFileConstants.LANE_1);
+        for (DXFLWPolyline roadPline : laneRoads) {
+            Lane  road = new Lane();
+            road.setPresentInDxf(true);
+            road.setPolyLine(roadPline);
+            pl.getLaneRoads().add(road);
 
+        }
+        
+        
+        extractShortestDistanceToPlotFromRoadCenter(doc,pl);
+        extractShortestDistanceToPlot(doc, pl);
+        extractDistanceFromBuildingToRoadEnd(doc, pl);
 
         return pl;
 
+    }
+
+    private void extractShortestDistanceToPlotFromRoadCenter(DXFDocument doc, PlanDetail pl) {
+        List<DXFDimension> shortestDistanceCentralLineRoadDimension = Util.getDimensionsByLayer(doc, DxfFileConstants.DIST_CL_ROAD);
+        List<RoadOutput> shortDistainceFromCenter= new ArrayList<RoadOutput>();
+      
+        shortDistainceFromCenter=roadDistanceWithColourCode(doc, shortestDistanceCentralLineRoadDimension, shortDistainceFromCenter);
+        
+        List<BigDecimal> notifiedRoadDistance= new ArrayList<BigDecimal>();
+        List<BigDecimal> nonNotifiedRoadDistance= new ArrayList<BigDecimal>();
+        List<BigDecimal> culdesacRoadDistance= new ArrayList<BigDecimal>();
+        List<BigDecimal> laneDistance= new ArrayList<BigDecimal>();
+        
+            for( RoadOutput roadOutput:shortDistainceFromCenter)
+            {
+                if (Integer.valueOf(roadOutput.colourCode) == 1) {
+                    notifiedRoadDistance.add(roadOutput.roadDistainceToPlot);
+                }
+                if (Integer.valueOf(roadOutput.colourCode) == 2) {
+                    nonNotifiedRoadDistance.add(roadOutput.roadDistainceToPlot);
+                }
+                if (Integer.valueOf(roadOutput.colourCode) == 5) {
+                    culdesacRoadDistance.add(roadOutput.roadDistainceToPlot);
+                }
+                if (Integer.valueOf(roadOutput.colourCode) == 6) {
+                    laneDistance.add(roadOutput.roadDistainceToPlot);
+                }
+            }
+            
+            for(int i=0;i<pl.getNotifiedRoads().size();i++)
+            {
+                if(i<notifiedRoadDistance.size())
+                    pl.getNotifiedRoads().get(i).setDistanceFromCenterToPlot(notifiedRoadDistance.get(i));
+            }
+            for(int i=0;i<pl.getNonNotifiedRoads().size();i++)
+            {
+                if(i<nonNotifiedRoadDistance.size())
+                    pl.getNonNotifiedRoads().get(i).setDistanceFromCenterToPlot(nonNotifiedRoadDistance.get(i));
+            }
+            for(int i=0;i<pl.getCuldeSacRoads().size();i++)
+            {
+                if(i<culdesacRoadDistance.size())
+                    pl.getCuldeSacRoads().get(i).setDistanceFromCenterToPlot(culdesacRoadDistance.get(i));
+            }
+            for(int i=0;i<pl.getLaneRoads().size();i++)
+            {
+                if(i<laneDistance.size())
+                    pl.getLaneRoads().get(i).setDistanceFromCenterToPlot(laneDistance.get(i));
+            }
+    }
+
+    private void extractShortestDistanceToPlot(DXFDocument doc, PlanDetail pl) {
+        List<DXFDimension> shortestDistanceDimension = Util.getDimensionsByLayer(doc, DxfFileConstants.SHORTEST_DISTANCE_TO_ROAD);
+        List<RoadOutput> shortDistaineToPlot= new ArrayList<RoadOutput>();
+      
+        shortDistaineToPlot=roadDistanceWithColourCode(doc, shortestDistanceDimension, shortDistaineToPlot);
+        
+        List<BigDecimal> notifiedRoadDistance= new ArrayList<BigDecimal>();
+        List<BigDecimal> nonNotifiedRoadDistance= new ArrayList<BigDecimal>();
+        List<BigDecimal> culdesacRoadDistance= new ArrayList<BigDecimal>();
+        List<BigDecimal> laneDistance= new ArrayList<BigDecimal>();
+        
+            for( RoadOutput roadOutput:shortDistaineToPlot)
+            {
+                if (Integer.valueOf(roadOutput.colourCode) == 1) {
+                    notifiedRoadDistance.add(roadOutput.roadDistainceToPlot);
+                }
+                if (Integer.valueOf(roadOutput.colourCode) == 2) {
+                    nonNotifiedRoadDistance.add(roadOutput.roadDistainceToPlot);
+                }
+                if (Integer.valueOf(roadOutput.colourCode) == 5) {
+                    culdesacRoadDistance.add(roadOutput.roadDistainceToPlot);
+                }
+                if (Integer.valueOf(roadOutput.colourCode) == 6) {
+                    laneDistance.add(roadOutput.roadDistainceToPlot);
+                }
+            }
+            
+            for(int i=0;i<pl.getNotifiedRoads().size();i++)
+            {
+                if(i<notifiedRoadDistance.size())
+                    pl.getNotifiedRoads().get(i).setShortestDistanceToRoad(notifiedRoadDistance.get(i));
+            }
+            for(int i=0;i<pl.getNonNotifiedRoads().size();i++)
+            {
+                if(i<nonNotifiedRoadDistance.size())
+                    pl.getNonNotifiedRoads().get(i).setShortestDistanceToRoad(nonNotifiedRoadDistance.get(i));
+            }
+            for(int i=0;i<pl.getCuldeSacRoads().size();i++)
+            {
+                if(i<culdesacRoadDistance.size())
+                    pl.getCuldeSacRoads().get(i).setShortestDistanceToRoad(culdesacRoadDistance.get(i));
+            }
+            for(int i=0;i<pl.getLaneRoads().size();i++)
+            {
+                if(i<laneDistance.size())
+                    pl.getLaneRoads().get(i).setShortestDistanceToRoad(laneDistance.get(i));
+            }
+    }
+
+    private List<RoadOutput>  roadDistanceWithColourCode(DXFDocument doc, List<DXFDimension> shortestDistanceCentralLineRoadDimension,
+            List<RoadOutput> clcolourCodeWithDimension) {
+        if (null != shortestDistanceCentralLineRoadDimension){
+            
+          for (Object dxfEntity : shortestDistanceCentralLineRoadDimension) {
+              BigDecimal value = BigDecimal.ZERO;
+              
+              DXFDimension line = (DXFDimension) dxfEntity;
+              String dimensionBlock = line.getDimensionBlock();
+              DXFBlock dxfBlock = doc.getDXFBlock(dimensionBlock);
+              Iterator dxfEntitiesIterator = dxfBlock.getDXFEntitiesIterator();
+              while (dxfEntitiesIterator.hasNext()) {
+                  DXFEntity e = (DXFEntity) dxfEntitiesIterator.next();
+                  if (e.getType().equals(DXFConstants.ENTITY_TYPE_MTEXT)) {
+                      DXFMText text = (DXFMText) e;
+                      String text2 = text.getText();
+                                      if (text2.contains(";")) {
+                                              text2 = text2.split(";")[1];
+                                      } else
+
+                                              text2 = text2.replaceAll("[^\\d.]", "");
+                                      ;
+                      if (!text2.isEmpty()){
+                          value = BigDecimal.valueOf(Double.parseDouble(text2));
+                          RoadOutput roadOutput= new RoadOutput();
+                          roadOutput.roadDistainceToPlot=value;
+                          roadOutput.colourCode=String.valueOf(line.getColor());
+                          clcolourCodeWithDimension.add(roadOutput);
+                      }
+
+                  }
+              }
+
+          }
+        }
+        return clcolourCodeWithDimension;
+    }
+
+    private void extractDistanceFromBuildingToRoadEnd(DXFDocument doc, PlanDetail pl) {
+        List<DXFDimension> dxfLineEntities = Util.getDimensionsByLayer(doc, DxfFileConstants.MAX_HEIGHT_CAL);
+        BigDecimal dimension = BigDecimal.ZERO;
+        BigDecimal minDimension = BigDecimal.ZERO;
+        if (null != dxfLineEntities) {
+            for (Object dxfEntity : dxfLineEntities) {
+                DXFDimension line = (DXFDimension) dxfEntity;
+                String dimensionBlock = line.getDimensionBlock();
+                DXFBlock dxfBlock = doc.getDXFBlock(dimensionBlock);
+                Iterator dxfEntitiesIterator = dxfBlock.getDXFEntitiesIterator();
+                while (dxfEntitiesIterator.hasNext()) {
+                    DXFEntity e = (DXFEntity) dxfEntitiesIterator.next();
+                    if (e.getType().equals(DXFConstants.ENTITY_TYPE_MTEXT)) {
+                        DXFMText text = (DXFMText) e;
+                        String text2 = text.getText();
+                        if (text2.contains(";")) {
+                            text2 = text2.split(";")[1];
+                        } else
+                            text2 = text2.replaceAll("[^\\d.]", "");
+                        ;
+                        if (!text2.isEmpty()) {
+                            dimension = BigDecimal.valueOf(Double.parseDouble(text2));
+                            if (minDimension.compareTo(BigDecimal.ZERO) >0 &&
+                                    dimension.compareTo(minDimension) <= 0) // TODO: CHECK WHETHER SHORTEST OR LONGEST ROAD TO BE
+                                                                            // SELECTED .
+                                    minDimension = dimension;
+                                else
+                                    minDimension = dimension;
+                        }
+
+                    }
+                }
+
+            }
+            pl.getBuilding().setDistanceFromBuildingFootPrintToRoadEnd(minDimension);
+
+        }
     }
 
     private PlanDetail extractUtilities(DXFDocument doc, PlanDetail pl) {

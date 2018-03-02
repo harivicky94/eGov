@@ -196,6 +196,21 @@ public class Util {
 
     }
 
+    public static List<DXFDimension> getDimensionsByLayer(DXFDocument dxfDocument, String name) {
+        if (dxfDocument == null)
+            return null;
+        if (name == null)
+            return null;
+        name = name.toUpperCase();
+        BigDecimal value = BigDecimal.ZERO;
+
+        if (dxfDocument.containsDXFLayer(name)) {
+            DXFLayer dxfLayer = dxfDocument.getDXFLayer(name);
+            return dxfLayer.getDXFEntities(DXFConstants.ENTITY_TYPE_DIMENSION);
+        }
+        return null;
+    }
+
     public static BigDecimal getSingleDimensionValueByLayer(DXFDocument dxfDocument, String name, PlanDetail pl) {
 
         if (dxfDocument == null)
@@ -295,6 +310,7 @@ public class Util {
         List<DXFLWPolyline> dxflwPolylines = new ArrayList<>();
         if (name == null)
             return dxflwPolylines;
+        if(dxfDocument.containsDXFLayer(name)){
         DXFLayer dxfLayer = dxfDocument.getDXFLayer(name);
         
         if (dxfLayer.hasDXFEntities(DXFConstants.ENTITY_TYPE_LWPOLYLINE)) {
@@ -307,7 +323,7 @@ public class Util {
             // TODO: add what if polylines not found
 
         }
-
+        }
         return dxflwPolylines;
     }
 

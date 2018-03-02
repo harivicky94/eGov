@@ -52,6 +52,7 @@ public class PlanRuleService {
             } else {
                 planRules.append(",24"); // interior or exterior
                 planRules.append(",25");// distance from road
+                planRules.append(",26");
                 planRules.append(",30");
                 planRules.append(",31");// coverage and FAR
 

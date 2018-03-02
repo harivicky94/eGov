@@ -89,19 +89,19 @@ public class Rule32 extends GeneralRule {
 
         if (planDetail.getNonNotifiedRoads() != null)
             for (NonNotifiedRoad nonnotifiedRoad : planDetail.getNonNotifiedRoads())
-                if (nonnotifiedRoad.getMinimumDistance() != null
-                    && nonnotifiedRoad.getMinimumDistance().compareTo(BigDecimal.ZERO) > 0 &&
-                    nonnotifiedRoad.getMinimumDistance().compareTo(TWELVE) <= 0) {
+                if (nonnotifiedRoad.getShortestDistanceToRoad() != null
+                    && nonnotifiedRoad.getShortestDistanceToRoad().compareTo(BigDecimal.ZERO) > 0 &&
+                    nonnotifiedRoad.getShortestDistanceToRoad().compareTo(TWELVE) <= 0) {
                     shortDistainceLessThan12 = true;
-                    return;
+                   // return;
                 }
         if (planDetail.getNotifiedRoads() != null)
             for (NotifiedRoad notifiedRoad : planDetail.getNotifiedRoads())
-                if (notifiedRoad.getMinimumDistance() != null && notifiedRoad.getMinimumDistance().compareTo(BigDecimal.ZERO) > 0
+                if (notifiedRoad.getShortestDistanceToRoad() != null && notifiedRoad.getShortestDistanceToRoad().compareTo(BigDecimal.ZERO) > 0
                     &&
-                    notifiedRoad.getMinimumDistance().compareTo(TWELVE) <= 0) {
+                    notifiedRoad.getShortestDistanceToRoad().compareTo(TWELVE) <= 0) {
                     shortDistainceLessThan12 = true;
-                    return;
+                   // return; 
                 }
 
         if (shortDistainceLessThan12 && planDetail.getBuilding() != null && planDetail.getBuilding().getBuildingHeight() != null
