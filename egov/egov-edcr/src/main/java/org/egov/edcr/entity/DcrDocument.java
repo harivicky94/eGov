@@ -77,6 +77,8 @@ public class DcrDocument extends AbstractAuditable {
     @JoinColumn(name = "application")
     private EdcrApplication application;
 
+    private String status;
+
     @Override
     public Long getId() {
         return id;
@@ -113,5 +115,13 @@ public class DcrDocument extends AbstractAuditable {
 
     public void setReportOutputId(FileStoreMapper reportOutputId) {
         this.reportOutputId = reportOutputId;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

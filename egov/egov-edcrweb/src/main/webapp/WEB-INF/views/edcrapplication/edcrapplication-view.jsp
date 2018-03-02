@@ -18,22 +18,10 @@
                     <div class="col-sm-3 add-margin view-content">
                         <c:out value="${edcrApplication.applicationNumber}" default="N/A"></c:out>
                     </div>
-                    <div class="col-xs-3 add-margin"><spring:message code="lbl.dcrnumber"/>
-                    </div>
-                    <div class="col-sm-3 add-margin view-content">
-                        <c:out value="${edcrApplication.dcrNumber}" default="N/A"></c:out>
-                    </div>
-                </div>
-                <div class="row add-border">
                     <div class="col-xs-3 add-margin"><spring:message code="lbl.applicationdate"/>
                     </div>
                     <div class="col-sm-3 add-margin view-content">
                         <fmt:formatDate pattern="dd/MM/yyyyy" value="${edcrApplication.applicationDate}"/>
-                    </div>
-                    <div class="col-xs-3 add-margin"><spring:message code="lbl.amenity.type"/>
-                    </div>
-                    <div class="col-sm-3 add-margin view-content">
-                        <c:out value="${edcrApplication.planInformation.amenities}" default="N/A"></c:out>
                     </div>
                 </div>
                 <div class="row add-border">
@@ -46,6 +34,13 @@
                     </div>
                     <div class="col-sm-3 add-margin view-content">
                         <c:out value="${edcrApplication.planInformation.occupancy}" default="N/A"></c:out>
+                    </div>
+                </div>
+                <div class="row add-border">
+                    <div class="col-xs-3 add-margin"><spring:message code="lbl.amenity.type"/>
+                    </div>
+                    <div class="col-sm-3 add-margin view-content">
+                        <c:out value="${edcrApplication.planInformation.amenities}" default="N/A"></c:out>
                     </div>
                 </div>
             </div>

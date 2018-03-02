@@ -22,4 +22,8 @@ public class DcrDocumentService {
     public void saveAll(List<DcrDocument> dcrDocuments) {
         dcrDocumentRepository.save(dcrDocuments);
     }
+
+    public List<DcrDocument> fingByAppNo(Long appNo) {
+       return dcrDocumentRepository.findByApplicationId(appNo);
+    }
 }

@@ -59,6 +59,27 @@
 </div>
 <div class="panel-body">
     <div class="form-group">
+        <label class="col-sm-3 control-label text-right">Re-Upload E-Dcr<span class="mandatory"></span></label>
+        <div class="col-sm-4 add-margin">
+            <div class="fileSection col-md77-4">
+                <input type="file" required="required" name="dxfFile" id="myfile" style="display:none;">
+                <p class="hide"><i class="fa fa-file-text"></i>&nbsp;&nbsp;<span id="fileName"></span></p>
+                <button type="button" id="fileTrigger" class="btn btn-primary fullWidth">
+                    <span class="glyphicon glyphicon glyphicon-cloud-upload"></span> &nbsp;Choose a file
+                </button>
+                <div class="row hide fileActions">
+                    <div class="col-md-6">
+                        <button type="button" id="fileDelete" class="btn btn-primary fullWidth">
+                            <i class="fa fa-trash-o"></i> &nbsp;Delete
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <small class="error-msg"><spring:message
+                    code="lbl.dcr.upload.help" /></small>
+        </div>
+    </div>
+    <div class="form-group">
         <label class="col-sm-3 control-label text-right"><spring:message code="lbl.applicationnumber" /> <span
                 class="mandatory"></span></label>
         <div class="col-sm-3 add-margin">
@@ -81,27 +102,6 @@
             </label>
         <div class="col-sm-3 add-margin">
             <textarea name="planInformation.amenities" class="form-control resetValues" id="amenities" value="${edcrApplication.planInformation.amenities}" readonly="readonly"></textarea>
-        </div>
-    </div>
-    <div class="form-group">
-        <label class="col-sm-3 control-label text-right">Re-Upload E-Dcr<span class="mandatory"></span></label>
-        <div class="col-sm-4 add-margin">
-            <div class="fileSection col-md77-4">
-                <input type="file" required="required" name="dxfFile" id="myfile" style="display:none;">
-                <p class="hide"><i class="fa fa-file-text"></i>&nbsp;&nbsp;<span id="fileName"></span></p>
-                <button type="button" id="fileTrigger" class="btn btn-primary fullWidth">
-                    <span class="glyphicon glyphicon glyphicon-cloud-upload"></span> &nbsp;Choose a file
-                </button>
-                <div class="row hide fileActions">
-                    <div class="col-md-6">
-                        <button type="button" id="fileDelete" class="btn btn-primary fullWidth">
-                            <i class="fa fa-trash-o"></i> &nbsp;Delete
-                        </button>
-                    </div>
-                </div>
-            </div>
-            <small class="error-msg"><spring:message
-                    code="lbl.dcr.upload.help" /></small>
         </div>
     </div>
 

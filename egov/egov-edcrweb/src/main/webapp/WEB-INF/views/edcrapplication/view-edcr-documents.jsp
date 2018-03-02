@@ -46,24 +46,27 @@
   ~
   --%>
 
-<%@ page contentType="text/html;charset=UTF-8" language="java"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
-<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 
 <div class="panel-heading custom_form_panel_heading">
     <div class="panel-title">
-        <spring:message code="lbl.doc.details" />
+        <spring:message code="lbl.doc.details"/>
     </div>
 </div>
 <table class="table">
     <thead>
     <tr>
         <th class="text-center"><spring:message code="lbl.srl.no"/></th>
+        <th class="text-center"><spring:message code="lbl.dcrnumber"/></th>
         <th class="text-center"><spring:message code="lbl.dxf.doc"/></th>
         <th class="text-center"><spring:message code="lbl.dcr.report.ouput"/></th>
+        <th class="text-center"><spring:message code="lbl.created.date"/></th>
+        <th class="text-center"><spring:message code="lbl.status"/></th>
     </tr>
     </thead>
     <tbody>
@@ -73,11 +76,12 @@
                        varStatus="status">
                 <tr>
                     <td class="text-center">${status.index+1}</td>
+                    <td class="text-center"><c:out value="${edcrApplication.dcrNumber}" default="N/A"></c:out>
+                    </td>
                     <td class="text-center"><c:set value="false" var="isDocFound"></c:set>
                         <c:if test="${docs.dxfFileId.fileStoreId ne null}">
                             <c:set value="true" var="isDocFound"></c:set>
-                            <a
-                                    href="/egi/downloadfile?fileStoreId=${docs.dxfFileId.fileStoreId}&moduleName=EDCR&toSave=true">
+                            <a href="/egi/downloadfile?fileStoreId=${docs.dxfFileId.fileStoreId}&moduleName=EDCR&toSave=true">
                                     ${docs.dxfFileId.fileName}<br>
                             </a>
                             <c:if test="${!loop.last}">,</c:if>&nbsp;
@@ -97,6 +101,8 @@
                         <c:if test="${!isDocFound}">
                             N/A
                         </c:if></td>
+                    <td class="text-center">${docs.createdDate} </td>
+                    <td class="text-center">${docs.status} </td>
                 </tr>
             </c:forEach>
         </c:when>

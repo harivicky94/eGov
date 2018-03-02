@@ -1,16 +1,20 @@
 package org.egov.edcr.service;
 
-import java.io.File;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import ar.com.fdvs.dj.core.DynamicJasperHelper;
+import ar.com.fdvs.dj.core.layout.ClassicLayoutManager;
+import ar.com.fdvs.dj.domain.DynamicReport;
+import ar.com.fdvs.dj.domain.Style;
+import ar.com.fdvs.dj.domain.builders.FastReportBuilder;
+import ar.com.fdvs.dj.domain.constants.Font;
+import ar.com.fdvs.dj.domain.constants.HorizontalAlign;
+import ar.com.fdvs.dj.domain.constants.Page;
+import net.sf.jasperreports.engine.JRDataSource;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.egov.edcr.entity.DcrDocument;
 import org.egov.edcr.entity.EdcrApplication;
 import org.egov.edcr.entity.PlanDetail;
 import org.egov.edcr.entity.PlanRule;
@@ -24,19 +28,13 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import ar.com.fdvs.dj.core.DynamicJasperHelper;
-import ar.com.fdvs.dj.core.layout.ClassicLayoutManager;
-import ar.com.fdvs.dj.domain.DynamicReport;
-import ar.com.fdvs.dj.domain.Style;
-import ar.com.fdvs.dj.domain.builders.FastReportBuilder;
-import ar.com.fdvs.dj.domain.constants.Font;
-import ar.com.fdvs.dj.domain.constants.HorizontalAlign;
-import ar.com.fdvs.dj.domain.constants.Page;
-import net.sf.jasperreports.engine.JRDataSource;
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperPrint;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import java.io.File;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 /*General rule class contains validations which are required for all types of building plans*/
 @Service
@@ -62,6 +60,10 @@ public class DcrService {
 
     @Autowired
     private FileStoreService fileStoreService;
+
+
+    @Autowired
+    private DcrDocumentService dcrDocumentService;
 
     public PlanDetail getPlanDetail() {
         return planDetail;
@@ -160,14 +162,54 @@ public class DcrService {
             e.printStackTrace();
         }
 
-        FileStoreMapper fileStoreId = fileStoreService.store(reportStream, "EDCR", "application/pdf",
-                DcrConstants.FILESTORE_MODULECODE);
-
-        if (fileStoreId != null)
-            dcrApplication.getSavedDcrDocument().setReportOutputId(fileStoreId);
-
+        saveOutputReport(dcrApplication, reportStream, planDetail);
         return reportOutput;
 
+    }
+
+    @Transactional
+    public void saveOutputReport(EdcrApplication edcrApplication, InputStream reportOutput, PlanDetail planDetail) {
+
+        List<DcrDocument> dcrDocuments = dcrDocumentService.fingByAppNo(edcrApplication.getId());
+        final String fileName = edcrApplication.getApplicationNumber() + "-v" + dcrDocuments.size() + ".pdf";
+
+        final FileStoreMapper fileStoreMapper = fileStoreService.store(reportOutput, fileName, "application/pdf",
+                DcrConstants.FILESTORE_MODULECODE);
+
+        buildDocuments(edcrApplication, null, fileStoreMapper, planDetail);
+
+        dcrDocumentService.saveAll(edcrApplication.getDcrDocuments());
+    }
+
+
+    public void buildDocuments(EdcrApplication edcrApplication, FileStoreMapper dxfFile, FileStoreMapper reportOutput, PlanDetail planDetail) {
+
+        if (dxfFile != null) {
+            DcrDocument dcrDocument = new DcrDocument();
+
+            dcrDocument.setDxfFileId(dxfFile);
+            dcrDocument.setApplication(edcrApplication);
+
+            List<DcrDocument> dcrDocuments = new ArrayList<>();
+            dcrDocuments.add(dcrDocument);
+            edcrApplication.setSavedDcrDocument(dcrDocument);
+            edcrApplication.setDcrDocuments(dcrDocuments);
+        }
+
+        if (reportOutput != null) {
+            DcrDocument dcrDocument = edcrApplication.getDcrDocuments().get(0);
+
+            if (planDetail.getEdcrPassed()) {
+                dcrDocument.setStatus("Accepted");
+            } else {
+                dcrDocument.setStatus("Not Accepted");
+            }
+            dcrDocument.setCreatedDate(new Date());
+            dcrDocument.setReportOutputId(reportOutput);
+            List<DcrDocument> dcrDocuments = new ArrayList<>();
+            dcrDocuments.add(dcrDocument);
+            edcrApplication.setDcrDocuments(dcrDocuments);
+        }
     }
 
     private JasperPrint prepareReportData(PlanDetail planDetail2, EdcrApplication dcrApplication) throws JRException {
@@ -183,22 +225,22 @@ public class DcrService {
         final Style subTitleStyle = new Style("subtitleStyle");
         titleStyle.setFont(new Font(2, Font._FONT_TIMES_NEW_ROMAN, false));
         String applicationNumber = StringUtils.isNotBlank(dcrApplication.getApplicationNumber())
-                                   ? dcrApplication.getApplicationNumber() : "NA";
+                ? dcrApplication.getApplicationNumber() : "NA";
         BigDecimal plotArea = planDetail2.getPlanInformation().getPlotArea() != null
-                              ? planDetail2.getPlanInformation().getPlotArea() : BigDecimal.ZERO;
+                ? planDetail2.getPlanInformation().getPlotArea() : BigDecimal.ZERO;
         String applicationDate = FORMATDDMMYYYY.format(dcrApplication.getApplicationDate());
         String occupancy = dcrApplication.getPlanInformation().getOccupancy() != null
-                           ? dcrApplication.getPlanInformation().getOccupancy() : "NA";
+                ? dcrApplication.getPlanInformation().getOccupancy() : "NA";
         String architectName = StringUtils.isNotBlank(dcrApplication.getPlanInformation().getArchitectInformation())
-                               ? dcrApplication.getPlanInformation().getArchitectInformation() : "NA";
+                ? dcrApplication.getPlanInformation().getArchitectInformation() : "NA";
         reportBuilder.append("\\n").append("Application Details").append("\\n").append("\\n")
-                     .append("Application Number  :   ").append(applicationNumber)
-                     .append("                                                    ")
-                     .append("Plot Area          :   ").append(plotArea).append("\\n").append("\\n")
-                     .append("Application Date       :   ").append(applicationDate)
-                     .append("                                                           ")
-                     .append("Occupancy       :   ").append(occupancy).append("\\n").append("\\n")
-                     .append("Architect name         :   ").append(architectName);
+                .append("Application Number  :   ").append(applicationNumber)
+                .append("                                                    ")
+                .append("Plot Area          :   ").append(plotArea).append("\\n").append("\\n")
+                .append("Application Date       :   ").append(applicationDate)
+                .append("                                                           ")
+                .append("Occupancy       :   ").append(occupancy).append("\\n").append("\\n")
+                .append("Architect name         :   ").append(architectName);
 
         boolean reportStatus = false;
         if (planDetail.getErrors() != null && planDetail.getErrors().size() > 0) {
@@ -211,10 +253,9 @@ public class DcrService {
                 i++;
             }
             reportBuilder.append("\\n");
-        } else  
+        } else
             reportStatus = true;
-        
-        
+
 
         List<Map<String, String>> errors = new ArrayList<Map<String, String>>();
         errors.add(planDetail.getErrors());
@@ -247,14 +288,14 @@ public class DcrService {
         reportBuilder.append("Rules Verified : ").append("\\n");
 
         drb.setTitle("Building Plan Approval" + "\\n" + "EDCR Report")
-           .setSubtitle(reportBuilder.toString())
-           .setPrintBackgroundOnOddRows(false)
-           .setSubtitleStyle(subTitleStyle)
-           .setTitleHeight(40).setSubtitleHeight(20).setUseFullPageWidth(true);
+                .setSubtitle(reportBuilder.toString())
+                .setPrintBackgroundOnOddRows(false)
+                .setSubtitleStyle(subTitleStyle)
+                .setTitleHeight(40).setSubtitleHeight(20).setUseFullPageWidth(true);
         drb.setMargins(20, 20, 20, 20);
 
         final DynamicReport dr = drb.build();
-
+        planDetail2.setEdcrPassed(reportStatus);
         return DynamicJasperHelper.generateJasperPrint(dr, new ClassicLayoutManager(), ds, valuesMap);
 
     }
