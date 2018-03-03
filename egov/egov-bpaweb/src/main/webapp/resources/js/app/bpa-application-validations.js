@@ -416,9 +416,13 @@ $(document).ready(function() {
 	});
 	
 	var previousIndex;
+    var oneDayPermitPreviousVal;
+    var landTypeDescIndex;
 	$('#occupancyapplnlevel').focus(function () {
         // Store the current value on focus, before it changes
         previousIndex= this.selectedIndex;
+        oneDayPermitPreviousVal = $('#isOneDayPermitApplication').is(':checked');
+        landTypeDescIndex = $('#typeOfLand').val()
     }).change(function(e){
     	if($('#buildingAreaDetails tbody tr').length == 1 && ($('.occupancy').val() == '' || $('.floorDescription').val() == '')){
     		resetOccupancyDetails();
@@ -452,7 +456,11 @@ $(document).ready(function() {
 						return true;
 					} else {
 						dropdown.target.selectedIndex = previousIndex;
-                        showOnePermitOnPageLoad();
+						if(oneDayPermitPreviousVal) {
+                            $('#isOneDayPermitApplication').prop('checked', true);
+                            $('#typeOfLand').val(landTypeDescIndex);
+						}
+						showOnePermitOnPageLoad();
 						return true;
 					}
 				}
@@ -585,45 +593,53 @@ $(document).ready(function() {
 	$( "#constStages" ).trigger( "change" );
 	$( ".serviceType" ).trigger( "change" );
 	$( ".applicationAmenity" ).trigger( "change" );
-	
-	 if ($('#isOneDayPermitApplication').is(':checked')) {
-		 $('#oneDayPermitSec').show(); 
-	 }else
-		 $('#oneDayPermitSec').hide(); 
+
 	var serviceTypeName = $( "#serviceType option:selected" ).text();
 	if('Addition or Extension' == serviceTypeName || 'Alteration' == serviceTypeName || 'New Construction' == serviceTypeName
 			|| 'Amenities' == serviceTypeName) {
-        showOnePermitOnPageLoad();
+
+        	showOnePermitOnPageLoad();
+
 		$('#occupancyapplnlevel').on('change', function() {
 			if($("#occupancyapplnlevel option:selected" ).text() == 'Residential'){
 				$('#oneDayPermitSec').show(); 
-				$('#isOneDayPermitApplication').prop('checked', false); 
+				$('#isOneDayPermitApplication').prop('checked', false);
+                $('#isOneDayPermitApplication').val(false);
 				$('#oneDayPermitTypeOfLandSec').hide();
 			} else {
                 $('#typeOfLand').val('');
 				$('#typeOfLand').removeAttr('required');
 				$('#isOneDayPermitApplication').prop('checked', false);
 				$('#oneDayPermitSec').hide();
+                $('#isOneDayPermitApplication').val(false);
 			}
 		});
 	}
 
 	function showOnePermitOnPageLoad() {
-        if($("#occupancyapplnlevel option:selected" ).text() == 'Residential'){
-            $('#oneDayPermitSec').show();
-            $('#isOneDayPermitApplication').prop('checked', false);
-            $('#oneDayPermitTypeOfLandSec').hide();
+        if($("#occupancyapplnlevel option:selected" ).text() == 'Residential') {
+            if($('#isOneDayPermitApplication').is(':checked')) {
+                $('#oneDayPermitSec').show();
+                $('#oneDayPermitTypeOfLandSec').show();
+			} else {
+                $('#oneDayPermitSec').show();
+                $('#isOneDayPermitApplication').val(false);
+                $('#oneDayPermitTypeOfLandSec').hide();
+            }
         }
 	}
+
 	 $('#isOneDayPermitApplication').click(function() {
-	        if (!$(this).is(':checked')) {
-                $('#typeOfLand').val('');
-	        	$('#oneDayPermitTypeOfLandSec').hide(); 
-	        	$('#isOneDayPermitApplication').prop('checked', false);
-	        	$('#typeOfLand').removeAttr('required');
+	        if ($(this).is(':checked')) {
+                $('#typeOfLand').prop('required', true);
+                $('#oneDayPermitTypeOfLandSec').show();
+                $('#isOneDayPermitApplication').val(true);
 	        } else{
-	        	$('#typeOfLand').prop('required', true); 
-	        	$('#oneDayPermitTypeOfLandSec').show();
+                $('#typeOfLand').val('');
+                $('#oneDayPermitTypeOfLandSec').hide();
+                $('#isOneDayPermitApplication').prop('checked', false);
+                $('#typeOfLand').removeAttr('required');
+                $('#isOneDayPermitApplication').val(false);
 	        }
 	  });
 });
