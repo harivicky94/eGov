@@ -205,11 +205,13 @@ public class DXFExtractService {
         int floorNo = -1;
         while (layer != null) {
             floorNo++;
-            layer = doc.getDXFLayer(DxfFileConstants.FLOOR_NAME_PREFIX + floorNo);
-            if (!layer.getName().equalsIgnoreCase("FLOOR_" + floorNo))
+            String floorName = DxfFileConstants.FLOOR_NAME_PREFIX + floorNo;
+            layer = doc.getDXFLayer(floorName);
+            if (!layer.getName().equalsIgnoreCase(floorName))
                 break;
 
             Floor floor = new Floor();
+            floor.setName(floorName);
             List dxfPolyLineEntities = layer.getDXFEntities(DXFConstants.ENTITY_TYPE_LWPOLYLINE);
             if (dxfPolyLineEntities != null)
                 for (Object dxfEntity : dxfPolyLineEntities) {

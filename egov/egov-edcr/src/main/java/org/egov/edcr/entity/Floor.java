@@ -10,6 +10,7 @@ public class Floor extends Measurement {
     private List<Room> habitableRooms = new ArrayList<>();
     private Measurement exterior;
     private List<Measurement> openSpaces = new ArrayList<>();
+    private String name;
 
     public List<Room> getHabitableRooms() {
         return habitableRooms;
@@ -40,6 +41,14 @@ public class Floor extends Measurement {
 
         return "Floor [habitableRooms Count" + habitableRooms.size() + "\n exterior=" + exterior + "\n openSpaces Count=" + openSpaces.size() + "]";
 
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
 }

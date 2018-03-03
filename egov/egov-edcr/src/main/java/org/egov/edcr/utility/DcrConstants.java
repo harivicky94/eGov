@@ -105,5 +105,6 @@ public class DcrConstants {
     public static final String CULD_DE_SAC = "culd de sac";
     public static final String OPEN_STAIR_DESC = "Open Stair ";
 
+    public static final String HABITABLE_ROOM = "Habitable Room";
 
 }

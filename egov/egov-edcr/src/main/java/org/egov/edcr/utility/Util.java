@@ -11,8 +11,10 @@ import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
 import org.egov.edcr.constants.DxfFileConstants;
+import org.egov.edcr.entity.Floor;
 import org.egov.edcr.entity.PlanDetail;
 import org.egov.edcr.entity.ReportOutput;
+import org.egov.edcr.entity.Room;
 import org.egov.edcr.entity.RuleOutput;
 import org.egov.edcr.entity.SubRuleOutput;
 import org.egov.edcr.entity.utility.RuleReportOutput;
@@ -35,6 +37,7 @@ import org.kabeja.math.MathUtils;
 public class Util {
     private static String FLOOR_NAME_PREFIX = "FLOOR_";
     private static final int DECIMALDIGITS = 10;
+    public static final int COMPARE_WITH_2_PERCENT_ERROR_DIGITS = 2;
     private static Logger LOG = Logger.getLogger(Util.class);
 
     public List<DXFLWPolyline> getPolyLinesByColor(DXFDocument dxfDocument, Integer colorCode) {
@@ -128,11 +131,9 @@ public class Util {
 
         new ArrayList<>();
 
-        Iterator dxfLayerIterator = dxfDocument.getDXFLayerIterator();
-
-        while (dxfLayerIterator.hasNext()) {
-
-            DXFLayer dxfLayer = (DXFLayer) dxfLayerIterator.next();
+        DXFLayer dxfLayer = dxfDocument.getDXFLayer(name);
+        //if layer with name not found kabeja will return default layer or create new layer and gives
+        if (dxfLayer.getName().equalsIgnoreCase(name)) {
 
             List dxfLineEntities = dxfLayer.getDXFEntities(DXFConstants.ENTITY_TYPE_LINE);
 
@@ -169,6 +170,8 @@ public class Util {
         while (dxfLayerIterator.hasNext()) {
 
             DXFLayer dxfLayer = (DXFLayer) dxfLayerIterator.next();
+            if (dxfLayer.getName().equalsIgnoreCase(name))
+            {
 
             List dxfLineEntities = dxfLayer.getDXFEntities(DXFConstants.ENTITY_TYPE_DIMENSION);
 
@@ -188,6 +191,7 @@ public class Util {
                         dimensions.add(line);
 
                 }
+            }
         }
         if (dimensions.size() == 1)
             return dimensions.get(0);
@@ -221,9 +225,7 @@ public class Util {
         BigDecimal value = BigDecimal.ZERO;
 
         DXFLayer dxfLayer = dxfDocument.getDXFLayer(name);
-        if (dxfLayer == null)
-            pl.addError(name, name + " layer not defined");
-
+        if (dxfLayer.getName().equalsIgnoreCase(name)){
         List dxfLineEntities = dxfLayer.getDXFEntities(DXFConstants.ENTITY_TYPE_DIMENSION);
 
         if (null != dxfLineEntities)
@@ -250,6 +252,7 @@ public class Util {
 
                     }
                 }
+            }
 
             }
         if (BigDecimal.ZERO.compareTo(value) == 0)
@@ -312,6 +315,7 @@ public class Util {
             return dxflwPolylines;
         if(dxfDocument.containsDXFLayer(name)){
         DXFLayer dxfLayer = dxfDocument.getDXFLayer(name);
+        if (dxfLayer.getName().equalsIgnoreCase(name)){
         
         if (dxfLayer.hasDXFEntities(DXFConstants.ENTITY_TYPE_LWPOLYLINE)) {
             List dxfPolyLineEntities = dxfLayer.getDXFEntities(DXFConstants.ENTITY_TYPE_LWPOLYLINE);
@@ -319,12 +323,15 @@ public class Util {
                 DXFLWPolyline dxflwPolyline = (DXFLWPolyline) dxfEntity;
                 dxflwPolylines.add(dxflwPolyline);
             }
+            
         } else {
             // TODO: add what if polylines not found
 
         }
         }
+        }
         return dxflwPolylines;
+    
     }
 
     public static BigDecimal getPolyLineArea(DXFPolyline dxfPolyline) {
@@ -520,11 +527,22 @@ public class Util {
         return i;
     }
 
-    public boolean pointsEquals(Point point1, Point point) {
+    public static boolean pointsEquals(Point point1, Point point) {
         BigDecimal px = BigDecimal.valueOf(point.getX()).setScale(DECIMALDIGITS, BigDecimal.ROUND_DOWN);
         BigDecimal py = BigDecimal.valueOf(point.getY()).setScale(DECIMALDIGITS, BigDecimal.ROUND_DOWN);
         BigDecimal p1x = BigDecimal.valueOf(point1.getX()).setScale(DECIMALDIGITS, BigDecimal.ROUND_DOWN);
         BigDecimal p1y = BigDecimal.valueOf(point1.getY()).setScale(DECIMALDIGITS, BigDecimal.ROUND_DOWN);
+        if (px.compareTo(p1x) == 0 && py.compareTo(p1y) == 0)
+            return true;
+        else
+            return false;
+    }
+    
+    public static boolean pointsEqualsWith2PercentError(Point point1, Point point) {
+        BigDecimal px = BigDecimal.valueOf(point.getX()).setScale(COMPARE_WITH_2_PERCENT_ERROR_DIGITS, BigDecimal.ROUND_DOWN);
+        BigDecimal py = BigDecimal.valueOf(point.getY()).setScale(COMPARE_WITH_2_PERCENT_ERROR_DIGITS, BigDecimal.ROUND_DOWN);
+        BigDecimal p1x = BigDecimal.valueOf(point1.getX()).setScale(COMPARE_WITH_2_PERCENT_ERROR_DIGITS, BigDecimal.ROUND_DOWN);
+        BigDecimal p1y = BigDecimal.valueOf(point1.getY()).setScale(COMPARE_WITH_2_PERCENT_ERROR_DIGITS, BigDecimal.ROUND_DOWN);
         if (px.compareTo(p1x) == 0 && py.compareTo(p1y) == 0)
             return true;
         else
@@ -590,7 +608,7 @@ public class Util {
             while (vertexIterator.hasNext()) {
                 DXFVertex next = (DXFVertex) vertexIterator.next();
                 LOG.info(next.getPoint().getX() + "," + next.getPoint().getY());
-                LOG.info(next.getX() + "," + next.getY());
+               // LOG.info(next.getX() + "," + next.getY());
             }
         }
 
@@ -633,6 +651,31 @@ public class Util {
 
         LOG.info("ReportOutput Completed");
 
+    }
+    
+    public static void print (List<Floor> floors)
+    {
+     for(Floor floor:floors)
+     {
+//         LOG.info("Floor Name"+floor.getName());
+         if(floor.getExterior()!=null)
+         {
+         LOG.info("Ext points Count"+floor.getExterior().getPolyLine().getVertexCount());
+         LOG.info("maxx  : "+floor.getExterior().getPolyLine().getBounds().getMaximumX()+" minx :  "+floor.getExterior().getPolyLine().getBounds().getMinimumX());
+         LOG.info("maxy  : "+floor.getExterior().getPolyLine().getBounds().getMaximumY()+" minx :  "+floor.getExterior().getPolyLine().getBounds().getMinimumY());
+          print(floor.getExterior().getPolyLine(),floor.getName());
+         }
+         LOG.info("Habitable Rooms count"+floor.getHabitableRooms().size());
+         int i=0;
+         for(Room r:floor.getHabitableRooms())
+         {
+             LOG.info("maxx  : "+r.getPolyLine().getBounds().getMaximumX()+" minx :  "+r.getPolyLine().getBounds().getMinimumX());
+             LOG.info("maxy  : "+r.getPolyLine().getBounds().getMaximumY()+" minx :  "+r.getPolyLine().getBounds().getMinimumY());
+             print(r.getPolyLine(),floor.getName()+"_Room_"+i++);
+         }
+         
+     }
+        
     }
 
     public static void print(PlanDetail pl) {

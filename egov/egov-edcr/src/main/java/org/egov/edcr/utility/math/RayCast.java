@@ -5,6 +5,8 @@ import static java.lang.Math.min;
 
 import java.math.BigDecimal;
 
+import org.egov.edcr.utility.Util;
+
 public class RayCast {
 
     private static final int DECIMALDIGITS = 8;
@@ -35,10 +37,19 @@ public class RayCast {
         double blue = (B[1] - A[1]) / (B[0] - A[0]);
         // System.out.println("red"+red+",blue"+blue);
         BigDecimal redB = BigDecimal.valueOf(blue).setScale(DECIMALDIGITS, BigDecimal.ROUND_DOWN);
-        BigDecimal redR = BigDecimal.valueOf(red).setScale(8, BigDecimal.ROUND_DOWN);
+        BigDecimal redR = BigDecimal.valueOf(red).setScale(DECIMALDIGITS, BigDecimal.ROUND_DOWN);
         // System.out.println("red"+redR+",blue"+redB);
         // System.out.println("Compare"+redR.compareTo(redB));
-        return redR.compareTo(redB) >= 0;
+        Boolean result=redR.compareTo(redB) >= 0;
+       
+       /* //if raycast goes wrong delte this
+        if(!result)
+        {
+             redB = BigDecimal.valueOf(blue).setScale(Util.COMPARE_WITH_2_PERCENT_ERROR_DIGITS, BigDecimal.ROUND_DOWN);
+             redR = BigDecimal.valueOf(red).setScale(Util.COMPARE_WITH_2_PERCENT_ERROR_DIGITS, BigDecimal.ROUND_DOWN);  
+             result=redR.compareTo(redB) >= 0;
+        }*/
+        return result;
 
     }
 

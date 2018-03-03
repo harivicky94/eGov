@@ -1,21 +1,28 @@
 package org.egov.edcr.rule;
 
+ 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+import org.egov.edcr.entity.Floor;
 import org.egov.edcr.entity.PlanDetail;
 import org.egov.edcr.entity.Result;
+import org.egov.edcr.entity.Room;
 import org.egov.edcr.entity.RuleOutput;
 import org.egov.edcr.entity.SubRuleOutput;
 import org.egov.edcr.entity.measurement.Measurement;
 import org.egov.edcr.service.MinDistance;
 import org.egov.edcr.service.ReportService;
 import org.egov.edcr.utility.DcrConstants;
+import org.egov.edcr.utility.Util;
 import org.egov.edcr.utility.math.RayCast;
+import org.kabeja.dxf.DXFLWPolyline;
 import org.kabeja.dxf.DXFVertex;
 import org.kabeja.dxf.helpers.Point;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,9 +37,11 @@ import ar.com.fdvs.dj.domain.builders.FastReportBuilder;
 import ar.com.fdvs.dj.domain.entities.Subreport;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+ 
 
 @Service
 public class Rule24 extends GeneralRule {
+    private Logger LOG = Logger.getLogger(Rule24.class);
 
     private static final BigDecimal FRONTYARDMINIMUM_DISTANCE = BigDecimal.valueOf(1.8);
     private static final BigDecimal FRONTYARDMEAN_DISTANCE = BigDecimal.valueOf(3);
@@ -74,6 +83,10 @@ public class Rule24 extends GeneralRule {
    
     private static final String SUB_RULE_24_10 = "24(10)";
     private static final String SUB_RULE_24_10_DESCRIPTION = "No construction or hangings outside the boundaries of the site";
+ 
+    private static final String SUB_RULE_24_1 = "HABITABLE ROOMS";
+    private static final String SUB_RULE_24_1_DESCRIPTION = "Every habitable room shall abut on an exterior or interior open space or verandah";
+ 
 
     private String MEAN_MINIMUM = "(Minimum distance,Mean distance) ";
 
@@ -92,8 +105,10 @@ public class Rule24 extends GeneralRule {
                 planDetail.addErrors(errors);
             }
 
+ 
             if (planDetail.getPlot() != null && (planDetail.getPlot().getFrontYard() == null ||
                                                  !planDetail.getPlot().getFrontYard().getPresentInDxf())) {
+ 
                 errors.put(DcrConstants.FRONT_YARD_DESC,
                         prepareMessage(DcrConstants.OBJECTNOTDEFINED, DcrConstants.FRONT_YARD_DESC));
                 planDetail.addErrors(errors);
@@ -154,9 +169,14 @@ public class Rule24 extends GeneralRule {
 
     @Override
     public PlanDetail process(PlanDetail planDetail) {
+ 
         {
-            // For building of heights less than or equal to 10
-            if (planDetail.getBuilding() != null && planDetail.getBuilding().getBuildingHeight() != null
+          
+
+        rule24_1(planDetail);
+        // For building of heights less than or equal to 10
+        if (planDetail.getBuilding() != null && planDetail.getBuilding().getBuildingHeight() != null
+ 
                 && planDetail.getBuilding().getBuildingHeight().compareTo(BigDecimal.ZERO) > 0
                 && planDetail.getBuilding().getBuildingHeight().compareTo(new BigDecimal(10)) <= 0)
                 rule24_3(planDetail, DcrConstants.NON_BASEMENT);
@@ -255,7 +275,9 @@ public class Rule24 extends GeneralRule {
                 if (planDetail.getPlanInformation() != null && planDetail.getPlanInformation().getNocToAbutSide())
                     rule24_4(planDetail, SIDE1MINIMUM_DISTANCE_LESSTHAN7_WITHOUTOPENING, SIDE2MINIMUM_DISTANCE_LESSTHAN7_WITHOUTOPENING, DcrConstants.BASEMENT);
 
+ 
                 rule24_4_LessThan7WithoutOpeningNoc(planDetail, SIDE1MINIMUM_DISTANCE_LESSTHAN7_WITHOUTOPENING, DcrConstants.BASEMENT);
+ 
 
             }
     }
@@ -791,4 +813,106 @@ public class Rule24 extends GeneralRule {
 
     }
 
+
+    private void rule24_1(PlanDetail pl) {
+
+        if (pl.getBuilding().getFloors().size() <= 0)
+            return;
+
+        List<Point> vertices = new ArrayList<>();
+
+        int faileCount = 0;
+
+        Util.print(pl.getBuilding().getFloors());
+        for (Floor floor : pl.getBuilding().getFloors()) {
+            if (floor.getExterior() == null) {
+               continue;
+            }
+          //  LOG.info("ext wall points");
+            DXFLWPolyline extWall = floor.getExterior().getPolyLine();
+            Iterator extItr = extWall.getVertexIterator();
+            while (extItr.hasNext()) {
+                DXFVertex next = (DXFVertex) extItr.next();
+                vertices.add(next.getPoint());
+               // LOG.info(next.getPoint().getX()+","+next.getPoint().getY());
+            }
+
+            List<Point> extPoints = MinDistance.findPointsOnPolylines(vertices);
+            
+            if (floor.getHabitableRooms().size() >= 1) {
+
+                int habitableRoomNo = 0;
+                for (Room room : floor.getHabitableRooms()) {
+                    habitableRoomNo++;
+                    Boolean habitable = false;
+                    Iterator habitableRoomPointItr = room.getPolyLine().getVertexIterator();
+
+                    habitableRoomLoop: while (habitableRoomPointItr.hasNext()) {
+
+                        DXFVertex next = (DXFVertex) habitableRoomPointItr.next();
+                       // LOG.info(" Contains "+next.getPoint().getX()+","+next.getPoint().getY());
+                        if (extPoints.contains(next.getPoint())) {
+                            Point point = extPoints.get(extPoints.indexOf(next.getPoint()));
+                         //   LOG.info("Contains found+" +point.getX() +","+point.getY());
+                            habitable = true;
+
+                        }
+
+                    }
+
+                    if (!habitable) {
+                        //TODO :Verify this 
+                        Iterator habitableRoomPointItr2 = room.getPolyLine().getVertexIterator();
+                        habitableRoomLoop2: while (habitableRoomPointItr2.hasNext()) {
+
+                            DXFVertex next = (DXFVertex) habitableRoomPointItr2.next();
+                           // LOG.info(" Hroorm "+next.getPoint().getX()+","+next.getPoint().getY());
+                            LOG.info("Looping"+extPoints.size());
+                            for (Point p : extPoints) {
+                              //  LOG.info("Comparing"+p.getX()+","+p.getY());
+                               // LOG.info("next"+next.getPoint().getX()+","+next.getPoint().getY());
+                                if (Util.pointsEqualsWith2PercentError(p, next.getPoint())) {
+                                    LOG.info("Matched");
+                                    habitable = true;
+
+                                }    
+                            }
+                        }
+                    }       
+
+                    if (!habitable) {   
+
+                        LOG.info("since rooom is not habitable "+habitableRoomNo+" floor no"+ floor.getName());
+                        faileCount++;
+
+                        pl.reportOutput
+                                .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_1, SUB_RULE_24_1_DESCRIPTION,
+                                        DcrConstants.HABITABLE_ROOM,
+                                        DcrConstants.HABITABLE_ROOM
+                                                + " shall abut on an exterior or interior open space or verandah ",
+                                        DcrConstants.HABITABLE_ROOM + " number " + habitableRoomNo + " in " + floor.getName()
+                                                + " is not abuting an exterior or interior open space or verandah",
+                                        Result.Not_Accepted, null));
+                    }
+
+                }
+            }
+
+        }
+        if (faileCount > 0) {
+            pl.reportOutput
+                    .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_1, SUB_RULE_24_1_DESCRIPTION,
+                            DcrConstants.HABITABLE_ROOM,
+                            DcrConstants.HABITABLE_ROOM + " shall abut on an exterior or interior open space or verandah ",
+                            " " + faileCount + " " + DcrConstants.HABITABLE_ROOM
+                                    + " (s)  not abuting an exterior or interior open space or verandah",
+                            Result.Not_Accepted, null));
+        }
+
+    }
+
+    
+ 
+    
 }
+
