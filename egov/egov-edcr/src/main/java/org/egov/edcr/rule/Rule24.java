@@ -11,6 +11,7 @@ import org.egov.edcr.entity.PlanDetail;
 import org.egov.edcr.entity.Result;
 import org.egov.edcr.entity.RuleOutput;
 import org.egov.edcr.entity.SubRuleOutput;
+import org.egov.edcr.entity.measurement.Measurement;
 import org.egov.edcr.service.MinDistance;
 import org.egov.edcr.service.ReportService;
 import org.egov.edcr.utility.DcrConstants;
@@ -57,7 +58,8 @@ public class Rule24 extends GeneralRule {
     private static final BigDecimal REARYARDMINIMUM_DISTANCE_WITHOUTOPENING_CORRESPONDINGFLOOR = BigDecimal.valueOf(0.75);
 
     private static final BigDecimal REARYARDMINIMUM_DISTANCE_WITHOUTOPENING_NOC = BigDecimal.ZERO;
-
+    private static final BigDecimal OPENSTAIR_DISTANCE = BigDecimal.valueOf(0.60);
+    
     private static final String SUB_RULE_24_3 = "24(3)";
     private static final String SUB_RULE_24_3_DESCRIPTION = "Front yard distance";
 
@@ -67,6 +69,9 @@ public class Rule24 extends GeneralRule {
     private static final String SUB_RULE_24_5 = "24(5)";
     private static final String SUB_RULE_24_5_DESCRIPTION = "Side yard distance";
 
+    private static final String SUB_RULE_24_11 = "24(11)";
+    private static final String SUB_RULE_24_11_DESCRIPTION=  "Open space for open stair";
+   
     private static final String SUB_RULE_24_10 = "24(10)";
     private static final String SUB_RULE_24_10_DESCRIPTION = "No construction or hangings outside the boundaries of the site";
 
@@ -185,9 +190,38 @@ public class Rule24 extends GeneralRule {
                 }
         }
         rule24_10(planDetail);
+        rule24_11(planDetail);
+        
         if (planDetail.getBasement() != null)
             rule24_12(planDetail);
         return planDetail;
+    }
+
+    private void rule24_11(PlanDetail planDetail) {
+        if (planDetail.getBuilding() != null && planDetail.getBuilding().getOpenStairs() != null
+                && planDetail.getBuilding().getOpenStairs().size() > 0) {
+            for (Measurement measurement : planDetail.getBuilding().getOpenStairs()) {
+                if (measurement.getMinimumDistance().compareTo(OPENSTAIR_DISTANCE) >= 0)
+                    planDetail.reportOutput
+                            .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_11, SUB_RULE_24_11_DESCRIPTION,
+                                    DcrConstants.OPEN_STAIR_DESC,
+                                    "Min" + OPENSTAIR_DISTANCE.toString()
+                                            + DcrConstants.IN_METER,
+                                    measurement.getMinimumDistance().toString()
+                                            + DcrConstants.IN_METER,
+                                    Result.Accepted, null));
+                else
+                    planDetail.reportOutput
+                            .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_11, SUB_RULE_24_11_DESCRIPTION,
+                                    DcrConstants.OPEN_STAIR_DESC,
+                                    "Min" + OPENSTAIR_DISTANCE.toString()
+                                            + DcrConstants.IN_METER,
+                                    measurement.getMinimumDistance().toString()
+                                            + DcrConstants.IN_METER,
+                                    Result.Not_Accepted, null));
+            }
+        }
+
     }
 
     private void rule24_12(PlanDetail planDetail) {

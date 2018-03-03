@@ -88,7 +88,7 @@ public class Measurement {
 
     @Override
     public String toString() {
-        return "Measurement : presentInDxf=" + presentInDxf +"\n polyLine Count=" + polyLine.getVertexCount() + "]";
+        return "Measurement : presentInDxf=" + presentInDxf +"\n polyLine Count="  + "]";
     }
 
 }

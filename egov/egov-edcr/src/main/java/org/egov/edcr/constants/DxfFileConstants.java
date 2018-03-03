@@ -12,7 +12,7 @@ public class DxfFileConstants {
     public static final String NON_NOTIFIED_ROAD = "NON_NOTIFIED_ROAD";
     public static final String CULD_1 = "CULD_1";
     public static final String LANE_1 = "LANE_1";
-    public static final String HORIZ_CLEAR_OHE2 = "HORIZ_CLEAR_OHE,HORIZ_CLEAR_OHEL";
+    public static final String HORIZ_CLEAR_OHE2 = "HORIZ_CLEAR_OHEL";
     public static final String PLOT_BOUNDARY = "PLOT_BOUNDARY";
     public static String CRZ_ZONE = "CRZ";
     public static final String PLOT_AREA = "PLOT_AREA_M2";

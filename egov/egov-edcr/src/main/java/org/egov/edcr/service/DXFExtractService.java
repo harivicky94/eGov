@@ -295,17 +295,44 @@ public class DXFExtractService {
         }
         building.setShade(shade);
 
-        // TODO : Verify it is line only or dimension
-        List<DXFLine> lines = Util.getLinesByLayer(doc, DxfFileConstants.OPEN_STAIR);
-        for (DXFLine line : lines) {
-            Measurement shortDistanceToPlot = new Measurement();
-            shortDistanceToPlot
-                    .setMinimumDistance(BigDecimal.valueOf(line.getLength()).setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS));
-            building.getOpenStairs().add(shortDistanceToPlot);
-        }
+        extractOpenStairs(doc, building);
 
         pl.setBuilding(building);
 
+    }
+
+    private void extractOpenStairs(DXFDocument doc, Building building) {
+        List<DXFDimension> lines = Util.getDimensionsByLayer(doc, DxfFileConstants.OPEN_STAIR);
+        
+        for (Object dxfEntity : lines) {
+            BigDecimal value = BigDecimal.ZERO;
+            DXFDimension line = (DXFDimension) dxfEntity;
+            String dimensionBlock = line.getDimensionBlock();
+            DXFBlock dxfBlock = doc.getDXFBlock(dimensionBlock);
+            Iterator dxfEntitiesIterator = dxfBlock.getDXFEntitiesIterator();
+            while (dxfEntitiesIterator.hasNext()) {
+                DXFEntity e = (DXFEntity) dxfEntitiesIterator.next();
+                if (e.getType().equals(DXFConstants.ENTITY_TYPE_MTEXT)) {
+                    DXFMText text = (DXFMText) e;
+                    String text2 = text.getText();
+                    if (text2.contains(";")) {
+                        text2 = text2.split(";")[1];
+                    } else
+
+                        text2 = text2.replaceAll("[^\\d.]", "");
+                    ;
+                    if (!text2.isEmpty()) {
+                        value = BigDecimal.valueOf(Double.parseDouble(text2));
+                        Measurement openPlot = new Measurement();
+                        openPlot
+                                .setMinimumDistance(value);
+                        building.getOpenStairs().add(openPlot);
+                    }
+
+                }
+            }
+
+        }
     }
 
     private void extractBasementDetails(PlanDetail pl, DXFDocument doc) {
