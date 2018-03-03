@@ -7,7 +7,7 @@ import org.egov.edcr.entity.utility.RuleReportOutput;
 
 public class SubRuleOutput {
     public String key;
-    public List<RuleReportOutput> ruleReportOutputs;
+    public List<RuleReportOutput> ruleReportOutputs = new ArrayList();
     public String message;
     public Result result;
     public String ruleDescription;

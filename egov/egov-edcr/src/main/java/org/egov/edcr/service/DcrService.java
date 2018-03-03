@@ -287,11 +287,11 @@ public class DcrService {
         reportBuilder.append("Report Status : " + (reportStatus ? "Accepted" : "NotAccepted")).append("\\n").append("\\n");
         reportBuilder.append("Rules Verified : ").append("\\n");
 
-        drb.setTitle("Building Plan Approval" + "\\n" + "EDCR Report")
+        drb.setTitle("Building Plan Approval" + "\\n" + "\\n" + "EDCR Report")
                 .setSubtitle(reportBuilder.toString())
                 .setPrintBackgroundOnOddRows(false)
                 .setSubtitleStyle(subTitleStyle)
-                .setTitleHeight(40).setSubtitleHeight(20).setUseFullPageWidth(true);
+                .setTitleHeight(60).setSubtitleHeight(30).setUseFullPageWidth(true);
         drb.setMargins(20, 20, 20, 20);
 
         final DynamicReport dr = drb.build();
