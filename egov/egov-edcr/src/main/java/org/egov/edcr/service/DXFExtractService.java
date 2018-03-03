@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -39,7 +40,6 @@ import org.kabeja.dxf.DXFDocument;
 import org.kabeja.dxf.DXFEntity;
 import org.kabeja.dxf.DXFLWPolyline;
 import org.kabeja.dxf.DXFLayer;
-import org.kabeja.dxf.DXFLine;
 import org.kabeja.dxf.DXFMText;
 import org.kabeja.dxf.DXFVertex;
 import org.kabeja.dxf.helpers.Point;
@@ -119,7 +119,7 @@ public class DXFExtractService {
 
     private void extractParkingDetails(DXFDocument doc, PlanDetail pl) {
 
-        List<DXFLWPolyline> residentialUnit = new ArrayList<DXFLWPolyline>();
+        List<DXFLWPolyline> residentialUnit = new LinkedList<DXFLWPolyline>();
         List<DXFLWPolyline> residentialUnitDeduction = new ArrayList<DXFLWPolyline>();
         List<DXFLWPolyline> removeDeduction = new ArrayList<DXFLWPolyline>();
         boolean layerPresent = true;
@@ -813,33 +813,33 @@ public class DXFExtractService {
     private PlanDetail extractOverheadElectricLines(DXFDocument doc, PlanDetail pl) {
         ElectricLine line = new ElectricLine();
 
-        DXFLine horiz_clear_OHE = Util.getSingleLineByLayer(doc, DxfFileConstants.HORIZ_CLEAR_OHE2);
+        /*  DXFLine horiz_clear_OHE = Util.getSingleLineByLayer(doc, DxfFileConstants.HORIZ_CLEAR_OHE2);
 
-        if (horiz_clear_OHE != null) {
+      if (horiz_clear_OHE != null) {
             line.setHorizontalDistance(BigDecimal.valueOf(horiz_clear_OHE.getLength()));
             line.setPresentInDxf(true);
-        } else {
+        } else {*/
             BigDecimal dimension = Util.getSingleDimensionValueByLayer(doc, DxfFileConstants.HORIZ_CLEAR_OHE2, pl);
             if (dimension != null) {
                 line.setHorizontalDistance(dimension);
                 line.setPresentInDxf(true);
             }
-        }
-        DXFLine vert_clear_OHE = Util.getSingleLineByLayer(doc, DxfFileConstants.VERT_CLEAR_OHE);
+       // }
+       /* DXFLine vert_clear_OHE = Util.getSingleLineByLayer(doc, DxfFileConstants.VERT_CLEAR_OHE);
 
         if (vert_clear_OHE != null) {
             line.setVerticalDistance(BigDecimal.valueOf(vert_clear_OHE.getLength()));
             line.setPresentInDxf(true);
-        } else {
-            Util.getMtextByLayerName(doc, DxfFileConstants.VERT_CLEAR_OHE);
+        } else {*/
+          //  Util.getMtextByLayerName(doc, DxfFileConstants.VERT_CLEAR_OHE);
 
-            BigDecimal dimension = Util.getSingleDimensionValueByLayer(doc, DxfFileConstants.VERT_CLEAR_OHE, pl);
-            if (dimension != null) {
-                line.setVerticalDistance(dimension);
+            BigDecimal dimensionVerticle = Util.getSingleDimensionValueByLayer(doc, DxfFileConstants.VERT_CLEAR_OHE, pl);
+            if (dimensionVerticle != null) {
+                line.setVerticalDistance(dimensionVerticle);
                 line.setPresentInDxf(true);
             }
 
-        }
+        //}
 
         String voltage = Util.getMtextByLayerName(doc, "VOLTAGE");
         if (voltage != null)
@@ -855,7 +855,7 @@ public class DXFExtractService {
 
             }
         else {
-            if (horiz_clear_OHE != null || vert_clear_OHE != null)
+            if (dimension != null || dimensionVerticle != null)
                 pl.addError("VOLTAGE", "Voltage is not mentioned for the " + DxfFileConstants.HORIZ_CLEAR_OHE2 + " or "
                         + DxfFileConstants.VERT_CLEAR_OHE);
         }

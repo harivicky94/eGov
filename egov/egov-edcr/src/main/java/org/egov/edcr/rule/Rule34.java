@@ -97,6 +97,7 @@ public class Rule34 extends GeneralRule {
                             groupUnitByArea.get("ABOVE250") != null ? groupUnitByArea.get("ABOVE250") + 1 : 1);
                 }
             }
+            System.out.println("Parking Unit area on group " +groupUnitByArea);
 
             if (groupUnitByArea.size() > 0) {
                 totalParkingRequired = (groupUnitByArea.get("WITHIN60") != null ? Math.floor(groupUnitByArea.get("WITHIN60") / 3)

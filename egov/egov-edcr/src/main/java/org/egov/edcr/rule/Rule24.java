@@ -748,12 +748,12 @@ public class Rule24 extends GeneralRule {
 
         double[][] pointsOfPlot = MinDistance.pointsOfPolygon(pl.getPlot().getPolyLine());
         Iterator buildingIterator = pl.getBuilding().getPolyLine().getVertexIterator();
-        Boolean buildingOutSideBoundary = false;
+        Boolean buildingOutSideBoundary = true;
         while (buildingIterator.hasNext()) {
             DXFVertex dxfVertex = (DXFVertex) buildingIterator.next();
             Point point = dxfVertex.getPoint();
             if (RayCast.contains(pointsOfPlot, new double[] { point.getX(), point.getY() }) == false)
-                buildingOutSideBoundary = true;
+                buildingOutSideBoundary = false;
 
         }
         if (buildingOutSideBoundary)
@@ -765,12 +765,12 @@ public class Rule24 extends GeneralRule {
                             Result.Not_Accepted, null));
 
         buildingIterator = pl.getBuilding().getShade().getPolyLine().getVertexIterator();
-        Boolean shadeOutSideBoundary = false;
+        Boolean shadeOutSideBoundary = true;
         while (buildingIterator.hasNext()) {
             DXFVertex dxfVertex = (DXFVertex) buildingIterator.next();
             Point point = dxfVertex.getPoint();
             if (RayCast.contains(pointsOfPlot, new double[] { point.getX(), point.getY() }) == false)
-                shadeOutSideBoundary = true;
+                shadeOutSideBoundary = false;
 
         }
         if (shadeOutSideBoundary)
