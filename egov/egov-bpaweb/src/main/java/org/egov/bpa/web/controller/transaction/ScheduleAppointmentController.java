@@ -206,6 +206,7 @@ public class ScheduleAppointmentController extends BpaGenericApplicationControll
     @GetMapping("/scrutiny/reschedule/{applicationNumber}")
     public String showReScheduleDcoumentScrutiny(@PathVariable final String applicationNumber, final Model model) {
         BpaApplication application = applicationBpaService.findByApplicationNumber(applicationNumber);
+        if (validateOnDocumentScrutiny(model, application)) return COMMON_ERROR;
         if(application.getIsRescheduledByEmployee()) {
             model.addAttribute(MESSAGE, "Re-Schedule appointment by employee already completed, employee can re-schedule appointment only once.");
             return COMMON_ERROR;

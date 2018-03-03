@@ -91,7 +91,6 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
     private static final String MSG_REJECT_FORWARD_REGISTRATION = "msg.reject.forward.registration";
     private static final String MSG_INITIATE_REJECTION = "msg.initiate.reject";
     private static final String MSG_UPDATE_FORWARD_REGISTRATION = "msg.update.forward.registration";
-    private static final String MESSAGE = "message";
 
     private static final String APPLICATION_VIEW = "application-view";
     private static final String CREATEDOCUMENTSCRUTINY_FORM = "createdocumentscrutiny-form";
@@ -250,14 +249,7 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
     public String documentScrutinyForm(final Model model, @PathVariable final String applicationNumber,
             final HttpServletRequest request) {
 		final BpaApplication application = getBpaApplication(applicationNumber);
-		if(BpaConstants.APPLICATION_STATUS_DOC_VERIFIED.equals(application.getStatus().getCode())) {
-			model.addAttribute(MESSAGE, "Document verification of application is already completed.");
-			return COMMON_ERROR;
-		}
-		if(BpaConstants.WF_REJECT_STATE.equals(application.getStatus().getCode())) {
-			model.addAttribute(MESSAGE, "Application is already initiated for rejection.");
-			return COMMON_ERROR;
-		}
+		if (validateOnDocumentScrutiny(model, application)) return COMMON_ERROR;
 		buildRejectionReasons(model, application);
 		loadViewdata(model, application);
 		model.addAttribute("loginUser", securityUtils.getCurrentUser());
@@ -266,7 +258,7 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
 		return CREATEDOCUMENTSCRUTINY_FORM;
     }
 
-    @RequestMapping(value = "/documentscrutiny/{applicationNumber}", method = RequestMethod.POST)
+	@RequestMapping(value = "/documentscrutiny/{applicationNumber}", method = RequestMethod.POST)
     public String documentScrutinyForm(@Valid @ModelAttribute(BPA_APPLICATION) BpaApplication bpaApplication,
             @PathVariable final String applicationNumber,
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes,

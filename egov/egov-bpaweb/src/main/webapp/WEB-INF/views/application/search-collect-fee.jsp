@@ -90,3 +90,4 @@
 <script	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
 				
 <script src="<cdn:url value='/resources/js/app/search-collect-fee.js?rnd=${app_release_no}'/> "></script>
+<script src="<cdn:url value='/resources/js/app/bpa-ajax-helper.js?rnd=${app_release_no}'/> "></script>

@@ -208,6 +208,12 @@ public class SearchBpaApplicationService {
 		if (searchBpaApplicationForm.getToDate() != null)
 			criteria.add(Restrictions.le("bpaApplication.applicationDate",
 					resetToDateTimeStamp(searchBpaApplicationForm.getToDate())));
+		buildSearchCriteriaForBoundaries(searchBpaApplicationForm, criteria);
+		criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+		return criteria;
+	}
+
+	private void buildSearchCriteriaForBoundaries(SearchBpaApplicationForm searchBpaApplicationForm, Criteria criteria) {
 		if (searchBpaApplicationForm.getElectionWardId() != null || searchBpaApplicationForm.getWardId() != null
 				|| searchBpaApplicationForm.getZoneId() != null || searchBpaApplicationForm.getZone() != null) {
 			criteria.createAlias("bpaApplication.siteDetail", "siteDetail");
@@ -231,19 +237,16 @@ public class SearchBpaApplicationService {
 			criteria.createAlias("adminBoundary.parent", "parent")
 					.add(Restrictions.eq("parent.name", searchBpaApplicationForm.getZone()));
 		}
-		criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
-		return criteria;
 	}
 
-	public List<SearchBpaApplicationForm> searchForDocumentScrutinyPending(
-			final SearchBpaApplicationForm bpaApplicationForm, final List<Long> bndryIds) {
-		final Criteria criteria = buildDocumentScrutinySearchCriteria(bpaApplicationForm, bndryIds);
+	public List<SearchBpaApplicationForm> searchForDocumentScrutinyPending(final SearchBpaApplicationForm bpaApplicationForm) {
+		final Criteria criteria = buildDocumentScrutinySearchCriteria(bpaApplicationForm);
 		criteria.createAlias("slotApplication.application.status", "status").add(
 				Restrictions.in("status.code", "Scheduled For Document Scrutiny", "Rescheduled For Document Scrutiny"));
 		return buildDocumentScrutinyApplicationDetailsResponse(criteria);
 	}
 
-	public Criteria buildDocumentScrutinySearchCriteria(final SearchBpaApplicationForm searchBpaApplicationForm, final List<Long> bndryIds) {
+	public Criteria buildDocumentScrutinySearchCriteria(final SearchBpaApplicationForm searchBpaApplicationForm) {
 		final Criteria criteria = getCurrentSession().createCriteria(SlotApplication.class, "slotApplication");
 		criteria.createAlias("slotApplication.application", "bpaApplication");
 		criteria.createAlias("slotApplication.slotDetail", "slotDetail");
@@ -263,14 +266,7 @@ public class SearchBpaApplicationService {
 			criteria.add(Restrictions.eq("slot.appointmentDate",
 					resetToDateTimeStamp(searchBpaApplicationForm.getToDate())));
 
-		criteria.createAlias("bpaApplication.siteDetail", "siteDetail");
-		if (searchBpaApplicationForm.getElectionWardId() == null) {
-			criteria.createAlias("siteDetail.electionBoundary", "electionBoundary")
-					.add(Restrictions.in("electionBoundary.id", bndryIds));
-		} else if (searchBpaApplicationForm.getElectionWardId() != null) {
-			criteria.createAlias("siteDetail.electionBoundary", "electionBoundary")
-					.add(Restrictions.eq("electionBoundary.id", searchBpaApplicationForm.getElectionWardId()));
-		}
+		buildSearchCriteriaForBoundaries(searchBpaApplicationForm, criteria);
 
 		criteria.add(Restrictions.eq("slotApplication.isActive", true));
 		criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);

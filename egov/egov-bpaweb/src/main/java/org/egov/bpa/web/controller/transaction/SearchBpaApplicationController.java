@@ -45,7 +45,7 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 package org.egov.bpa.web.controller.transaction;
-import static org.egov.bpa.utils.BpaConstants.FILESTORE_MODULECODE;
+import static org.egov.bpa.utils.BpaConstants.*;
 import static org.egov.infra.utils.JsonUtils.toJSON;
 
 import java.util.*;
@@ -63,6 +63,7 @@ import org.egov.bpa.web.controller.adaptor.SearchBpaApplicationFormAdaptor;
 import org.egov.eis.entity.*;
 import org.egov.eis.service.*;
 import org.egov.infra.admin.master.entity.*;
+import org.egov.infra.admin.master.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.MediaType;
@@ -90,6 +91,12 @@ public class SearchBpaApplicationController extends BpaGenericApplicationControl
     private LettertoPartyService lettertoPartyService;
     @Autowired
     private EmployeeService employeeService;
+    @Autowired
+    private BoundaryTypeService boundaryTypeService;
+    @Autowired
+    private CrossHierarchyService crossHierarchyService;
+    @Autowired
+    private BoundaryService boundaryService;
 
 
     @RequestMapping(value = "/search", method = RequestMethod.GET)
@@ -148,28 +155,38 @@ public class SearchBpaApplicationController extends BpaGenericApplicationControl
     
     @RequestMapping(value = "/bpadocumentscrutiny", method = RequestMethod.GET)
     public String showDocumentScrutinyPendingRecords(final Model model) {
-        model.addAttribute("searchBpaApplicationForm", new SearchBpaApplicationForm());
-        model.addAttribute("employeeRevMappedBndries", getLoginEmpMappedBoundaries());
-        return "search-document-scrutiny";
-    }
-
-    private List<Boundary> getLoginEmpMappedBoundaries() {
-        List<Boundary> employeeRevMappedBndries = new ArrayList<>();
+        List<Boundary> employeeMappedZone = new ArrayList<>();
+        List<Boundary> mappedElectionWard = new ArrayList<>();
+        Set<Boundary> electionWards = new HashSet<>();
+        BoundaryType revenueType = boundaryTypeService.getBoundaryTypeByNameAndHierarchyTypeName(WARD, REVENUE_HIERARCHY_TYPE);
         final Employee employee = employeeService.getEmployeeById(securityUtils.getCurrentUser().getId());
-        for(Jurisdiction jurisdiction : employee.getJurisdictions()) {
-            if(!BpaConstants.BOUNDARY_TYPE_CITY.equals(jurisdiction.getBoundaryType().getName()))
-                employeeRevMappedBndries.add(jurisdiction.getBoundary());
+        for (Jurisdiction jurisdiction : employee.getJurisdictions()) {
+            if (!BOUNDARY_TYPE_CITY.equals(jurisdiction.getBoundaryType().getName())) {
+                mappedElectionWard.add(jurisdiction.getBoundary());
+                break;
+            }
         }
-        return employeeRevMappedBndries;
+        List<Boundary> revenueWards = crossHierarchyService.getParentBoundaryByChildBoundaryAndParentBoundaryType(mappedElectionWard.get(0).getId(), revenueType.getId());
+        employeeMappedZone.add(revenueWards.get(0).getParent());
+        model.addAttribute("searchBpaApplicationForm", new SearchBpaApplicationForm());
+        List<Boundary> revWards = boundaryService.getActiveChildBoundariesByBoundaryId(revenueWards.get(0).getParent().getId());
+        for (Boundary revenue : revWards) {
+            electionWards.addAll(crossHierarchyService
+                    .findChildBoundariesByParentBoundaryIdParentBoundaryTypeAndChildBoundaryType(WARD,
+                            REVENUE_HIERARCHY_TYPE, WARD, revenue.getId()));
+        }
+        model.addAttribute("employeeMappedZone", employeeMappedZone);
+        model.addAttribute("mappedRevenueBoundries", revWards);
+        model.addAttribute("mappedElectionBoundries", electionWards);
+        return "search-document-scrutiny";
     }
 
     @RequestMapping(value = "/bpadocumentscrutiny", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
     public String searchDocumentScrutinyPendingRecords(final Model model,
             @ModelAttribute final SearchBpaApplicationForm searchBpaApplicationForm) {
-        List<Long> bndryIds = getLoginEmpMappedBoundaries().stream().map(Boundary :: getId).collect(Collectors.toList());
         final List<SearchBpaApplicationForm> searchResultList = searchBpaApplicationService
-                .searchForDocumentScrutinyPending(searchBpaApplicationForm, bndryIds);
+                .searchForDocumentScrutinyPending(searchBpaApplicationForm);
         return new StringBuilder(DATA)
                 .append(toJSON(searchResultList, SearchBpaApplicationForm.class, SearchBpaApplicationFormAdaptor.class))
                 .append("}")

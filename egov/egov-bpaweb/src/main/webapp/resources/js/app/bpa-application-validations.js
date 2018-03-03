@@ -629,7 +629,12 @@ $(document).ready(function() {
         }
 	}
 
-	 $('#isOneDayPermitApplication').click(function() {
+    if ($('#isOneDayPermitApplication').is(':checked'))
+        $('#oneDayPermitSec').show();
+	else
+        $('#oneDayPermitSec').hide();
+
+    $('#isOneDayPermitApplication').click(function() {
 	        if ($(this).is(':checked')) {
                 $('#typeOfLand').prop('required', true);
                 $('#oneDayPermitTypeOfLandSec').show();

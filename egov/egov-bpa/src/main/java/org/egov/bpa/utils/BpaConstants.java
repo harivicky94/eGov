@@ -265,6 +265,7 @@ public class BpaConstants {
     public static final String NO = "NO";
     // other
     public static final int SCALING_FACTOR = 2;
+    public static final String MESSAGE = "message";
 
     private static final List<String> BUILDPERMIT = new ArrayList<>();
     static {

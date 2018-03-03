@@ -57,7 +57,7 @@ import org.egov.bpa.transaction.service.*;
 import org.egov.bpa.transaction.service.collection.BpaDemandService;
 import org.egov.bpa.transaction.service.messaging.BPASmsAndEmailService;
 import org.egov.bpa.transaction.workflow.BpaWorkFlowService;
-import org.egov.bpa.utils.BpaUtils;
+import org.egov.bpa.utils.*;
 import org.egov.dcb.bean.Receipt;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgdmCollectedReceipt;
@@ -341,6 +341,17 @@ public abstract class BpaGenericApplicationController extends GenericWorkFlowCon
     @ModelAttribute("oneDayPermitLandTypeList") 
     public List<OneDayPermitLandType> getOneDayPermitLandType() {
         return Arrays.asList(OneDayPermitLandType.values());
+    }
+
+    protected boolean validateOnDocumentScrutiny(Model model, BpaApplication application) {
+        if(APPLICATION_STATUS_DOC_VERIFIED.equals(application.getStatus().getCode())) {
+            model.addAttribute(MESSAGE, "Document verification of application is already completed.");
+            return true;
+        } else if(WF_REJECT_STATE.equals(application.getStatus().getCode())) {
+            model.addAttribute(MESSAGE, "Application is already initiated for rejection.");
+            return true;
+        }
+        return false;
     }
 
 }

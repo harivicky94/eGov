@@ -42,6 +42,29 @@ $(document)
 		.ready(
 				function() {
 
+                    $('#wardId').change(function(){
+                        $.ajax({
+                            url: "/bpa/boundary/ajaxBoundary-electionwardbyrevenueward",
+                            type: "GET",
+                            data: {
+                                wardId : $('#wardId').val()
+                            },
+                            cache: false,
+                            dataType: "json",
+                            success: function (response) {
+                                $('#electionBoundary').html("");
+                                $('#electionBoundary').append("<option value=''>Select</option>");
+                                $.each(response, function(index, value) {
+                                    $('#electionBoundary').append($('<option>').text(value.electionwardName).attr('value', value.electionwardId));
+                                });
+                            },
+                            error: function (response) {
+                                $('#electionBoundary').html("");
+                                $('#electionBoundary').append("<option value=''>Select</option>");
+                            }
+                        });
+                    });
+
                     $("#toDate").datepicker().datepicker("setDate", new Date());
 					$('#serviceTypeEnum').on('change', function() {
 						if($("#serviceTypeEnum option:selected" ).val() == 'ALL_OTHER_SERVICES') {
