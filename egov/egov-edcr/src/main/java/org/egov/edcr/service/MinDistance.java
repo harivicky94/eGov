@@ -27,7 +27,7 @@ public class MinDistance {
         DXFLWPolyline plotBoundary = pl.getPlot().getPolyLine();
         // Util.print(plotBoundary,"Plot Boundary");
         DXFLWPolyline buildFoorPrint = pl.getBuilding().getPolyLine();
-         Util.print(buildFoorPrint,"buildFoorPrint");
+       //  Util.print(buildFoorPrint,"buildFoorPrint");
 
         DXFLWPolyline yard = null;
         if (name.equals(DxfFileConstants.FRONT_YARD))
@@ -40,7 +40,7 @@ public class MinDistance {
         {
            // LOG.info("Starting side 2");
             yard = pl.getPlot().getSideYard2().getPolyLine();
-            LOG.info("Starting side is closed"+yard.isClosed() +" plot"+plotBoundary.isClosed());
+           // LOG.info("Starting side is closed"+yard.isClosed() +" plot"+plotBoundary.isClosed());
             }
         if (plotBoundary == null || buildFoorPrint == null || yard == null) {
             pl.getErrors().put("Set back calculation Error",
@@ -49,7 +49,7 @@ public class MinDistance {
             return BigDecimal.ZERO.setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS);
         }
         Iterator vertexIterator = yard.getVertexIterator();
-         Util.print(yard,name);
+       //  Util.print(yard,name);
         List<Point> yardOutSidePoints = new ArrayList<>();
         List<Point> yardInSidePoints = new ArrayList<>();
         List<Double> distanceList = new ArrayList<>();
@@ -57,7 +57,7 @@ public class MinDistance {
         //   int count = plotBoundary.getVertexCount();
         double[][] shape = pointsOfPolygon(plotBoundary);
         List<Point> plotBoundaryEdges = listOfPointsOfPolygon(plotBoundary);
-        Util.print(plotBoundary,"plot");
+       // Util.print(plotBoundary,"plot");
           List<Point> pointsOnPlot = findPointsOnPolylines(plotBoundaryEdges);
 
         while (vertexIterator.hasNext()) {
@@ -174,7 +174,7 @@ public class MinDistance {
                 // LOG.info("Foot Print :"+point1.getX()+","+point1.getY());
                 if (util.pointsEqualsWith2PercentError(point1, point)) {
                     yardInSidePoints.add(point);
-                    LOG.info("Inside : with pointsEqualsWith2PercentError "+point.getX()+","+point.getY());
+                   // LOG.info("Inside : with pointsEqualsWith2PercentError "+point.getX()+","+point.getY());
                     break inside;
                 }
             }
@@ -453,7 +453,7 @@ public class MinDistance {
 
         for (Point in : yardInSidePoints) {
             
-            LOG.info(" IN: "+ in.getX()+","+in.getY());
+           // LOG.info(" IN: "+ in.getX()+","+in.getY());
             if (old == null) {
                 old = in;
                 first = in;

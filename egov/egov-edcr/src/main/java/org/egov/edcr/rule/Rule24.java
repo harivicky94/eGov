@@ -867,12 +867,12 @@ public class Rule24 extends GeneralRule {
 
                             DXFVertex next = (DXFVertex) habitableRoomPointItr2.next();
                            // LOG.info(" Hroorm "+next.getPoint().getX()+","+next.getPoint().getY());
-                            LOG.info("Looping"+extPoints.size());
+                           // LOG.info("Looping"+extPoints.size());
                             for (Point p : extPoints) {
                               //  LOG.info("Comparing"+p.getX()+","+p.getY());
                                // LOG.info("next"+next.getPoint().getX()+","+next.getPoint().getY());
                                 if (Util.pointsEqualsWith2PercentError(p, next.getPoint())) {
-                                    LOG.info("Matched");
+                                  //  LOG.info("Matched");
                                     habitable = true;
 
                                 }    
@@ -907,6 +907,17 @@ public class Rule24 extends GeneralRule {
                             " " + faileCount + " " + DcrConstants.HABITABLE_ROOM
                                     + " (s)  not abuting an exterior or interior open space or verandah",
                             Result.Not_Accepted, null));
+        }else
+        {
+
+            pl.reportOutput
+                    .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_1, SUB_RULE_24_1_DESCRIPTION,
+                            DcrConstants.HABITABLE_ROOM,
+                            DcrConstants.HABITABLE_ROOM + " shall abut on an exterior or interior open space or verandah ",
+                            " All " +  DcrConstants.HABITABLE_ROOM
+                                    + " (s)  are abuting an exterior or interior open space or verandah",
+                            Result.Accepted, null));
+        
         }
 
     }
