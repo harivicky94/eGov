@@ -42,13 +42,14 @@ public class RayCast {
         // System.out.println("Compare"+redR.compareTo(redB));
         Boolean result=redR.compareTo(redB) >= 0;
        
-       /* //if raycast goes wrong delte this
+        //if raycast goes wrong delte this
         if(!result)
         {
+            System.out.println("Compromizing on point "+redR+",blue"+redB);
              redB = BigDecimal.valueOf(blue).setScale(Util.COMPARE_WITH_2_PERCENT_ERROR_DIGITS, BigDecimal.ROUND_DOWN);
              redR = BigDecimal.valueOf(red).setScale(Util.COMPARE_WITH_2_PERCENT_ERROR_DIGITS, BigDecimal.ROUND_DOWN);  
              result=redR.compareTo(redB) >= 0;
-        }*/
+        }
         return result;
 
     }

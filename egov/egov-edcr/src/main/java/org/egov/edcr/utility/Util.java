@@ -455,9 +455,9 @@ public class Util {
 
                 param = text.getText();
                 param = param.replace(s, "#");
-                // System.out.println(param);
+                // LOG.info(param);
                 if (param.contains("#P"))
-                    // System.out.println("inside");
+                    // LOG.info("inside");
                     split = param.split("#P");
                 else {
                     split = new String[1];
@@ -468,7 +468,7 @@ public class Util {
 
                     String[] data = element.split("=");
                     if (data.length == 2)
-                        // System.out.println(data[0]+"---"+data[1]);
+                        // LOG.info(data[0]+"---"+data[1]);
                         planInfoProperties.put(data[0], data[1]);
                     else {
                         // throw new RuntimeException("Plan info sheet data not following standard '=' for " +param);
@@ -543,8 +543,16 @@ public class Util {
         BigDecimal py = BigDecimal.valueOf(point.getY()).setScale(COMPARE_WITH_2_PERCENT_ERROR_DIGITS, BigDecimal.ROUND_DOWN);
         BigDecimal p1x = BigDecimal.valueOf(point1.getX()).setScale(COMPARE_WITH_2_PERCENT_ERROR_DIGITS, BigDecimal.ROUND_DOWN);
         BigDecimal p1y = BigDecimal.valueOf(point1.getY()).setScale(COMPARE_WITH_2_PERCENT_ERROR_DIGITS, BigDecimal.ROUND_DOWN);
+        double d = 0.01;
+
+       
+        
         if (px.compareTo(p1x) == 0 && py.compareTo(p1y) == 0)
             return true;
+        else if ((Math.abs(px.doubleValue() - p1x.doubleValue()) <= d) && (Math.abs(py.doubleValue() - p1y.doubleValue()) <= d))
+        {
+            return true;
+        }
         else
             return false;
     }
@@ -560,7 +568,7 @@ public class Util {
             shape[i][0] = point1.getX();
             shape[i][1] = point1.getY();
 
-            // System.out.println(name+"===Shape=="+shape[i][0]+"--"+shape[i][1]);
+            // LOG.info(name+"===Shape=="+shape[i][0]+"--"+shape[i][1]);
             i++;
 
         }
@@ -583,9 +591,9 @@ public class Util {
             if (first.equals(in))
                 continue;
 
-            // System.out.println("Points for line "+old.getX()+","+old.getY() +" And"+ in.getX()+","+in.getY());
+            // LOG.info("Points for line "+old.getX()+","+old.getY() +" And"+ in.getX()+","+in.getY());
             double distance = MathUtils.distance(old, in);
-            // System.out.println("Distance"+distance);
+            // LOG.info("Distance"+distance);
 
             for (double j = .01; j < distance; j = j + .01) {
                 point1 = new Point();
@@ -593,7 +601,7 @@ public class Util {
                 point1.setX((1 - t) * old.getX() + t * in.getX());
                 point1.setY((1 - t) * old.getY() + t * in.getY());
                 myPoints.add(point1);
-                // System.out.println(point1.getX()+"---"+point1.getY());
+                // LOG.info(point1.getX()+"---"+point1.getY());
             }
 
             old = in;

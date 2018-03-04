@@ -88,16 +88,16 @@ public class DXFExtractService {
             pl.getPlot().getSideYard2().setMinimumDistance(MinDistance.getYardMinDistance(pl, DxfFileConstants.SIDE_YARD_2));
             pl.getPlot().getRearYard().setMinimumDistance(MinDistance.getYardMinDistance(pl, DxfFileConstants.REAR_YARD));
 
-            if (pl.getBasement()!=null) {
+           if (pl.getBasement()!=null) {
             pl.getPlot().setBsmtFrontYard(getYard(pl, doc, DxfFileConstants.BSMNT_FRONT_YARD));
             pl.getPlot().setBsmtRearYard(getYard(pl, doc, DxfFileConstants.BSMNT_REAR_YARD));
             pl.getPlot().setBsmtSideYard1(getYard(pl, doc, DxfFileConstants.BSMNT_SIDE_YARD_1));
             pl.getPlot().setBsmtSideYard2(getYard(pl, doc, DxfFileConstants.BSMNT_SIDE_YARD_2));
 
-            pl.getPlot().getBsmtFrontYard().setMinimumDistance(MinDistance.getYardMinDistance(pl, DxfFileConstants.BSMNT_FRONT_YARD));
-            pl.getPlot().getBsmtSideYard1().setMinimumDistance(MinDistance.getYardMinDistance(pl, DxfFileConstants.BSMNT_SIDE_YARD_1));
-            pl.getPlot().getBsmtSideYard2().setMinimumDistance(MinDistance.getYardMinDistance(pl, DxfFileConstants.BSMNT_SIDE_YARD_2));
-            pl.getPlot().getBsmtRearYard().setMinimumDistance(MinDistance.getYardMinDistance(pl, DxfFileConstants.BSMNT_REAR_YARD));
+            pl.getPlot().getBsmtFrontYard().setMinimumDistance(MinDistance.getBasementYardMinDistance(pl, DxfFileConstants.BSMNT_FRONT_YARD));
+            pl.getPlot().getBsmtSideYard1().setMinimumDistance(MinDistance.getBasementYardMinDistance(pl, DxfFileConstants.BSMNT_SIDE_YARD_1));
+            pl.getPlot().getBsmtSideYard2().setMinimumDistance(MinDistance.getBasementYardMinDistance(pl, DxfFileConstants.BSMNT_SIDE_YARD_2));
+            pl.getPlot().getBsmtRearYard().setMinimumDistance(MinDistance.getBasementYardMinDistance(pl, DxfFileConstants.BSMNT_REAR_YARD));
             }
 
             pl = extractRoadDetails(doc, pl);
@@ -305,7 +305,7 @@ public class DXFExtractService {
 
     private void extractOpenStairs(DXFDocument doc, Building building) {
         List<DXFDimension> lines = Util.getDimensionsByLayer(doc, DxfFileConstants.OPEN_STAIR);
-        
+        if(lines!=null)
         for (Object dxfEntity : lines) {
             BigDecimal value = BigDecimal.ZERO;
             DXFDimension line = (DXFDimension) dxfEntity;

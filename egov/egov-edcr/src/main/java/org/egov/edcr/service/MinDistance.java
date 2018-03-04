@@ -1,5 +1,12 @@
 package org.egov.edcr.service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import org.apache.log4j.Logger;
 import org.egov.edcr.constants.DxfFileConstants;
 import org.egov.edcr.entity.PlanDetail;
 import org.egov.edcr.utility.DcrConstants;
@@ -11,15 +18,9 @@ import org.kabeja.dxf.helpers.Point;
 import org.kabeja.math.MathUtils;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 @Service
 public class MinDistance {
-
+    private static Logger LOG = Logger.getLogger(MinDistance.class);
     public static BigDecimal getYardMinDistance(PlanDetail pl, String name) {
         Util util = new Util();
 
@@ -36,7 +37,11 @@ public class MinDistance {
         if (name.equals(DxfFileConstants.SIDE_YARD_1))
             yard = pl.getPlot().getSideYard1().getPolyLine();
         if (name.equals(DxfFileConstants.SIDE_YARD_2))
+        {
+           // LOG.info("Starting side 2");
             yard = pl.getPlot().getSideYard2().getPolyLine();
+            LOG.info("Starting side is closed"+yard.isClosed() +" plot"+plotBoundary.isClosed());
+            }
         if (plotBoundary == null || buildFoorPrint == null || yard == null) {
             pl.getErrors().put("Set back calculation Error",
                     "Either" + DxfFileConstants.BUILDING_FOOT_PRINT + "," + DxfFileConstants.PLOT_BOUNDARY
@@ -51,11 +56,14 @@ public class MinDistance {
         //  int i = 0;
         //   int count = plotBoundary.getVertexCount();
         double[][] shape = pointsOfPolygon(plotBoundary);
+        List<Point> plotBoundaryEdges = listOfPointsOfPolygon(plotBoundary);
+        Util.print(plotBoundary,"plot");
+          List<Point> pointsOnPlot = findPointsOnPolylines(plotBoundaryEdges);
 
         while (vertexIterator.hasNext()) {
             DXFVertex next = (DXFVertex) vertexIterator.next();
             Point point = next.getPoint();
-            // System.out.println("yard Point :"+point.getX()+","+point.getY());
+            // LOG.info("yard Point :"+point.getX()+","+point.getY());
 
             Iterator plotBIterator = plotBoundary.getVertexIterator();
 
@@ -69,17 +77,17 @@ public class MinDistance {
                 Point point1 = dxfVertex.getPoint();
          
                 
-                // System.out.println("plotBIterator :"+point1.getX()+","+point1.getY());
+                // LOG.info("plotBIterator :"+point1.getX()+","+point1.getY());
                 if (util.pointsEquals(point1, point)) {
-                    // System.out.println(name+" adding on points on a plot boundary Point ---"+point.getX()+","+point.getY());
+                    // LOG.info(name+" adding on points on a plot boundary Point ---"+point.getX()+","+point.getY());
                     pointAdded=true;
                     yardOutSidePoints.add(point);
 
-                    break outside;
+                    break outside;   
                 }
                
                 if (util.pointsEqualsWith2PercentError(point1, point)) {
-                    // System.out.println(name+" adding on points on a plot boundary Point ---"+point.getX()+","+point.getY());
+                    // LOG.info(name+" adding on points on a plot boundary Point with pointsEqualsWith2PercentError ---"+point.getX()+","+point.getY());
                     yardOutSidePoints.add(point);
 
                     break outside;
@@ -92,9 +100,9 @@ public class MinDistance {
                     DXFVertex dxfVertex = (DXFVertex) plotBIterator.next();
                     Point point1 = dxfVertex.getPoint();
                     
-                    // System.out.println("plotBIterator :"+point1.getX()+","+point1.getY());
+                    // LOG.info("plotBIterator :"+point1.getX()+","+point1.getY());
                     if (util.pointsEqualsWith2PercentError(point1, point)) {
-                        // System.out.println(name+" adding on points on a plot boundary Point ---"+point.getX()+","+point.getY());
+                        // LOG.info(name+" adding on points on a plot boundary Point ---"+point.getX()+","+point.getY());
                         pointAdded=true;
                         yardOutSidePoints.add(point);
 
@@ -104,12 +112,50 @@ public class MinDistance {
                 }
             }*/
 
-
-            if (RayCast.contains(shape, new double[]{point.getX(), point.getY()}) == true)
-                if (!yardOutSidePoints.contains(point))
-                    // System.out.println(name+" adding point on a plot Boundary line using
-                    // raycast---"+point.getX()+","+point.getY());
+            
+            Boolean added=false;
+            if(pointsOnPlot.contains(point))  
+            {
+                yardOutSidePoints.add(point);
+                added=true;
+            }  
+            if(!added)
+            for(Point p:pointsOnPlot)
+            {
+                if(Util.pointsEquals(p, point))
+                {
                     yardOutSidePoints.add(point);
+                    added=true;
+                }
+            }
+            
+            if(!added)
+            {
+               /* if(name.equals(DxfFileConstants.SIDE_YARD_2))
+                {
+                   // LOG.info("side yard 2 point" +point.getX()+","+point.getY());
+                }   */ 
+                for(Point p:pointsOnPlot)  
+                {
+                   /* if(name.equals(DxfFileConstants.SIDE_YARD_2))
+                    {
+                        LOG.info(p.getX()+","+p.getY()+"#");
+                    }*/
+                    if(Util.pointsEqualsWith2PercentError(p, point))
+                    {
+                        
+                        yardOutSidePoints.add(point);
+                        added=true;
+                    }
+                }
+            }   
+           // LOG.info("completed outside "+name);
+
+           /* if (RayCast.contains(shape, new double[]{point.getX(), point.getY()}) == true)
+                if (!yardOutSidePoints.contains(point))
+                    // LOG.info(name+" adding point on a plot Boundary line using
+                    // raycast---"+point.getX()+","+point.getY());
+                    yardOutSidePoints.add(point);*/
 
             Iterator footPrintIterator = buildFoorPrint.getVertexIterator();
 
@@ -119,10 +165,16 @@ public class MinDistance {
 
                 DXFVertex dxfVertex = (DXFVertex) footPrintIterator.next();
                 Point point1 = dxfVertex.getPoint();
-                // System.out.println("Foot Print :"+point1.getX()+","+point1.getY());
+                // LOG.info("Foot Print :"+point1.getX()+","+point1.getY());
                 if (util.pointsEquals(point1, point)) {
                     yardInSidePoints.add(point);
-                    // System.out.println("Inside :"+point.getX()+","+point.getY());
+                    // LOG.info("Inside :"+point.getX()+","+point.getY());
+                    break inside;
+                }
+                // LOG.info("Foot Print :"+point1.getX()+","+point1.getY());
+                if (util.pointsEqualsWith2PercentError(point1, point)) {
+                    yardInSidePoints.add(point);
+                    LOG.info("Inside : with pointsEqualsWith2PercentError "+point.getX()+","+point.getY());
                     break inside;
                 }
             }
@@ -135,49 +187,49 @@ public class MinDistance {
             pl.getErrors().put("Set back calculation Error",
                     "Points of " + name + " not on " + DxfFileConstants.BUILDING_FOOT_PRINT);
 
-        // System.out.println(name+" Outside Points-------------");
+         LOG.info(name+" Outside Points-------------"+yardOutSidePoints.size() +" inside points "+yardInSidePoints.size());
         for (Point p : yardOutSidePoints)
             for (Point p1 : yardInSidePoints)
                 if (util.pointsEquals(p1, p))
                     toremove.add(p);
-        // System.out.println(name+" Outside Points-------------");
+        // LOG.info(name+" Outside Points-------------");
         for (Point p : toremove)
             yardOutSidePoints.remove(p);
-        // System.out.println(name+" remove Points-------------"+p.getX()+",,,,"+p.getY());
-        // System.out.println(name+" Outside Points-------------");
+        // LOG.info(name+" remove Points-------------"+p.getX()+",,,,"+p.getY());
+        // LOG.info(name+" Outside Points-------------");
         for (Point p : yardOutSidePoints) {
 
-            // System.out.println(p.getX()+","+p.getY());
+            // LOG.info(p.getX()+","+p.getY());
         }
 
-        // System.out.println(name+" Inside Points-------------");
+        // LOG.info(name+" Inside Points-------------");
 
         for (Point p : yardInSidePoints) {
-            // System.out.println(p.getX()+","+p.getY());
+            // LOG.info(p.getX()+","+p.getY());
         }
 
         List<Point> outsidePoints = findPointsOnPolylines(yardOutSidePoints);
-        // System.out.println(outsidePoints.size());
+        // LOG.info(outsidePoints.size());
         List<Point> insidePoints = findPointsOnPolylines(yardInSidePoints);
-        // System.out.println(insidePoints.size());
+        // LOG.info(insidePoints.size());
 
         if (yardInSidePoints.isEmpty())
             pl.getErrors().put("Set back calculation Error",
                     "Points of " + name + " not properly on " + DxfFileConstants.BUILDING_FOOT_PRINT);
 
         for (Point in : insidePoints)
-            // System.out.println("Inside : "+in.getX()+","+in.getY());
+            // LOG.info("Inside : "+in.getX()+","+in.getY());
             for (Point out : outsidePoints) {
-                // System.out.println("Outside : "+out.getX()+","+out.getY());
+                // LOG.info("Outside : "+out.getX()+","+out.getY());
                 double distance = MathUtils.distance(in, out);
-                // System.out.println("Distance : "+distance);
+                // LOG.info("Distance : "+distance);
                 distanceList.add(distance);
 
             }
 
-        // System.out.println(distanceList);
+        // LOG.info(distanceList);
         java.util.Collections.sort(distanceList);
-        // System.out.println("the shortest Distance is " + distanceList.get(0));
+        // LOG.info("the shortest Distance is " + distanceList.get(0));
         if (distanceList.size() > 0)
             return BigDecimal.valueOf(distanceList.get(0)).setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS,
                     RoundingMode.HALF_UP);
@@ -220,7 +272,7 @@ public class MinDistance {
         while (vertexIterator.hasNext()) {
             DXFVertex next = (DXFVertex) vertexIterator.next();
             Point point = next.getPoint();
-            // System.out.println("yard Point :"+point.getX()+","+point.getY());
+            // LOG.info("yard Point :"+point.getX()+","+point.getY());
 
             Iterator plotBIterator = plotBoundary.getVertexIterator();
 
@@ -231,9 +283,9 @@ public class MinDistance {
                 DXFVertex dxfVertex = (DXFVertex) plotBIterator.next();
                 Point point1 = dxfVertex.getPoint();
 
-                // System.out.println("plotBIterator :"+point1.getX()+","+point1.getY());
+                // LOG.info("plotBIterator :"+point1.getX()+","+point1.getY());
                 if (util.pointsEquals(point1, point)) {
-                    // System.out.println(name+" adding on points on a plot boundary Point ---"+point.getX()+","+point.getY());
+                    // LOG.info(name+" adding on points on a plot boundary Point ---"+point.getX()+","+point.getY());
                     yardOutSidePoints.add(point);
 
                     break outside;
@@ -242,7 +294,7 @@ public class MinDistance {
 
             if (RayCast.contains(shape, new double[]{point.getX(), point.getY()}) == true)
                 if (!yardOutSidePoints.contains(point))
-                    // System.out.println(name+" adding point on a plot Boundary line using
+                    // LOG.info(name+" adding point on a plot Boundary line using
                     // raycast---"+point.getX()+","+point.getY());
                     yardOutSidePoints.add(point);
 
@@ -254,10 +306,10 @@ public class MinDistance {
 
                 DXFVertex dxfVertex = (DXFVertex) footPrintIterator.next();
                 Point point1 = dxfVertex.getPoint();
-                // System.out.println("Foot Print :"+point1.getX()+","+point1.getY());
+                // LOG.info("Foot Print :"+point1.getX()+","+point1.getY());
                 if (util.pointsEquals(point1, point)) {
                     yardInSidePoints.add(point);
-                    // System.out.println("Inside :"+point.getX()+","+point.getY());
+                    // LOG.info("Inside :"+point.getX()+","+point.getY());
                     break inside;
                 }
             }
@@ -270,49 +322,49 @@ public class MinDistance {
             pl.getErrors().put("Set back calculation Error",
                     "Points of " + name + " not on " + DxfFileConstants.BUILDING_FOOT_PRINT);
 
-        // System.out.println(name+" Outside Points-------------");
+        // LOG.info(name+" Outside Points-------------");
         for (Point p : yardOutSidePoints)
             for (Point p1 : yardInSidePoints)
                 if (util.pointsEquals(p1, p))
                     toremove.add(p);
-        // System.out.println(name+" Outside Points-------------");
+        // LOG.info(name+" Outside Points-------------");
         for (Point p : toremove)
             yardOutSidePoints.remove(p);
-        // System.out.println(name+" remove Points-------------"+p.getX()+",,,,"+p.getY());
-        // System.out.println(name+" Outside Points-------------");
+        // LOG.info(name+" remove Points-------------"+p.getX()+",,,,"+p.getY());
+        // LOG.info(name+" Outside Points-------------");
         for (Point p : yardOutSidePoints) {
 
-            // System.out.println(p.getX()+","+p.getY());
+            // LOG.info(p.getX()+","+p.getY());
         }
 
-        // System.out.println(name+" Inside Points-------------");
+        // LOG.info(name+" Inside Points-------------");
 
         for (Point p : yardInSidePoints) {
-            // System.out.println(p.getX()+","+p.getY());
+            // LOG.info(p.getX()+","+p.getY());
         }
 
         List<Point> outsidePoints = findPointsOnPolylines(yardOutSidePoints);
-        // System.out.println(outsidePoints.size());
+        // LOG.info(outsidePoints.size());
         List<Point> insidePoints = findPointsOnPolylines(yardInSidePoints);
-        // System.out.println(insidePoints.size());
+        // LOG.info(insidePoints.size());
 
         if (yardInSidePoints.isEmpty())
             pl.getErrors().put("Set back calculation Error",
                     "Points of " + name + " not properly on " + DxfFileConstants.BUILDING_FOOT_PRINT);
 
         for (Point in : insidePoints)
-            // System.out.println("Inside : "+in.getX()+","+in.getY());
+            // LOG.info("Inside : "+in.getX()+","+in.getY());
             for (Point out : outsidePoints) {
-                // System.out.println("Outside : "+out.getX()+","+out.getY());
+                // LOG.info("Outside : "+out.getX()+","+out.getY());
                 double distance = MathUtils.distance(in, out);
-                // System.out.println("Distance : "+distance);
+                // LOG.info("Distance : "+distance);
                 distanceList.add(distance);
 
             }
 
-        // System.out.println(distanceList);
+        // LOG.info(distanceList);
         java.util.Collections.sort(distanceList);
-        // System.out.println("the shortest Distance is " + distanceList.get(0));
+        // LOG.info("the shortest Distance is " + distanceList.get(0));
         if (distanceList.size() > 0)
             return BigDecimal.valueOf(distanceList.get(0)).setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS,
                     RoundingMode.HALF_UP);
@@ -337,7 +389,55 @@ public class MinDistance {
             shape[i][0] = point1.getX();
             shape[i][1] = point1.getY();
 
-            // System.out.println(name+"===Shape=="+shape[i][0]+"--"+shape[i][1]);
+            // LOG.info(name+"===Shape=="+shape[i][0]+"--"+shape[i][1]);
+            i++;
+
+        }
+         shape[i] = shape[0];
+        return shape;
+    }
+    
+    public static List<Point> listOfPointsOfPolygon(DXFLWPolyline plotBoundary) {
+        if (plotBoundary == null) {
+            return null;
+        }
+        int i = 0;
+        int count = plotBoundary.getVertexCount();
+        List<Point> points=new ArrayList<>();
+        Iterator plotBIterator1 = plotBoundary.getVertexIterator();
+        while (plotBIterator1.hasNext()) {
+
+            DXFVertex dxfVertex = (DXFVertex) plotBIterator1.next();
+            Point point1 = dxfVertex.getPoint();
+
+            points.add(point1);
+
+            // LOG.info(name+"===Shape=="+shape[i][0]+"--"+shape[i][1]);
+            i++;
+
+        }
+        
+        points.add(points.get(0));
+        return points;
+    }
+    
+    public static double[][] pointsOfPolygonWith(DXFLWPolyline plotBoundary) {
+        if (plotBoundary == null) {
+            return null;
+        }
+        int i = 0;
+        int count = plotBoundary.getVertexCount();
+        double[][] shape = new double[count + 1][2];
+        Iterator plotBIterator1 = plotBoundary.getVertexIterator();
+        while (plotBIterator1.hasNext()) {
+
+            DXFVertex dxfVertex = (DXFVertex) plotBIterator1.next();
+            Point point1 = dxfVertex.getPoint();
+
+            shape[i][0] = point1.getX();
+            shape[i][1] = point1.getY();
+
+            // LOG.info(name+"===Shape=="+shape[i][0]+"--"+shape[i][1]);
             i++;
 
         }
@@ -352,17 +452,21 @@ public class MinDistance {
         List<Point> myPoints = new ArrayList<>();
 
         for (Point in : yardInSidePoints) {
+            
+            LOG.info(" IN: "+ in.getX()+","+in.getY());
             if (old == null) {
                 old = in;
                 first = in;
                 continue;
             }
-            if (first.equals(in))
-                continue;
+            //commented to fix yard min in sample_17.dxf
+            /*if (first.equals(in))
+                continue;*/
 
-            // System.out.println("Points for line "+old.getX()+","+old.getY() +" And"+ in.getX()+","+in.getY());
+           //  LOG.info("Points for line ------"+old.getX()+","+old.getY() +" And "+ in.getX()+","+in.getY());
             double distance = MathUtils.distance(old, in);
-            // System.out.println("Distance"+distance);
+            
+            // LOG.info("Distance"+distance);
 
             for (double j = .01; j < distance; j = j + .01) {
                 point1 = new Point();
@@ -370,7 +474,7 @@ public class MinDistance {
                 point1.setX((1 - t) * old.getX() + t * in.getX());
                 point1.setY((1 - t) * old.getY() + t * in.getY());
                 myPoints.add(point1);
-                // System.out.println(point1.getX()+"---"+point1.getY());
+                // LOG.info(point1.getX()+"---"+point1.getY());
             }
 
             old = in;
