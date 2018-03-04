@@ -44,6 +44,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.BpaStatus;
 import org.egov.bpa.transaction.entity.SlotApplication;
@@ -62,6 +63,8 @@ import org.springframework.transaction.support.TransactionTemplate;
 @Service
 @Transactional(readOnly = true)
 public class BpaApplicationCancellationService {
+    
+    private static final Logger logger = Logger.getLogger(BpaApplicationCancellationService.class);
 	@Autowired
 	private ApplicationBpaService applicationBpaService;
 
@@ -80,41 +83,48 @@ public class BpaApplicationCancellationService {
 	@Autowired
 	private TransactionTemplate transactionTemplate;
 
-	@Transactional
-	public void cancelNonverifiedApplications() {
-		Calendar calender = Calendar.getInstance();
-		Date todayDate = calender.getTime();
-		BpaStatus bpaStatusScheduled = bpaStatusRepository.findByCode(BpaConstants.APPLICATION_STATUS_SCHEDULED);
-		BpaStatus bpaStatusRescheduled = bpaStatusRepository.findByCode(BpaConstants.APPLICATION_STATUS_RESCHEDULED);
-		List<BpaStatus> listOfBpaStatus = new ArrayList<>();
-		listOfBpaStatus.add(bpaStatusScheduled);
-		listOfBpaStatus.add(bpaStatusRescheduled);
-		List<BpaApplication> bpaApplicationList = applicationBpaService
-				.findByStatusListOrderByCreatedDate(listOfBpaStatus);
-		for (BpaApplication bpaApplication : bpaApplicationList) {
-			try {
-				TransactionTemplate template = new TransactionTemplate(transactionTemplate.getTransactionManager());
-				template.execute(result -> {
-			List<SlotApplication> slotApplicationList = slotApplicationRepository
-					.findByApplicationOrderByIdDesc(bpaApplication);
-			if (slotApplicationList.size() > 0) {
-				Date appointmentDate = slotApplicationList.get(0).getSlotDetail().getSlot().getAppointmentDate();
-				if (todayDate.compareTo(appointmentDate) > 0) {
-					bpaUtils.redirectToBpaWorkFlow(bpaApplication.getCurrentState().getOwnerPosition().getId(),
-							bpaApplication, null, "Application is cancelled because citizen not attended for document scrutiny",
-							BpaConstants.WF_CANCELAPPLICATION_BUTTON, null);
-					applicationBpaService.saveBpaApplication(bpaApplication);
-					bpaSmsAndEmailService.sendSMSAndEmailForDocumentScrutiny(slotApplicationList.get(0),
-							bpaApplication);
-				}
-			}
-					return true;
-				});
-			} catch (Exception e) {
-				getErrorMessage(e);
-			}
-			}
-	}
+    @Transactional
+    public void cancelNonverifiedApplications() {
+        Calendar calender = Calendar.getInstance();
+        Date todayDate = calender.getTime();
+        BpaStatus bpaStatusScheduled = bpaStatusRepository.findByCode(BpaConstants.APPLICATION_STATUS_SCHEDULED);
+        BpaStatus bpaStatusRescheduled = bpaStatusRepository.findByCode(BpaConstants.APPLICATION_STATUS_RESCHEDULED);
+        List<BpaStatus> listOfBpaStatus = new ArrayList<>();
+        listOfBpaStatus.add(bpaStatusScheduled);
+        listOfBpaStatus.add(bpaStatusRescheduled);
+        List<BpaApplication> bpaApplicationList = applicationBpaService
+                .findByStatusListOrderByCreatedDate(listOfBpaStatus);
+        logger.info("*****************Bpa Applications with Scheduled And Rescheduled status found :**************************" + bpaApplicationList);
+        for (BpaApplication bpaApplication : bpaApplicationList) {
+            try {
+                TransactionTemplate template = new TransactionTemplate(transactionTemplate.getTransactionManager());
+                template.execute(result -> {
+                    List<SlotApplication> slotApplicationList = slotApplicationRepository
+                            .findByApplicationOrderByIdDesc(bpaApplication);
+                    logger.info("************SlotApplicationList found is :************" + slotApplicationList);
+                    if (slotApplicationList.size() > 0) {
+                        Date appointmentDate = slotApplicationList.get(0).getSlotDetail().getSlot().getAppointmentDate();
+                        logger.info("**********appointmentDate For last scheduled or rescheduled application is*************" + appointmentDate);
+                        if (todayDate.compareTo(appointmentDate) > 0) {
+                            logger.info(
+                                    "**********now changing bpa Application Status to Cancelled and close the workflow for ApplicationNumber :************"
+                                            + bpaApplication.getApplicationNumber());
+                            bpaUtils.redirectToBpaWorkFlow(bpaApplication.getCurrentState().getOwnerPosition().getId(),
+                                    bpaApplication, null,
+                                    "Application is cancelled because citizen not attended for document scrutiny",
+                                    BpaConstants.WF_CANCELAPPLICATION_BUTTON, null);
+                            applicationBpaService.saveBpaApplication(bpaApplication);
+                            bpaSmsAndEmailService.sendSMSAndEmailForDocumentScrutiny(slotApplicationList.get(0),
+                                    bpaApplication);
+                        }
+                    }
+                    return true;
+                });
+            } catch (Exception e) {
+                getErrorMessage(e);
+            }
+        }
+    }
 
 	LocalDate convertToLocalDate(Date date) {
 		if (date == null)
