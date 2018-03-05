@@ -527,8 +527,8 @@ public class Rule24 extends GeneralRule {
                 planDetail.getPlot().getBsmtRearYard().getPresentInDxf()
                 && planDetail.getPlot().getBsmtRearYard().getMinimumDistance() != null
                 && planDetail.getPlot().getBsmtRearYard().getMean() != null)
-                if (planDetail.getPlot().getBsmtRearYard().getMinimumDistance().compareTo(rearYardMin) <= 0 &&
-                    planDetail.getPlot().getBsmtRearYard().getMean().compareTo(rearYardMean) <= 0)
+                if (planDetail.getPlot().getBsmtRearYard().getMinimumDistance().compareTo(rearYardMin) >= 0 &&
+                    planDetail.getPlot().getBsmtRearYard().getMean().compareTo(rearYardMean) >= 0)
                     planDetail.reportOutput
                             .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_12_4, SUB_RULE_24_12_4_DESCRIPTION,
                                     DcrConstants.BSMT_REAR_YARD_DESC,
@@ -553,8 +553,8 @@ public class Rule24 extends GeneralRule {
                    planDetail.getPlot().getRearYard().getPresentInDxf()
                    && planDetail.getPlot().getRearYard().getMinimumDistance() != null
                    && planDetail.getPlot().getRearYard().getMean() != null)
-            if (planDetail.getPlot().getRearYard().getMinimumDistance().compareTo(rearYardMin) <= 0 &&
-                planDetail.getPlot().getRearYard().getMean().compareTo(rearYardMean) <= 0)
+            if (planDetail.getPlot().getRearYard().getMinimumDistance().compareTo(rearYardMin) >= 0 &&
+                planDetail.getPlot().getRearYard().getMean().compareTo(rearYardMean) >= 0)
                 planDetail.reportOutput
                         .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_4, SUB_RULE_24_4_DESCRIPTION,
                                 DcrConstants.REAR_YARD_DESC,
@@ -632,7 +632,7 @@ public class Rule24 extends GeneralRule {
                 && planDetail.getPlot().getBsmtRearYard().getMean() != null) {
 
                 if (planDetail.getPlot().getBsmtRearYard().getMinimumDistance()
-                              .compareTo(REARYARDMINIMUM_DISTANCE_WITHOUTOPENING_CORRESPONDINGFLOOR) <= 0)
+                              .compareTo(REARYARDMINIMUM_DISTANCE_WITHOUTOPENING_CORRESPONDINGFLOOR) >= 0)
                     planDetail.reportOutput
                             .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_4, SUB_RULE_24_4_DESCRIPTION,
                                     DcrConstants.BSMT_REAR_YARD_DESC,
@@ -656,7 +656,7 @@ public class Rule24 extends GeneralRule {
                        && planDetail.getPlot().getRearYard().getMinimumDistance() != null
                        && planDetail.getPlot().getRearYard().getMean() != null)
                 if (planDetail.getPlot().getRearYard().getMinimumDistance()
-                              .compareTo(REARYARDMINIMUM_DISTANCE_WITHOUTOPENING_CORRESPONDINGFLOOR) <= 0)
+                              .compareTo(REARYARDMINIMUM_DISTANCE_WITHOUTOPENING_CORRESPONDINGFLOOR) >= 0)
                     planDetail.reportOutput
                             .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_4, SUB_RULE_24_4_DESCRIPTION,
                                     DcrConstants.REAR_YARD_DESC,
