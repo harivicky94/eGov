@@ -113,7 +113,7 @@ public class RescheduleAppointmentsForDocumentScrutinyService {
 			slotDet.setUtilizedScheduledSlots(slotDet.getUtilizedScheduledSlots() + 1);
 		slotApp.setSlotDetail(slotDet);
 		applicationBpaRepository.save(application);
-		bpaSmsAndEmailService.sendSMSAndEmailForDocumentScrutiny(slotApplication.get(0), application);
+		bpaSmsAndEmailService.sendSMSAndEmailForDocumentScrutiny(slotApp, application);
 		slotApplicationRepository.save(slotApp);
 		return slotApp;
 	}
@@ -148,7 +148,7 @@ public class RescheduleAppointmentsForDocumentScrutinyService {
 			slotDet.setUtilizedScheduledSlots(slotDet.getUtilizedScheduledSlots() + 1);
 		slotApp.setSlotDetail(slotDet);
 		applicationBpaRepository.save(bpaApplication);
-		bpaSmsAndEmailService.sendSMSAndEmailForDocumentScrutiny(slotApplication.get(0), bpaApplication);
+		bpaSmsAndEmailService.sendSMSAndEmailForDocumentScrutiny(slotApp, bpaApplication);
 		slotApplicationRepository.save(slotApp);
 		return slotApp;
 	}

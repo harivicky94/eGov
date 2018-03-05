@@ -74,35 +74,35 @@ public class BpaSchedulerConfiguration extends QuartzSchedulerConfiguration {
 
 	@Bean
 	public CronTriggerFactoryBean openSlotsCronTrigger() {
-		CronTriggerFactoryBean demandActivationCron = new CronTriggerFactoryBean();
-		demandActivationCron.setJobDetail(openSlotsJobDetail().getObject());
-		demandActivationCron.setGroup("BPA_TRIGGER_GROUP");
-		demandActivationCron.setName("BPA_OPEN_SLOT_TRIGGER");
-		demandActivationCron.setCronExpression("0 */4 * * * ?");
-		demandActivationCron.setMisfireInstruction(MISFIRE_INSTRUCTION_DO_NOTHING);
-		return demandActivationCron;
+		CronTriggerFactoryBean openSlotsCron = new CronTriggerFactoryBean();
+		openSlotsCron.setJobDetail(openSlotsJobDetail().getObject());
+		openSlotsCron.setGroup("BPA_TRIGGER_GROUP");
+		openSlotsCron.setName("BPA_OPEN_SLOT_TRIGGER");
+		openSlotsCron.setCronExpression("0 */4 * * * ?");
+		openSlotsCron.setMisfireInstruction(MISFIRE_INSTRUCTION_DO_NOTHING);
+		return openSlotsCron;
 	}
 
 	@Bean
 	public CronTriggerFactoryBean scheduleAppointmentCronTrigger() {
-		CronTriggerFactoryBean demandActivationCron = new CronTriggerFactoryBean();
-		demandActivationCron.setJobDetail(scheduleAppointmentJobDetail().getObject());
-		demandActivationCron.setGroup("BPA_TRIGGER_GROUP");
-		demandActivationCron.setName("BPA_SCHEDULE_APPOINTMENT_TRIGGER");
-		demandActivationCron.setCronExpression("0 */5 * * * ?");
-		demandActivationCron.setMisfireInstruction(MISFIRE_INSTRUCTION_DO_NOTHING);
-		return demandActivationCron;
+		CronTriggerFactoryBean scheduleAppointmentCron = new CronTriggerFactoryBean();
+		scheduleAppointmentCron.setJobDetail(scheduleAppointmentJobDetail().getObject());
+		scheduleAppointmentCron.setGroup("BPA_TRIGGER_GROUP");
+		scheduleAppointmentCron.setName("BPA_SCHEDULE_APPOINTMENT_TRIGGER");
+		scheduleAppointmentCron.setCronExpression("0 */5 * * * ?");
+		scheduleAppointmentCron.setMisfireInstruction(MISFIRE_INSTRUCTION_DO_NOTHING);
+		return scheduleAppointmentCron;
 	}
 
 	@Bean
 	public CronTriggerFactoryBean cancelAppointmentCronTrigger() {
-		CronTriggerFactoryBean demandActivationCron = new CronTriggerFactoryBean();
-		demandActivationCron.setJobDetail(cancelAppointmentJobDetail().getObject());
-		demandActivationCron.setGroup("BPA_TRIGGER_GROUP");
-		demandActivationCron.setName("BPA_CANCEL_APPOINTMENT_TRIGGER");
-		demandActivationCron.setCronExpression("0 */59 * * * ?");
-		demandActivationCron.setMisfireInstruction(MISFIRE_INSTRUCTION_DO_NOTHING);
-		return demandActivationCron;
+		CronTriggerFactoryBean cancelAppointmentCron = new CronTriggerFactoryBean();
+		cancelAppointmentCron.setJobDetail(cancelAppointmentJobDetail().getObject());
+		cancelAppointmentCron.setGroup("BPA_TRIGGER_GROUP");
+		cancelAppointmentCron.setName("BPA_CANCEL_APPOINTMENT_TRIGGER");
+		cancelAppointmentCron.setCronExpression("0 */6 * * * ?");
+		cancelAppointmentCron.setMisfireInstruction(MISFIRE_INSTRUCTION_DO_NOTHING);
+		return cancelAppointmentCron;
 	}
 
 	@Bean("openSlotsJob")
