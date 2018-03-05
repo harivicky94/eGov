@@ -1,6 +1,7 @@
 package org.egov.edcr.rule;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,6 +10,7 @@ import org.egov.edcr.entity.PlanDetail;
 import org.egov.edcr.entity.Result;
 import org.egov.edcr.entity.RuleOutput;
 import org.egov.edcr.entity.SubRuleOutput;
+import org.egov.edcr.entity.utility.RuleReportOutput;
 import org.egov.edcr.service.ReportService;
 import org.egov.edcr.utility.DcrConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +29,8 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 @Service
 public class Rule30 extends GeneralRule {
-
+    private static final String SUB_RULE_30 = "30";
+    private static final String SUB_RULE_30_DESCRIPTION = "Occupancy of Buildings";
     @Autowired
     private ReportService reportService;
 
@@ -36,7 +39,7 @@ public class Rule30 extends GeneralRule {
         HashMap<String, String> errors = new HashMap<>();
         System.out.println("validate 30");
         if (planDetail != null && planDetail.getPlanInformation() != null
-            && StringUtils.isEmpty(planDetail.getPlanInformation().getOccupancy())) {
+                && StringUtils.isEmpty(planDetail.getPlanInformation().getOccupancy())) {
             errors.put(DcrConstants.OCCUPANCY,
                     edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
                             new String[] { DcrConstants.OCCUPANCY }, LocaleContextHolder.getLocale()));
@@ -55,10 +58,14 @@ public class Rule30 extends GeneralRule {
 
     private void rule30(PlanDetail planDetail) {
         if (planDetail != null && planDetail.getPlanInformation() != null
-            && !StringUtils.isEmpty(planDetail.getPlanInformation().getOccupancy()))
+                && !StringUtils.isEmpty(planDetail.getPlanInformation().getOccupancy()))
             planDetail.reportOutput
-                    .add(buildRuleOutputWithMainRule(DcrConstants.RULE30, DcrConstants.OCCUPANCY,
-                            Result.Verify, DcrConstants.OCCUPANCY + DcrConstants.OBJECTDEFINED_DESC));
+                    .add(buildRuleOutputWithSubRule(DcrConstants.RULE30, SUB_RULE_30, SUB_RULE_30_DESCRIPTION,
+                            DcrConstants.OCCUPANCY,
+                            null,
+                            null,
+                            Result.Verify, planDetail.getPlanInformation().getOccupancy() + " " + DcrConstants.OCCUPANCY
+                                    + DcrConstants.OBJECTDEFINED_DESC));
     }
 
     @Override
@@ -74,11 +81,11 @@ public class Rule30 extends GeneralRule {
                     stringBuilder.append("Description : ").append(ruleOutput.getRuleDescription()).append("\\n");
                 drb.setMargins(5, 0, 10, 10);
                 drb.setTitle("Rule : " + ruleOutput.getKey() + "\\n")
-                   .setSubtitle(stringBuilder.toString())
-                   .setPrintBackgroundOnOddRows(false).setWhenNoData("", null)
-                   .setTitleStyle(reportService.getTitleStyle())
-                   .setSubtitleStyle(reportService.getSubTitleStyle())
-                   .setSubtitleHeight(30);
+                        .setSubtitle(stringBuilder.toString())
+                        .setPrintBackgroundOnOddRows(false).setWhenNoData("", null)
+                        .setTitleStyle(reportService.getTitleStyle())
+                        .setSubtitleStyle(reportService.getSubTitleStyle())
+                        .setSubtitleHeight(30);
 
                 new JRBeanCollectionDataSource(ruleOutput.getSubRuleOutputs());
                 final DJDataSource djds = new DJDataSource(ruleOutput.getKey(), DJConstants.DATA_SOURCE_ORIGIN_PARAMETER,
@@ -91,21 +98,32 @@ public class Rule30 extends GeneralRule {
                 subRep.setUseParentReportParameters(true);
                 subRep.setSplitAllowed(true);
                 drb2.addConcatenatedReport(subRep);
-                valuesMap.put(ruleOutput.getKey(), new JRBeanCollectionDataSource(rules));
+                SubRuleOutput subRule30 = new SubRuleOutput();
+                valuesMap.put(ruleOutput.getKey(), new JRBeanCollectionDataSource(ruleOutput.getSubRuleOutputs()));
                 if (ruleOutput != null && !ruleOutput.getSubRuleOutputs().isEmpty())
-                    for (SubRuleOutput subRuleOutput : ruleOutput.getSubRuleOutputs())
-                        try {
+                    try {
+                        for (SubRuleOutput subRuleOutput : ruleOutput.getSubRuleOutputs()) {
                             reportStatus = reportService.getReportStatus(subRuleOutput.getRuleReportOutputs(), reportStatus);
-                            valuesMap.put(subRuleOutput.getKey() + "DataSource",
-                                    new JRBeanCollectionDataSource(subRuleOutput.getRuleReportOutputs()));
-                            drb2.addConcatenatedReport(generateSubRuleReport(subRuleOutput, drb2, valuesMap));
-                        } catch (Exception e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
+                            if (subRuleOutput.getKey().equalsIgnoreCase(SUB_RULE_30)) {
+                                subRule30.setKey(subRuleOutput.getKey());
+                                subRule30.setMessage(subRuleOutput.getMessage());
+                                subRule30.setRuleDescription(subRuleOutput.getRuleDescription());
+                                subRule30.getRuleReportOutputs().addAll(subRuleOutput.getRuleReportOutputs());
+                            }
                         }
+                        if (subRule30 != null) {
+                            valuesMap.put(SUB_RULE_30 + "DataSource",
+                                    new JRBeanCollectionDataSource(subRule30.getRuleReportOutputs()));
+                            drb2.addConcatenatedReport(generateSubRuleReport(subRule30, drb2, valuesMap));
+                        }
+
+                    } catch (Exception e) {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace();
+                    }
                 break;
             }
-       return reportStatus;
+        return reportStatus;
     }
 
     public Subreport generateSubRuleReport(final SubRuleOutput subRuleOutput, FastReportBuilder drb2, Map valuesMap)
@@ -122,12 +140,11 @@ public class Rule30 extends GeneralRule {
 
         drb.setMargins(0, 10, 10, 10);
         drb.setTitle("SubRule : " + subRuleOutput.getKey())
-           .setSubtitle(stringBuilder.toString())
-           .setPrintBackgroundOnOddRows(false).setWhenNoData("", null)
-           .setTitleStyle(reportService.getTitleStyle())
-           .setSubtitleStyle(reportService.getSubTitleStyle())
-           .setSubtitleHeight(30).setTitleHeight(40);
-
+                .setSubtitle(stringBuilder.toString())
+                .setPrintBackgroundOnOddRows(false).setWhenNoData("", null)
+                .setTitleStyle(reportService.getTitleStyle())
+                .setSubtitleStyle(reportService.getSubTitleStyle())
+                .setSubtitleHeight(30).setTitleHeight(40);
 
         if (subRuleOutput.getRuleReportOutputs() != null && !subRuleOutput.getRuleReportOutputs().isEmpty()) {
 
