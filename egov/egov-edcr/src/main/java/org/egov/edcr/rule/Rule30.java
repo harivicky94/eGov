@@ -141,7 +141,7 @@ public class Rule30 extends GeneralRule {
         drb.setMargins(0, 10, 10, 10);
         drb.setTitle("SubRule : " + subRuleOutput.getKey())
                 .setSubtitle(stringBuilder.toString())
-                .setPrintBackgroundOnOddRows(false).setWhenNoData("", null)
+                .setPrintBackgroundOnOddRows(false).setWhenNoData("NotMentioned", null)
                 .setTitleStyle(reportService.getTitleStyle())
                 .setSubtitleStyle(reportService.getSubTitleStyle())
                 .setSubtitleHeight(30).setTitleHeight(40);
