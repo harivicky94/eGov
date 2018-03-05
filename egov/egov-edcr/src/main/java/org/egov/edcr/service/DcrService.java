@@ -1,17 +1,16 @@
 package org.egov.edcr.service;
 
-import ar.com.fdvs.dj.core.DynamicJasperHelper;
-import ar.com.fdvs.dj.core.layout.ClassicLayoutManager;
-import ar.com.fdvs.dj.domain.DynamicReport;
-import ar.com.fdvs.dj.domain.Style;
-import ar.com.fdvs.dj.domain.builders.FastReportBuilder;
-import ar.com.fdvs.dj.domain.constants.Font;
-import ar.com.fdvs.dj.domain.constants.HorizontalAlign;
-import ar.com.fdvs.dj.domain.constants.Page;
-import net.sf.jasperreports.engine.JRDataSource;
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperPrint;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import java.io.File;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.edcr.entity.DcrDocument;
@@ -30,12 +29,30 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.File;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.*;
-
+import ar.com.fdvs.dj.core.DynamicJasperHelper;
+import ar.com.fdvs.dj.core.layout.ClassicLayoutManager;
+import ar.com.fdvs.dj.domain.DJCalculation;
+import ar.com.fdvs.dj.domain.DJGroupLabel;
+import ar.com.fdvs.dj.domain.DynamicReport;
+import ar.com.fdvs.dj.domain.Style;
+import ar.com.fdvs.dj.domain.builders.ColumnBuilder;
+import ar.com.fdvs.dj.domain.builders.FastReportBuilder;
+import ar.com.fdvs.dj.domain.builders.GroupBuilder;
+import ar.com.fdvs.dj.domain.builders.StyleBuilder;
+import ar.com.fdvs.dj.domain.constants.Border;
+import ar.com.fdvs.dj.domain.constants.Font;
+import ar.com.fdvs.dj.domain.constants.GroupLayout;
+import ar.com.fdvs.dj.domain.constants.HorizontalAlign;
+import ar.com.fdvs.dj.domain.constants.LabelPosition;
+import ar.com.fdvs.dj.domain.constants.Page;
+import ar.com.fdvs.dj.domain.constants.VerticalAlign;
+import ar.com.fdvs.dj.domain.entities.DJGroup;
+import ar.com.fdvs.dj.domain.entities.columns.AbstractColumn;
+import ar.com.fdvs.dj.domain.entities.columns.PropertyColumn;
+import net.sf.jasperreports.engine.JRDataSource;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 /*General rule class contains validations which are required for all types of building plans*/
 @Service
 public class DcrService {
@@ -253,15 +270,15 @@ public class DcrService {
                 i++;
             }
             reportBuilder.append("\\n");
-        } else
+        } else {
+            reportBuilder.append("\\n").append("\\n");
             reportStatus = true;
-
-
+        }
+            
         List<Map<String, String>> errors = new ArrayList<Map<String, String>>();
         errors.add(planDetail.getErrors());
 
         drb.setPageSizeAndOrientation(new Page(842, 595, true));
-
         final JRDataSource ds = new JRBeanCollectionDataSource(planDetail.getReportOutput().getRuleOutPuts());
         final JRDataSource ds1 = new JRBeanCollectionDataSource(planDetail.getReportOutput().getRuleOutPuts());
 
@@ -286,7 +303,7 @@ public class DcrService {
         }
         reportBuilder.append("Report Status : " + (reportStatus ? "Accepted" : "NotAccepted")).append("\\n").append("\\n");
         reportBuilder.append("Rules Verified : ").append("\\n");
-
+     
         drb.setTitle("Building Plan Approval" + "\\n" + "\\n" + "EDCR Report")
                 .setSubtitle(reportBuilder.toString())
                 .setPrintBackgroundOnOddRows(false)
