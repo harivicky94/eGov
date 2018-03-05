@@ -83,6 +83,8 @@ public class Rule24 extends GeneralRule {
 
 
     private static final String SUB_RULE_24_5 = "24(5)";
+    private static final String SUB_RULE_24_5_SIDE1 = "24(5) SIDE1";
+    private static final String SUB_RULE_24_5_SIDE2 = "24(5) SIDE2";
     private static final String SUB_RULE_24_5_DESCRIPTION = "Side yard distance";
     
     private static final String SUB_RULE_24_12_5 = "24(12(5))";
@@ -95,7 +97,7 @@ public class Rule24 extends GeneralRule {
     private static final String SUB_RULE_24_10 = "24(10)";
     private static final String SUB_RULE_24_10_DESCRIPTION = "No construction or hangings outside the boundaries of the site";
  
-    private static final String SUB_RULE_24_1 = "HABITABLE ROOMS";
+    private static final String SUB_RULE_24_1 = "24(1)";
     private static final String SUB_RULE_24_1_DESCRIPTION = "Every habitable room shall abut on an exterior or interior open space or verandah";
  
 
@@ -448,7 +450,7 @@ public class Rule24 extends GeneralRule {
             if (sideyard1.compareTo(sideyard2) > 0) {
                 if (sideyard1.compareTo(sideYard1MinDist) == 0)
                     planDetail.reportOutput
-                            .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_5, SUB_RULE_24_5_DESCRIPTION,
+                            .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_5_SIDE1, SUB_RULE_24_5_DESCRIPTION,
                                     DcrConstants.SIDE_YARD1_DESC,
                                     sideYard1MinDist.toString() + DcrConstants.IN_METER,
                                     sideyard1.toString()
@@ -456,7 +458,7 @@ public class Rule24 extends GeneralRule {
                                     Result.Not_Accepted, null));
                 else
                     planDetail.reportOutput
-                            .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_5, SUB_RULE_24_5_DESCRIPTION,
+                            .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_5_SIDE1, SUB_RULE_24_5_DESCRIPTION,
                                     DcrConstants.SIDE_YARD1_DESC,
                                     sideYard1MinDist.toString() + DcrConstants.IN_METER,
                                     sideyard1.toString()
@@ -465,7 +467,7 @@ public class Rule24 extends GeneralRule {
 
                 if (sideyard2.compareTo(sideYard2MinDist) < 0)
                     planDetail.reportOutput
-                            .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_5, SUB_RULE_24_5_DESCRIPTION,
+                            .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_5_SIDE2, SUB_RULE_24_5_DESCRIPTION,
                                     DcrConstants.SIDE_YARD2_DESC,
                                     sideYard2MinDist.toString() + DcrConstants.IN_METER,
                                     sideyard2.toString()
@@ -473,7 +475,7 @@ public class Rule24 extends GeneralRule {
                                     Result.Verify, null));
                 else
                     planDetail.reportOutput
-                            .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_5, SUB_RULE_24_5_DESCRIPTION,
+                            .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_5_SIDE2, SUB_RULE_24_5_DESCRIPTION,
                                     DcrConstants.SIDE_YARD2_DESC,
                                     sideYard2MinDist.toString() + DcrConstants.IN_METER,
                                     sideyard2.toString()
@@ -482,7 +484,7 @@ public class Rule24 extends GeneralRule {
             } else {
                 if (sideyard2.compareTo(sideYard1MinDist) == 0)
                     planDetail.reportOutput
-                            .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_5, SUB_RULE_24_5_DESCRIPTION,
+                            .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_5_SIDE2, SUB_RULE_24_5_DESCRIPTION,
                                     DcrConstants.SIDE_YARD2_DESC,
                                     sideYard1MinDist.toString() + DcrConstants.IN_METER,
                                     sideyard2.toString()
@@ -490,7 +492,7 @@ public class Rule24 extends GeneralRule {
                                     Result.Not_Accepted, null));
                 else
                     planDetail.reportOutput
-                            .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_5, SUB_RULE_24_5_DESCRIPTION,
+                            .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_5_SIDE2, SUB_RULE_24_5_DESCRIPTION,
                                     DcrConstants.SIDE_YARD2_DESC,
                                     sideYard1MinDist.toString() + DcrConstants.IN_METER,
                                     sideyard2.toString()
@@ -499,7 +501,7 @@ public class Rule24 extends GeneralRule {
 
                 if (sideyard1.compareTo(sideYard2MinDist) < 0)
                     planDetail.reportOutput
-                            .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_5, SUB_RULE_24_5_DESCRIPTION,
+                            .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_5_SIDE1, SUB_RULE_24_5_DESCRIPTION,
                                     DcrConstants.SIDE_YARD1_DESC,
                                     sideYard2MinDist.toString() + DcrConstants.IN_METER,
                                     sideyard1.toString()
@@ -507,7 +509,7 @@ public class Rule24 extends GeneralRule {
                                     Result.Verify, null));
                 else
                     planDetail.reportOutput
-                            .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_5, SUB_RULE_24_5_DESCRIPTION,
+                            .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_5_SIDE1, SUB_RULE_24_5_DESCRIPTION,
                                     DcrConstants.SIDE_YARD1_DESC,
                                     sideYard2MinDist.toString() + DcrConstants.IN_METER,
                                     sideyard1.toString()
