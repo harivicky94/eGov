@@ -50,6 +50,10 @@ public class DxfFileConstants {
     public static final String RESI_UNIT="RESI_UNIT";
     public static final String RESI_UNIT_DEDUCT="RESI_UNIT_DEDUCT";
     public static final String PARKING_SLOT="PARKING_SLOT";
+    public static final int COLOUR_CODE_NOTIFIEDROAD=1;
+    public static final int COLOUR_CODE_NONNOTIFIEDROAD=2;
+    public static final int COLOUR_CODE_LANE=5;
+    public static final int COLOUR_CODE_CULDESAC=6;
     
 
 }

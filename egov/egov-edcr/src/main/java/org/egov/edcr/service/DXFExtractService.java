@@ -639,16 +639,16 @@ public class DXFExtractService {
         
             for( RoadOutput roadOutput:shortDistainceFromCenter)
             {
-                if (Integer.valueOf(roadOutput.colourCode) == 1) {
+                if (Integer.valueOf(roadOutput.colourCode) == DxfFileConstants.COLOUR_CODE_NOTIFIEDROAD) {
                     notifiedRoadDistance.add(roadOutput.roadDistainceToPlot);
                 }
-                if (Integer.valueOf(roadOutput.colourCode) == 2) {
+                if (Integer.valueOf(roadOutput.colourCode) == DxfFileConstants.COLOUR_CODE_NONNOTIFIEDROAD) {
                     nonNotifiedRoadDistance.add(roadOutput.roadDistainceToPlot);
                 }
-                if (Integer.valueOf(roadOutput.colourCode) == 5) {
+                if (Integer.valueOf(roadOutput.colourCode) ==  DxfFileConstants.COLOUR_CODE_CULDESAC) {
                     culdesacRoadDistance.add(roadOutput.roadDistainceToPlot);
                 }
-                if (Integer.valueOf(roadOutput.colourCode) == 6) {
+                if (Integer.valueOf(roadOutput.colourCode) ==  DxfFileConstants.COLOUR_CODE_LANE) {
                     laneDistance.add(roadOutput.roadDistainceToPlot);
                 }
             }
@@ -688,16 +688,16 @@ public class DXFExtractService {
         
             for( RoadOutput roadOutput:shortDistaineToPlot)
             {
-                if (Integer.valueOf(roadOutput.colourCode) == 1) {
+                if (Integer.valueOf(roadOutput.colourCode) == DxfFileConstants.COLOUR_CODE_NOTIFIEDROAD) {
                     notifiedRoadDistance.add(roadOutput.roadDistainceToPlot);
                 }
-                if (Integer.valueOf(roadOutput.colourCode) == 2) {
+                if (Integer.valueOf(roadOutput.colourCode) == DxfFileConstants.COLOUR_CODE_NONNOTIFIEDROAD) {
                     nonNotifiedRoadDistance.add(roadOutput.roadDistainceToPlot);
                 }
-                if (Integer.valueOf(roadOutput.colourCode) == 5) {
+                if (Integer.valueOf(roadOutput.colourCode) == DxfFileConstants.COLOUR_CODE_CULDESAC) {
                     culdesacRoadDistance.add(roadOutput.roadDistainceToPlot);
                 }
-                if (Integer.valueOf(roadOutput.colourCode) == 6) {
+                if (Integer.valueOf(roadOutput.colourCode) == DxfFileConstants.COLOUR_CODE_LANE) {
                     laneDistance.add(roadOutput.roadDistainceToPlot);
                 }
             }
