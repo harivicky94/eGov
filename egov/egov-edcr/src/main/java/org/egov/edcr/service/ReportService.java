@@ -45,6 +45,7 @@ public class ReportService {
         columnStyle.setFont(new Font(5, Font._FONT_ARIAL, false));
         columnStyle.setTransparency(Transparency.OPAQUE);
         columnStyle.setBorderBottom(Border.THIN());
+        columnStyle.setTransparent(false);
         return columnStyle;
     }
 
@@ -54,8 +55,9 @@ public class ReportService {
         columnStyle.setBorderRight(Border.THIN());
         columnStyle.setTextColor(Color.black);
         columnStyle.setHorizontalAlign(HorizontalAlign.CENTER);
-        columnStyle.setFont(new Font(8, Font._FONT_TIMES_NEW_ROMAN, false));
+        columnStyle.setFont(new Font(10, Font._FONT_TIMES_NEW_ROMAN, false));
         columnStyle.setBorderBottom(Border.THIN());
+        columnStyle.setTransparent(false);
         return columnStyle;
     }
 
@@ -65,7 +67,7 @@ public class ReportService {
         columnStyle.setBorderRight(Border.THIN());
         columnStyle.setTextColor(Color.black);
         columnStyle.setHorizontalAlign(HorizontalAlign.CENTER);
-        columnStyle.setFont(new Font(8, Font._FONT_TIMES_NEW_ROMAN, false));
+        columnStyle.setFont(new Font(10, Font._FONT_COMIC_SANS, false));
         columnStyle.setBorderBottom(Border.THIN());
         return columnStyle;
     }
@@ -78,20 +80,20 @@ public class ReportService {
         columnheaderStyle.setBorderBottom(Border.THIN());
         columnheaderStyle.setTextColor(Color.black);
         columnheaderStyle.setHorizontalAlign(HorizontalAlign.CENTER);
-        columnheaderStyle.setFont(new Font(10, Font._FONT_TIMES_NEW_ROMAN, true));
+        columnheaderStyle.setFont(new Font(10, Font._FONT_COMIC_SANS, true));
         return columnheaderStyle;
     }
 
     public Style getTitleStyle() {
         final Style titleStyle = new Style("titleStyle");
-        titleStyle.setFont(new Font(8, Font._FONT_TIMES_NEW_ROMAN, true));
+        titleStyle.setFont(new Font(10, Font._FONT_COMIC_SANS, true));
         titleStyle.setHorizontalAlign(HorizontalAlign.LEFT);
         return titleStyle;
     }
 
     public Style getSubTitleStyle() {
         final Style subTitleStyle = new Style("titleStyle");
-        subTitleStyle.setFont(new Font(8, Font._FONT_TIMES_NEW_ROMAN, true));
+        subTitleStyle.setFont(new Font(10, Font._FONT_COMIC_SANS, true));
         subTitleStyle.setHorizontalAlign(HorizontalAlign.LEFT);
         return subTitleStyle;
     }

@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -29,26 +30,20 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import ar.com.fdvs.dj.core.DJConstants;
 import ar.com.fdvs.dj.core.DynamicJasperHelper;
 import ar.com.fdvs.dj.core.layout.ClassicLayoutManager;
 import ar.com.fdvs.dj.domain.DJCalculation;
-import ar.com.fdvs.dj.domain.DJGroupLabel;
+import ar.com.fdvs.dj.domain.DJCrosstab;
+import ar.com.fdvs.dj.domain.DJDataSource;
 import ar.com.fdvs.dj.domain.DynamicReport;
 import ar.com.fdvs.dj.domain.Style;
-import ar.com.fdvs.dj.domain.builders.ColumnBuilder;
+import ar.com.fdvs.dj.domain.builders.CrosstabBuilder;
 import ar.com.fdvs.dj.domain.builders.FastReportBuilder;
-import ar.com.fdvs.dj.domain.builders.GroupBuilder;
-import ar.com.fdvs.dj.domain.builders.StyleBuilder;
 import ar.com.fdvs.dj.domain.constants.Border;
 import ar.com.fdvs.dj.domain.constants.Font;
-import ar.com.fdvs.dj.domain.constants.GroupLayout;
 import ar.com.fdvs.dj.domain.constants.HorizontalAlign;
-import ar.com.fdvs.dj.domain.constants.LabelPosition;
 import ar.com.fdvs.dj.domain.constants.Page;
-import ar.com.fdvs.dj.domain.constants.VerticalAlign;
-import ar.com.fdvs.dj.domain.entities.DJGroup;
-import ar.com.fdvs.dj.domain.entities.columns.AbstractColumn;
-import ar.com.fdvs.dj.domain.entities.columns.PropertyColumn;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperPrint;
@@ -239,50 +234,34 @@ public class DcrService {
         titleStyle.setFont(new Font(50, Font._FONT_TIMES_NEW_ROMAN, true));
         titleStyle.setHorizontalAlign(HorizontalAlign.CENTER);
 
-        final Style subTitleStyle = new Style("subtitleStyle");
         titleStyle.setFont(new Font(2, Font._FONT_TIMES_NEW_ROMAN, false));
         String applicationNumber = StringUtils.isNotBlank(dcrApplication.getApplicationNumber())
                 ? dcrApplication.getApplicationNumber() : "NA";
-        BigDecimal plotArea = planDetail2.getPlanInformation().getPlotArea() != null
-                ? planDetail2.getPlanInformation().getPlotArea() : BigDecimal.ZERO;
         String applicationDate = FORMATDDMMYYYY.format(dcrApplication.getApplicationDate());
-        String occupancy = dcrApplication.getPlanInformation().getOccupancy() != null
-                ? dcrApplication.getPlanInformation().getOccupancy() : "NA";
-        String architectName = StringUtils.isNotBlank(dcrApplication.getPlanInformation().getArchitectInformation())
-                ? dcrApplication.getPlanInformation().getArchitectInformation() : "NA";
-        reportBuilder.append("\\n").append("Application Details").append("\\n").append("\\n")
-                .append("Application Number  :   ").append(applicationNumber)
-                .append("                                                    ")
-                .append("Plot Area          :   ").append(plotArea).append("\\n").append("\\n")
-                .append("Application Date       :   ").append(applicationDate)
-                .append("                                                           ")
-                .append("Occupancy       :   ").append(occupancy).append("\\n").append("\\n")
-                .append("Architect name         :   ").append(architectName);
 
         boolean reportStatus = false;
+        StringBuilder errors = new StringBuilder();
         if (planDetail.getErrors() != null && planDetail.getErrors().size() > 0) {
             int i = 1;
-            reportBuilder.append("\\n").append("\\n").append("Errors").append("\\n");
             for (Map.Entry<String, String> entry : planDetail.getErrors().entrySet()) {
-                reportBuilder.append(String.valueOf(i)).append(". ");
-                reportBuilder.append(entry.getValue());
-                reportBuilder.append("\\n");
+                errors.append(String.valueOf(i)).append(". ");
+                errors.append(entry.getValue());
+                errors.append("\\n");
                 i++;
             }
-            reportBuilder.append("\\n");
         } else {
-            reportBuilder.append("\\n").append("\\n");
             reportStatus = true;
         }
-            
-        List<Map<String, String>> errors = new ArrayList<Map<String, String>>();
-        errors.add(planDetail.getErrors());
 
         drb.setPageSizeAndOrientation(new Page(842, 595, true));
-        final JRDataSource ds = new JRBeanCollectionDataSource(planDetail.getReportOutput().getRuleOutPuts());
+        final JRDataSource ds = new JRBeanCollectionDataSource(Collections.singletonList(planDetail2));
         final JRDataSource ds1 = new JRBeanCollectionDataSource(planDetail.getReportOutput().getRuleOutPuts());
 
         final Map valuesMap = new HashMap();
+        valuesMap.put("applicationNumber", applicationNumber);
+        valuesMap.put("applicationDate", applicationDate);
+        valuesMap.put("errors", planDetail.getErrors());
+        valuesMap.put("errorString", errors.toString());
         List<PlanRule> planRules = planRuleService.findRulesByPlanDetail(planDetail);
 
         for (PlanRule pl : planRules) {
@@ -303,13 +282,9 @@ public class DcrService {
         }
         reportBuilder.append("Report Status : " + (reportStatus ? "Accepted" : "NotAccepted")).append("\\n").append("\\n");
         reportBuilder.append("Rules Verified : ").append("\\n");
-     
-        drb.setTitle("Building Plan Approval" + "\\n" + "\\n" + "EDCR Report")
-                .setSubtitle(reportBuilder.toString())
-                .setPrintBackgroundOnOddRows(false)
-                .setSubtitleStyle(subTitleStyle)
-                .setTitleHeight(60).setSubtitleHeight(30).setUseFullPageWidth(true);
-        drb.setMargins(20, 20, 20, 20);
+        valuesMap.put("reportStatus", (reportStatus ? "Accepted" : "NotAccepted"));
+        drb.setTemplateFile("/reports/templates/edcr_report.jrxml");
+        drb.setMargins(5, 0, 33, 20);
 
         final DynamicReport dr = drb.build();
         planDetail2.setEdcrPassed(reportStatus);
