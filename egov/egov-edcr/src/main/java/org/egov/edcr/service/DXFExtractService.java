@@ -146,6 +146,7 @@ public class DXFExtractService {
         int i = 0;
         for (DXFLWPolyline resUnit : residentialUnit) {
 
+          //  Util.print(resUnit, "resUnit_"+i);
             FloorUnit floorUnit = new FloorUnit();
             floorUnit.setPolyLine(resUnit);
 
@@ -153,20 +154,23 @@ public class DXFExtractService {
             double[][] pointsOfPlot = MinDistance.pointsOfPolygon(resUnit);
 
             BigDecimal deduction = BigDecimal.ZERO;
+            int j=0;
             for (DXFLWPolyline residentialDeduct : residentialUnitDeduction) {
+            //   Util.print(residentialDeduct, "residentialDeduct_"+j++);
                 boolean contains = false;
                 Iterator buildingIterator = residentialDeduct.getVertexIterator();
                 while (buildingIterator.hasNext()) {
                     DXFVertex dxfVertex = (DXFVertex) buildingIterator.next();
                     Point point = dxfVertex.getPoint();
                     if (RayCast.contains(pointsOfPlot, new double[] { point.getX(), point.getY() }) == true) {
+                      //  LOG.info(" above res contains "+point.getX()+","+point.getY());
                         contains = true;
-                        removeDeduction.add(residentialDeduct);
+                       // removeDeduction.add(residentialDeduct);
                         Measurement measurement = new Measurement();
                         measurement.setPolyLine(residentialDeduct);
                         floorUnit.getDeductions().add(measurement);
                     }
-                }
+                }    
                 if (contains) {
                     /*
                      * System.out.println("current deduct " + deduction + "    :add deduct for rest unit " + i + " area added" +

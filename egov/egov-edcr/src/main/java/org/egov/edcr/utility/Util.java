@@ -613,6 +613,10 @@ public class Util {
         if (yard != null) {
             Iterator vertexIterator = yard.getVertexIterator();
             LOG.info("Points on the " + name);
+            LOG.info("Max x: " + yard.getBounds().getMaximumX() +" Min x:"+yard.getBounds().getMinimumX());
+            LOG.info("Max y: " + yard.getBounds().getMaximumY() +" Min x:"+yard.getBounds().getMinimumY());
+            
+            
             while (vertexIterator.hasNext()) {
                 DXFVertex next = (DXFVertex) vertexIterator.next();
                 LOG.info(next.getPoint().getX() + "," + next.getPoint().getY());
