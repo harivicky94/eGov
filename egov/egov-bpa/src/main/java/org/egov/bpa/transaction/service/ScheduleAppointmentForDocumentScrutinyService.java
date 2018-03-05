@@ -59,8 +59,10 @@ import org.egov.bpa.transaction.repository.SlotRepository;
 import org.egov.bpa.transaction.service.messaging.BPASmsAndEmailService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.utils.BpaUtils;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.repository.BoundaryRepository;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.validation.exception.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -70,6 +72,8 @@ import org.springframework.transaction.support.TransactionTemplate;
 @Service
 @Transactional(readOnly = true)
 public class ScheduleAppointmentForDocumentScrutinyService {
+    private static final String MODULE_NAME = "BPA";
+    private static final String APP_CONFIG_KEY = "GAPFORSCHEDULING";
 
     @Autowired
     private SlotMappingService slotMappingService;
@@ -93,10 +97,15 @@ public class ScheduleAppointmentForDocumentScrutinyService {
     private SlotApplicationRepository slotApplicationRepository;
     @Autowired
     private TransactionTemplate transactionTemplate;
+    @Autowired
+    private AppConfigValueService appConfigValuesService;
 
     public void scheduleAppointmentsForDocumentScrutiny() {
         Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.DAY_OF_YEAR, 2);
+        List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(MODULE_NAME,
+                APP_CONFIG_KEY);
+        String noOfDays = appConfigValue.get(0).getValue();
+        calendar.add(Calendar.DAY_OF_YEAR, Integer.valueOf(noOfDays));
         List<Boundary> zonesList = slotMappingService.slotfindZoneByApplType(ApplicationType.ALL_OTHER_SERVICES);
         for (Boundary bndry : zonesList) {
             List<Slot> slotList = slotRepository.findByZoneAndApplicationDate(bndry, calendar.getTime());
