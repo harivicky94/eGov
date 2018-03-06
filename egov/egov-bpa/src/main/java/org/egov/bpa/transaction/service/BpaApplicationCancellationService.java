@@ -53,8 +53,8 @@ import org.egov.bpa.transaction.repository.SlotApplicationRepository;
 import org.egov.bpa.transaction.service.messaging.BPASmsAndEmailService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.utils.BpaUtils;
+import org.egov.infra.utils.DateUtils;
 import org.egov.infra.validation.exception.ValidationException;
-import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -85,8 +85,6 @@ public class BpaApplicationCancellationService {
 
     @Transactional
     public void cancelNonverifiedApplications() {
-        Calendar calender = Calendar.getInstance();
-        Date todayDate = calender.getTime();
         BpaStatus bpaStatusScheduled = bpaStatusRepository.findByCode(BpaConstants.APPLICATION_STATUS_SCHEDULED);
         BpaStatus bpaStatusRescheduled = bpaStatusRepository.findByCode(BpaConstants.APPLICATION_STATUS_RESCHEDULED);
         List<BpaStatus> listOfBpaStatus = new ArrayList<>();
@@ -94,18 +92,21 @@ public class BpaApplicationCancellationService {
         listOfBpaStatus.add(bpaStatusRescheduled);
         List<BpaApplication> bpaApplicationList = applicationBpaService
                 .findByStatusListOrderByCreatedDate(listOfBpaStatus);
-        logger.info("*****************Bpa Applications with Scheduled And Rescheduled status found :**************************" + bpaApplicationList);
         for (BpaApplication bpaApplication : bpaApplicationList) {
             try {
                 TransactionTemplate template = new TransactionTemplate(transactionTemplate.getTransactionManager());
                 template.execute(result -> {
                     List<SlotApplication> slotApplicationList = slotApplicationRepository
                             .findByApplicationOrderByIdDesc(bpaApplication);
-                    logger.info("************SlotApplicationList found is :************" + slotApplicationList);
                     if (slotApplicationList.size() > 0) {
                         Date appointmentDate = slotApplicationList.get(0).getSlotDetail().getSlot().getAppointmentDate();
-                        logger.info("**********appointmentDate For last scheduled or rescheduled application is*************" + appointmentDate);
-                        if (todayDate.compareTo(appointmentDate) > 0) {
+                        logger.info("**********appointmentDate For last scheduled or rescheduled application is*************"
+                                + appointmentDate);
+                        logger.info("compare date :" + DateUtils
+                                .toDateUsingDefaultPattern(DateUtils.toDefaultDateFormat(Calendar.getInstance().getTime()))
+                                .after(DateUtils.toDateUsingDefaultPattern(DateUtils.toDefaultDateFormat(appointmentDate))));
+                        if (DateUtils.toDateUsingDefaultPattern(DateUtils.toDefaultDateFormat(Calendar.getInstance().getTime()))
+                                .after(DateUtils.toDateUsingDefaultPattern(DateUtils.toDefaultDateFormat(appointmentDate)))) {
                             logger.info(
                                     "**********now changing bpa Application Status to Cancelled and close the workflow for ApplicationNumber :************"
                                             + bpaApplication.getApplicationNumber());
@@ -126,12 +127,6 @@ public class BpaApplicationCancellationService {
         }
     }
 
-	LocalDate convertToLocalDate(Date date) {
-		if (date == null)
-			return null;
-		return new LocalDate(date);
-	}
-	
 	private String getErrorMessage(final Exception exception) {
 		String error;
 		if (exception instanceof ValidationException)
