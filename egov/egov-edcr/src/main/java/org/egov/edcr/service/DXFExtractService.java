@@ -36,6 +36,7 @@ import org.egov.edcr.utility.math.RayCast;
 import org.kabeja.dxf.DXFBlock;
 import org.kabeja.dxf.DXFConstants;
 import org.kabeja.dxf.DXFDimension;
+import org.egov.edcr.utility.math.Ray;
 import org.kabeja.dxf.DXFDocument;
 import org.kabeja.dxf.DXFEntity;
 import org.kabeja.dxf.DXFLWPolyline;
@@ -143,7 +144,7 @@ public class DXFExtractService {
                 }
         }
 
-        int i = 0;
+        /*    int i = 0;
         for (DXFLWPolyline resUnit : residentialUnit) {
 
           //  Util.print(resUnit, "resUnit_"+i);
@@ -172,10 +173,10 @@ public class DXFExtractService {
                     }
                 }    
                 if (contains) {
-                    /*
+                    
                      * System.out.println("current deduct " + deduction + "    :add deduct for rest unit " + i + " area added" +
                      * Util.getPolyLineArea(residentialDeduct));
-                     */
+                     
                     deduction = deduction.add(Util.getPolyLineArea(residentialDeduct));
                 }
 
@@ -187,8 +188,67 @@ public class DXFExtractService {
             }
             floorUnit.setTotalUnitDeduction(deduction);
             pl.getFloorUnits().add(floorUnit);
-        }
+      }  */
 
+        
+        Ray RAY_CASTING = new Ray(
+                new org.egov.edcr.utility.math.Point(-1.123456789, -1.987654321));
+                    int i=0;
+                    for (DXFLWPolyline resUnit :residentialUnit )
+                    {
+                        FloorUnit floorUnit = new FloorUnit();
+                        floorUnit.setPolyLine(resUnit);
+                            i++;
+                            double[][] pointsOfPlot = MinDistance.pointsOfPolygon(resUnit);
+                            Iterator vertexIterator = resUnit.getVertexIterator();
+                            List<org.egov.edcr.utility.math.Point> points=new ArrayList<>();
+                            while(vertexIterator.hasNext())
+                  {
+                          DXFVertex next =(DXFVertex) vertexIterator.next();
+                          org.egov.edcr.utility.math.Point p=new org.egov.edcr.utility.math.Point(next.getX(), next.getY());
+                          points.add(p);
+                  }
+                            
+                            org.egov.edcr.utility.math.Polygon polygon=new org.egov.edcr.utility.math.Polygon(points);
+                            
+                           // System.out.println("resunit points----"+pointsOfPlot);
+                            BigDecimal deduction=BigDecimal.ZERO;
+                            for (DXFLWPolyline residentialDeduct: residentialUnitDeduction) {
+                                     boolean contains=false;
+                                 Iterator buildingIterator =residentialDeduct.getVertexIterator();
+                                 while (buildingIterator.hasNext()) {
+                             DXFVertex dxfVertex = (DXFVertex) buildingIterator.next();
+                             Point point = dxfVertex.getPoint();
+                             org.egov.edcr.utility.math.Point point1=new org.egov.edcr.utility.math.Point(point.getX(), point.getY());
+                            if( RAY_CASTING.contains(point1, polygon))
+                            {
+                                    contains=true;
+                                    Measurement measurement = new Measurement();
+                                    measurement.setPolyLine(residentialDeduct);
+                                    floorUnit.getDeductions().add(measurement);
+                            }
+                             
+                          //   System.out.println(point.getX()+","+point.getY());
+                                  /*   if (RayCast.contains(pointsOfPlot, new double[]{point.getX(), point.getY()}) == true) {
+                                         contains=true;
+                                     }*/
+                                 }
+                                 if(contains)
+                                 {
+                                         System.out.println("current deduct "+deduction+"  :add deduct for rest unit "+i+" area added "+Util.getPolyLineArea(residentialDeduct));
+                                         deduction=deduction.add(Util.getPolyLineArea(residentialDeduct));
+                                 }
+                                 
+                         }
+                           // unitWiseDeduction.put("resUnit"+i, deduction);
+                            
+                            floorUnit.setTotalUnitDeduction(deduction);
+                            pl.getFloorUnits().add(floorUnit); 
+                           
+                            
+                    }
+                    
+                    
         layerPresent = doc.containsDXFLayer(DxfFileConstants.PARKING_SLOT);
 
         if (layerPresent) {
@@ -358,16 +418,16 @@ public class DXFExtractService {
 
     private void extractPlotDetails(PlanDetail pl, DXFDocument doc) {
         List<DXFLWPolyline> polyLinesByLayer;
-        Plot plot = new Plot();
+      //  Plot plot = new Plot();
         polyLinesByLayer = Util.getPolyLinesByLayer(doc, DxfFileConstants.PLOT_BOUNDARY);
         if (polyLinesByLayer.size() > 0) {
-            plot.setPolyLine(polyLinesByLayer.get(0));
-            plot.setArea(Util.getPolyLineArea(plot.getPolyLine()));
-            plot.setPresentInDxf(true);
+            pl.getPlot().setPolyLine(polyLinesByLayer.get(0));
+           // plot.setArea(Util.getPolyLineArea(plot.getPolyLine())); //The actual area of plot boundary not used. Plot area decide by plan information table.
+          //  plot.setPresentInDxf(true);
         } else
             pl.addError(DxfFileConstants.PLOT_BOUNDARY, edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
                     new String[]{DxfFileConstants.PLOT_BOUNDARY}, null));
-        pl.setPlot(plot);
+       // pl.setPlot(plot);
     }
 
     private PlanDetail extractHeights(DXFDocument doc, PlanDetail pl) {
@@ -468,33 +528,15 @@ public class DXFExtractService {
             pl.addError(DxfFileConstants.PLOT_AREA, DxfFileConstants.PLOT_AREA + " is not defined in the Plan Information Layer");
         else
             try {
+                Plot plot = new Plot();
                 plotArea = plotArea.replaceAll("[^\\d.]", "");
                 pi.setPlotArea(BigDecimal.valueOf(Double.parseDouble(plotArea)));
+                plot.setArea(BigDecimal.valueOf(Double.parseDouble(plotArea)));
+                plot.setPresentInDxf(true);
+                pl.setPlot(plot);
             } catch (Exception e) {
                 pl.addError(DxfFileConstants.PLOT_AREA, DxfFileConstants.PLOT_AREA + " contains non invalid values.");
             }
-        // The below code must be deleted once plot area is defined properly in dxf file
-        {
-            if (plotArea == null) {
-                Set<String> keySet = planInfoProperties.keySet();
-                for (String s : keySet)
-                    if (s.contains(DxfFileConstants.PLOT_AREA)) {
-                        plotArea = planInfoProperties.get(s);
-                        pl.addError(DxfFileConstants.PLOT_AREA,
-                                DxfFileConstants.PLOT_AREA + " is invalid .Text in dxf file is " + s);
-                    }
-
-                try {
-                    plotArea = plotArea.replaceAll("[^\\d.]", "");
-                    pi.setPlotArea(BigDecimal.valueOf(Double.parseDouble(plotArea)));
-                } catch (Exception e) {
-                    pl.addError(DxfFileConstants.PLOT_AREA, DxfFileConstants.PLOT_AREA + " contains non invalid values.");
-
-                }
-            }
-        }
-        // till here
-
         if (planInfoProperties.get(DxfFileConstants.CRZ_ZONE) != null) {
             String value = planInfoProperties.get(DxfFileConstants.CRZ_ZONE);
             if (value.equalsIgnoreCase(DcrConstants.YES))
