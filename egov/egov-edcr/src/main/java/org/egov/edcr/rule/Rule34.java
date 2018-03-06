@@ -222,7 +222,7 @@ public class Rule34 extends GeneralRule {
         if (subRuleOutput.getRuleDescription() != null)
             stringBuilder.append("Description : ").append(subRuleOutput.getRuleDescription()).append("\\n");
 
-        drb.setMargins(0, 10, 10, 10);
+        drb.setMargins(10, 10, 10, 10);
         drb.setTitle("SubRule : " + subRuleOutput.getKey())
            .setSubtitle(stringBuilder.toString())
            .setPrintBackgroundOnOddRows(false).setWhenNoData("", null)
