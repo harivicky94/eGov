@@ -34,6 +34,9 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 @Service
 public class Rule26 extends GeneralRule {
     private static final BigDecimal three = BigDecimal.valueOf(3);
+    private static final BigDecimal TWO_MTR = BigDecimal.valueOf(2);
+    private static final BigDecimal ONE_ANDHALF_MTR = BigDecimal.valueOf(1.5);
+
     private static final BigDecimal a = BigDecimal.valueOf(1.8);
     private static final String SUB_RULE_26_DESCRIPTION = "Prohibition for constructions abutting public roads.";
     private static final String SUB_RULE_26 = "Rule 26";
@@ -189,11 +192,11 @@ public class Rule26 extends GeneralRule {
             for (CulDeSacRoad culd_sac : planDetail.getCuldeSacRoads())
                 if (culd_sac.getShortestDistanceToRoad() != null &&
                         culd_sac.getShortestDistanceToRoad().compareTo(BigDecimal.ZERO) > 0)
-                    if (culd_sac.getShortestDistanceToRoad().compareTo(three) >= 0)
+                    if (culd_sac.getShortestDistanceToRoad().compareTo(TWO_MTR) >= 0)
                         planDetail.reportOutput
                                 .add(buildRuleOutputWithSubRule(DcrConstants.RULE26, SUB_RULE_26, SUB_RULE_26_DESCRIPTION,
                                         DcrConstants.CULD_SAC_SHORTESTDISTINCTTOROAD,
-                                        "Min. " + three.toString() + DcrConstants.IN_METER,
+                                        "Min. " + TWO_MTR.toString() + DcrConstants.IN_METER,
                                         culd_sac.getShortestDistanceToRoad().toString()
                                                 + DcrConstants.IN_METER,
                                         Result.Accepted, null));
@@ -201,7 +204,7 @@ public class Rule26 extends GeneralRule {
                         planDetail.reportOutput
                                 .add(buildRuleOutputWithSubRule(DcrConstants.RULE26, SUB_RULE_26, SUB_RULE_26_DESCRIPTION,
                                         DcrConstants.CULD_SAC_SHORTESTDISTINCTTOROAD,
-                                        "Min. " + three.toString() + DcrConstants.IN_METER,
+                                        "Min. " + TWO_MTR.toString() + DcrConstants.IN_METER,
                                         culd_sac.getShortestDistanceToRoad().toString()
                                                 + DcrConstants.IN_METER,
                                         Result.Not_Accepted, null));
@@ -212,11 +215,11 @@ public class Rule26 extends GeneralRule {
             for (Lane lane : planDetail.getLaneRoads())
                 if (lane.getShortestDistanceToRoad() != null &&
                         lane.getShortestDistanceToRoad().compareTo(BigDecimal.ZERO) > 0)
-                    if (lane.getShortestDistanceToRoad().compareTo(three) >= 0)
+                    if (lane.getShortestDistanceToRoad().compareTo(ONE_ANDHALF_MTR) >= 0)
                         planDetail.reportOutput
                                 .add(buildRuleOutputWithSubRule(DcrConstants.RULE26, SUB_RULE_26, SUB_RULE_26_DESCRIPTION,
                                         DcrConstants.LANE_SHORTESTDISTINCTTOROAD,
-                                        "Min. " + three.toString() + DcrConstants.IN_METER,
+                                        "Min. " + ONE_ANDHALF_MTR.toString() + DcrConstants.IN_METER,
                                         lane.getShortestDistanceToRoad().toString()
                                                 + DcrConstants.IN_METER,
                                         Result.Accepted, null));
@@ -224,7 +227,7 @@ public class Rule26 extends GeneralRule {
                         planDetail.reportOutput
                                 .add(buildRuleOutputWithSubRule(DcrConstants.RULE26, SUB_RULE_26, SUB_RULE_26_DESCRIPTION,
                                         DcrConstants.LANE_SHORTESTDISTINCTTOROAD,
-                                        "Min. " + three.toString() + DcrConstants.IN_METER,
+                                        "Min. " + ONE_ANDHALF_MTR.toString() + DcrConstants.IN_METER,
                                         lane.getShortestDistanceToRoad().toString()
                                                 + DcrConstants.IN_METER,
                                         Result.Not_Accepted, null));

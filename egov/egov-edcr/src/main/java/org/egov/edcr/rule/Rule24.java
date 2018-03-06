@@ -50,7 +50,7 @@ public class Rule24 extends GeneralRule {
     private static final BigDecimal REARYARDMEAN_DISTANCE = BigDecimal.valueOf(2);
 
     private static final BigDecimal SIDE1MINIMUM_DISTANCE = BigDecimal.valueOf(1);
-    private static final BigDecimal SIDE2MINIMUM_DISTANCE = BigDecimal.valueOf(2.2);
+    private static final BigDecimal SIDE2MINIMUM_DISTANCE = BigDecimal.valueOf(1.2);
 
     private static final BigDecimal SIDE1MINIMUM_DISTANCE_LESSTHAN7_WITHOPENING = BigDecimal.valueOf(0.75);
     private static final BigDecimal SIDE2MINIMUM_DISTANCE_LESSTHAN7_WITHOPENING = BigDecimal.valueOf(1.2);
