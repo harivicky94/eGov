@@ -287,6 +287,12 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
             }
         }
         applicationBpaService.persistOrUpdateApplicationDocument(bpaApplication);
+        bpaApplication.setAdmissionfeeAmount(applicationBpaService.setAdmissionFeeAmountForRegistrationWithAmenities(
+                bpaApplication.getServiceType().getId(), new ArrayList<ServiceType>()));
+        if (bpaApplication.getOwner().getUser() != null && bpaApplication.getOwner().getUser().getId() == null) {
+            buildOwnerDetails(bpaApplication);
+        }
+        BpaApplication bpaApplicationRes = applicationBpaService.createNewApplication(bpaApplication, workFlowAction);
         if (workFlowAction != null
                 && workFlowAction
                         .equals(WF_LBE_SUBMIT_BUTTON)
@@ -294,12 +300,6 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
             return genericBillGeneratorService
                     .generateBillAndRedirectToCollection(bpaApplication, model);
         }
-        bpaApplication.setAdmissionfeeAmount(applicationBpaService.setAdmissionFeeAmountForRegistrationWithAmenities(
-                bpaApplication.getServiceType().getId(), new ArrayList<ServiceType>()));
-        if (bpaApplication.getOwner().getUser() != null && bpaApplication.getOwner().getUser().getId() == null) {
-            buildOwnerDetails(bpaApplication);
-        }
-        BpaApplication bpaApplicationRes = applicationBpaService.createNewApplication(bpaApplication, workFlowAction);
         if (citizenOrBusinessUser) { 
             if (isCitizen)
                 bpaUtils.createPortalUserinbox(bpaApplicationRes, Arrays.asList(bpaApplicationRes.getOwner().getUser(),

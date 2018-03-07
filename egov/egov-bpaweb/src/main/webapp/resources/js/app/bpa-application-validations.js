@@ -639,6 +639,8 @@ $(document).ready(function() {
                 $('#typeOfLand').prop('required', true);
                 $('#oneDayPermitTypeOfLandSec').show();
                 $('#isOneDayPermitApplication').val(true);
+                if($('#zone').val()!='' && $('#electionBoundary').val()!='')
+	        		validateSlotMappingForOneDayPermit($('#zone').val(), $('#electionBoundary').val());
 	        } else{
                 $('#typeOfLand').val('');
                 $('#oneDayPermitTypeOfLandSec').hide();
@@ -647,7 +649,34 @@ $(document).ready(function() {
                 $('#isOneDayPermitApplication').val(false);
 	        }
 	  });
+    
+    $('#electionBoundary').on('change', function() {
+		 if($('#zone').val()!='' && $('#isOneDayPermitApplication').is(':checked'))
+			 validateSlotMappingForOneDayPermit($('#zone').val(), $('#electionBoundary').val());
+	 });
 });
+
+function validateSlotMappingForOneDayPermit(zoneId, electionWardId){
+	$.ajax({
+		url: "/bpa/ajax/getOneDayPermitSlotByBoundary",   
+		type: "GET",
+		data: {
+			zoneId : zoneId,
+			electionWardId : electionWardId
+		},
+		dataType: "json",
+		success: function (response) {
+			if(response==false){
+				$('#electionBoundary').val('');
+				bootbox.alert("Slot Mapping Master Data not defined for selected Election Ward. Please Define the Mapping.");
+				return false;
+			} else
+				return true;
+		}, 
+		error: function (response) {
+		}
+	});
+}
 
 
 function getOccupancyObject() {

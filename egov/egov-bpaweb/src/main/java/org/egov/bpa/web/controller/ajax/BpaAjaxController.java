@@ -57,11 +57,14 @@ import org.egov.bpa.master.entity.BpaSchemeLandUsage;
 import org.egov.bpa.master.entity.Occupancy;
 import org.egov.bpa.master.entity.PostalAddress;
 import org.egov.bpa.master.entity.RegistrarOfficeVillage;
+import org.egov.bpa.master.entity.SlotMapping;
 import org.egov.bpa.master.entity.StakeHolder;
+import org.egov.bpa.master.entity.enums.ApplicationType;
 import org.egov.bpa.master.service.BpaSchemeService;
 import org.egov.bpa.master.service.OccupancyService;
 import org.egov.bpa.master.service.PostalAddressService;
 import org.egov.bpa.master.service.RegistrarOfficeVillageService;
+import org.egov.bpa.master.service.SlotMappingService;
 import org.egov.bpa.master.service.StakeHolderService;
 import org.egov.bpa.transaction.entity.enums.StakeHolderType;
 import org.egov.bpa.transaction.service.ApplicationBpaService;
@@ -127,6 +130,8 @@ public class BpaAjaxController {
     private RegistrarOfficeVillageService registrarOfficeService;
     @Autowired
     private BoundaryService boundaryService;
+    @Autowired
+    private SlotMappingService slotMappingService;
 
     @RequestMapping(value = "/ajax/getAdmissionFees", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
@@ -326,5 +331,21 @@ public class BpaAjaxController {
 
     private void sortBoundaryByBndryNumberAsc(List<Boundary> boundaries) {
         boundaries.sort((Boundary b1, Boundary b2) -> b1.getBoundaryNum().compareTo(b2.getBoundaryNum()));
+    }
+    
+    @RequestMapping(value = "/ajax/getOneDayPermitSlotByBoundary", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public Boolean getOneDayPermitSlotByBoundary(@RequestParam Long zoneId, @RequestParam Long electionWardId) {
+    	SlotMapping slotMapping = new SlotMapping();
+    	Boundary zone = boundaryService.getBoundaryById(zoneId);
+    	Boundary electionWard = boundaryService.getBoundaryById(electionWardId);
+    	slotMapping.setZone(zone);
+    	slotMapping.setElectionWard(electionWard);
+    	slotMapping.setApplType(ApplicationType.ONE_DAY_PERMIT);
+        List<SlotMapping> slotMappings = slotMappingService.searchSlotMapping(slotMapping);
+        if(!slotMappings.isEmpty() && slotMappings.size()>0)
+        	return true;
+        else
+        	return false;
     }
 }
