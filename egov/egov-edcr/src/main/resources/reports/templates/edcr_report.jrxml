@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
-<!-- 2018-03-05T17:39:33 -->
+<!-- Created with Jaspersoft Studio version 6.5.1.final using JasperReports Library version 6.5.1  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="edcr_report" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="ccdee1e7-8a6e-4168-a80a-d10d6f4f913c">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<import value="org.egov.infra.reporting.util.*"/>
 	<import value="org.egov.infstr.utils.*"/>
 	<import value="net.sf.jasperreports.engine.data.*"/>
@@ -13,6 +13,7 @@
 	<parameter name="applicationNumber" class="java.lang.String"/>
 	<parameter name="errorString" class="java.lang.String"/>
 	<parameter name="applicationDate" class="java.lang.String"/>
+	<parameter name="qrCode" class="java.io.File"/>
 	<parameter name="errors" class="java.util.Map"/>
 	<field name="planInformation" class="org.egov.edcr.entity.PlanInformation"/>
 	<field name="plot" class="org.egov.edcr.entity.Plot"/>
@@ -66,6 +67,10 @@
 				<textElement textAlignment="Left"/>
 				<textFieldExpression><![CDATA[$P{applicationDate}]]></textFieldExpression>
 			</textField>
+			<image scaleImage="RetainShape" hAlign="Center" isUsingCache="true" onErrorType="Blank">
+				<reportElement  mode="Transparent" x="389" y="0" width="149" height="56" uuid="2b22371f-417f-42af-bb21-16b7dca8a245"/>
+				<imageExpression><![CDATA[$P{qrCode}]]></imageExpression>
+			</image>
 			<staticText>
 				<reportElement x="17" y="172" width="103" height="20" uuid="c98c0611-16b5-4a2c-ad07-937836d42f07"/>
 				<textElement>

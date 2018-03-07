@@ -1,19 +1,20 @@
 package org.egov.edcr.service;
 
-import java.io.File;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import ar.com.fdvs.dj.core.DynamicJasperHelper;
+import ar.com.fdvs.dj.core.layout.ClassicLayoutManager;
+import ar.com.fdvs.dj.domain.DynamicReport;
+import ar.com.fdvs.dj.domain.Style;
+import ar.com.fdvs.dj.domain.builders.FastReportBuilder;
+import ar.com.fdvs.dj.domain.constants.Font;
+import ar.com.fdvs.dj.domain.constants.HorizontalAlign;
+import ar.com.fdvs.dj.domain.constants.Page;
+import net.sf.jasperreports.engine.JRDataSource;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.egov.edcr.autonumber.DcrApplicationNumberGenerator;
 import org.egov.edcr.entity.DcrDocument;
 import org.egov.edcr.entity.EdcrApplication;
 import org.egov.edcr.entity.PlanDetail;
@@ -30,24 +31,13 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import ar.com.fdvs.dj.core.DJConstants;
-import ar.com.fdvs.dj.core.DynamicJasperHelper;
-import ar.com.fdvs.dj.core.layout.ClassicLayoutManager;
-import ar.com.fdvs.dj.domain.DJCalculation;
-import ar.com.fdvs.dj.domain.DJCrosstab;
-import ar.com.fdvs.dj.domain.DJDataSource;
-import ar.com.fdvs.dj.domain.DynamicReport;
-import ar.com.fdvs.dj.domain.Style;
-import ar.com.fdvs.dj.domain.builders.CrosstabBuilder;
-import ar.com.fdvs.dj.domain.builders.FastReportBuilder;
-import ar.com.fdvs.dj.domain.constants.Border;
-import ar.com.fdvs.dj.domain.constants.Font;
-import ar.com.fdvs.dj.domain.constants.HorizontalAlign;
-import ar.com.fdvs.dj.domain.constants.Page;
-import net.sf.jasperreports.engine.JRDataSource;
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperPrint;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import java.io.File;
+import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.*;
+
+import static org.egov.infra.security.utils.SecureCodeUtils.generatePDF417Code;
+
 /*General rule class contains validations which are required for all types of building plans*/
 @Service
 public class DcrService {
@@ -72,6 +62,9 @@ public class DcrService {
 
     @Autowired
     private FileStoreService fileStoreService;
+
+    @Autowired
+    private DcrApplicationNumberGenerator dcrApplicationNumberGenerator;
 
 
     @Autowired
@@ -280,11 +273,19 @@ public class DcrService {
 
             }
         }
+
         reportBuilder.append("Report Status : " + (reportStatus ? "Accepted" : "NotAccepted")).append("\\n").append("\\n");
         reportBuilder.append("Rules Verified : ").append("\\n");
+        if(reportStatus) {
+            valuesMap.put("qrCode", generatePDF417Code(buildQRCodeDetails(dcrApplication,reportStatus)));
+        }
         valuesMap.put("reportStatus", (reportStatus ? "Accepted" : "NotAccepted"));
         drb.setTemplateFile("/reports/templates/edcr_report.jrxml");
         drb.setMargins(5, 0, 33, 20);
+        if (planDetail.getEdcrPassed()) {
+            String dcrApplicationNumber = dcrApplicationNumberGenerator.generateEDcrApplicationNumber(dcrApplication);
+            dcrApplication.setApplicationNumber(dcrApplicationNumber);
+        }
 
         final DynamicReport dr = drb.build();
         planDetail2.setEdcrPassed(reportStatus);
@@ -292,9 +293,17 @@ public class DcrService {
 
     }
 
-    public byte[] generatePlanScrutinyReport(PlanDetail planDetail) {
+    public byte[] generatePlanScrutinyReport (PlanDetail planDetail){
         // TODO Auto-generated method stub
         return null;
     }
 
+    private String buildQRCodeDetails(final EdcrApplication dcrApplication, boolean reportStatus) {
+        StringBuilder qrCodeValue = new StringBuilder();
+        qrCodeValue = !org.apache.commons.lang.StringUtils.isEmpty(dcrApplication.getDcrNumber()) ? qrCodeValue.append("DCR Number : ").append(dcrApplication.getDcrNumber()).append("\n") : qrCodeValue.append("DCR Number : ").append("N/A").append("\n");
+        qrCodeValue = !org.apache.commons.lang.StringUtils.isEmpty(dcrApplication.getApplicationNumber()) ? qrCodeValue.append("Applicstion Number : ").append(dcrApplication.getApplicationNumber()).append("\n") : qrCodeValue.append("Application Number : ").append("N/A").append("\n");
+        qrCodeValue = dcrApplication.getApplicationDate() != null ? qrCodeValue.append("Application Date : ").append(dcrApplication.getApplicationDate()).append("\n") : qrCodeValue.append("Application Date : ").append("N/A").append("\n");
+        qrCodeValue = qrCodeValue.append("Report Status :").append(reportStatus ? "Accepted" : "NotAccepted").append("\n");
+        return qrCodeValue.toString();
+    }
 }
