@@ -2,6 +2,11 @@ package org.egov.edcr.utility.math;
 
 import java.awt.geom.Line2D;
 
+import org.kabeja.dxf.helpers.Point;
+
+ 
+
+
 public class Ray {
 
 	
@@ -42,13 +47,17 @@ public class Ray {
 	    }
 
 	    // use already existing java libraries for line intersection
-        private boolean isIntersects(final Point testPoint,
+	    private boolean isIntersects(final Point testPoint,
 	                                 final Point p1,
 	                                 final Point p2) {
+	       
+	       
+	        
 	        return Line2D.linesIntersect(
-	                rayStartPoint.getFX(), rayStartPoint.getFY(),
-	                testPoint.getFX(), testPoint.getFY(),
-	                p1.getFX(), p1.getFY(), p2.getFX(), p2.getFY()); 
+	                Double.valueOf(rayStartPoint.getX()).floatValue(),  Double.valueOf(rayStartPoint.getY()).floatValue(),
+	                Double.valueOf(testPoint.getX()).floatValue(), Double.valueOf(testPoint.getY()).floatValue(),
+	                Double.valueOf(p1.getX()).floatValue() , Double.valueOf(p1.getY()).floatValue(), 
+	                Double.valueOf(p2.getX()).floatValue(),Double.valueOf(p2.getY()).floatValue() ); 
 	    }
 
 	    // our cheap rectangle collision method.

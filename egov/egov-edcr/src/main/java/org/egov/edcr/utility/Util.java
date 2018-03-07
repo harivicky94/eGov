@@ -18,6 +18,7 @@ import org.egov.edcr.entity.Room;
 import org.egov.edcr.entity.RuleOutput;
 import org.egov.edcr.entity.SubRuleOutput;
 import org.egov.edcr.entity.utility.RuleReportOutput;
+import org.egov.edcr.utility.math.Polygon;
 import org.kabeja.dxf.DXFBlock;
 import org.kabeja.dxf.DXFConstants;
 import org.kabeja.dxf.DXFDimension;
@@ -557,57 +558,9 @@ public class Util {
             return false;
     }
 
-    private static double[][] pointsOnPolygon(int i, DXFLWPolyline plotBoundary, int count) {
-        double[][] shape = new double[count + 1][2];
-        Iterator plotBIterator1 = plotBoundary.getVertexIterator();
-        while (plotBIterator1.hasNext()) {
+    
 
-            DXFVertex dxfVertex = (DXFVertex) plotBIterator1.next();
-            Point point1 = dxfVertex.getPoint();
-
-            shape[i][0] = point1.getX();
-            shape[i][1] = point1.getY();
-
-            // LOG.info(name+"===Shape=="+shape[i][0]+"--"+shape[i][1]);
-            i++;
-
-        }
-        shape[i] = shape[0];
-        return shape;
-    }
-
-    private static List<Point> findPointsOnPolylines(List<Point> yardInSidePoints) {
-        Point old = null;
-        Point first = null;
-        Point point1 = new Point();
-        List<Point> myPoints = new ArrayList<>();
-
-        for (Point in : yardInSidePoints) {
-            if (old == null) {
-                old = in;
-                first = in;
-                continue;
-            }
-            if (first.equals(in))
-                continue;
-
-            // LOG.info("Points for line "+old.getX()+","+old.getY() +" And"+ in.getX()+","+in.getY());
-            double distance = MathUtils.distance(old, in);
-            // LOG.info("Distance"+distance);
-
-            for (double j = .01; j < distance; j = j + .01) {
-                point1 = new Point();
-                double t = j / distance;
-                point1.setX((1 - t) * old.getX() + t * in.getX());
-                point1.setY((1 - t) * old.getY() + t * in.getY());
-                myPoints.add(point1);
-                // LOG.info(point1.getX()+"---"+point1.getY());
-            }
-
-            old = in;
-        }
-        return myPoints;
-    }
+    
 
     public static void print(DXFLWPolyline yard, String name) {
         if (yard != null) {
@@ -700,5 +653,73 @@ public class Util {
         LOG.info(pl.getBuilding());
         
     }
+  
+    public static Polygon getPolygon(DXFLWPolyline plotBoundary) {
+         List<Point> pointsOnPolygon = pointsOnPolygon(plotBoundary);
+        return new Polygon(pointsOnPolygon);
+    }
+    
+    public static List<Point> pointsOnPolygon(DXFLWPolyline plotBoundary) {
+        if (plotBoundary == null) {
+            return null;
+        }
+        int i = 0;
+        int count = plotBoundary.getVertexCount();
+        List<Point> points = new ArrayList<>();
+        Iterator plotBIterator1 = plotBoundary.getVertexIterator();
+        while (plotBIterator1.hasNext()) {
+
+            DXFVertex dxfVertex = (DXFVertex) plotBIterator1.next();
+            Point point1 = dxfVertex.getPoint();
+
+            points.add(point1);
+
+            // LOG.info(name+"===Shape=="+shape[i][0]+"--"+shape[i][1]);
+            i++;
+
+        }
+
+        points.add(points.get(0));
+        return points;
+    }
+    
+    public static List<Point> findPointsOnPolylines(List<Point> yardInSidePoints) {
+        Point old = null;
+        Point first = null;
+        Point point1 = new Point();
+        List<Point> myPoints = new ArrayList<>();
+
+        for (Point in : yardInSidePoints) {
+
+            // LOG.info(" IN: "+ in.getX()+","+in.getY());
+            if (old == null) {
+                old = in;
+                first = in;
+                continue;
+            }
+            // commented to fix yard min in sample_17.dxf
+            /*
+             * if (first.equals(in)) continue;
+             */
+
+            // LOG.info("Points for line ------"+old.getX()+","+old.getY() +" And "+ in.getX()+","+in.getY());
+            double distance = MathUtils.distance(old, in);
+
+            // LOG.info("Distance"+distance);
+
+            for (double j = .01; j < distance; j = j + .01) {
+                point1 = new Point();
+                double t = j / distance;
+                point1.setX((1 - t) * old.getX() + t * in.getX());
+                point1.setY((1 - t) * old.getY() + t * in.getY());
+                myPoints.add(point1);
+                // LOG.info(point1.getX()+"---"+point1.getY());
+            }
+
+            old = in;
+        }
+        return myPoints;
+    }
+
 
 }

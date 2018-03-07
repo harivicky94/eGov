@@ -32,11 +32,11 @@ import org.egov.edcr.entity.measurement.WasteDisposal;
 import org.egov.edcr.entity.measurement.Yard;
 import org.egov.edcr.utility.DcrConstants;
 import org.egov.edcr.utility.Util;
-import org.egov.edcr.utility.math.RayCast;
+import org.egov.edcr.utility.math.Polygon;
+import org.egov.edcr.utility.math.Ray;
 import org.kabeja.dxf.DXFBlock;
 import org.kabeja.dxf.DXFConstants;
 import org.kabeja.dxf.DXFDimension;
-import org.egov.edcr.utility.math.Ray;
 import org.kabeja.dxf.DXFDocument;
 import org.kabeja.dxf.DXFEntity;
 import org.kabeja.dxf.DXFLWPolyline;
@@ -57,6 +57,7 @@ import org.springframework.stereotype.Service;
 public class DXFExtractService {
     private static Logger LOG = Logger.getLogger(DcrService.class);
 
+    private final Ray RAY_CASTING = new Ray(new Point(-1.123456789, -1.987654321, 0d));
     @Autowired
     @Qualifier("parentMessageSource")
     protected MessageSource edcrMessageSource;
@@ -89,21 +90,25 @@ public class DXFExtractService {
             pl.getPlot().getSideYard2().setMinimumDistance(MinDistance.getYardMinDistance(pl, DxfFileConstants.SIDE_YARD_2));
             pl.getPlot().getRearYard().setMinimumDistance(MinDistance.getYardMinDistance(pl, DxfFileConstants.REAR_YARD));
 
-           if (pl.getBasement()!=null) {
-            pl.getPlot().setBsmtFrontYard(getYard(pl, doc, DxfFileConstants.BSMNT_FRONT_YARD));
-            pl.getPlot().setBsmtRearYard(getYard(pl, doc, DxfFileConstants.BSMNT_REAR_YARD));
-            pl.getPlot().setBsmtSideYard1(getYard(pl, doc, DxfFileConstants.BSMNT_SIDE_YARD_1));
-            pl.getPlot().setBsmtSideYard2(getYard(pl, doc, DxfFileConstants.BSMNT_SIDE_YARD_2));
+            if (pl.getBasement() != null) {
+                pl.getPlot().setBsmtFrontYard(getYard(pl, doc, DxfFileConstants.BSMNT_FRONT_YARD));
+                pl.getPlot().setBsmtRearYard(getYard(pl, doc, DxfFileConstants.BSMNT_REAR_YARD));
+                pl.getPlot().setBsmtSideYard1(getYard(pl, doc, DxfFileConstants.BSMNT_SIDE_YARD_1));
+                pl.getPlot().setBsmtSideYard2(getYard(pl, doc, DxfFileConstants.BSMNT_SIDE_YARD_2));
 
-            pl.getPlot().getBsmtFrontYard().setMinimumDistance(MinDistance.getBasementYardMinDistance(pl, DxfFileConstants.BSMNT_FRONT_YARD));
-            pl.getPlot().getBsmtSideYard1().setMinimumDistance(MinDistance.getBasementYardMinDistance(pl, DxfFileConstants.BSMNT_SIDE_YARD_1));
-            pl.getPlot().getBsmtSideYard2().setMinimumDistance(MinDistance.getBasementYardMinDistance(pl, DxfFileConstants.BSMNT_SIDE_YARD_2));
-            pl.getPlot().getBsmtRearYard().setMinimumDistance(MinDistance.getBasementYardMinDistance(pl, DxfFileConstants.BSMNT_REAR_YARD));
+                pl.getPlot().getBsmtFrontYard()
+                        .setMinimumDistance(MinDistance.getBasementYardMinDistance(pl, DxfFileConstants.BSMNT_FRONT_YARD));
+                pl.getPlot().getBsmtSideYard1()
+                        .setMinimumDistance(MinDistance.getBasementYardMinDistance(pl, DxfFileConstants.BSMNT_SIDE_YARD_1));
+                pl.getPlot().getBsmtSideYard2()
+                        .setMinimumDistance(MinDistance.getBasementYardMinDistance(pl, DxfFileConstants.BSMNT_SIDE_YARD_2));
+                pl.getPlot().getBsmtRearYard()
+                        .setMinimumDistance(MinDistance.getBasementYardMinDistance(pl, DxfFileConstants.BSMNT_REAR_YARD));
             }
 
             pl = extractRoadDetails(doc, pl);
-          //  pl.setNotifiedRoads(new ArrayList<>());
-           // pl.setNonNotifiedRoads(new ArrayList<>());
+            // pl.setNotifiedRoads(new ArrayList<>());
+            // pl.setNonNotifiedRoads(new ArrayList<>());
             pl = extractUtilities(doc, pl);
             pl = extractOverheadElectricLines(doc, pl);
             pl = extractHeights(doc, pl);
@@ -144,111 +149,68 @@ public class DXFExtractService {
                 }
         }
 
-        /*    int i = 0;
-        for (DXFLWPolyline resUnit : residentialUnit) {
+        /*
+         * int i = 0; for (DXFLWPolyline resUnit : residentialUnit) { // Util.print(resUnit, "resUnit_"+i); FloorUnit floorUnit =
+         * new FloorUnit(); floorUnit.setPolyLine(resUnit); i++; double[][] pointsOfPlot = MinDistance.pointsOfPolygon(resUnit);
+         * BigDecimal deduction = BigDecimal.ZERO; int j=0; for (DXFLWPolyline residentialDeduct : residentialUnitDeduction) { //
+         * Util.print(residentialDeduct, "residentialDeduct_"+j++); boolean contains = false; Iterator buildingIterator =
+         * residentialDeduct.getVertexIterator(); while (buildingIterator.hasNext()) { DXFVertex dxfVertex = (DXFVertex)
+         * buildingIterator.next(); Point point = dxfVertex.getPoint(); if (RayCast.contains(pointsOfPlot, new double[] {
+         * point.getX(), point.getY() }) == true) { // LOG.info(" above res contains "+point.getX()+","+point.getY()); contains =
+         * true; // removeDeduction.add(residentialDeduct); Measurement measurement = new Measurement();
+         * measurement.setPolyLine(residentialDeduct); floorUnit.getDeductions().add(measurement); } } if (contains) {
+         * System.out.println("current deduct " + deduction + "    :add deduct for rest unit " + i + " area added" +
+         * Util.getPolyLineArea(residentialDeduct)); deduction = deduction.add(Util.getPolyLineArea(residentialDeduct)); } } //
+         * Each blocks are adjecent to each other. Raycast repeat the same points in each block. if (removeDeduction.size() > 0) {
+         * residentialUnitDeduction.removeAll(removeDeduction); removeDeduction = new ArrayList<DXFLWPolyline>(); }
+         * floorUnit.setTotalUnitDeduction(deduction); pl.getFloorUnits().add(floorUnit); }
+         */
 
-          //  Util.print(resUnit, "resUnit_"+i);
+        int i = 0;
+        for (DXFLWPolyline resUnit : residentialUnit) {
             FloorUnit floorUnit = new FloorUnit();
             floorUnit.setPolyLine(resUnit);
-
             i++;
-            double[][] pointsOfPlot = MinDistance.pointsOfPolygon(resUnit);
+            Polygon polygon = Util.getPolygon(resUnit);
+            Iterator vertexIterator = resUnit.getVertexIterator();
+            List<Point> points = new ArrayList<>();
+            while (vertexIterator.hasNext()) {
+                DXFVertex next = (DXFVertex) vertexIterator.next();
+                Point p = new Point(next.getX(), next.getY(), 0d);
+                points.add(p);
+            }
 
+            // System.out.println("resunit points----"+pointsOfPlot);
             BigDecimal deduction = BigDecimal.ZERO;
-            int j=0;
             for (DXFLWPolyline residentialDeduct : residentialUnitDeduction) {
-            //   Util.print(residentialDeduct, "residentialDeduct_"+j++);
                 boolean contains = false;
                 Iterator buildingIterator = residentialDeduct.getVertexIterator();
                 while (buildingIterator.hasNext()) {
                     DXFVertex dxfVertex = (DXFVertex) buildingIterator.next();
                     Point point = dxfVertex.getPoint();
-                    if (RayCast.contains(pointsOfPlot, new double[] { point.getX(), point.getY() }) == true) {
-                      //  LOG.info(" above res contains "+point.getX()+","+point.getY());
+                    // Point point1=new org.egov.edcr.utility.math.Point(point.getX(), point.getY());
+                    if (RAY_CASTING.contains(point, polygon)) {
                         contains = true;
-                       // removeDeduction.add(residentialDeduct);
                         Measurement measurement = new Measurement();
                         measurement.setPolyLine(residentialDeduct);
                         floorUnit.getDeductions().add(measurement);
                     }
-                }    
+
+                }
                 if (contains) {
-                    
-                     * System.out.println("current deduct " + deduction + "    :add deduct for rest unit " + i + " area added" +
-                     * Util.getPolyLineArea(residentialDeduct));
-                     
+                    System.out.println("current deduct " + deduction + "  :add deduct for rest unit " + i + " area added "
+                            + Util.getPolyLineArea(residentialDeduct));
                     deduction = deduction.add(Util.getPolyLineArea(residentialDeduct));
                 }
 
             }
-            // Each blocks are adjecent to each other. Raycast repeat the same points in each block.
-            if (removeDeduction.size() > 0) {
-                residentialUnitDeduction.removeAll(removeDeduction);
-                removeDeduction = new ArrayList<DXFLWPolyline>();
-            }
+            // unitWiseDeduction.put("resUnit"+i, deduction);
+
             floorUnit.setTotalUnitDeduction(deduction);
             pl.getFloorUnits().add(floorUnit);
-      }  */
 
-        
-        Ray RAY_CASTING = new Ray(
-                new org.egov.edcr.utility.math.Point(-1.123456789, -1.987654321));
-                    int i=0;
-                    for (DXFLWPolyline resUnit :residentialUnit )
-                    {
-                        FloorUnit floorUnit = new FloorUnit();
-                        floorUnit.setPolyLine(resUnit);
-                            i++;
-                            double[][] pointsOfPlot = MinDistance.pointsOfPolygon(resUnit);
-                            Iterator vertexIterator = resUnit.getVertexIterator();
-                            List<org.egov.edcr.utility.math.Point> points=new ArrayList<>();
-                            while(vertexIterator.hasNext())
-                  {
-                          DXFVertex next =(DXFVertex) vertexIterator.next();
-                          org.egov.edcr.utility.math.Point p=new org.egov.edcr.utility.math.Point(next.getX(), next.getY());
-                          points.add(p);
-                  }
-                            
-                            org.egov.edcr.utility.math.Polygon polygon=new org.egov.edcr.utility.math.Polygon(points);
-                            
-                           // System.out.println("resunit points----"+pointsOfPlot);
-                            BigDecimal deduction=BigDecimal.ZERO;
-                            for (DXFLWPolyline residentialDeduct: residentialUnitDeduction) {
-                                     boolean contains=false;
-                                 Iterator buildingIterator =residentialDeduct.getVertexIterator();
-                                 while (buildingIterator.hasNext()) {
-                             DXFVertex dxfVertex = (DXFVertex) buildingIterator.next();
-                             Point point = dxfVertex.getPoint();
-                             org.egov.edcr.utility.math.Point point1=new org.egov.edcr.utility.math.Point(point.getX(), point.getY());
-                            if( RAY_CASTING.contains(point1, polygon))
-                            {
-                                    contains=true;
-                                    Measurement measurement = new Measurement();
-                                    measurement.setPolyLine(residentialDeduct);
-                                    floorUnit.getDeductions().add(measurement);
-                            }
-                             
-                          //   System.out.println(point.getX()+","+point.getY());
-                                  /*   if (RayCast.contains(pointsOfPlot, new double[]{point.getX(), point.getY()}) == true) {
-                                         contains=true;
-                                     }*/
-                                 }
-                                 if(contains)
-                                 {
-                                         System.out.println("current deduct "+deduction+"  :add deduct for rest unit "+i+" area added "+Util.getPolyLineArea(residentialDeduct));
-                                         deduction=deduction.add(Util.getPolyLineArea(residentialDeduct));
-                                 }
-                                 
-                         }
-                           // unitWiseDeduction.put("resUnit"+i, deduction);
-                            
-                            floorUnit.setTotalUnitDeduction(deduction);
-                            pl.getFloorUnits().add(floorUnit); 
-                           
-                            
-                    }
-                    
-                    
+        }
+
         layerPresent = doc.containsDXFLayer(DxfFileConstants.PARKING_SLOT);
 
         if (layerPresent) {
@@ -351,7 +313,7 @@ public class DXFExtractService {
             building.setPresentInDxf(true);
         } else
             pl.addError(DxfFileConstants.BUILDING_FOOT_PRINT, edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
-                    new String[]{DxfFileConstants.BUILDING_FOOT_PRINT}, null));
+                    new String[] { DxfFileConstants.BUILDING_FOOT_PRINT }, null));
 
         polyLinesByLayer = Util.getPolyLinesByLayer(doc, DxfFileConstants.SHADE_OVERHANG);
 
@@ -369,41 +331,41 @@ public class DXFExtractService {
 
     private void extractOpenStairs(DXFDocument doc, Building building) {
         List<DXFDimension> lines = Util.getDimensionsByLayer(doc, DxfFileConstants.OPEN_STAIR);
-        if(lines!=null)
-        for (Object dxfEntity : lines) {
-            BigDecimal value = BigDecimal.ZERO;
-            DXFDimension line = (DXFDimension) dxfEntity;
-            String dimensionBlock = line.getDimensionBlock();
-            DXFBlock dxfBlock = doc.getDXFBlock(dimensionBlock);
-            Iterator dxfEntitiesIterator = dxfBlock.getDXFEntitiesIterator();
-            while (dxfEntitiesIterator.hasNext()) {
-                DXFEntity e = (DXFEntity) dxfEntitiesIterator.next();
-                if (e.getType().equals(DXFConstants.ENTITY_TYPE_MTEXT)) {
-                    DXFMText text = (DXFMText) e;
-                    String text2 = text.getText();
-                    if (text2.contains(";")) {
-                        text2 = text2.split(";")[1];
-                    } else
+        if (lines != null)
+            for (Object dxfEntity : lines) {
+                BigDecimal value = BigDecimal.ZERO;
+                DXFDimension line = (DXFDimension) dxfEntity;
+                String dimensionBlock = line.getDimensionBlock();
+                DXFBlock dxfBlock = doc.getDXFBlock(dimensionBlock);
+                Iterator dxfEntitiesIterator = dxfBlock.getDXFEntitiesIterator();
+                while (dxfEntitiesIterator.hasNext()) {
+                    DXFEntity e = (DXFEntity) dxfEntitiesIterator.next();
+                    if (e.getType().equals(DXFConstants.ENTITY_TYPE_MTEXT)) {
+                        DXFMText text = (DXFMText) e;
+                        String text2 = text.getText();
+                        if (text2.contains(";")) {
+                            text2 = text2.split(";")[1];
+                        } else
 
-                        text2 = text2.replaceAll("[^\\d.]", "");
-                    ;
-                    if (!text2.isEmpty()) {
-                        value = BigDecimal.valueOf(Double.parseDouble(text2));
-                        Measurement openPlot = new Measurement();
-                        openPlot
-                                .setMinimumDistance(value);
-                        building.getOpenStairs().add(openPlot);
+                            text2 = text2.replaceAll("[^\\d.]", "");
+                        ;
+                        if (!text2.isEmpty()) {
+                            value = BigDecimal.valueOf(Double.parseDouble(text2));
+                            Measurement openPlot = new Measurement();
+                            openPlot
+                                    .setMinimumDistance(value);
+                            building.getOpenStairs().add(openPlot);
+                        }
+
                     }
-
                 }
-            }
 
-        }
+            }
     }
 
     private void extractBasementDetails(PlanDetail pl, DXFDocument doc) {
-        List<DXFLWPolyline> polyLinesByLayer= new ArrayList<>();
-        
+        List<DXFLWPolyline> polyLinesByLayer = new ArrayList<>();
+
         if (doc.containsDXFLayer(DxfFileConstants.BSMNT_FOOT_PRINT)) {
             polyLinesByLayer = Util.getPolyLinesByLayer(doc, DxfFileConstants.BSMNT_FOOT_PRINT);
             if (polyLinesByLayer.size() > 0) {
@@ -412,22 +374,23 @@ public class DXFExtractService {
                 basement.setPresentInDxf(true);
                 pl.setBasement(basement);
             }
-          
+
         }
     }
 
     private void extractPlotDetails(PlanDetail pl, DXFDocument doc) {
         List<DXFLWPolyline> polyLinesByLayer;
-      //  Plot plot = new Plot();
+        // Plot plot = new Plot();
         polyLinesByLayer = Util.getPolyLinesByLayer(doc, DxfFileConstants.PLOT_BOUNDARY);
         if (polyLinesByLayer.size() > 0) {
             pl.getPlot().setPolyLine(polyLinesByLayer.get(0));
-           // plot.setArea(Util.getPolyLineArea(plot.getPolyLine())); //The actual area of plot boundary not used. Plot area decide by plan information table.
-          //  plot.setPresentInDxf(true);
+            // plot.setArea(Util.getPolyLineArea(plot.getPolyLine())); //The actual area of plot boundary not used. Plot area
+            // decide by plan information table.
+            // plot.setPresentInDxf(true);
         } else
             pl.addError(DxfFileConstants.PLOT_BOUNDARY, edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
-                    new String[]{DxfFileConstants.PLOT_BOUNDARY}, null));
-       // pl.setPlot(plot);
+                    new String[] { DxfFileConstants.PLOT_BOUNDARY }, null));
+        // pl.setPlot(plot);
     }
 
     private PlanDetail extractHeights(DXFDocument doc, PlanDetail pl) {
@@ -473,7 +436,7 @@ public class DXFExtractService {
                 for (DXFLWPolyline pline : cvDeductPlines)
                     cvDeduct.add(Util.getPolyLineArea(pline));
             }
-            BigDecimal coverage=BigDecimal.valueOf(100);
+            BigDecimal coverage = BigDecimal.valueOf(100);
 
             if (buildingFootPrintArea != null && pl.getPlanInformation().getPlotArea() != null
                     && pl.getPlanInformation().getPlotArea().intValue() > 0) {
@@ -507,7 +470,7 @@ public class DXFExtractService {
             yard.setPresentInDxf(true);
 
         } else
-            pl.addError("", edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED, new String[]{yardName}, null));
+            pl.addError("", edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED, new String[] { yardName }, null));
 
         return yard;
 
@@ -581,7 +544,6 @@ public class DXFExtractService {
                 pi.setNocToAbutRear(false);
         }
 
-
         if (planInfoProperties.get(DxfFileConstants.ARCHITECT_NAME) != null)
             pi.setArchitectInformation(planInfoProperties.get(DxfFileConstants.ARCHITECT_NAME));
 
@@ -652,15 +614,14 @@ public class DXFExtractService {
         }
         List<DXFLWPolyline> laneRoads = Util.getPolyLinesByLayer(doc, DxfFileConstants.LANE_1);
         for (DXFLWPolyline roadPline : laneRoads) {
-            Lane  road = new Lane();
+            Lane road = new Lane();
             road.setPresentInDxf(true);
             road.setPolyLine(roadPline);
             pl.getLaneRoads().add(road);
 
         }
-        
-        
-        extractShortestDistanceToPlotFromRoadCenter(doc,pl);
+
+        extractShortestDistanceToPlotFromRoadCenter(doc, pl);
         extractShortestDistanceToPlot(doc, pl);
         extractDistanceFromBuildingToRoadEnd(doc, pl);
 
@@ -669,137 +630,130 @@ public class DXFExtractService {
     }
 
     private void extractShortestDistanceToPlotFromRoadCenter(DXFDocument doc, PlanDetail pl) {
-        List<DXFDimension> shortestDistanceCentralLineRoadDimension = Util.getDimensionsByLayer(doc, DxfFileConstants.DIST_CL_ROAD);
-        List<RoadOutput> shortDistainceFromCenter= new ArrayList<RoadOutput>();
-      
-        shortDistainceFromCenter=roadDistanceWithColourCode(doc, shortestDistanceCentralLineRoadDimension, shortDistainceFromCenter);
-        
-        List<BigDecimal> notifiedRoadDistance= new ArrayList<BigDecimal>();
-        List<BigDecimal> nonNotifiedRoadDistance= new ArrayList<BigDecimal>();
-        List<BigDecimal> culdesacRoadDistance= new ArrayList<BigDecimal>();
-        List<BigDecimal> laneDistance= new ArrayList<BigDecimal>();
-        
-            for( RoadOutput roadOutput:shortDistainceFromCenter)
-            {
-                if (Integer.valueOf(roadOutput.colourCode) == DxfFileConstants.COLOUR_CODE_NOTIFIEDROAD) {
-                    notifiedRoadDistance.add(roadOutput.roadDistainceToPlot);
-                }
-                if (Integer.valueOf(roadOutput.colourCode) == DxfFileConstants.COLOUR_CODE_NONNOTIFIEDROAD) {
-                    nonNotifiedRoadDistance.add(roadOutput.roadDistainceToPlot);
-                }
-                if (Integer.valueOf(roadOutput.colourCode) ==  DxfFileConstants.COLOUR_CODE_CULDESAC) {
-                    culdesacRoadDistance.add(roadOutput.roadDistainceToPlot);
-                }
-                if (Integer.valueOf(roadOutput.colourCode) ==  DxfFileConstants.COLOUR_CODE_LANE) {
-                    laneDistance.add(roadOutput.roadDistainceToPlot);
-                }
+        List<DXFDimension> shortestDistanceCentralLineRoadDimension = Util.getDimensionsByLayer(doc,
+                DxfFileConstants.DIST_CL_ROAD);
+        List<RoadOutput> shortDistainceFromCenter = new ArrayList<RoadOutput>();
+
+        shortDistainceFromCenter = roadDistanceWithColourCode(doc, shortestDistanceCentralLineRoadDimension,
+                shortDistainceFromCenter);
+
+        List<BigDecimal> notifiedRoadDistance = new ArrayList<BigDecimal>();
+        List<BigDecimal> nonNotifiedRoadDistance = new ArrayList<BigDecimal>();
+        List<BigDecimal> culdesacRoadDistance = new ArrayList<BigDecimal>();
+        List<BigDecimal> laneDistance = new ArrayList<BigDecimal>();
+
+        for (RoadOutput roadOutput : shortDistainceFromCenter) {
+            if (Integer.valueOf(roadOutput.colourCode) == DxfFileConstants.COLOUR_CODE_NOTIFIEDROAD) {
+                notifiedRoadDistance.add(roadOutput.roadDistainceToPlot);
             }
-            
-            for(int i=0;i<pl.getNotifiedRoads().size();i++)
-            {
-                if(i<notifiedRoadDistance.size())
-                    pl.getNotifiedRoads().get(i).setDistanceFromCenterToPlot(notifiedRoadDistance.get(i));
+            if (Integer.valueOf(roadOutput.colourCode) == DxfFileConstants.COLOUR_CODE_NONNOTIFIEDROAD) {
+                nonNotifiedRoadDistance.add(roadOutput.roadDistainceToPlot);
             }
-            for(int i=0;i<pl.getNonNotifiedRoads().size();i++)
-            {
-                if(i<nonNotifiedRoadDistance.size())
-                    pl.getNonNotifiedRoads().get(i).setDistanceFromCenterToPlot(nonNotifiedRoadDistance.get(i));
+            if (Integer.valueOf(roadOutput.colourCode) == DxfFileConstants.COLOUR_CODE_CULDESAC) {
+                culdesacRoadDistance.add(roadOutput.roadDistainceToPlot);
             }
-            for(int i=0;i<pl.getCuldeSacRoads().size();i++)
-            {
-                if(i<culdesacRoadDistance.size())
-                    pl.getCuldeSacRoads().get(i).setDistanceFromCenterToPlot(culdesacRoadDistance.get(i));
+            if (Integer.valueOf(roadOutput.colourCode) == DxfFileConstants.COLOUR_CODE_LANE) {
+                laneDistance.add(roadOutput.roadDistainceToPlot);
             }
-            for(int i=0;i<pl.getLaneRoads().size();i++)
-            {
-                if(i<laneDistance.size())
-                    pl.getLaneRoads().get(i).setDistanceFromCenterToPlot(laneDistance.get(i));
-            }
+        }
+
+        for (int i = 0; i < pl.getNotifiedRoads().size(); i++) {
+            if (i < notifiedRoadDistance.size())
+                pl.getNotifiedRoads().get(i).setDistanceFromCenterToPlot(notifiedRoadDistance.get(i));
+        }
+        for (int i = 0; i < pl.getNonNotifiedRoads().size(); i++) {
+            if (i < nonNotifiedRoadDistance.size())
+                pl.getNonNotifiedRoads().get(i).setDistanceFromCenterToPlot(nonNotifiedRoadDistance.get(i));
+        }
+        for (int i = 0; i < pl.getCuldeSacRoads().size(); i++) {
+            if (i < culdesacRoadDistance.size())
+                pl.getCuldeSacRoads().get(i).setDistanceFromCenterToPlot(culdesacRoadDistance.get(i));
+        }
+        for (int i = 0; i < pl.getLaneRoads().size(); i++) {
+            if (i < laneDistance.size())
+                pl.getLaneRoads().get(i).setDistanceFromCenterToPlot(laneDistance.get(i));
+        }
     }
 
     private void extractShortestDistanceToPlot(DXFDocument doc, PlanDetail pl) {
         List<DXFDimension> shortestDistanceDimension = Util.getDimensionsByLayer(doc, DxfFileConstants.SHORTEST_DISTANCE_TO_ROAD);
-        List<RoadOutput> shortDistaineToPlot= new ArrayList<RoadOutput>();
-      
-        shortDistaineToPlot=roadDistanceWithColourCode(doc, shortestDistanceDimension, shortDistaineToPlot);
-        
-        List<BigDecimal> notifiedRoadDistance= new ArrayList<BigDecimal>();
-        List<BigDecimal> nonNotifiedRoadDistance= new ArrayList<BigDecimal>();
-        List<BigDecimal> culdesacRoadDistance= new ArrayList<BigDecimal>();
-        List<BigDecimal> laneDistance= new ArrayList<BigDecimal>();
-        
-            for( RoadOutput roadOutput:shortDistaineToPlot)
-            {
-                if (Integer.valueOf(roadOutput.colourCode) == DxfFileConstants.COLOUR_CODE_NOTIFIEDROAD) {
-                    notifiedRoadDistance.add(roadOutput.roadDistainceToPlot);
-                }
-                if (Integer.valueOf(roadOutput.colourCode) == DxfFileConstants.COLOUR_CODE_NONNOTIFIEDROAD) {
-                    nonNotifiedRoadDistance.add(roadOutput.roadDistainceToPlot);
-                }
-                if (Integer.valueOf(roadOutput.colourCode) == DxfFileConstants.COLOUR_CODE_CULDESAC) {
-                    culdesacRoadDistance.add(roadOutput.roadDistainceToPlot);
-                }
-                if (Integer.valueOf(roadOutput.colourCode) == DxfFileConstants.COLOUR_CODE_LANE) {
-                    laneDistance.add(roadOutput.roadDistainceToPlot);
-                }
+        List<RoadOutput> shortDistaineToPlot = new ArrayList<RoadOutput>();
+
+        shortDistaineToPlot = roadDistanceWithColourCode(doc, shortestDistanceDimension, shortDistaineToPlot);
+
+        List<BigDecimal> notifiedRoadDistance = new ArrayList<BigDecimal>();
+        List<BigDecimal> nonNotifiedRoadDistance = new ArrayList<BigDecimal>();
+        List<BigDecimal> culdesacRoadDistance = new ArrayList<BigDecimal>();
+        List<BigDecimal> laneDistance = new ArrayList<BigDecimal>();
+
+        for (RoadOutput roadOutput : shortDistaineToPlot) {
+            if (Integer.valueOf(roadOutput.colourCode) == DxfFileConstants.COLOUR_CODE_NOTIFIEDROAD) {
+                notifiedRoadDistance.add(roadOutput.roadDistainceToPlot);
             }
-            
-            for(int i=0;i<pl.getNotifiedRoads().size();i++)
-            {
-                if(i<notifiedRoadDistance.size())
-                    pl.getNotifiedRoads().get(i).setShortestDistanceToRoad(notifiedRoadDistance.get(i));
+            if (Integer.valueOf(roadOutput.colourCode) == DxfFileConstants.COLOUR_CODE_NONNOTIFIEDROAD) {
+                nonNotifiedRoadDistance.add(roadOutput.roadDistainceToPlot);
             }
-            for(int i=0;i<pl.getNonNotifiedRoads().size();i++)
-            {
-                if(i<nonNotifiedRoadDistance.size())
-                    pl.getNonNotifiedRoads().get(i).setShortestDistanceToRoad(nonNotifiedRoadDistance.get(i));
+            if (Integer.valueOf(roadOutput.colourCode) == DxfFileConstants.COLOUR_CODE_CULDESAC) {
+                culdesacRoadDistance.add(roadOutput.roadDistainceToPlot);
             }
-            for(int i=0;i<pl.getCuldeSacRoads().size();i++)
-            {
-                if(i<culdesacRoadDistance.size())
-                    pl.getCuldeSacRoads().get(i).setShortestDistanceToRoad(culdesacRoadDistance.get(i));
+            if (Integer.valueOf(roadOutput.colourCode) == DxfFileConstants.COLOUR_CODE_LANE) {
+                laneDistance.add(roadOutput.roadDistainceToPlot);
             }
-            for(int i=0;i<pl.getLaneRoads().size();i++)
-            {
-                if(i<laneDistance.size())
-                    pl.getLaneRoads().get(i).setShortestDistanceToRoad(laneDistance.get(i));
-            }
+        }
+
+        for (int i = 0; i < pl.getNotifiedRoads().size(); i++) {
+            if (i < notifiedRoadDistance.size())
+                pl.getNotifiedRoads().get(i).setShortestDistanceToRoad(notifiedRoadDistance.get(i));
+        }
+        for (int i = 0; i < pl.getNonNotifiedRoads().size(); i++) {
+            if (i < nonNotifiedRoadDistance.size())
+                pl.getNonNotifiedRoads().get(i).setShortestDistanceToRoad(nonNotifiedRoadDistance.get(i));
+        }
+        for (int i = 0; i < pl.getCuldeSacRoads().size(); i++) {
+            if (i < culdesacRoadDistance.size())
+                pl.getCuldeSacRoads().get(i).setShortestDistanceToRoad(culdesacRoadDistance.get(i));
+        }
+        for (int i = 0; i < pl.getLaneRoads().size(); i++) {
+            if (i < laneDistance.size())
+                pl.getLaneRoads().get(i).setShortestDistanceToRoad(laneDistance.get(i));
+        }
     }
 
-    private List<RoadOutput>  roadDistanceWithColourCode(DXFDocument doc, List<DXFDimension> shortestDistanceCentralLineRoadDimension,
+    private List<RoadOutput> roadDistanceWithColourCode(DXFDocument doc,
+            List<DXFDimension> shortestDistanceCentralLineRoadDimension,
             List<RoadOutput> clcolourCodeWithDimension) {
-        if (null != shortestDistanceCentralLineRoadDimension){
-            
-          for (Object dxfEntity : shortestDistanceCentralLineRoadDimension) {
-              BigDecimal value = BigDecimal.ZERO;
-              
-              DXFDimension line = (DXFDimension) dxfEntity;
-              String dimensionBlock = line.getDimensionBlock();
-              DXFBlock dxfBlock = doc.getDXFBlock(dimensionBlock);
-              Iterator dxfEntitiesIterator = dxfBlock.getDXFEntitiesIterator();
-              while (dxfEntitiesIterator.hasNext()) {
-                  DXFEntity e = (DXFEntity) dxfEntitiesIterator.next();
-                  if (e.getType().equals(DXFConstants.ENTITY_TYPE_MTEXT)) {
-                      DXFMText text = (DXFMText) e;
-                      String text2 = text.getText();
-                                      if (text2.contains(";")) {
-                                              text2 = text2.split(";")[1];
-                                      } else
+        if (null != shortestDistanceCentralLineRoadDimension) {
 
-                                              text2 = text2.replaceAll("[^\\d.]", "");
-                                      ;
-                      if (!text2.isEmpty()){
-                          value = BigDecimal.valueOf(Double.parseDouble(text2));
-                          RoadOutput roadOutput= new RoadOutput();
-                          roadOutput.roadDistainceToPlot=value;
-                          roadOutput.colourCode=String.valueOf(line.getColor());
-                          clcolourCodeWithDimension.add(roadOutput);
-                      }
+            for (Object dxfEntity : shortestDistanceCentralLineRoadDimension) {
+                BigDecimal value = BigDecimal.ZERO;
 
-                  }
-              }
+                DXFDimension line = (DXFDimension) dxfEntity;
+                String dimensionBlock = line.getDimensionBlock();
+                DXFBlock dxfBlock = doc.getDXFBlock(dimensionBlock);
+                Iterator dxfEntitiesIterator = dxfBlock.getDXFEntitiesIterator();
+                while (dxfEntitiesIterator.hasNext()) {
+                    DXFEntity e = (DXFEntity) dxfEntitiesIterator.next();
+                    if (e.getType().equals(DXFConstants.ENTITY_TYPE_MTEXT)) {
+                        DXFMText text = (DXFMText) e;
+                        String text2 = text.getText();
+                        if (text2.contains(";")) {
+                            text2 = text2.split(";")[1];
+                        } else
 
-          }
+                            text2 = text2.replaceAll("[^\\d.]", "");
+                        ;
+                        if (!text2.isEmpty()) {
+                            value = BigDecimal.valueOf(Double.parseDouble(text2));
+                            RoadOutput roadOutput = new RoadOutput();
+                            roadOutput.roadDistainceToPlot = value;
+                            roadOutput.colourCode = String.valueOf(line.getColor());
+                            clcolourCodeWithDimension.add(roadOutput);
+                        }
+
+                    }
+                }
+
+            }
         }
         return clcolourCodeWithDimension;
     }
@@ -826,12 +780,12 @@ public class DXFExtractService {
                         ;
                         if (!text2.isEmpty()) {
                             dimension = BigDecimal.valueOf(Double.parseDouble(text2));
-                            if (minDimension.compareTo(BigDecimal.ZERO) >0 &&
+                            if (minDimension.compareTo(BigDecimal.ZERO) > 0 &&
                                     dimension.compareTo(minDimension) <= 0) // TODO: CHECK WHETHER SHORTEST OR LONGEST ROAD TO BE
-                                                                            // SELECTED .
-                                    minDimension = dimension;
-                                else
-                                    minDimension = dimension;
+                                // SELECTED .
+                                minDimension = dimension;
+                            else
+                                minDimension = dimension;
                         }
 
                     }
@@ -861,33 +815,30 @@ public class DXFExtractService {
     private PlanDetail extractOverheadElectricLines(DXFDocument doc, PlanDetail pl) {
         ElectricLine line = new ElectricLine();
 
-        /*  DXFLine horiz_clear_OHE = Util.getSingleLineByLayer(doc, DxfFileConstants.HORIZ_CLEAR_OHE2);
-
-      if (horiz_clear_OHE != null) {
-            line.setHorizontalDistance(BigDecimal.valueOf(horiz_clear_OHE.getLength()));
+        /*
+         * DXFLine horiz_clear_OHE = Util.getSingleLineByLayer(doc, DxfFileConstants.HORIZ_CLEAR_OHE2); if (horiz_clear_OHE !=
+         * null) { line.setHorizontalDistance(BigDecimal.valueOf(horiz_clear_OHE.getLength())); line.setPresentInDxf(true); } else
+         * {
+         */
+        BigDecimal dimension = Util.getSingleDimensionValueByLayer(doc, DxfFileConstants.HORIZ_CLEAR_OHE2, pl);
+        if (dimension != null) {
+            line.setHorizontalDistance(dimension);
             line.setPresentInDxf(true);
-        } else {*/
-            BigDecimal dimension = Util.getSingleDimensionValueByLayer(doc, DxfFileConstants.HORIZ_CLEAR_OHE2, pl);
-            if (dimension != null) {
-                line.setHorizontalDistance(dimension);
-                line.setPresentInDxf(true);
-            }
-       // }
-       /* DXFLine vert_clear_OHE = Util.getSingleLineByLayer(doc, DxfFileConstants.VERT_CLEAR_OHE);
+        }
+        // }
+        /*
+         * DXFLine vert_clear_OHE = Util.getSingleLineByLayer(doc, DxfFileConstants.VERT_CLEAR_OHE); if (vert_clear_OHE != null) {
+         * line.setVerticalDistance(BigDecimal.valueOf(vert_clear_OHE.getLength())); line.setPresentInDxf(true); } else {
+         */
+        // Util.getMtextByLayerName(doc, DxfFileConstants.VERT_CLEAR_OHE);
 
-        if (vert_clear_OHE != null) {
-            line.setVerticalDistance(BigDecimal.valueOf(vert_clear_OHE.getLength()));
+        BigDecimal dimensionVerticle = Util.getSingleDimensionValueByLayer(doc, DxfFileConstants.VERT_CLEAR_OHE, pl);
+        if (dimensionVerticle != null) {
+            line.setVerticalDistance(dimensionVerticle);
             line.setPresentInDxf(true);
-        } else {*/
-          //  Util.getMtextByLayerName(doc, DxfFileConstants.VERT_CLEAR_OHE);
+        }
 
-            BigDecimal dimensionVerticle = Util.getSingleDimensionValueByLayer(doc, DxfFileConstants.VERT_CLEAR_OHE, pl);
-            if (dimensionVerticle != null) {
-                line.setVerticalDistance(dimensionVerticle);
-                line.setPresentInDxf(true);
-            }
-
-        //}
+        // }
 
         String voltage = Util.getMtextByLayerName(doc, "VOLTAGE");
         if (voltage != null)

@@ -7,6 +7,8 @@ import org.egov.edcr.entity.Result;
 import org.egov.edcr.entity.RuleOutput;
 import org.egov.edcr.entity.SubRuleOutput;
 import org.egov.edcr.entity.utility.RuleReportOutput;
+import org.egov.edcr.utility.math.Ray;
+import org.kabeja.dxf.helpers.Point;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
@@ -17,6 +19,8 @@ import ar.com.fdvs.dj.domain.builders.FastReportBuilder;
 @Service
 public class GeneralRule {
 
+    
+    protected final Ray RAY_CASTING = new Ray(new Point(-1.123456789, -1.987654321, 0d));
     @Autowired
     @Qualifier("parentMessageSource")
     protected MessageSource edcrMessageSource;

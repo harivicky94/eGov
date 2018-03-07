@@ -21,6 +21,7 @@ import org.egov.edcr.service.MinDistance;
 import org.egov.edcr.service.ReportService;
 import org.egov.edcr.utility.DcrConstants;
 import org.egov.edcr.utility.Util;
+import org.egov.edcr.utility.math.Polygon;
 import org.egov.edcr.utility.math.RayCast;
 import org.kabeja.dxf.DXFLWPolyline;
 import org.kabeja.dxf.DXFVertex;
@@ -783,14 +784,14 @@ public class Rule24 extends GeneralRule {
             return;
         }
 
-        double[][] pointsOfPlot = MinDistance.pointsOfPolygon(pl.getPlot().getPolyLine());
+        Polygon plotPolygon = Util.getPolygon(pl.getPlot().getPolyLine());
         Iterator buildingIterator = pl.getBuilding().getPolyLine().getVertexIterator();
-        Boolean buildingOutSideBoundary = true;
+        Boolean buildingOutSideBoundary = false;
         while (buildingIterator.hasNext()) {
             DXFVertex dxfVertex = (DXFVertex) buildingIterator.next();
             Point point = dxfVertex.getPoint();
-            if (RayCast.contains(pointsOfPlot, new double[] { point.getX(), point.getY() }) == true)
-                buildingOutSideBoundary = false;
+            if (!RAY_CASTING.contains(point, plotPolygon))
+                buildingOutSideBoundary = true;
 
         }
         if (buildingOutSideBoundary)
@@ -801,13 +802,14 @@ public class Rule24 extends GeneralRule {
                             DcrConstants.BUILDING_FOOT_PRINT + " is outside Plot Boundary",
                             Result.Not_Accepted, null));
 
-        buildingIterator = pl.getBuilding().getShade().getPolyLine().getVertexIterator();
-        Boolean shadeOutSideBoundary = true;
-        while (buildingIterator.hasNext()) {
-            DXFVertex dxfVertex = (DXFVertex) buildingIterator.next();
+        Iterator   shadeIterator = pl.getBuilding().getShade().getPolyLine().getVertexIterator();
+        Boolean shadeOutSideBoundary = false;
+        
+        while (shadeIterator.hasNext()) {
+            DXFVertex dxfVertex = (DXFVertex) shadeIterator.next();
             Point point = dxfVertex.getPoint();
-            if (RayCast.contains(pointsOfPlot, new double[] { point.getX(), point.getY() }) == true)
-                shadeOutSideBoundary = false;
+            if (!RAY_CASTING.contains(point, plotPolygon))
+                shadeOutSideBoundary = true;
 
         }
         if (shadeOutSideBoundary)
@@ -852,7 +854,7 @@ public class Rule24 extends GeneralRule {
                // LOG.info(next.getPoint().getX()+","+next.getPoint().getY());
             }
 
-            List<Point> extPoints = MinDistance.findPointsOnPolylines(vertices);
+            List<Point> extPoints = Util.findPointsOnPolylines(vertices);
             
             if (floor.getHabitableRooms().size() >= 1) {
 
