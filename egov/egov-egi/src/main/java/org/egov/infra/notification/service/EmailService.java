@@ -67,6 +67,7 @@ public class EmailService {
 
     public void sendEmail(String toEmail, String subject, String mailBody) {
         SimpleMailMessage mailMessage = new SimpleMailMessage();
+        mailMessage.setFrom(mailSender.getUsername());
         mailMessage.setTo(toEmail);
         mailMessage.setSubject(subject);
         mailMessage.setText(mailBody);
@@ -78,6 +79,7 @@ public class EmailService {
         MimeMessage message = mailSender.createMimeMessage();
         try {
             MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(message, true);
+            mimeMessageHelper.setFrom(mailSender.getUsername());
             mimeMessageHelper.setTo(toEmail);
             mimeMessageHelper.setSubject(subject);
             mimeMessageHelper.setText(mailBody);
