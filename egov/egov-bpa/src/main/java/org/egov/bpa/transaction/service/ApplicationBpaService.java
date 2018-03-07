@@ -239,11 +239,11 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
           bpaUtils.redirectToBpaWorkFlow(approvalPosition, application, WF_NEW_STATE,
                     application.getApprovalComent(), null, null);
         }
-        scheduleAppointmentForOnePermit(application);
+        scheduleAppointmentForOneDayPermit(application);
         return applicationBpaRepository.save(application);
     }
 
-    public void scheduleAppointmentForOnePermit(BpaApplication application) {
+    public void scheduleAppointmentForOneDayPermit(BpaApplication application) {
         if(application.getIsOneDayPermitApplication() && application.getStatus().getCode().equalsIgnoreCase(BpaConstants.APPLICATION_STATUS_SCHEDULED)) {
         	SlotDetail slotDetail = slotOpeningForAppointmentService.openSlotsForDocumentScrutiny(application.getSiteDetail().get(0).getAdminBoundary().getParent(),
         			application.getSiteDetail().get(0).getAdminBoundary(), application.getSiteDetail().get(0).getElectionBoundary());

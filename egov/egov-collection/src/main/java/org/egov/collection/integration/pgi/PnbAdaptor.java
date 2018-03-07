@@ -111,7 +111,7 @@ public class PnbAdaptor implements PaymentGatewayAdaptor {
 			AWLMEAPI objAWLMEAPI = new AWLMEAPI();
 			ResMsgDTO objResMsgDTO = objAWLMEAPI.parseTrnResMsg(merchantResponse,
 					collectionApplicationProperties.pnbEncryptionKey());
-			// Punjab Payment Gateway returns Response Code 'S' for successful
+			// Punjab national bank Payment Gateway returns Response Code 'S' for successful
 			// transactions, so converted it to 0300
 			// as that is being followed as a standard in other payment
 			// gateways.
