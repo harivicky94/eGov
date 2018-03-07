@@ -293,13 +293,6 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
             buildOwnerDetails(bpaApplication);
         }
         BpaApplication bpaApplicationRes = applicationBpaService.createNewApplication(bpaApplication, workFlowAction);
-        if (workFlowAction != null
-                && workFlowAction
-                        .equals(WF_LBE_SUBMIT_BUTTON)
-                && onlinePaymentEnable) {
-            return genericBillGeneratorService
-                    .generateBillAndRedirectToCollection(bpaApplication, model);
-        }
         if (citizenOrBusinessUser) { 
             if (isCitizen)
                 bpaUtils.createPortalUserinbox(bpaApplicationRes, Arrays.asList(bpaApplicationRes.getOwner().getUser(),
@@ -330,6 +323,13 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
                         "Sucessfully saved with ApplicationNumber " + bpaApplicationRes.getApplicationNumber() + ".");
             }
             bpaUtils.sendSmsEmailOnCitizenSubmit(bpaApplication);  
+        }
+        if (workFlowAction != null
+                && workFlowAction
+                        .equals(WF_LBE_SUBMIT_BUTTON)
+                && onlinePaymentEnable) {
+            return genericBillGeneratorService
+                    .generateBillAndRedirectToCollection(bpaApplication, model);
         }
         return BPAAPPLICATION_CITIZEN;
     }
