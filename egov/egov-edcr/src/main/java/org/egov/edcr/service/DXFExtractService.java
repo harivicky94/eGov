@@ -215,13 +215,18 @@ public class DXFExtractService {
 
         if (layerPresent) {
             List<DXFLWPolyline> bldparking = Util.getPolyLinesByLayer(doc, DxfFileConstants.PARKING_SLOT);
-            if (!bldparking.isEmpty())
+            if (!bldparking.isEmpty()) {
+                LOG.info("Parking slot ");
                 for (DXFLWPolyline pline : bldparking) {
+                    LOG.info("Width:"+pline.getBounds().getWidth());
+                    LOG.info("Height"+pline.getBounds().getHeight());
                     Measurement measurement = new Measurement();
+                    measurement.setWidth(BigDecimal.valueOf(pline.getBounds().getWidth()));
+                    measurement.setHeight(BigDecimal.valueOf(pline.getBounds().getHeight()));
                     measurement.setPolyLine(pline);
                     pl.getParkingSlots().add(measurement);
-                    // System.out.println("parking " + Util.getPolyLineArea(pline));
                 }
+            }
         }
     }
 

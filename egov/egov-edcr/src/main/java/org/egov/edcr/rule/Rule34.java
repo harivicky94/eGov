@@ -36,7 +36,10 @@ public class Rule34 extends GeneralRule {
     private static final String SUB_RULE_34_2 = "34(2)";
     private static final String SUB_RULE_34_2_DESCRIPTION = "Total number of Parking ";
 
-    private static final BigDecimal PARKING_MIN_AREA = BigDecimal.valueOf(14.85);
+    private static final String PARKING_MIN_AREA = " 2.70 M x 5.50 M";
+    private static final BigDecimal PARKING_SLOT_WIDTH = BigDecimal.valueOf(2.7);
+    private static final BigDecimal PARKING_SLOT_HEIGHT = BigDecimal.valueOf(5.5);
+
 
     @Autowired
     private ReportService reportService;
@@ -138,9 +141,15 @@ public class Rule34 extends GeneralRule {
             int areaOfparkingViolation = 0;
             for (Measurement parkingslot : planDetail.getParkingSlots()) {
                 parkingCount++;
-                if (parkingslot.getPolyLine() != null &&
-                        Util.getPolyLineArea(parkingslot.getPolyLine()).compareTo(PARKING_MIN_AREA) < 0) {
-                    areaOfparkingViolation++;
+                if (parkingslot.getWidth() != null && parkingslot.getHeight() != null) {
+                    if (parkingslot.getWidth().compareTo(parkingslot.getHeight()) > 0) {
+                        if (parkingslot.getWidth().compareTo(PARKING_SLOT_HEIGHT) < 0 ||
+                                parkingslot.getHeight().compareTo(PARKING_SLOT_WIDTH) < 0)
+                            areaOfparkingViolation++;
+
+                    } else if (parkingslot.getWidth().compareTo(PARKING_SLOT_WIDTH) < 0 ||
+                            parkingslot.getHeight().compareTo(PARKING_SLOT_HEIGHT) < 0)
+                        areaOfparkingViolation++;
 
                 }
             }
@@ -148,7 +157,7 @@ public class Rule34 extends GeneralRule {
                 planDetail.reportOutput
                         .add(buildRuleOutputWithSubRule(DcrConstants.RULE34, SUB_RULE_34_1, SUB_RULE_34_1_DESCRIPTION,
                                 DcrConstants.PARKINGSLOT,
-                                PARKING_MIN_AREA + " MTR. Minimum Area of Each parking",
+                                PARKING_MIN_AREA + " Minimum Area of Each parking",
                                 "Out of " + parkingCount + " parking " + areaOfparkingViolation
                                         + " parking violated minimum area.",
                                 Result.Not_Accepted, null));
@@ -156,7 +165,7 @@ public class Rule34 extends GeneralRule {
                 planDetail.reportOutput
                 .add(buildRuleOutputWithSubRule(DcrConstants.RULE34, SUB_RULE_34_1, SUB_RULE_34_1_DESCRIPTION,
                         DcrConstants.PARKINGSLOT,
-                        PARKING_MIN_AREA + " MTR. Minimum Area of Each parking",
+                        PARKING_MIN_AREA + "  Minimum Area of Each parking",
                         "No violation of area in " + parkingCount + " parking " ,
                         Result.Accepted, null));
         }
