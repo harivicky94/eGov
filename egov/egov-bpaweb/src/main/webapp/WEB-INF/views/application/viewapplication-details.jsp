@@ -50,6 +50,7 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
 <div class="panel-heading custom_form_panel_heading">
 	<div class="panel-title">
@@ -62,7 +63,8 @@
 			<spring:message code="lbl.build.plan.permission.date" />
 		</div>
 		<div class="col-sm-3 add-margin view-content">
-			<c:out value="${bpaApplication.planPermissionDate}" default="N/A"></c:out>
+			<fmt:formatDate value="${bpaApplication.planPermissionDate}" pattern="dd/MM/yyyy" var="planPermissionDate" />
+			<c:out value="${planPermissionDate}" default="N/A"></c:out>
 		</div>
 		<div class="col-sm-3 add-margin">
 			<spring:message code="lbl.plan.permission.no" />
@@ -126,7 +128,8 @@
 			<spring:message code="lbl.application.date" />
 		</div>
 		<div class="col-sm-3 add-margin view-content">
-			<c:out value="${bpaApplication.applicationDate}" default="N/A"></c:out>
+			<fmt:formatDate value="${bpaApplication.applicationDate}" pattern="dd/MM/yyyy" var="applicationDate" />
+			<c:out value="${applicationDate}" default="N/A"></c:out>
 		</div>
 	</div>
 
