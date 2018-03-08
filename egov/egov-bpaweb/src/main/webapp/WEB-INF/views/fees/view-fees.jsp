@@ -66,7 +66,6 @@
 </div>
 <<script type="text/javascript">
 function redirectToUpdateFeeDetail(feeId){
-	alert("hie");
 	var url = "/bpa/fees/update/"+feeId;
 	window.open(url,'_self','scrollbars=yes,resizable=yes,height=700,width=800,status=yes');
 }

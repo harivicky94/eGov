@@ -140,7 +140,8 @@
 			<spring:message code="lbl.dob" />
 		</div>
 		<div class="col-sm-3 add-margin view-content">
-			<c:out value="${stakeHolder.dob}" default="N/A"></c:out>
+			<fmt:formatDate value="${stakeHolder.dob}" pattern="dd/MM/yyyy" var="dob" />
+			<c:out value="${dob}" default="N/A"></c:out>
 		</div>
 
 		<div class="col-sm-3 add-margin">
@@ -180,13 +181,15 @@
 			<spring:message code="lbl.buil.lic.iss.date" />
 		</div>
 		<div class="col-sm-3 add-margin view-content">
-			<c:out value="${stakeHolder.buildingLicenceIssueDate}" default="N/A"></c:out>
+			<fmt:formatDate value="${stakeHolder.buildingLicenceIssueDate}" pattern="dd/MM/yyyy" var="buildingLicenceIssueDate" />
+			<c:out value="${buildingLicenceIssueDate}" default="N/A"></c:out>
 		</div>
 		<div class="col-sm-3 add-margin">
 			<spring:message code="lbl.build.lic.exp.date" />
 		</div>
 		<div class="col-sm-3 add-margin view-content">
-			<c:out value="${stakeHolder.buildingLicenceExpiryDate}" default="N/A"></c:out>
+			<fmt:formatDate value="${stakeHolder.buildingLicenceExpiryDate}" pattern="dd/MM/yyyy" var="buildingLicenceExpiryDate" />
+			<c:out value="${buildingLicenceExpiryDate}" default="N/A"></c:out>
 		</div>
 	</div>
 
