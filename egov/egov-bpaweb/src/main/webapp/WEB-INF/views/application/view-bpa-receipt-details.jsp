@@ -42,6 +42,8 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+
 
 <%-- <div class="panel-heading custom_form_panel_heading">
 	<div class="panel-title">
@@ -76,8 +78,9 @@
 					<tr>
 						<td><a class="open-popup"
 							href="/collection/citizen/onlineReceipt-viewReceipt.action?receiptNumber=${receipt.receiptNumber}&consumerCode=${bpaApplication.applicationNumber}&serviceCode=BPA">${receipt.receiptNumber}</a></td>
-						<td><c:out value="${receipt.receiptDate}"
-								default="N/A"></c:out></td>
+						<td>
+							<fmt:formatDate value="${receipt.receiptDate}" pattern="dd/MM/yyyy" var="receiptDate" />
+							<c:out value="${receiptDate}" default="N/A"></c:out></td>
 						<td><c:out value="${receipt.receiptAmt}" default="N/A" /></td>
 					</tr>
 				</c:forEach>

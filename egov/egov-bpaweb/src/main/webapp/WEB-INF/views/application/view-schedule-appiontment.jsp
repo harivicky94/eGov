@@ -51,6 +51,8 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+
 
 <div class="panel-body" data-collapsed="0">
 	<c:forEach items="${appointmentScheduledList}" var="appoimnt"
@@ -66,7 +68,8 @@
 				<spring:message code="lbl.appmnt.date" />
 			</div>
 			<div class="col-sm-3 add-margin view-content">
-				<c:out value="${appoimnt.appointmentDate}" default="N/A"></c:out>
+				<fmt:formatDate value="${appoimnt.appointmentDate}" pattern="dd/MM/yyyy" var="appointmentDate" />
+				<c:out value="${appointmentDate}" default="N/A"></c:out>
 			</div>
 			<div class="col-sm-3 add-margin">
 				<spring:message code="lbl.appmnt.time" />
