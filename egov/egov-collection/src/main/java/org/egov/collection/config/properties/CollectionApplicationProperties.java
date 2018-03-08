@@ -199,4 +199,8 @@ public class CollectionApplicationProperties {
 		return environment.getProperty("pnb.transactionmessage");
 	}
 	
+	public String pnbReconcileUrl() {
+		return environment.getProperty("pnb.reconcile.url");
+	}
+	
 }
