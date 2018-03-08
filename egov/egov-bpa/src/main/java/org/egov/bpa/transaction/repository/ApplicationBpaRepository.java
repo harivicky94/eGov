@@ -59,7 +59,7 @@ public interface ApplicationBpaRepository extends JpaRepository<BpaApplication, 
 
 	BpaApplication findById(Long id);
 
-	@Query("select app from BpaApplication app where app.status in :status order by createddate asc")
+    @Query("select app from BpaApplication app where app.status in :status and app.isOneDayPermitApplication = false order by createddate asc")
 	List<BpaApplication> findByStatusListOrderByCreatedDateAsc(@Param("status") List<BpaStatus> listOfBpaStatus);
 
 }
