@@ -179,17 +179,17 @@
                 <tbody class="servicesUnderScrutinyHide">
                 <c:forEach items="${totalServicesPending}" var="inboxItem" varStatus="item">
 		                 <tr onclick="openPopUp('${inboxItem.portalInbox.link}');" class = "${inboxItem.portalInbox.module.contextRoot } showAll">
-		                   <td><span class="spansno">${item.index + 1}</span></td>
-		                   <td>${inboxItem.portalInbox.applicationNumber}</td>
-		                   <td>${inboxItem.portalInbox.portalInboxUsers[0].user.name}</td>
-		                   <td>
+							 <td><span class="spansno">${item.index + 1}</span></td>
+							 <td>${inboxItem.portalInbox.portalInboxUsers[0].user.name}</td>
+							 <td>${inboxItem.portalInbox.applicationNumber}</td>
+		                    <td>
 			                   <fmt:formatDate
 								value="${inboxItem.portalInbox.applicationDate}"
 								pattern="dd/MM/yyyy" /></td>
-		                   <td>${inboxItem.portalInbox.module.displayName}</td>
-		                   <td>${inboxItem.portalInbox.serviceType}</td>
-		                   <td>${inboxItem.portalInbox.status}</td>
-		                   <td>
+		                    <td>${inboxItem.portalInbox.module.displayName}</td>
+		                    <td>${inboxItem.portalInbox.serviceType}</td>
+		                    <td>${inboxItem.portalInbox.status}</td>
+		                    <td>
 								<c:choose>
 		 							<c:when test="${inboxItem.portalInbox.state != null && inboxItem.portalInbox.state.nextAction != ''}">
 		 								${inboxItem.portalInbox.state.nextAction}
@@ -201,8 +201,8 @@
 	 								</c:otherwise>
 		 						</c:choose>
 							</td>
-		                   <td>
-		 						<div class="text-center">
+		                    <td>
+		 						<div>
 									<fmt:formatDate
 										value="${inboxItem.portalInbox.slaEndDate}"
 										pattern="dd/MM/yyyy" />
@@ -216,79 +216,81 @@
                 </tbody>
                 <tbody class="totalServicesAppliedHide">
                 <c:forEach items="${totalServicesApplied}" var="inboxItem" varStatus="item">
-	                	<tr onclick="openPopUp('${inboxItem.portalInbox.link}');" class = "${inboxItem.portalInbox.module.contextRoot } showAll">
-	                    <td><span class="spansno">${item.index + 1}</span></td>
-	                    <td>${inboxItem.portalInbox.applicationNumber}</td>
-	                    <td>${inboxItem.portalInbox.portalInboxUsers[0].user.name}</td>
-	                    <td>
-	                    	<fmt:formatDate
-								value="${inboxItem.portalInbox.applicationDate}"
-								pattern="dd/MM/yyyy" /></td>
+					<tr onclick="openPopUp('${inboxItem.portalInbox.link}');"
+						class="${inboxItem.portalInbox.module.contextRoot } showAll">
+						<td><span class="spansno">${item.index + 1}</span></td>
+						<td>${inboxItem.portalInbox.portalInboxUsers[0].user.name}</td>
+						<td>${inboxItem.portalInbox.applicationNumber}</td>
+						<td>
+							<fmt:formatDate
+									value="${inboxItem.portalInbox.applicationDate}"
+									pattern="dd/MM/yyyy"/></td>
 
-	                    <td>${inboxItem.portalInbox.module.displayName}</td>
-	                    <td>${inboxItem.portalInbox.serviceType}</td>
-	                    <td>${inboxItem.portalInbox.status}</td>
-	                    <td>
-	 						<c:choose>
-	 							<c:when test="${inboxItem.portalInbox.state != null && inboxItem.portalInbox.state.nextAction != ''}">
-	 								${inboxItem.portalInbox.state.nextAction}
- 								</c:when>
- 								<c:otherwise>
- 									<div class="text-center">
- 										<c:out value="-" ></c:out>
- 									</div>
- 								</c:otherwise>
-	 						</c:choose>
-	 					</td>
-	                    <td>
-	 						<div class="text-center">
+						<td>${inboxItem.portalInbox.module.displayName}</td>
+						<td>${inboxItem.portalInbox.serviceType}</td>
+						<td>${inboxItem.portalInbox.status}</td>
+						<td>
+							<c:choose>
+								<c:when test="${inboxItem.portalInbox.state != null && inboxItem.portalInbox.state.nextAction != ''}">
+									${inboxItem.portalInbox.state.nextAction}
+								</c:when>
+								<c:otherwise>
+									<div class="text-center">
+										<c:out value="-"></c:out>
+									</div>
+								</c:otherwise>
+							</c:choose>
+						</td>
+						<td>
+							<div>
 								<fmt:formatDate
-									value="${inboxItem.portalInbox.slaEndDate}"
-									pattern="dd/MM/yyyy" />
+										value="${inboxItem.portalInbox.slaEndDate}"
+										pattern="dd/MM/yyyy"/>
 							</div>
-	 					</td>
-	                    <%--<td>
-	 						${inboxItem.portalInbox.detailedMessage}
-	 					</td>--%>
-	                  	</tr>
+						</td>
+							<%--<td>
+                                 ${inboxItem.portalInbox.detailedMessage}
+                             </td>--%>
+					</tr>
                   </c:forEach>
                 </tbody>
                  <tbody class="totalServicesCompletedHide">
                 <c:forEach items="${totalServicesCompleted}" var="inboxItem" varStatus="item">
-	                  <tr onclick="openPopUp('${inboxItem.portalInbox.link}');" class = "${inboxItem.portalInbox.module.contextRoot } showAll">
-	                    <td><span class="spansno">${item.index + 1}</span></td>
-	                    <td>${inboxItem.portalInbox.applicationNumber}</td>
-	                    <td>${inboxItem.portalInbox.portalInboxUsers[0].user.name}</td>
-	                    <td>
-		                   <fmt:formatDate
-							value="${inboxItem.portalInbox.applicationDate}"
-							pattern="dd/MM/yyyy" /></td>
-	                    <td>${inboxItem.portalInbox.module.displayName}</td>
-	                    <td>${inboxItem.portalInbox.serviceType}</td>
-	                    <td>${inboxItem.portalInbox.status}</td>
-	                    <td>
-	 						<c:choose>
-	 							<c:when test="${inboxItem.portalInbox.state != null && inboxItem.portalInbox.state.nextAction != ''}">
-	 								${inboxItem.portalInbox.state.nextAction}
- 								</c:when>
- 								<c:otherwise>
- 									<div class="text-center">
- 										<c:out value="-" ></c:out>
- 									</div>
- 								</c:otherwise>
-	 						</c:choose>
-	 					</td>
-	                    <td>
-							<div class="text-center">
+					<tr onclick="openPopUp('${inboxItem.portalInbox.link}');"
+						class="${inboxItem.portalInbox.module.contextRoot } showAll">
+						<td><span class="spansno">${item.index + 1}</span></td>
+						<td>${inboxItem.portalInbox.portalInboxUsers[0].user.name}</td>
+						<td>${inboxItem.portalInbox.applicationNumber}</td>
+						<td>
+							<fmt:formatDate
+									value="${inboxItem.portalInbox.applicationDate}"
+									pattern="dd/MM/yyyy"/></td>
+						<td>${inboxItem.portalInbox.module.displayName}</td>
+						<td>${inboxItem.portalInbox.serviceType}</td>
+						<td>${inboxItem.portalInbox.status}</td>
+						<td>
+							<c:choose>
+								<c:when test="${inboxItem.portalInbox.state != null && inboxItem.portalInbox.state.nextAction != ''}">
+									${inboxItem.portalInbox.state.nextAction}
+								</c:when>
+								<c:otherwise>
+									<div class="text-center">
+										<c:out value="-"></c:out>
+									</div>
+								</c:otherwise>
+							</c:choose>
+						</td>
+						<td>
+							<div>
 								<fmt:formatDate
-									value="${inboxItem.portalInbox.slaEndDate}"
-									pattern="dd/MM/yyyy" />
+										value="${inboxItem.portalInbox.slaEndDate}"
+										pattern="dd/MM/yyyy"/>
 							</div>
-	 					</td>
-	                    <%--<td>
-	 						${inboxItem.portalInbox.detailedMessage}
-	 					</td>--%>
-	                  </tr>
+						</td>
+							<%--<td>
+                                 ${inboxItem.portalInbox.detailedMessage}
+                             </td>--%>
+					</tr>
                   </c:forEach>
                 </tbody>
               </table>

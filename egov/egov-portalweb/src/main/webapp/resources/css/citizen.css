@@ -190,12 +190,13 @@ html body .container-fluid .badge {
   background: red;
   color: #fff; }
 html body .container-fluid .left-menu {
-  background: #1C1C1C;
+  background: #26A69A;
   height: 100vh;
   width: 120px;
   float: left;
   position: relative; }
 html body .container-fluid .left-menu .modules-ul {
+  background: #26A69A;
   margin: 0;
   padding: 0 10px;
   text-align: center;
@@ -213,19 +214,20 @@ html body .container-fluid .left-menu .modules-ul .modules-li a .img-view {
   font-size: 22px; }
 html body .container-fluid .left-menu .modules-ul .modules-li a .module-text {
   font-size: 13px;
+  color: #fff;
   overflow-wrap: break-word;
   font-family: regular; }
 html body .container-fluid .left-menu .modules-ul .modules-li a:hover, html body .container-fluid .left-menu .modules-ul .modules-li a:focus, html body .container-fluid .left-menu .modules-ul .modules-li a:visited {
   text-decoration: none; }
 html body .container-fluid .left-menu .modules-ul .modules-li a:hover i, html body .container-fluid .left-menu .modules-ul .modules-li a:focus i, html body .container-fluid .left-menu .modules-ul .modules-li a:visited i {
-  color: #0099cc; }
+  color: #fff; }
 html body .container-fluid .left-menu .modules-ul .modules-li a:hover .module-text, html body .container-fluid .left-menu .modules-ul .modules-li a:focus .module-text, html body .container-fluid .left-menu .modules-ul .modules-li a:visited .module-text {
   color: #fff;
   font-family: bold; }
 html body .container-fluid .left-menu .modules-ul .modules-li.inbox {
   position: fixed;
   padding: 30px 0;
-  background: #1C1C1C;
+  background: #26A69A;
   z-index: 10;
   width: 86px;
   left: 1%; }
@@ -243,7 +245,7 @@ html body .container-fluid .left-menu .modules-ul .modules-li.active .module-tex
   color: #fff;
   font-family: bold; }
 html body .container-fluid .left-menu .modules-ul .modules-li.active i {
-  color: #0099cc; }
+  color: #fff; }
 html body .container-fluid .right-content {
   width: calc(100% - 120px);
   float: left;

@@ -76,10 +76,10 @@ public interface PortalServiceTypeRepository
     @Query("select distinct(pst.module.displayName) from PortalServiceType as pst where pst.isActive=true and pst.userService=true order by pst.module.displayName asc")
     List<String> getDistinctModuleNamesForCitizen();
 
-    @Query("from PortalServiceType pst where pst.isActive=true  and pst.businessUserService=true order by pst.name asc")
+    @Query("from PortalServiceType pst where pst.isActive=true  and pst.businessUserService=true order by pst.id asc")
     List<PortalServiceType> findAllServiceTypesForBusinessUser();
 
-    @Query("from PortalServiceType pst where pst.isActive=true and pst.userService=true  order by pst.name asc")
+    @Query("from PortalServiceType pst where pst.isActive=true and pst.userService=true  order by pst.id asc")
     List<PortalServiceType> findAllServiceTypesForCitizenUser();
 
 }
