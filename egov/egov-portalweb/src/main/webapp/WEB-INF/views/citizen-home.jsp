@@ -72,13 +72,26 @@
         <div class="right-content">
           <header>
             <nav class="navbar">
-              <div class="col-md-6 col-sm-9 col-xs-12 left-section">
+              <div class="col-md-6 col-sm-7 col-xs-12 left-section">
                 <span>
 					<img src="<c:url value='/downloadfile/logo' context="/egi"/>" height="60" class="homepage_logo">
                 </span>
                 <span class="corporation-name"><spring:message code="lbl.portalservices" /></span>
               </div>
-              <div class="col-md-6 col-sm-3 col-xs-12 right-section">
+				<%--<div class="col-md-6 col-sm-7 col-xs-12 left-section">
+					<span>
+						<a href="http://www.egovernments.org" target="_blank">
+								<img src="<c:url value='/resources/global/images/logo@2x.png' context='/egi'/>" title="Powered by eGovernments" height="20px">
+							</a>
+					</span>
+				</div>--%>
+
+              <div class="col-md-6 col-sm-5 col-xs-12 right-section">
+				<span class="pull-right ">
+					<a href="http://www.egovernments.org" target="_blank">
+							<img src="<cdn:url value='/resources/global/images/favicon.png' context='/egi'/>" title="Powered by eGovernments" height="40px">
+						</a>
+				</span>
                 <span class="pull-right profile-dd"><a href="/egi/logout"><i class="fa fa-sign-out" aria-hidden="true"></i> Sign Out</a></span>
                 <span class="pull-right profile-name">
                   <span class="text hidden-sm">${userName }</span> <span><i class="fa fa-caret-down" aria-hidden="true"></i></span>
@@ -152,8 +165,8 @@
                 <thead>
                   <tr>
                     <th><spring:message code="lbl.slno" /></th>
-                    <th><spring:message code="lbl.applicartionno" /></th>
                     <th><spring:message code="lbl.applicant.name" /></th>
+					  <th><spring:message code="lbl.applicartionno" /></th>
                     <th><spring:message code="lbl.applicationdate" /></th>
                     <th><spring:message code="lbl.servicegroup" /></th>
                     <th><spring:message code="lbl.servicename" /></th>
