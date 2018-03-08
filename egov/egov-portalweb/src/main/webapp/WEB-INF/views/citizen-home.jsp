@@ -173,7 +173,7 @@
                     <th><spring:message code="lbl.status" /></th>
                     <th><spring:message code="lbl.pendingaction" /></th>
                     <th><spring:message code="lbl.expectedservicedelivery" /></th>
-                    <th><spring:message code="lbl.description" /></th>
+                    <%--<th><spring:message code="lbl.description" /></th>--%>
                   </tr>
                 </thead>
                 <tbody class="servicesUnderScrutinyHide">
@@ -208,9 +208,9 @@
 										pattern="dd/MM/yyyy" />
 							</div>
 		 					</td>
-		 					<td>
+		 					<%--<td>
  								${inboxItem.portalInbox.detailedMessage}
-		 					</td>
+		 					</td>--%>
 		                 </tr>
                   </c:forEach>
                 </tbody>
@@ -247,9 +247,9 @@
 									pattern="dd/MM/yyyy" />
 							</div>
 	 					</td>
-	                    <td>
+	                    <%--<td>
 	 						${inboxItem.portalInbox.detailedMessage}
-	 					</td>
+	 					</td>--%>
 	                  	</tr>
                   </c:forEach>
                 </tbody>
@@ -285,9 +285,9 @@
 									pattern="dd/MM/yyyy" />
 							</div>
 	 					</td>
-	                    <td>
+	                    <%--<td>
 	 						${inboxItem.portalInbox.detailedMessage}
-	 					</td>
+	 					</td>--%>
 	                  </tr>
                   </c:forEach>
                 </tbody>
