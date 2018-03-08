@@ -61,10 +61,10 @@ import java.util.List;
 public interface PortalServiceTypeRepository
         extends JpaRepository<PortalServiceType, Long>, JpaSpecificationExecutor<PortalServiceType> {
 
-    @Query("select distinct pst.module from PortalServiceType pst")
+    @Query("select distinct pst.module from PortalServiceType pst where pst.isActive=true")
     List<Module> findAllModules();
 
-    @Query("select distinct pst.name from PortalServiceType pst where pst.module.id=:moduleId order by pst.name asc")
+    @Query("select distinct pst.name from PortalServiceType pst where pst.isActive=true and pst.module.id=:moduleId order by pst.name asc")
     List<String> findAllServiceTypes(@Param("moduleId") Long moduleId);
 
     @Query("select distinct(module.displayName) from PortalServiceType as pst")
