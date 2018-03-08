@@ -67,7 +67,6 @@ import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.validation.exception.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.*;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -155,10 +154,9 @@ public class ScheduleAppointmentForDocumentScrutinyService {
                                     LOGGER.info("******************Application Number ------>>>>>>" + bpaApp.getApplicationNumber());
                                     LOGGER.info("******************Application Date ------>>>>>>" + bpaApp.getApplicationDate());
                                 }
-                                try {
+                            try {
                                     TransactionTemplate template = new TransactionTemplate(
                                             transactionTemplate.getTransactionManager());
-                                    template.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
                                     template.execute(result -> {
 										if(LOGGER.isInfoEnabled())
 											LOGGER.info("****************** Schedule appointment  Transaction start *****************");
@@ -215,7 +213,7 @@ public class ScheduleAppointmentForDocumentScrutinyService {
                                         }
 										if(LOGGER.isInfoEnabled())
 											LOGGER.info("****************** Schedule appointment Transaction End *****************");
-                                        return true;
+                                       return true;
                                     });
                                     if(LOGGER.isInfoEnabled())
                                         LOGGER.info("****************** Outside Transaction Template *****************");
