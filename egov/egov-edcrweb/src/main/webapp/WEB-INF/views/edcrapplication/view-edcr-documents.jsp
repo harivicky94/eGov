@@ -71,12 +71,12 @@
     </thead>
     <tbody>
     <c:choose>
-        <c:when test="${not empty edcrApplication.dcrDocuments}">
-            <c:forEach items="${edcrApplication.dcrDocuments}" var="docs"
+        <c:when test="${not empty edcrApplication.edcrApplicationDetails}">
+            <c:forEach items="${edcrApplication.edcrApplicationDetails}" var="docs"
                        varStatus="status">
                 <tr>
                     <td class="text-center">${status.index+1}</td>
-                    <td class="text-center"><c:out value="${edcrApplication.dcrNumber}" default="N/A"></c:out>
+                    <td class="text-center"><c:out value="${docs.dcrNumber}" default="N/A"></c:out>
                     </td>
                     <td class="text-center"><c:set value="false" var="isDocFound"></c:set>
                         <c:if test="${docs.dxfFileId.fileStoreId ne null}">

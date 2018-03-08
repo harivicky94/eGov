@@ -65,10 +65,6 @@ public class EdcrApplicationService {
         edcrApplication.setPlanInformation(edcrApplication.getPlanInformation());
         edcrApplicationRepository.save(edcrApplication);
         PlanDetail planDetail = callDcrProcess(edcrApplication);
-        if (planDetail.getEdcrPassed()){
-            String dcrApplicationNumber = dcrApplicationNumberGenerator.generateEDcrApplicationNumber(edcrApplication);
-            edcrApplication.setDcrNumber(dcrApplicationNumber);
-        }
         portalInetgrationService.createPortalUserinbox(edcrApplication, Arrays.asList(securityUtils.getCurrentUser()));
         return edcrApplication;
     }
@@ -79,10 +75,6 @@ public class EdcrApplicationService {
         edcrApplication.setSavedDxfFile(saveDXF(edcrApplication));
         EdcrApplication applicationRes = edcrApplicationRepository.save(edcrApplication);
         PlanDetail planDetail = callDcrProcess(edcrApplication);
-        if (planDetail.getEdcrPassed()){
-            String dcrApplicationNumber = dcrApplicationNumberGenerator.generateEDcrApplicationNumber(edcrApplication);
-            edcrApplication.setDcrNumber(dcrApplicationNumber);
-        }
         portalInetgrationService.updatePortalUserinbox(applicationRes, securityUtils.getCurrentUser());
         return applicationRes;
     }
@@ -105,8 +97,8 @@ public class EdcrApplicationService {
     private File saveDXF(EdcrApplication edcrApplication) {
         FileStoreMapper fileStoreMapper = addToFileStore(edcrApplication.getDxfFile());
         File dxfFile = fileStoreService.fetch(fileStoreMapper.getFileStoreId(), FILESTORE_MODULECODE);
-        dcrService.buildDocuments(edcrApplication, fileStoreMapper, null,null);
-        edcrApplication.setDcrDocuments(edcrApplication.getDcrDocuments());
+        dcrService.buildDocuments(edcrApplication, fileStoreMapper, null, null);
+        edcrApplication.setEdcrApplicationDetails(edcrApplication.getEdcrApplicationDetails());
         return dxfFile;
 
     }

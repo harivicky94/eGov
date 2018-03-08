@@ -1,29 +1,14 @@
 package org.egov.edcr.entity;
 
-import java.io.File;
-import java.util.Date;
-import java.util.List;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.Transient;
-import javax.validation.constraints.NotNull;
-
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import java.io.File;
+import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "EDCR_APPLICATION")
@@ -42,9 +27,6 @@ public class EdcrApplication extends AbstractAuditable {
     @NotNull
     @Length(min = 1, max = 128)
     private String applicationNumber;
-
-    @Length(min = 1, max = 128)
-    private String dcrNumber;
 
     @Temporal(value = TemporalType.DATE)
     private Date applicationDate;
@@ -65,21 +47,21 @@ public class EdcrApplication extends AbstractAuditable {
 
     @OneToMany(mappedBy = "application", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @OrderBy("id DESC ")
-    private List<DcrDocument> dcrDocuments;
+    private List<EdcrApplicationDetail> edcrApplicationDetails;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "planinfoid")
     private PlanInformation planInformation;
 
     @Transient
-    private DcrDocument savedDcrDocument;
+    private EdcrApplicationDetail savedEdcrApplicationDetail;
 
-    public DcrDocument getSavedDcrDocument() {
-        return savedDcrDocument;
+    public EdcrApplicationDetail getSavedEdcrApplicationDetail() {
+        return savedEdcrApplicationDetail;
     }
 
-    public void setSavedDcrDocument(DcrDocument savedDcrDocument) {
-        this.savedDcrDocument = savedDcrDocument;
+    public void setSavedEdcrApplicationDetail(EdcrApplicationDetail savedEdcrApplicationDetail) {
+        this.savedEdcrApplicationDetail = savedEdcrApplicationDetail;
     }
 
     @Override
@@ -100,14 +82,6 @@ public class EdcrApplication extends AbstractAuditable {
         this.applicationNumber = applicationNumber;
     }
 
-    public String getDcrNumber() {
-        return dcrNumber;
-    }
-
-    public void setDcrNumber(String dcrNumber) {
-        this.dcrNumber = dcrNumber;
-    }
-
     public Date getApplicationDate() {
         return applicationDate;
     }
@@ -124,12 +98,12 @@ public class EdcrApplication extends AbstractAuditable {
         this.dxfFile = dxfFile;
     }
 
-    public List<DcrDocument> getDcrDocuments() {
-        return dcrDocuments;
+    public List<EdcrApplicationDetail> getEdcrApplicationDetails() {
+        return edcrApplicationDetails;
     }
 
-    public void setDcrDocuments(List<DcrDocument> dcrDocuments) {
-        this.dcrDocuments = dcrDocuments;
+    public void setEdcrApplicationDetails(List<EdcrApplicationDetail> edcrApplicationDetails) {
+        this.edcrApplicationDetails = edcrApplicationDetails;
     }
 
     public PlanInformation getPlanInformation() {

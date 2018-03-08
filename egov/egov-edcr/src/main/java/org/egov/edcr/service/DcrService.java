@@ -15,8 +15,8 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.edcr.autonumber.DcrApplicationNumberGenerator;
-import org.egov.edcr.entity.DcrDocument;
 import org.egov.edcr.entity.EdcrApplication;
+import org.egov.edcr.entity.EdcrApplicationDetail;
 import org.egov.edcr.entity.PlanDetail;
 import org.egov.edcr.entity.PlanRule;
 import org.egov.edcr.rule.GeneralRule;
@@ -68,7 +68,7 @@ public class DcrService {
 
 
     @Autowired
-    private DcrDocumentService dcrDocumentService;
+    private EdcrApplicationDetailService edcrApplicationDetailService;
 
     public PlanDetail getPlanDetail() {
         return planDetail;
@@ -175,45 +175,45 @@ public class DcrService {
     @Transactional
     public void saveOutputReport(EdcrApplication edcrApplication, InputStream reportOutput, PlanDetail planDetail) {
 
-        List<DcrDocument> dcrDocuments = dcrDocumentService.fingByAppNo(edcrApplication.getId());
-        final String fileName = edcrApplication.getApplicationNumber() + "-v" + dcrDocuments.size() + ".pdf";
+        List<EdcrApplicationDetail> edcrApplicationDetails = edcrApplicationDetailService.fingByAppNo(edcrApplication.getId());
+        final String fileName = edcrApplication.getApplicationNumber() + "-v" + edcrApplicationDetails.size() + ".pdf";
 
         final FileStoreMapper fileStoreMapper = fileStoreService.store(reportOutput, fileName, "application/pdf",
                 DcrConstants.FILESTORE_MODULECODE);
 
         buildDocuments(edcrApplication, null, fileStoreMapper, planDetail);
 
-        dcrDocumentService.saveAll(edcrApplication.getDcrDocuments());
+        edcrApplicationDetailService.saveAll(edcrApplication.getEdcrApplicationDetails());
     }
 
 
     public void buildDocuments(EdcrApplication edcrApplication, FileStoreMapper dxfFile, FileStoreMapper reportOutput, PlanDetail planDetail) {
 
         if (dxfFile != null) {
-            DcrDocument dcrDocument = new DcrDocument();
+            EdcrApplicationDetail edcrApplicationDetail = new EdcrApplicationDetail();
 
-            dcrDocument.setDxfFileId(dxfFile);
-            dcrDocument.setApplication(edcrApplication);
+            edcrApplicationDetail.setDxfFileId(dxfFile);
+            edcrApplicationDetail.setApplication(edcrApplication);
 
-            List<DcrDocument> dcrDocuments = new ArrayList<>();
-            dcrDocuments.add(dcrDocument);
-            edcrApplication.setSavedDcrDocument(dcrDocument);
-            edcrApplication.setDcrDocuments(dcrDocuments);
+            List<EdcrApplicationDetail> edcrApplicationDetails = new ArrayList<>();
+            edcrApplicationDetails.add(edcrApplicationDetail);
+            edcrApplication.setSavedEdcrApplicationDetail(edcrApplicationDetail);
+            edcrApplication.setEdcrApplicationDetails(edcrApplicationDetails);
         }
 
         if (reportOutput != null) {
-            DcrDocument dcrDocument = edcrApplication.getDcrDocuments().get(0);
+            EdcrApplicationDetail edcrApplicationDetail = edcrApplication.getEdcrApplicationDetails().get(0);
 
             if (planDetail.getEdcrPassed()) {
-                dcrDocument.setStatus("Accepted");
+                edcrApplicationDetail.setStatus("Accepted");
             } else {
-                dcrDocument.setStatus("Not Accepted");
+                edcrApplicationDetail.setStatus("Not Accepted");
             }
-            dcrDocument.setCreatedDate(new Date());
-            dcrDocument.setReportOutputId(reportOutput);
-            List<DcrDocument> dcrDocuments = new ArrayList<>();
-            dcrDocuments.add(dcrDocument);
-            edcrApplication.setDcrDocuments(dcrDocuments);
+            edcrApplicationDetail.setCreatedDate(new Date());
+            edcrApplicationDetail.setReportOutputId(reportOutput);
+            List<EdcrApplicationDetail> edcrApplicationDetails = new ArrayList<>();
+            edcrApplicationDetails.add(edcrApplicationDetail);
+            edcrApplication.setEdcrApplicationDetails(edcrApplicationDetails);
         }
     }
 
@@ -276,15 +276,16 @@ public class DcrService {
 
         reportBuilder.append("Report Status : " + (reportStatus ? "Accepted" : "NotAccepted")).append("\\n").append("\\n");
         reportBuilder.append("Rules Verified : ").append("\\n");
-        if(reportStatus) {
-            valuesMap.put("qrCode", generatePDF417Code(buildQRCodeDetails(dcrApplication,reportStatus)));
+        if (reportStatus) {
+            valuesMap.put("qrCode", generatePDF417Code(buildQRCodeDetails(dcrApplication, reportStatus)));
         }
         valuesMap.put("reportStatus", (reportStatus ? "Accepted" : "NotAccepted"));
         drb.setTemplateFile("/reports/templates/edcr_report.jrxml");
         drb.setMargins(5, 0, 33, 20);
         if (planDetail.getEdcrPassed()) {
-            String dcrApplicationNumber = dcrApplicationNumberGenerator.generateEDcrApplicationNumber(dcrApplication);
-            dcrApplication.setApplicationNumber(dcrApplicationNumber);
+            String dcrApplicationNumber = dcrApplicationNumberGenerator.generateEdcrApplicationNumber(dcrApplication);
+            EdcrApplicationDetail edcrApplicationDetail = dcrApplication.getEdcrApplicationDetails().get(0);
+            edcrApplicationDetail.setDcrNumber(dcrApplicationNumber);
         }
 
         final DynamicReport dr = drb.build();
@@ -293,14 +294,14 @@ public class DcrService {
 
     }
 
-    public byte[] generatePlanScrutinyReport (PlanDetail planDetail){
+    public byte[] generatePlanScrutinyReport(PlanDetail planDetail) {
         // TODO Auto-generated method stub
         return null;
     }
 
     private String buildQRCodeDetails(final EdcrApplication dcrApplication, boolean reportStatus) {
         StringBuilder qrCodeValue = new StringBuilder();
-        qrCodeValue = !org.apache.commons.lang.StringUtils.isEmpty(dcrApplication.getDcrNumber()) ? qrCodeValue.append("DCR Number : ").append(dcrApplication.getDcrNumber()).append("\n") : qrCodeValue.append("DCR Number : ").append("N/A").append("\n");
+        qrCodeValue = !org.apache.commons.lang.StringUtils.isEmpty(dcrApplication.getEdcrApplicationDetails().get(0).getDcrNumber()) ? qrCodeValue.append("DCR Number : ").append(dcrApplication.getEdcrApplicationDetails().get(0).getDcrNumber()).append("\n") : qrCodeValue.append("DCR Number : ").append("N/A").append("\n");
         qrCodeValue = !org.apache.commons.lang.StringUtils.isEmpty(dcrApplication.getApplicationNumber()) ? qrCodeValue.append("Applicstion Number : ").append(dcrApplication.getApplicationNumber()).append("\n") : qrCodeValue.append("Application Number : ").append("N/A").append("\n");
         qrCodeValue = dcrApplication.getApplicationDate() != null ? qrCodeValue.append("Application Date : ").append(dcrApplication.getApplicationDate()).append("\n") : qrCodeValue.append("Application Date : ").append("N/A").append("\n");
         qrCodeValue = qrCodeValue.append("Report Status :").append(reportStatus ? "Accepted" : "NotAccepted").append("\n");

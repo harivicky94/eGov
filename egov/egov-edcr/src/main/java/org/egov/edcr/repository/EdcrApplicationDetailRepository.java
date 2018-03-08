@@ -47,14 +47,14 @@
 
 package org.egov.edcr.repository;
 
-import org.egov.edcr.entity.DcrDocument;
+import org.egov.edcr.entity.EdcrApplicationDetail;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
-public interface DcrDocumentRepository extends JpaRepository<DcrDocument, Long> {
+public interface EdcrApplicationDetailRepository extends JpaRepository<EdcrApplicationDetail, Long> {
 
-    public List<DcrDocument> findByApplicationId(Long appNo);
+    public List<EdcrApplicationDetail> findByApplicationId(Long appNo);
 }

@@ -39,30 +39,22 @@
  */
 package org.egov.edcr.entity;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.validator.constraints.Length;
+
+import javax.persistence.*;
 
 @Entity
-@Table(name = "EDCR_DOCUMENT")
-@SequenceGenerator(name = DcrDocument.SEQ_DXF_DOCUMENT, sequenceName = DcrDocument.SEQ_DXF_DOCUMENT, allocationSize = 1)
-public class DcrDocument extends AbstractAuditable {
+@Table(name = "EDCR_APPLICATION_DETAIL")
+@SequenceGenerator(name = EdcrApplicationDetail.SEQ_EDCR_APPLICATION_DETAIL, sequenceName = EdcrApplicationDetail.SEQ_EDCR_APPLICATION_DETAIL, allocationSize = 1)
+public class EdcrApplicationDetail extends AbstractAuditable {
 
-    public static final String SEQ_DXF_DOCUMENT = "SEQ_EDCR_DOCUMENT";
+    public static final String SEQ_EDCR_APPLICATION_DETAIL = "SEQ_EDCR_APPLICATION_DETAIL";
     private static final long serialVersionUID = 2590259455834176449L;
 
     @Id
-    @GeneratedValue(generator = SEQ_DXF_DOCUMENT, strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = SEQ_EDCR_APPLICATION_DETAIL, strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @ManyToOne(cascade = CascadeType.ALL)
@@ -76,6 +68,9 @@ public class DcrDocument extends AbstractAuditable {
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "application")
     private EdcrApplication application;
+
+    @Length(min = 1, max = 128)
+    private String dcrNumber;
 
     private String status;
 
@@ -123,5 +118,13 @@ public class DcrDocument extends AbstractAuditable {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public String getDcrNumber() {
+        return dcrNumber;
+    }
+
+    public void setDcrNumber(String dcrNumber) {
+        this.dcrNumber = dcrNumber;
     }
 }

@@ -44,5 +44,5 @@ import org.egov.edcr.entity.EdcrApplication;
 @FunctionalInterface
 public interface DcrApplicationNumberGenerator {
 
-    String generateEDcrApplicationNumber(EdcrApplication edcrApplication);
+    String generateEdcrApplicationNumber(EdcrApplication edcrApplication);
 }
