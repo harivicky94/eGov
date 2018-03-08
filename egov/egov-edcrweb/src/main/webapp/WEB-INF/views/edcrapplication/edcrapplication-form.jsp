@@ -59,7 +59,7 @@
 </div>
 <div class="panel-body">
     <div class="form-group">
-            <label class="col-sm-3 control-label text-right">E-Dcr Upload<span class="mandatory"></span></label>
+            <label class="col-sm-3 control-label text-right"><spring:message code="lbl.upload.edcr" /><span class="mandatory"></span></label>
             <div class="col-sm-4 add-margin">
                 <div class="fileSection col-md77-4">
                     <input type="file" required="required" name="dxfFile" id="myfile" style="display:none;">

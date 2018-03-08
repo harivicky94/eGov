@@ -62,11 +62,11 @@
     <thead>
     <tr>
         <th class="text-center"><spring:message code="lbl.srl.no"/></th>
-        <th class="text-center"><spring:message code="lbl.dcrnumber"/></th>
-        <th class="text-center"><spring:message code="lbl.dxf.doc"/></th>
-        <th class="text-center"><spring:message code="lbl.dcr.report.ouput"/></th>
-        <th class="text-center"><spring:message code="lbl.created.date"/></th>
-        <th class="text-center"><spring:message code="lbl.status"/></th>
+        <th><spring:message code="lbl.dcrnumber"/></th>
+        <th><spring:message code="lbl.dxf.doc"/></th>
+        <th><spring:message code="lbl.dcr.report.ouput"/></th>
+        <th><spring:message code="lbl.created.date"/></th>
+        <th><spring:message code="lbl.status"/></th>
     </tr>
     </thead>
     <tbody>
@@ -76,9 +76,9 @@
                        varStatus="status">
                 <tr>
                     <td class="text-center">${status.index+1}</td>
-                    <td class="text-center"><c:out value="${docs.dcrNumber}" default="N/A"></c:out>
+                    <td><c:out value="${docs.dcrNumber}" default="N/A"></c:out>
                     </td>
-                    <td class="text-center"><c:set value="false" var="isDocFound"></c:set>
+                    <td><c:set value="false" var="isDocFound"></c:set>
                         <c:if test="${docs.dxfFileId.fileStoreId ne null}">
                             <c:set value="true" var="isDocFound"></c:set>
                             <a href="/egi/downloadfile?fileStoreId=${docs.dxfFileId.fileStoreId}&moduleName=EDCR&toSave=true">
@@ -89,7 +89,7 @@
                         <c:if test="${!isDocFound}">
                             N/A
                         </c:if></td>
-                    <td class="text-center"><c:set value="false" var="isDocFound"></c:set>
+                    <td><c:set value="false" var="isDocFound"></c:set>
                         <c:if test="${docs.reportOutputId.fileStoreId ne null}">
                             <c:set value="true" var="isDocFound"></c:set>
                             <a
@@ -101,8 +101,8 @@
                         <c:if test="${!isDocFound}">
                             N/A
                         </c:if></td>
-                    <td class="text-center">${docs.createdDate} </td>
-                    <td class="text-center">${docs.status} </td>
+                    <td><c:out value="${docs.createdDate}" default="N/A"></c:out> </td>
+                    <td><c:out value="${docs.status}" default="N/A"></c:out> </td>
                 </tr>
             </c:forEach>
         </c:when>
