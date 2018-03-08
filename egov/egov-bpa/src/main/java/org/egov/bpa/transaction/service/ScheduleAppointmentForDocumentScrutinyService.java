@@ -163,6 +163,8 @@ public class ScheduleAppointmentForDocumentScrutinyService {
 										if(LOGGER.isInfoEnabled())
 											LOGGER.info("****************** Schedule appointment  Transaction start *****************");
                                         for (SlotDetail slotDetail : slot.getSlotDetail()) {
+                                            if(LOGGER.isInfoEnabled())
+                                                LOGGER.info("******************Inside Transaction --- Slot Details List Size ------>>>>>>" + slot.getSlotDetail().size());
                                             if (bpaApp.getStatus().getCode().toString()
                                                     .equals(BpaConstants.APPLICATION_STATUS_PENDING_FOR_RESCHEDULING)) {
                                                 List<SlotApplication> slotApplications = slotApplicationRepository
@@ -171,6 +173,8 @@ public class ScheduleAppointmentForDocumentScrutinyService {
                                                 slotApplicationRepository.save(slotApplications.get(0));
                                                 Date appointmentDate = slotApplications.get(0).getSlotDetail().getSlot()
                                                         .getAppointmentDate();
+                                                if(LOGGER.isInfoEnabled())
+                                                    LOGGER.info("******************Inside Transaction --- Appointment Date ------>>>>>>" + appointmentDate);
                                                 if (slotDetail.getSlot().getAppointmentDate().compareTo(appointmentDate) > 0) {
                                                     if (slotDetail.getMaxRescheduledSlots()
                                                             - slotDetail.getUtilizedRescheduledSlots() > 0) {
@@ -193,6 +197,8 @@ public class ScheduleAppointmentForDocumentScrutinyService {
                                                     }
                                                 }
                                             } else {
+                                                if(LOGGER.isInfoEnabled())
+                                                    LOGGER.info("******************Inside Transaction --- Regular Application schedule start ------>>>>>>");
                                                 if (slotDetail.getMaxScheduledSlots()
                                                         - slotDetail.getUtilizedScheduledSlots() > 0) {
                                                     slotDetail.setUtilizedScheduledSlots(
@@ -201,6 +207,8 @@ public class ScheduleAppointmentForDocumentScrutinyService {
                                                             slotDetail);
                                                     createSlotApplicationAndUpdateStatus(slotDetail, bpaApp,
                                                             slotApplication);
+                                                    if(LOGGER.isInfoEnabled())
+                                                        LOGGER.info("******************Inside Transaction --- Regular Application schedule end ------>>>>>>");
                                                     break;
                                                 }
                                             }
@@ -209,6 +217,8 @@ public class ScheduleAppointmentForDocumentScrutinyService {
 											LOGGER.info("****************** Schedule appointment Transaction End *****************");
                                         return true;
                                     });
+                                    if(LOGGER.isInfoEnabled())
+                                        LOGGER.info("****************** Outside Transaction Template *****************");
                                 } catch (Exception e) {
                                     getErrorMessage(e);
                                 }
@@ -240,17 +250,31 @@ public class ScheduleAppointmentForDocumentScrutinyService {
 
     private void createSlotApplicationAndUpdateStatus(SlotDetail slotDetail, BpaApplication bpaApp,
             SlotApplication slotApplication) {
+        if(LOGGER.isInfoEnabled())
+            LOGGER.info("******************Inside Transaction --- Before slotApplication Save ******************************" + slotApplication);
         slotApplicationService.save(slotApplication);
+        if(LOGGER.isInfoEnabled())
+            LOGGER.info("******************Inside Transaction --- After slotApplication Save ******************************" + slotApplication);
+        if(LOGGER.isInfoEnabled())
+            LOGGER.info("******************Inside Transaction --- Before Bpa Application Save ******************************" + bpaApp);
         applicationBpaService.saveBpaApplication(bpaApp);
+        if(LOGGER.isInfoEnabled())
+            LOGGER.info("******************Inside Transaction --- After Bpa Application Save ******************************" + bpaApp);
+        if(LOGGER.isInfoEnabled())
+            LOGGER.info("****************** Schedule Appointment Type ******************************" + slotApplication.getScheduleAppointmentType().name());
         if (slotApplication.getScheduleAppointmentType().toString()
                 .equals(ScheduleAppointmentType.RESCHEDULE.toString())) {
             bpaUtils.redirectToBpaWorkFlow(bpaApp.getCurrentState().getOwnerPosition().getId(), bpaApp, null,
                     "document scrutiny re-scheduled", BpaConstants.WF_RESCHDLE_APPMNT_BUTTON, null);
         } else if (slotApplication.getScheduleAppointmentType().toString()
                 .equals(ScheduleAppointmentType.SCHEDULE.toString())) {
+            if(LOGGER.isInfoEnabled())
+                LOGGER.info("******************Start workflow - Schedule Appointment******************************");
             bpaUtils.redirectToBpaWorkFlow(
                     slotApplication.getApplication().getCurrentState().getOwnerPosition().getId(),
                     slotApplication.getApplication(), null, BpaConstants.APPLICATION_STATUS_SCHEDULED, "Forward", null);
+            if(LOGGER.isInfoEnabled())
+                LOGGER.info("******************End workflow - Schedule Appointment******************************");
         }
 		if(LOGGER.isInfoEnabled())
 			LOGGER.info("****************** before sending sms and email *****************");
