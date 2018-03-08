@@ -65,7 +65,7 @@
 					<div class="row add-margin">
 						<div class="col-sm-2 col-xs-12 add-margin">
 							<fmt:formatDate value="${history.date}" var="historyDate"
-								pattern="dd-MM-yyyy HH:mm a E" />
+								pattern="dd/MM/yyyy HH:mm a E" />
 							<c:out value="${historyDate}" />
 						</div>
 						<div class="col-sm-2 col-xs-12 add-margin">

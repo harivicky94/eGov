@@ -247,7 +247,7 @@ function validateExistBuildFloorOnAdd(){
 	    var carpetArea = $(this).find('*[name$="carpetArea"]').val();
 	    var occupancy  = $(this).find('*[name$="occupancy"]').val();
 	    if(!floorName || !floorNumber || !plinthArea || !carpetArea || !floorArea || !occupancy) { 
-	    	bootbox.alert("Please enter enter or select all values of existing rows before adding. Values cannot empty.");
+	    	bootbox.alert("Please enter or select all values of existing rows before adding. Values cannot empty.");
 	    	isValid=false;
 	    	return false;
 	    } 
