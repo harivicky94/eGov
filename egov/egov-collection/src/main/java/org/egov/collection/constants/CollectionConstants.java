@@ -676,5 +676,6 @@ public final class CollectionConstants {
     public static final String PNB_ADDL_FIELD_ONE  = "Addl Field 1";
     public static final String PNB_ADDL_FIELD_TWO = "Addl Field 2";
     public static final String PNB_TRANSACTION_STATUS_DESC = "Success";
+    public static final String PNB_SERVICECODE = "PNB";
     
 }

@@ -48,8 +48,16 @@
 
 package org.egov.collection.config;
 
+import static org.quartz.CronTrigger.MISFIRE_INSTRUCTION_DO_NOTHING;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.sql.DataSource;
+
 import org.egov.collection.scheduler.AtomReconciliationJob;
 import org.egov.collection.scheduler.AxisReconciliationJob;
+import org.egov.collection.scheduler.PnbReconciliationJob;
 import org.egov.collection.scheduler.RemittanceInstrumentJob;
 import org.egov.infra.config.scheduling.QuartzSchedulerConfiguration;
 import org.egov.infra.config.scheduling.SchedulerConfigCondition;
@@ -59,12 +67,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.quartz.CronTriggerFactoryBean;
 import org.springframework.scheduling.quartz.JobDetailFactoryBean;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
-
-import javax.sql.DataSource;
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.quartz.CronTrigger.MISFIRE_INSTRUCTION_DO_NOTHING;
 
 @Configuration
 @Conditional(SchedulerConfigCondition.class)
@@ -123,6 +125,39 @@ public class CollectionSchedulerConfiguration extends QuartzSchedulerConfigurati
     @Bean("axisReconciliationJob")
     public AxisReconciliationJob axisReconciliationJob() {
         return new AxisReconciliationJob();
+    }
+    
+    @Bean
+    public JobDetailFactoryBean pnbReconciliationJobDetail() {
+        JobDetailFactoryBean pnbReconciliationJobDetail = new JobDetailFactoryBean();
+        pnbReconciliationJobDetail.setGroup("COLLECTION_JOB_GROUP");
+        pnbReconciliationJobDetail.setName("COLLECTION_PNB_RECON_JOB");
+        pnbReconciliationJobDetail.setDurability(true);
+        pnbReconciliationJobDetail.setJobClass(PnbReconciliationJob.class);
+        pnbReconciliationJobDetail.setRequestsRecovery(true);
+        Map<String, String> jobDetailMap = new HashMap<>();
+        jobDetailMap.put("jobBeanName", "pnbReconciliationJob");
+        jobDetailMap.put("userName", "system");
+        jobDetailMap.put("cityDataRequired", "true");
+        jobDetailMap.put("moduleName", "collection");
+        pnbReconciliationJobDetail.setJobDataAsMap(jobDetailMap);
+        return pnbReconciliationJobDetail;
+    }
+
+    @Bean
+    public CronTriggerFactoryBean pnbReconciliationCronTrigger() {
+        CronTriggerFactoryBean pnbReconciliationCron = new CronTriggerFactoryBean();
+        pnbReconciliationCron.setJobDetail(pnbReconciliationJobDetail().getObject());
+        pnbReconciliationCron.setGroup("COLLECTION_TRIGGER_GROUP");
+        pnbReconciliationCron.setName("COLLECTION_PNB_RECON_TRIGGER");
+        pnbReconciliationCron.setCronExpression("0 */30 * * * ?");
+        pnbReconciliationCron.setMisfireInstruction(MISFIRE_INSTRUCTION_DO_NOTHING);
+        return pnbReconciliationCron;
+    }
+    
+    @Bean("pnbReconciliationJob")
+    public PnbReconciliationJob pnbReconciliationJob() {
+        return new PnbReconciliationJob();
     }
 
     @Bean

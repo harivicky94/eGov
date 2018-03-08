@@ -13,12 +13,15 @@ import javax.persistence.PersistenceContext;
 import org.apache.log4j.Logger;
 import org.egov.collection.config.properties.CollectionApplicationProperties;
 import org.egov.collection.constants.CollectionConstants;
+import org.egov.collection.entity.OnlinePayment;
 import org.egov.collection.entity.ReceiptHeader;
+import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infstr.models.ServiceDetails;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.awl.merchanttoolkit.dto.ReqMsgDTO;
 import com.awl.merchanttoolkit.dto.ResMsgDTO;
@@ -28,11 +31,14 @@ public class PnbAdaptor implements PaymentGatewayAdaptor {
 
 	private static final Logger LOGGER = Logger.getLogger(PnbAdaptor.class);
 	private static final BigDecimal PAISE_RUPEE_CONVERTER = BigDecimal.valueOf(100);
-	/*private static final String UTF8 = "UTF-8";
-	private static final String NO_VALUE_RETURNED = "No Value Returned";*/
+	private static final String UTF8 = "UTF-8";
+	// private static final String NO_VALUE_RETURNED = "No Value Returned";
 
 	@PersistenceContext
 	private EntityManager entityManager;
+
+	@Autowired
+	private CityService cityService;
 
 	@Autowired
 	private CollectionApplicationProperties collectionApplicationProperties;
@@ -111,7 +117,8 @@ public class PnbAdaptor implements PaymentGatewayAdaptor {
 			AWLMEAPI objAWLMEAPI = new AWLMEAPI();
 			ResMsgDTO objResMsgDTO = objAWLMEAPI.parseTrnResMsg(merchantResponse,
 					collectionApplicationProperties.pnbEncryptionKey());
-			// Punjab national bank Payment Gateway returns Response Code 'S' for successful
+			// Punjab national bank Payment Gateway returns Response Code 'S'
+			// for successful
 			// transactions, so converted it to 0300
 			// as that is being followed as a standard in other payment
 			// gateways.
@@ -144,4 +151,131 @@ public class PnbAdaptor implements PaymentGatewayAdaptor {
 			throw new ApplicationException(".transactiondate.parse.error", e);
 		}
 	}
+
+	@Transactional
+	public PaymentResponse createOfflinePaymentRequest(final OnlinePayment onlinePayment) {
+		LOGGER.debug("Inside createOfflinePaymentRequest");
+		final PaymentResponse pnbResponse = new DefaultPaymentResponse();
+		ResMsgDTO pnbResMsgDTO = new ResMsgDTO();
+		AWLMEAPI objAWLMEAPI = new AWLMEAPI();
+		try {
+			pnbResMsgDTO = objAWLMEAPI.getTransactionStatus(collectionApplicationProperties.pnbMid(),
+					onlinePayment.getReceiptHeader().getId().toString(), onlinePayment.getTransactionNumber(),
+					collectionApplicationProperties.pnbEncryptionKey(),
+					collectionApplicationProperties.pnbReconcileUrl());
+			pnbResponse.setAuthStatus(pnbResMsgDTO.getStatusCode().equals("S")
+					? CollectionConstants.PGI_AUTHORISATION_CODE_SUCCESS : pnbResMsgDTO.getStatusCode());
+			pnbResponse.setErrorDescription(pnbResMsgDTO.getStatusDesc());
+			pnbResponse.setAdditionalInfo6(pnbResMsgDTO.getAddField2().replace("-", "").replace("/", ""));
+			pnbResponse.setReceiptId(pnbResMsgDTO.getOrderId());
+
+			// Success
+			if (pnbResponse.getAuthStatus().equals(CollectionConstants.PGI_AUTHORISATION_CODE_SUCCESS)) {
+				pnbResponse.setTxnAmount(new BigDecimal(pnbResMsgDTO.getTrnAmt()).divide(PAISE_RUPEE_CONVERTER));
+				pnbResponse.setTxnReferenceNo(pnbResMsgDTO.getPgMeTrnRefNo());
+				pnbResponse.setTxnDate(getTransactionDate(pnbResMsgDTO.getTrnReqDate()));
+			}
+			LOGGER.debug(
+					"receiptid=" + pnbResponse.getReceiptId() + "consumercode=" + pnbResponse.getAdditionalInfo6());
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			LOGGER.error(e);
+		}
+		return pnbResponse;
+	}
+/*
+	@Transactional
+	public PaymentResponse createOfflinePaymentRequest(final OnlinePayment onlinePayment) {
+		LOGGER.debug("Inside createOfflinePaymentRequest");
+		final PaymentResponse pnbResponse = new DefaultPaymentResponse();
+		ResMsgDTO pnbResMsgDTO = new ResMsgDTO();
+		try {
+			final HttpPost httpPost = new HttpPost(collectionApplicationProperties.pnbReconcileUrl());
+			httpPost.setEntity(prepareEncodedFormEntity(onlinePayment));
+			final CloseableHttpClient httpclient = HttpClients.createDefault();
+			CloseableHttpResponse response;
+			HttpEntity responsePnb;
+			response = httpclient.execute(httpPost);
+			LOGGER.debug("Response Status >>>>>" + response.getStatusLine());
+			responsePnb = response.getEntity();
+			final Map<String, String> responsePnbMap = prepareResponseMap(responsePnb.getContent());
+			pnbResponse.setAdditionalInfo6(
+					onlinePayment.getReceiptHeader().getConsumerCode().replace("-", "").replace("/", ""));
+			pnbResponse.setReceiptId(onlinePayment.getReceiptHeader().getId().toString());
+
+			if (null != responsePnbMap.get(CollectionConstants.PNB_STATUS_CODE)
+					&& !"".equals(responsePnbMap.get(CollectionConstants.PNB_STATUS_CODE))) {
+
+				pnbResponse.setAuthStatus(null != responsePnbMap.get(CollectionConstants.PNB_STATUS_CODE)
+						&& "0".equals(responsePnbMap.get(CollectionConstants.PNB_STATUS_CODE))
+								? CollectionConstants.PGI_AUTHORISATION_CODE_SUCCESS
+								: responsePnbMap.get(CollectionConstants.PNB_STATUS_CODE));
+				pnbResponse.setErrorDescription(responsePnbMap.get(CollectionConstants.PNB_STATUS_DESCRIPTION));
+
+				if (CollectionConstants.PGI_AUTHORISATION_CODE_SUCCESS.equals(pnbResponse.getAuthStatus())) {
+					pnbResponse.setTxnReferenceNo(responsePnbMap.get(CollectionConstants.PNB_TRANSACTION_REFERENCE_NO));
+					pnbResponse.setTxnAmount(new BigDecimal(responsePnbMap.get(CollectionConstants.PNB_AMOUNT))
+							.divide(PAISE_RUPEE_CONVERTER));
+					pnbResponse.setTxnDate(
+							getTransactionDate(responsePnbMap.get(CollectionConstants.PNB_TRANSACTION_DATE)));
+				}
+			}
+			LOGGER.debug(
+					"receiptid=" + pnbResponse.getReceiptId() + "consumercode=" + pnbResponse.getAdditionalInfo6());
+		} catch (final Exception exp) {
+			LOGGER.error(exp);
+			throw new ApplicationRuntimeException("Exception during create offline requests" + exp.getMessage());
+		}
+		return pnbResponse;
+	}
+
+	private UrlEncodedFormEntity prepareEncodedFormEntity(final OnlinePayment onlinePayment) {
+		final List<NameValuePair> formData = new ArrayList<>();
+
+		formData.add(new BasicNameValuePair(CollectionConstants.PNB_MID, collectionApplicationProperties.pnbMid()));
+		formData.add(new BasicNameValuePair(CollectionConstants.PNB_ORDER_ID,
+				onlinePayment.getReceiptHeader().getId().toString()));
+		formData.add(new BasicNameValuePair(CollectionConstants.PNB_TRANSACTION_REFERENCE_NO,
+				onlinePayment.getTransactionNumber()));
+		formData.add(new BasicNameValuePair(CollectionConstants.PNB_ADDL_FIELD_TWO,
+				onlinePayment.getReceiptHeader().getConsumerCode()));
+		formData.add(
+				new BasicNameValuePair(CollectionConstants.PNB_ADDL_FIELD_ONE, ApplicationThreadLocals.getCityCode()));
+		UrlEncodedFormEntity urlEncodedFormEntity = null;
+		try {
+			urlEncodedFormEntity = new UrlEncodedFormEntity(formData);
+		} catch (final UnsupportedEncodingException e1) {
+			LOGGER.error("Error in Create Offline Payment Request" + e1);
+		}
+		return urlEncodedFormEntity;
+	}
+
+	private Map<String, String> prepareResponseMap(final InputStream responseContent) {
+		String[] pairs;
+		final BufferedReader reader = new BufferedReader(new InputStreamReader(responseContent));
+		final StringBuilder data = new StringBuilder();
+		String line;
+		try {
+			while ((line = reader.readLine()) != null)
+				data.append(line);
+			reader.close();
+		} catch (final IOException e) {
+			LOGGER.error("Error Reading InsputStrem from Punjab National Bank Response" + e);
+		}
+		LOGGER.info("ResponsePNB: " + data.toString());
+		pairs = data.toString().split("&");
+		final Map<String, String> responseAxisMap = new LinkedHashMap<>();
+		for (final String pair : pairs) {
+			final int idx = pair.indexOf('=');
+			try {
+				responseAxisMap.put(URLDecoder.decode(pair.substring(0, idx), UTF8),
+						URLDecoder.decode(pair.substring(idx + 1), UTF8));
+			} catch (final UnsupportedEncodingException e) {
+				LOGGER.error("Error Decoding Punjab National Bank Response" + e);
+			}
+		}
+		return responseAxisMap;
+	}
+*/
 }

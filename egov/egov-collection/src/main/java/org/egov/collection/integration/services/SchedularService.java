@@ -61,6 +61,7 @@ import org.egov.collection.entity.ReceiptHeader;
 import org.egov.collection.integration.pgi.AtomAdaptor;
 import org.egov.collection.integration.pgi.AxisAdaptor;
 import org.egov.collection.integration.pgi.PaymentResponse;
+import org.egov.collection.integration.pgi.PnbAdaptor;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.validation.exception.ValidationError;
@@ -89,6 +90,9 @@ public class SchedularService {
 
     @Autowired
     private AtomAdaptor atomAdaptor;
+    
+    @Autowired
+    private PnbAdaptor pnbAdaptor;
 
     @Transactional
     public void reconcileAXIS() {
@@ -206,5 +210,53 @@ public class SchedularService {
             }
         }
     }
+    
+    @Transactional
+    public void reconcilePNB() {
+        LOGGER.debug("Inside reconcilePNB");
+        final Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.MINUTE, -30);
+        final Query qry = persistenceService
+                .getSession()
+                .createQuery(
+                        "select receipt from org.egov.collection.entity.OnlinePayment as receipt where receipt.status.code=:onlinestatuscode"
+                                + " and receipt.service.code=:paymentservicecode and receipt.createdDate<:thirtyminslesssysdate")
+                .setMaxResults(50);
+        qry.setString("onlinestatuscode", CollectionConstants.ONLINEPAYMENT_STATUS_CODE_PENDING);
+        qry.setString("paymentservicecode", CollectionConstants.PNB_SERVICECODE);
+        qry.setParameter("thirtyminslesssysdate", new Date(cal.getTimeInMillis()));
+        final List<OnlinePayment> reconcileList = qry.list();
+
+        LOGGER.debug("Thread ID = " + Thread.currentThread().getId() + ": got " + reconcileList.size() + " results.");
+        if (!reconcileList.isEmpty()) {
+            for (final OnlinePayment onlinePaymentObj : reconcileList) {
+                final long startTimeInMilis = System.currentTimeMillis();
+                LOGGER.info("PNB Receiptid::::" + onlinePaymentObj.getReceiptHeader().getId());
+                PaymentResponse paymentResponse = pnbAdaptor.createOfflinePaymentRequest(onlinePaymentObj);
+                if (paymentResponse != null && isNotBlank(paymentResponse.getReceiptId())) {
+                    LOGGER.info("paymentResponse.getReceiptId():" + paymentResponse.getReceiptId());
+                    LOGGER.info("paymentResponse.getAdditionalInfo6():" + paymentResponse.getAdditionalInfo6());
+                    LOGGER.info("paymentResponse.getAuthStatus():" + paymentResponse.getAuthStatus());
+                    ReceiptHeader onlinePaymentReceiptHeader = (ReceiptHeader) persistenceService.findByNamedQuery(
+                            CollectionConstants.QUERY_RECEIPT_BY_ID_AND_CITYCODE, Long.valueOf(paymentResponse.getReceiptId()),
+                            ApplicationThreadLocals.getCityCode());
+
+                    if (CollectionConstants.PGI_AUTHORISATION_CODE_SUCCESS.equals(paymentResponse.getAuthStatus()))
+                        reconciliationService.processSuccessMsg(onlinePaymentReceiptHeader, paymentResponse);
+                    else
+                        reconciliationService.processFailureMsg(onlinePaymentReceiptHeader, paymentResponse);
+
+                    final long elapsedTimeInMillis = System.currentTimeMillis() - startTimeInMilis;
+                    LOGGER.info("$$$$$$ Online Receipt Persisted with Receipt Number: "
+                            + onlinePaymentReceiptHeader.getReceiptnumber()
+                            + (onlinePaymentReceiptHeader.getConsumerCode() != null ? " and consumer code: "
+                                    + onlinePaymentReceiptHeader.getConsumerCode() : "")
+                            + "; Time taken(ms) = "
+                            + elapsedTimeInMillis);
+                }
+            }
+        }
+    }
+
 
 }
