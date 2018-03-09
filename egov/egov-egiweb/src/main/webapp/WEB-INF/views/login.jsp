@@ -116,7 +116,7 @@
 					</noscript>
 					</div>
 					<div class="col-md-6 side-space">
-						<div class="col-md-12 community-card">
+						<%--<div class="col-md-12 community-card">
 							<a href="/portal/citizen/signup" target="_blank">
 								<div class="rounded-circle"><i class="fa fa-user a"></i></div>&nbsp;
 								<div class="label-font">
@@ -159,10 +159,10 @@
 									</div>
 								</a>
 							</div>
-						</c:if>
+						</c:if>--%>
 					</div>
 					<div class="col-md-6 side-space">
-	
+
 						<div class="signin-formcontent signin-section">
 							<form method="post" role="form" id="signform" action="${pageContext.request.contextPath}/j_security_check" autocomplete="off">
 								<div class="form-group">
