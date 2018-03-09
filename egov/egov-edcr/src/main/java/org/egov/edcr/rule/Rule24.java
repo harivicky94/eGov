@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
+import org.egov.edcr.constants.DxfFileConstants;
 import org.egov.edcr.entity.Floor;
 import org.egov.edcr.entity.PlanDetail;
 import org.egov.edcr.entity.Plot;
@@ -471,6 +472,11 @@ public class Rule24 extends GeneralRule {
             }
         }
 
+        String opening=planDetail.getPlanInformation().getOpeningOnSide()?"Yes":"No";
+        String noc = planDetail.getPlanInformation().getNocToAbutSide()?"Yes":"No";
+        String message= DxfFileConstants.OPENING_BELOW_2_1_ON_SIDE_LESS_1M +": "+ opening
+                       +" , "+DxfFileConstants.NOC_TO_ABUT_SIDE+": "+ noc ;                  
+                                     
         if (valid1 == true) {
 
             planDetail.reportOutput
@@ -478,18 +484,14 @@ public class Rule24 extends GeneralRule {
                             side1FieldName,
                             side1Expected,
                             min + DcrConstants.IN_METER,
-                            Result.Accepted,
-                            "Opening on Side :" + planDetail.getPlanInformation().getOpeningOnSide() +
-                                    ",Noc to Abut next plot:" + planDetail.getPlanInformation().getNocToAbutSide()));
+                            Result.Accepted,message ));
         } else {
             planDetail.reportOutput
                     .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, subRule+" Side Yard 1", side1Desc,
                             side1FieldName,
                             side1Expected,
                             min + DcrConstants.IN_METER, 
-                            Result.Not_Accepted,
-                            "Opening on Side :" + planDetail.getPlanInformation().getOpeningOnSide() +
-                                    ",Noc to Abut next plot:" + planDetail.getPlanInformation().getNocToAbutSide()));
+                            Result.Not_Accepted,message));
 
         }
         if (valid2 == true) {
