@@ -18,6 +18,7 @@ import org.egov.edcr.entity.RuleOutput;
 import org.egov.edcr.entity.SubRuleOutput;
 import org.egov.edcr.entity.measurement.Measurement;
 import org.egov.edcr.entity.measurement.Yard;
+import org.egov.edcr.entity.utility.RuleReportOutput;
 import org.egov.edcr.service.ReportService;
 import org.egov.edcr.utility.DcrConstants;
 import org.egov.edcr.utility.Util;
@@ -698,18 +699,42 @@ public class Rule24 extends GeneralRule {
                 subRep.setUseParentReportParameters(true);
                 subRep.setSplitAllowed(true);
                 drb2.addConcatenatedReport(subRep);
+                SubRuleOutput subRule24_5 =null;
+
                 valuesMap.put(ruleOutput.getKey(), new JRBeanCollectionDataSource(ruleOutput.getSubRuleOutputs()));
-                if (ruleOutput != null && !ruleOutput.getSubRuleOutputs().isEmpty())
-                    for (SubRuleOutput subRuleOutput : ruleOutput.getSubRuleOutputs())
+                if (ruleOutput != null && !ruleOutput.getSubRuleOutputs().isEmpty()){
+                    for (SubRuleOutput subRuleOutput : ruleOutput.getSubRuleOutputs()){
                         try {
+                            
+                            reportStatus = reportService.getReportStatus(subRuleOutput.getRuleReportOutputs(), reportStatus);
+                            if (subRuleOutput.getKey().equalsIgnoreCase(SUB_RULE_24_5)) {
+                                subRule24_5 = new SubRuleOutput();
+                                subRule24_5.setKey(subRuleOutput.getKey());
+                                subRule24_5.setMessage(subRuleOutput.getMessage());
+                                subRule24_5.setRuleDescription(subRuleOutput.getRuleDescription());
+                                subRule24_5.getRuleReportOutputs().addAll(subRuleOutput.getRuleReportOutputs());
+                            } else {
                             reportStatus = reportService.getReportStatus(subRuleOutput.getRuleReportOutputs(), reportStatus);
                             valuesMap.put(subRuleOutput.getKey() + "DataSource",
                                     new JRBeanCollectionDataSource(subRuleOutput.getRuleReportOutputs()));
                             drb2.addConcatenatedReport(generateSubRuleReport(subRuleOutput, drb2, valuesMap));
+                            }
                         } catch (Exception e) {
                             // TODO Auto-generated catch block
                             e.printStackTrace();
                         }
+                }
+                    if(subRule24_5 != null) {
+                        valuesMap.put(SUB_RULE_24_5 + "DataSource",
+                                new JRBeanCollectionDataSource(subRule24_5.getRuleReportOutputs()));
+                        try {
+                            drb2.addConcatenatedReport(generateSubRuleReport(subRule24_5, drb2, valuesMap));
+                        } catch (Exception e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        }
+                    }
+                }
                 break;
             }
         return reportStatus;
