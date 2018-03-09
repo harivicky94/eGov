@@ -89,7 +89,7 @@
               <div class="col-md-6 col-sm-5 col-xs-12 right-section">
 				<span class="pull-right ">
 					<a href="http://www.egovernments.org" target="_blank">
-							<img src="<cdn:url value='/resources/global/images/favicon.png' context='/egi'/>" title="Powered by eGovernments" height="40px">
+							<img src="<cdn:url value='/resources/global/images/egov_logo_brown.png' context='/egi'/>" title="Powered by eGovernments" height="35px">
 						</a>
 				</span>
                 <span class="pull-right profile-dd"><a href="/egi/logout"><i class="fa fa-sign-out" aria-hidden="true"></i> Sign Out</a></span>
