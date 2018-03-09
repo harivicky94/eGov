@@ -7,15 +7,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
+import ar.com.fdvs.dj.domain.constants.*;
 import org.egov.edcr.entity.PlanDetail;
 import org.egov.edcr.entity.utility.RuleReportOutput;
 import org.springframework.stereotype.Service;
 
 import ar.com.fdvs.dj.domain.Style;
-import ar.com.fdvs.dj.domain.constants.Border;
-import ar.com.fdvs.dj.domain.constants.Font;
-import ar.com.fdvs.dj.domain.constants.HorizontalAlign;
-import ar.com.fdvs.dj.domain.constants.Transparency;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperExportManager;
 import net.sf.jasperreports.engine.JasperPrint;
@@ -53,9 +50,11 @@ public class ReportService {
         final Style columnStyle = new Style("ColumnCss");
         columnStyle.setBorderLeft(Border.THIN());
         columnStyle.setBorderRight(Border.THIN());
+        columnStyle.setBorderBottom(Border.THIN());
+        columnStyle.setBorderTop(Border.THIN());
         columnStyle.setTextColor(Color.black);
-        columnStyle.setHorizontalAlign(HorizontalAlign.CENTER);
-        columnStyle.setFont(new Font(10, Font._FONT_TIMES_NEW_ROMAN, false));
+        columnStyle.setHorizontalAlign(HorizontalAlign.LEFT);
+        columnStyle.setFont(new Font(9, Font._FONT_TIMES_NEW_ROMAN, false));
         columnStyle.setBorderBottom(Border.THIN());
         columnStyle.setTransparent(false);
         return columnStyle;
@@ -80,13 +79,14 @@ public class ReportService {
         columnheaderStyle.setBorderBottom(Border.THIN());
         columnheaderStyle.setTextColor(Color.black);
         columnheaderStyle.setHorizontalAlign(HorizontalAlign.CENTER);
-        columnheaderStyle.setFont(new Font(10, Font._FONT_COMIC_SANS, true));
+        columnheaderStyle.setVerticalAlign(VerticalAlign.BOTTOM);
+        columnheaderStyle.setFont(new Font(10, Font._FONT_ARIAL, true));
         return columnheaderStyle;
     }
 
     public Style getTitleStyle() {
         final Style titleStyle = new Style("titleStyle");
-        titleStyle.setFont(new Font(10, Font._FONT_COMIC_SANS, true));
+        titleStyle.setFont(new Font(10, Font._FONT_ARIAL, true));
         titleStyle.setHorizontalAlign(HorizontalAlign.LEFT);
         return titleStyle;
     }
@@ -101,7 +101,7 @@ public class ReportService {
     public Style getResultColumnStyle(List<RuleReportOutput> ruleReportOutputs) {
         Style columnResultStyle = null;
         for (RuleReportOutput ruleReportOutput : ruleReportOutputs) {
-            if (ruleReportOutput.getStatus().equals("NotAccepted"))
+            if (ruleReportOutput.getStatus().equals("Not Accepted"))
                 columnResultStyle = getNotAcceptedResultStyle();
             if (ruleReportOutput.getStatus().equals("Accepted"))
                 columnResultStyle = getAcceptedResultStyle();

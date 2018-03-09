@@ -1,13 +1,17 @@
 package org.egov.edcr.service;
 
+import ar.com.fdvs.dj.core.DJConstants;
 import ar.com.fdvs.dj.core.DynamicJasperHelper;
 import ar.com.fdvs.dj.core.layout.ClassicLayoutManager;
+import ar.com.fdvs.dj.domain.DJDataSource;
 import ar.com.fdvs.dj.domain.DynamicReport;
 import ar.com.fdvs.dj.domain.Style;
 import ar.com.fdvs.dj.domain.builders.FastReportBuilder;
 import ar.com.fdvs.dj.domain.constants.Font;
 import ar.com.fdvs.dj.domain.constants.HorizontalAlign;
 import ar.com.fdvs.dj.domain.constants.Page;
+import ar.com.fdvs.dj.domain.constants.VerticalAlign;
+import ar.com.fdvs.dj.domain.entities.Subreport;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperPrint;
@@ -15,10 +19,8 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.edcr.autonumber.DcrApplicationNumberGenerator;
-import org.egov.edcr.entity.EdcrApplication;
-import org.egov.edcr.entity.EdcrApplicationDetail;
-import org.egov.edcr.entity.PlanDetail;
-import org.egov.edcr.entity.PlanRule;
+import org.egov.edcr.entity.*;
+import org.egov.edcr.entity.utility.RuleReportOutput;
 import org.egov.edcr.rule.GeneralRule;
 import org.egov.edcr.utility.DcrConstants;
 import org.egov.edcr.utility.Util;
@@ -27,6 +29,7 @@ import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -66,9 +69,11 @@ public class DcrService {
     @Autowired
     private DcrApplicationNumberGenerator dcrApplicationNumberGenerator;
 
-
     @Autowired
     private EdcrApplicationDetailService edcrApplicationDetailService;
+
+    @Value("${edcr.client.subreport}")
+    private boolean clientSpecificSubReport;
 
     public PlanDetail getPlanDetail() {
         return planDetail;
@@ -255,39 +260,75 @@ public class DcrService {
         valuesMap.put("applicationDate", applicationDate);
         valuesMap.put("errors", planDetail.getErrors());
         valuesMap.put("errorString", errors.toString());
-        List<PlanRule> planRules = planRuleService.findRulesByPlanDetail(planDetail);
 
-        for (PlanRule pl : planRules) {
-            String rules = pl.getRules();
-            String[] ruleSet = rules.split(",");
-            for (String s : ruleSet) {
-                String ruleName = "rule" + s;
-                LOG.info(s);
-                Object ruleBean = getRuleBean(ruleName);
-                if (ruleBean != null) {
-                    GeneralRule bean = (GeneralRule) ruleBean;
-                    if (bean != null)
-                        reportStatus = bean.generateRuleReport(planDetail, drb, valuesMap, reportStatus);
-                } else
-                    LOG.error("Skipping rule " + ruleName + "Since rule cannot be injected");
+        if (clientSpecificSubReport) {
+            List<DcrReportOutput> list = new ArrayList<>();
+            for (RuleOutput ruleOutput : planDetail2.getReportOutput().getRuleOutPuts()) {
+                DcrReportOutput dcrReportOutput;
+                if (ruleOutput.getSubRuleOutputs() != null && ruleOutput.getSubRuleOutputs().size() > 0) {
+                    for (SubRuleOutput subRuleOutput : ruleOutput.getSubRuleOutputs()) {
+                        if (subRuleOutput.getRuleReportOutputs().size() > 0) {
+                            dcrReportOutput = new DcrReportOutput();
+                            for (RuleReportOutput ruleReportOutput : subRuleOutput.getRuleReportOutputs()) {
+                                dcrReportOutput.setKey(subRuleOutput.getKey());
+                                dcrReportOutput.setDescription(subRuleOutput.getRuleDescription());
+                                dcrReportOutput.setExpectedResult(ruleReportOutput.getExpectedResult());
+                                dcrReportOutput.setActualResult(ruleReportOutput.getActualResult());
+                                dcrReportOutput.setStatus(ruleReportOutput.getStatus());
+                            }
+                            list.add(dcrReportOutput);
+                        } else {
+                            dcrReportOutput = new DcrReportOutput();
+                            dcrReportOutput.setKey(subRuleOutput.getKey());
+                            dcrReportOutput.setDescription(subRuleOutput.getRuleDescription());
+                            dcrReportOutput.setExpectedResult(null);
+                            dcrReportOutput.setActualResult(subRuleOutput.getMessage());
+                            dcrReportOutput.setStatus(null);
+                            list.add(dcrReportOutput);
+                        }
+                    }
+                }
+                JRDataSource dataSource = new JRBeanCollectionDataSource(list);
+                valuesMap.put("subreportds", dataSource);
+                try {
+                    drb.addConcatenatedReport(generateDcrSubReport(list));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        } else {
+            List<PlanRule> planRules = planRuleService.findRulesByPlanDetail(planDetail);
 
+            for (PlanRule pl : planRules) {
+                String rules = pl.getRules();
+                String[] ruleSet = rules.split(",");
+                for (String s : ruleSet) {
+                    String ruleName = "rule" + s;
+                    LOG.info(s);
+                    Object ruleBean = getRuleBean(ruleName);
+                    if (ruleBean != null) {
+                        GeneralRule bean = (GeneralRule) ruleBean;
+                        if (bean != null)
+                            reportStatus = bean.generateRuleReport(planDetail, drb, valuesMap, reportStatus);
+                    } else
+                        LOG.error("Skipping rule " + ruleName + "Since rule cannot be injected");
+                }
             }
         }
 
-        reportBuilder.append("Report Status : " + (reportStatus ? "Accepted" : "NotAccepted")).append("\\n").append("\\n");
+        reportBuilder.append("Report Status : " + (reportStatus ? "Accepted" : "Not Accepted")).append("\\n").append("\\n");
         reportBuilder.append("Rules Verified : ").append("\\n");
-        if (reportStatus) {
-            valuesMap.put("qrCode", generatePDF417Code(buildQRCodeDetails(dcrApplication, reportStatus)));
-        }
-        valuesMap.put("reportStatus", (reportStatus ? "Accepted" : "NotAccepted"));
+        valuesMap.put("reportStatus", (reportStatus ? "Accepted" : "Not Accepted"));
         drb.setTemplateFile("/reports/templates/edcr_report.jrxml");
         drb.setMargins(5, 0, 33, 20);
-        if (planDetail.getEdcrPassed()) {
+        if (reportStatus) {
             String dcrApplicationNumber = dcrApplicationNumberGenerator.generateEdcrApplicationNumber(dcrApplication);
             EdcrApplicationDetail edcrApplicationDetail = dcrApplication.getEdcrApplicationDetails().get(0);
             edcrApplicationDetail.setDcrNumber(dcrApplicationNumber);
         }
-
+        if (reportStatus) {
+            valuesMap.put("qrCode", generatePDF417Code(buildQRCodeDetails(dcrApplication, reportStatus)));
+        }
         final DynamicReport dr = drb.build();
         planDetail2.setEdcrPassed(reportStatus);
         return DynamicJasperHelper.generateJasperPrint(dr, new ClassicLayoutManager(), ds, valuesMap);
@@ -302,9 +343,42 @@ public class DcrService {
     private String buildQRCodeDetails(final EdcrApplication dcrApplication, boolean reportStatus) {
         StringBuilder qrCodeValue = new StringBuilder();
         qrCodeValue = !org.apache.commons.lang.StringUtils.isEmpty(dcrApplication.getEdcrApplicationDetails().get(0).getDcrNumber()) ? qrCodeValue.append("DCR Number : ").append(dcrApplication.getEdcrApplicationDetails().get(0).getDcrNumber()).append("\n") : qrCodeValue.append("DCR Number : ").append("N/A").append("\n");
-        qrCodeValue = !org.apache.commons.lang.StringUtils.isEmpty(dcrApplication.getApplicationNumber()) ? qrCodeValue.append("Applicstion Number : ").append(dcrApplication.getApplicationNumber()).append("\n") : qrCodeValue.append("Application Number : ").append("N/A").append("\n");
+        qrCodeValue = !org.apache.commons.lang.StringUtils.isEmpty(dcrApplication.getApplicationNumber()) ? qrCodeValue.append("Application Number : ").append(dcrApplication.getApplicationNumber()).append("\n") : qrCodeValue.append("Application Number : ").append("N/A").append("\n");
         qrCodeValue = dcrApplication.getApplicationDate() != null ? qrCodeValue.append("Application Date : ").append(dcrApplication.getApplicationDate()).append("\n") : qrCodeValue.append("Application Date : ").append("N/A").append("\n");
-        qrCodeValue = qrCodeValue.append("Report Status :").append(reportStatus ? "Accepted" : "NotAccepted").append("\n");
+        qrCodeValue = qrCodeValue.append("Report Status :").append(reportStatus ? "Accepted" : "Not Accepted").append("\n");
         return qrCodeValue.toString();
+    }
+
+    public Subreport generateDcrSubReport(final List<DcrReportOutput> dcrReportOutputs) throws Exception {
+        FastReportBuilder drb = new FastReportBuilder();
+
+        final Style titleStyle = new Style("titleStyle");
+        titleStyle.setFont(Font.ARIAL_MEDIUM_BOLD);
+        titleStyle.setHorizontalAlign(HorizontalAlign.CENTER);
+        titleStyle.setVerticalAlign(VerticalAlign.BOTTOM);
+
+
+        final Style columnStyle = reportService.getColumnStyle();
+        final Style columnHeaderStyle = reportService.getColumnHeaderStyle();
+        drb.setTitle("BUILDING RULE SCRUTINY");
+        drb.setTitleStyle(titleStyle);
+        drb.addColumn("KMBR Rule No", "key", String.class.getName(), 60, columnStyle, columnHeaderStyle);
+        drb.addColumn("Rule description", "description", String.class.getName(), 135, columnStyle, columnHeaderStyle);
+        drb.addColumn("Required by Rule", "expectedResult", String.class.getName(), 120, columnStyle, columnHeaderStyle);
+        drb.addColumn("Provided as per drawings", "actualResult", String.class.getName(), 130, columnStyle, columnHeaderStyle);
+        drb.addColumn("Accepted / Not Accepted", "status", String.class.getName(), 90, columnStyle, columnHeaderStyle);
+
+        drb.setPageSizeAndOrientation(Page.Page_Legal_Landscape());
+        new JRBeanCollectionDataSource(dcrReportOutputs);
+        final DJDataSource djds = new DJDataSource("subreportds", DJConstants.DATA_SOURCE_ORIGIN_PARAMETER,
+                DJConstants.DATA_SOURCE_TYPE_JRDATASOURCE);
+
+        final Subreport subRep = new Subreport();
+        subRep.setLayoutManager(new ClassicLayoutManager());
+        subRep.setDynamicReport(drb.build());
+        subRep.setDatasource(djds);
+        subRep.setUseParentReportParameters(true);
+
+        return subRep;
     }
 }
