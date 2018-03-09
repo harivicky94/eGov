@@ -78,7 +78,7 @@ public class BpaSchedulerConfiguration extends QuartzSchedulerConfiguration {
 		openSlotsCron.setJobDetail(openSlotsJobDetail().getObject());
 		openSlotsCron.setGroup("BPA_TRIGGER_GROUP");
 		openSlotsCron.setName("BPA_OPEN_SLOT_TRIGGER");
-		openSlotsCron.setCronExpression("0 */4 * * * ?");
+		openSlotsCron.setCronExpression("0 */45 * * * ?");
 		openSlotsCron.setMisfireInstruction(MISFIRE_INSTRUCTION_DO_NOTHING);
 		return openSlotsCron;
 	}
@@ -89,7 +89,7 @@ public class BpaSchedulerConfiguration extends QuartzSchedulerConfiguration {
 		scheduleAppointmentCron.setJobDetail(scheduleAppointmentJobDetail().getObject());
 		scheduleAppointmentCron.setGroup("BPA_TRIGGER_GROUP");
 		scheduleAppointmentCron.setName("BPA_SCHEDULE_APPOINTMENT_TRIGGER");
-		scheduleAppointmentCron.setCronExpression("0 */5 * * * ?");
+		scheduleAppointmentCron.setCronExpression("0 */30 * * * ?"); 
 		scheduleAppointmentCron.setMisfireInstruction(MISFIRE_INSTRUCTION_DO_NOTHING);
 		return scheduleAppointmentCron;
 	}
@@ -100,7 +100,7 @@ public class BpaSchedulerConfiguration extends QuartzSchedulerConfiguration {
 		cancelAppointmentCron.setJobDetail(cancelAppointmentJobDetail().getObject());
 		cancelAppointmentCron.setGroup("BPA_TRIGGER_GROUP");
 		cancelAppointmentCron.setName("BPA_CANCEL_APPOINTMENT_TRIGGER");
-		cancelAppointmentCron.setCronExpression("0 */6 * * * ?");
+		cancelAppointmentCron.setCronExpression("0 */30 * * * ?");
 		cancelAppointmentCron.setMisfireInstruction(MISFIRE_INSTRUCTION_DO_NOTHING);
 		return cancelAppointmentCron;
 	}

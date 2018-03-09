@@ -44,7 +44,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.log4j.*;
+import org.apache.log4j.Logger;
 import org.egov.bpa.master.entity.enums.ApplicationType;
 import org.egov.bpa.master.service.SlotMappingService;
 import org.egov.bpa.transaction.entity.BpaApplication;
@@ -67,6 +67,7 @@ import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.validation.exception.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -76,7 +77,7 @@ public class ScheduleAppointmentForDocumentScrutinyService {
     private static final String MODULE_NAME = "BPA";
     private static final String APP_CONFIG_KEY = "GAPFORSCHEDULING";
 
-	private static final Logger LOGGER = Logger.getLogger(ScheduleAppointmentForDocumentScrutinyService.class);
+    private static final Logger LOGGER = Logger.getLogger(ScheduleAppointmentForDocumentScrutinyService.class);
 
     @Autowired
     private SlotMappingService slotMappingService;
@@ -102,7 +103,7 @@ public class ScheduleAppointmentForDocumentScrutinyService {
     private TransactionTemplate transactionTemplate;
     @Autowired
     private AppConfigValueService appConfigValuesService;
-
+    
     public void scheduleAppointmentsForDocumentScrutiny() {
         Calendar calendar = Calendar.getInstance();
         List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(MODULE_NAME,
@@ -111,18 +112,18 @@ public class ScheduleAppointmentForDocumentScrutinyService {
         calendar.add(Calendar.DAY_OF_YEAR, Integer.valueOf(noOfDays));
         List<Boundary> zonesList = slotMappingService.slotfindZoneByApplType(ApplicationType.ALL_OTHER_SERVICES);
         for (Boundary bndry : zonesList) {
-        	if(LOGGER.isInfoEnabled()) {
-				LOGGER.info("******************Zone ------>>>>>>" + bndry.getName());
-				LOGGER.info("******************Gap for application schedule date ------>>>>>>" + calendar.getTime());
-			}
+            if(LOGGER.isInfoEnabled()) {
+                LOGGER.info("******************Zone ------>>>>>>" + bndry.getName());
+                LOGGER.info("******************Gap for application schedule date ------>>>>>>" + calendar.getTime());
+            }
             List<Slot> slotList = slotRepository.findByZoneAndApplicationDate(bndry, calendar.getTime());
-			if(LOGGER.isInfoEnabled())
-				LOGGER.info("******************Slot List Size ------>>>>>>" + slotList.size());
+            if(LOGGER.isInfoEnabled())
+                LOGGER.info("******************Slot List Size ------>>>>>>" + slotList.size());
             if (slotList.size() > 0) {
                 for (Slot slot : slotList) {
                     List<SlotDetail> slotDetailList = slotDetailRepository.findBySlot(slot);
-					if(LOGGER.isInfoEnabled())
-						LOGGER.info("******************Slot Details List Size ------>>>>>>" + slotDetailList.size());
+                    if(LOGGER.isInfoEnabled())
+                        LOGGER.info("******************Slot Details List Size ------>>>>>>" + slotDetailList.size());
                     slot.setSlotDetail(slotDetailList);
                     if (slot.getSlotDetail().size() > 0) {
                         Integer totalAvailableSlots = 0;
@@ -131,10 +132,10 @@ public class ScheduleAppointmentForDocumentScrutinyService {
                             Integer diffRescheduledSlots = 0;
                             if (slotDetail.getMaxScheduledSlots() > slotDetail.getUtilizedScheduledSlots())
                                 diffScheduledSlots = slotDetail.getMaxScheduledSlots()
-                                        - slotDetail.getUtilizedScheduledSlots();
+                                - slotDetail.getUtilizedScheduledSlots();
                             if (slotDetail.getMaxRescheduledSlots() > slotDetail.getUtilizedRescheduledSlots())
                                 diffRescheduledSlots = slotDetail.getMaxRescheduledSlots()
-                                        - slotDetail.getUtilizedRescheduledSlots();
+                                - slotDetail.getUtilizedRescheduledSlots();
                             totalAvailableSlots = totalAvailableSlots + diffScheduledSlots + diffRescheduledSlots;
                         }
                         BpaStatus bpaStatusPendingForRescheduling = bpaStatusRepository
@@ -146,44 +147,79 @@ public class ScheduleAppointmentForDocumentScrutinyService {
                         bpaStatusList.add(bpaStatusPendingForRescheduling);
                         List<Boundary> boundaryList = boundaryRepository
                                 .findActiveImmediateChildrenWithOutParent(slot.getZone().getId());
+
                         List<BpaApplication> bpaApplications = applicationBpaService
-                                .getBpaApplicationsByCriteria(bpaStatusList, boundaryList, totalAvailableSlots);
-                        if (bpaApplications.size() > 0) {
+                                .getBpaApplicationsForScheduleAndReSchedule(bpaStatusList, boundaryList, totalAvailableSlots);
+                        if (bpaApplications.size() > 0) { 
+                            List <Long> registrationNumber= new ArrayList<>();
+                            
                             for (BpaApplication bpaApp : bpaApplications) {
-                                if(LOGGER.isInfoEnabled()) {
-                                    LOGGER.info("******************Application Number ------>>>>>>" + bpaApp.getApplicationNumber());
+                                if (LOGGER.isInfoEnabled()) {
+                                    LOGGER.info(
+                                            "******************Application Number ------>>>>>>" + bpaApp.getApplicationNumber());
                                     LOGGER.info("******************Application Date ------>>>>>>" + bpaApp.getApplicationDate());
                                 }
-                            try {
+
+                                try {
+                                     
                                     TransactionTemplate template = new TransactionTemplate(
                                             transactionTemplate.getTransactionManager());
+                                    template.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
+                                    
                                     template.execute(result -> {
-										if(LOGGER.isInfoEnabled())
-											LOGGER.info("****************** Schedule appointment  Transaction start *****************");
-                                        for (SlotDetail slotDetail : slot.getSlotDetail()) {
-                                            if(LOGGER.isInfoEnabled())
-                                                LOGGER.info("******************Inside Transaction --- Slot Details List Size ------>>>>>>" + slot.getSlotDetail().size());
-                                            if (bpaApp.getStatus().getCode().toString()
-                                                    .equals(BpaConstants.APPLICATION_STATUS_PENDING_FOR_RESCHEDULING)) {
-                                                List<SlotApplication> slotApplications = slotApplicationRepository
-                                                        .findByApplicationOrderByIdDesc(bpaApp);
-                                                slotApplications.get(0).setActive(false);
-                                                slotApplicationRepository.save(slotApplications.get(0));
-                                                Date appointmentDate = slotApplications.get(0).getSlotDetail().getSlot()
-                                                        .getAppointmentDate();
-                                                if(LOGGER.isInfoEnabled())
-                                                    LOGGER.info("******************Inside Transaction --- Appointment Date ------>>>>>>" + appointmentDate);
-                                                if (slotDetail.getSlot().getAppointmentDate().compareTo(appointmentDate) > 0) {
-                                                    if (slotDetail.getMaxRescheduledSlots()
-                                                            - slotDetail.getUtilizedRescheduledSlots() > 0) {
-                                                        slotDetail.setUtilizedRescheduledSlots(
-                                                                slotDetail.getUtilizedRescheduledSlots() + 1);
-                                                        SlotApplication slotApplication = buildSlotApplicationObject(bpaApp,
-                                                                slotDetail);
-                                                        createSlotApplicationAndUpdateStatus(slotDetail, bpaApp,
-                                                                slotApplication);
-                                                        break;
-                                                    } else if (slotDetail.getMaxScheduledSlots()
+
+                                        try {
+                                          
+                                            
+                                            LOGGER.info("_---- transaction id "+ template.getTransactionManager().hashCode());
+                                            if (LOGGER.isInfoEnabled())
+                                                LOGGER.info(
+                                                        "****************** Schedule appointment  Transaction start *****************");
+                                            for (SlotDetail slotDetail : slot.getSlotDetail()) {
+                                                slotDetail=slotDetailRepository.findOne(slotDetail.getId());
+                                                if (LOGGER.isInfoEnabled())
+                                                    LOGGER.info(
+                                                            "******************Inside Transaction --- Slot Details List Size ------>>>>>>"
+                                                                    + slot.getSlotDetail().size());
+                                                if (bpaApp.getStatus().getCode().toString()
+                                                        .equals(BpaConstants.APPLICATION_STATUS_PENDING_FOR_RESCHEDULING)) {
+                                                    List<SlotApplication> slotApplications = slotApplicationRepository
+                                                            .findByApplicationOrderByIdDesc(bpaApp);
+                                                    slotApplications.get(0).setActive(false);
+                                                    slotApplicationRepository.save(slotApplications.get(0));
+                                                    Date appointmentDate = slotApplications.get(0).getSlotDetail().getSlot()
+                                                            .getAppointmentDate();
+                                                    if (LOGGER.isInfoEnabled())
+                                                        LOGGER.info(
+                                                                "******************Inside Transaction --- Appointment Date ------>>>>>>"
+                                                                        + appointmentDate);
+                                                    if (slotDetail.getSlot().getAppointmentDate()
+                                                            .compareTo(appointmentDate) > 0) {
+                                                        if (slotDetail.getMaxRescheduledSlots()
+                                                                - slotDetail.getUtilizedRescheduledSlots() > 0) {
+                                                            slotDetail.setUtilizedRescheduledSlots(
+                                                                    slotDetail.getUtilizedRescheduledSlots() + 1);
+                                                            SlotApplication slotApplication = buildSlotApplicationObject(bpaApp,
+                                                                    slotDetail);
+                                                            createSlotApplicationAndUpdateStatus(slotDetail, bpaApp,
+                                                                    slotApplication);
+                                                            break;
+                                                        } else if (slotDetail.getMaxScheduledSlots()
+                                                                - slotDetail.getUtilizedScheduledSlots() > 0) {
+                                                            slotDetail.setUtilizedScheduledSlots(
+                                                                    slotDetail.getUtilizedScheduledSlots() + 1);
+                                                            SlotApplication slotApplication = buildSlotApplicationObject(bpaApp,
+                                                                    slotDetail);
+                                                            createSlotApplicationAndUpdateStatus(slotDetail, bpaApp,
+                                                                    slotApplication);
+                                                            break;
+                                                        }
+                                                    }
+                                                } else {
+                                                    if (LOGGER.isInfoEnabled())
+                                                        LOGGER.info(
+                                                                "**Inside Transaction --- Regular Application schedule start ------>>>>>>");
+                                                    if (slotDetail.getMaxScheduledSlots()
                                                             - slotDetail.getUtilizedScheduledSlots() > 0) {
                                                         slotDetail.setUtilizedScheduledSlots(
                                                                 slotDetail.getUtilizedScheduledSlots() + 1);
@@ -191,36 +227,65 @@ public class ScheduleAppointmentForDocumentScrutinyService {
                                                                 slotDetail);
                                                         createSlotApplicationAndUpdateStatus(slotDetail, bpaApp,
                                                                 slotApplication);
+                                                        if (LOGGER.isInfoEnabled())
+                                                            LOGGER.info(
+                                                                    "**Inside Transaction --- Regular Application schedule end ------>>>>>>");
                                                         break;
                                                     }
                                                 }
-                                            } else {
-                                                if(LOGGER.isInfoEnabled())
-                                                    LOGGER.info("******************Inside Transaction --- Regular Application schedule start ------>>>>>>");
-                                                if (slotDetail.getMaxScheduledSlots()
-                                                        - slotDetail.getUtilizedScheduledSlots() > 0) {
-                                                    slotDetail.setUtilizedScheduledSlots(
-                                                            slotDetail.getUtilizedScheduledSlots() + 1);
-                                                    SlotApplication slotApplication = buildSlotApplicationObject(bpaApp,
-                                                            slotDetail);
-                                                    createSlotApplicationAndUpdateStatus(slotDetail, bpaApp,
-                                                            slotApplication);
-                                                    if(LOGGER.isInfoEnabled())
-                                                        LOGGER.info("******************Inside Transaction --- Regular Application schedule end ------>>>>>>");
-                                                    break;
-                                                }
                                             }
+                                     /*       if( bpaApp.getId()==372||
+                                                    bpaApp.getId()==388||
+                                                    bpaApp.getId()==393|| bpaApp.getId()==405)
+                                                throw new RuntimeException();
+                                */            
+                                            if (LOGGER.isInfoEnabled())
+                                                LOGGER.info(
+                                                        "****************** Schedule appointment Transaction End *****************");
+                                           // return true;
+                                        } catch (Exception e) {
+                                             registrationNumber.add(bpaApp.getId());
+                                             throw e;
+                                            //throw new RuntimeException(e.getMessage());
                                         }
-										if(LOGGER.isInfoEnabled())
-											LOGGER.info("****************** Schedule appointment Transaction End *****************");
-                                       return true;
+                                        return true;
                                     });
-                                    if(LOGGER.isInfoEnabled())
+                                    if (LOGGER.isInfoEnabled())
                                         LOGGER.info("****************** Outside Transaction Template *****************");
                                 } catch (Exception e) {
+                                    
+                                    /*transactionTemplate.execute(result1 -> {
+                                    if (LOGGER.isDebugEnabled()) {
+                                        LOGGER.error("Exception in Generating " + bpaApp.getId() );
+                                        LOGGER.error(e);
+                                    }
+                                    return Boolean.FALSE;
+                                });*/
+                                    LOGGER.error(e.getMessage(), e);
                                     getErrorMessage(e);
                                 }
 
+                            }
+                            
+                            if(registrationNumber.size()>0)
+                            {
+
+                                for (Long applicationId : registrationNumber) {
+                                    transactionTemplate.execute(result1 -> {
+
+                                        BpaApplication bpaApplication = applicationBpaService
+                                                .findById(applicationId);
+                                        bpaApplication.setFailureInScheduler(Boolean.TRUE);
+                                        applicationBpaService.saveApplicationForScheduler(bpaApplication);
+
+                                        if (LOGGER.isDebugEnabled()) {
+                                            LOGGER.error("Exception in document schedule Generation " + bpaApplication.getId());
+                                            // LOGGER.error(e);
+                                        }
+                                        return Boolean.FALSE;
+
+                                    });
+                                }
                             }
                         }
                     }
@@ -232,11 +297,12 @@ public class ScheduleAppointmentForDocumentScrutinyService {
     private SlotApplication buildSlotApplicationObject(BpaApplication bpaApp, SlotDetail slotDetail) {
         SlotApplication slotApplication = new SlotApplication();
         slotApplication.setActive(true);
-        slotApplication.setApplication(bpaApp);
+        slotApplication.setApplication(applicationBpaService.findByApplicationNumber(bpaApp.getApplicationNumber()));
         slotApplication.setSlotDetail(slotDetail);
         if (bpaApp.getStatus().getCode().toString().equals(BpaConstants.APPLICATION_STATUS_PENDING_FOR_RESCHEDULING)) {
-            slotApplication.setScheduleAppointmentType(ScheduleAppointmentType.RESCHEDULE);
+            slotApplication.setScheduleAppointmentType(ScheduleAppointmentType.RESCHEDULE);  
             bpaApp.setStatus(bpaStatusRepository.findByCode(BpaConstants.APPLICATION_STATUS_RESCHEDULED));
+            //TODO: MOVE STATUS SET FROM HERE. 
             return slotApplication;
         } else {
             slotApplication.setScheduleAppointmentType(ScheduleAppointmentType.SCHEDULE);
@@ -250,35 +316,36 @@ public class ScheduleAppointmentForDocumentScrutinyService {
             SlotApplication slotApplication) {
         if(LOGGER.isInfoEnabled())
             LOGGER.info("******************Inside Transaction --- Before slotApplication Save ******************************" + slotApplication);
-        slotApplicationService.save(slotApplication);
+        slotApplicationService.saveApplicationForScheduler(slotApplication);
         if(LOGGER.isInfoEnabled())
             LOGGER.info("******************Inside Transaction --- After slotApplication Save ******************************" + slotApplication);
         if(LOGGER.isInfoEnabled())
             LOGGER.info("******************Inside Transaction --- Before Bpa Application Save ******************************" + bpaApp);
-        applicationBpaService.saveBpaApplication(bpaApp);
+        applicationBpaService.saveApplicationForScheduler(bpaApp);
+        
         if(LOGGER.isInfoEnabled())
             LOGGER.info("******************Inside Transaction --- After Bpa Application Save ******************************" + bpaApp);
         if(LOGGER.isInfoEnabled())
             LOGGER.info("****************** Schedule Appointment Type ******************************" + slotApplication.getScheduleAppointmentType().name());
         if (slotApplication.getScheduleAppointmentType().toString()
                 .equals(ScheduleAppointmentType.RESCHEDULE.toString())) {
-            bpaUtils.redirectToBpaWorkFlow(bpaApp.getCurrentState().getOwnerPosition().getId(), bpaApp, null,
+            bpaUtils.redirectToBpaWorkFlowForScheduler(bpaApp.getCurrentState().getOwnerPosition().getId(), bpaApp, null,
                     "document scrutiny re-scheduled", BpaConstants.WF_RESCHDLE_APPMNT_BUTTON, null);
         } else if (slotApplication.getScheduleAppointmentType().toString()
                 .equals(ScheduleAppointmentType.SCHEDULE.toString())) {
             if(LOGGER.isInfoEnabled())
                 LOGGER.info("******************Start workflow - Schedule Appointment******************************");
-            bpaUtils.redirectToBpaWorkFlow(
+            bpaUtils.redirectToBpaWorkFlowForScheduler(
                     slotApplication.getApplication().getCurrentState().getOwnerPosition().getId(),
                     slotApplication.getApplication(), null, BpaConstants.APPLICATION_STATUS_SCHEDULED, "Forward", null);
             if(LOGGER.isInfoEnabled())
                 LOGGER.info("******************End workflow - Schedule Appointment******************************");
         }
-		if(LOGGER.isInfoEnabled())
-			LOGGER.info("****************** before sending sms and email *****************");
+        if(LOGGER.isInfoEnabled())
+            LOGGER.info("****************** before sending sms and email *****************");
         bpaSmsAndEmailService.sendSMSAndEmailForDocumentScrutiny(slotApplication, bpaApp);
-		if(LOGGER.isInfoEnabled())
-			LOGGER.info("****************** after sending sms and email *****************");
+        if(LOGGER.isInfoEnabled())
+            LOGGER.info("****************** after sending sms and email *****************");
     }
 
     private String getErrorMessage(final Exception exception) {

@@ -276,6 +276,17 @@ public class BpaUtils {
     public void redirectToBpaWorkFlow(Long approvalPosition, final BpaApplication application,
             final String currentState, final String remarks, final String workFlowAction, final BigDecimal amountRule) {
 
+        buildWorkFlow(approvalPosition, application, currentState, remarks, workFlowAction, amountRule);
+    }
+    public void redirectToBpaWorkFlowForScheduler(Long approvalPosition, final BpaApplication application,
+            final String currentState, final String remarks, final String workFlowAction, final BigDecimal amountRule) {
+
+        buildWorkFlow(approvalPosition, application, currentState, remarks, workFlowAction, amountRule);
+    }
+
+    private void buildWorkFlow(Long approvalPosition, final BpaApplication application, final String currentState,
+            final String remarks, final String workFlowAction, final BigDecimal amountRule) {
+        System.out.println("&&&&&&&&&&&&&& bpa application id " + application.getId());
         final WorkFlowMatrix wfmatrix = getWfMatrixByCurrentState(application, currentState);
         final BpaApplicationWorkflowCustomDefaultImpl applicationWorkflowCustomDefaultImpl = getInitialisedWorkFlowBean();
         Long approvalPositionId = approvalPosition;

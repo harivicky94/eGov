@@ -151,6 +151,9 @@ public class BpaApplication extends StateAware<Position> {
 	private Boolean isRescheduledByEmployee = false;
 	private Boolean isOneDayPermitApplication = false;
 	private Boolean isLPRequestInitiated;
+	private Boolean failureInScheduler = false;
+	private String schedulerFailedRemarks;
+	
 	@Enumerated(EnumType.STRING)
     @Column(name = "typeOfLand")
     private OneDayPermitLandType typeOfLand;// Garden Land or Wet Land
@@ -860,5 +863,21 @@ public class BpaApplication extends StateAware<Position> {
 	public void setTypeOfLand(OneDayPermitLandType typeOfLand) {
 		this.typeOfLand = typeOfLand;
 	}
+    
+        public Boolean getFailureInScheduler() {
+            return failureInScheduler;
+        }
+    
+        public void setFailureInScheduler(Boolean failureInScheduler) {
+            this.failureInScheduler = failureInScheduler;
+        }
+    
+        public String getSchedulerFailedRemarks() {
+            return schedulerFailedRemarks;
+        }
+    
+        public void setSchedulerFailedRemarks(String schedulerFailedRemarks) {
+            this.schedulerFailedRemarks = schedulerFailedRemarks;
+        }
 
 }

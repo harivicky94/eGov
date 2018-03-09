@@ -57,5 +57,10 @@ public class SlotApplicationService {
 		slotApplicationRepository.save(slotApplication);
 
 	}
+	
+        public void saveApplicationForScheduler(SlotApplication slotApplication) {
+                slotApplicationRepository.save(slotApplication);
+
+        }
 
 }
