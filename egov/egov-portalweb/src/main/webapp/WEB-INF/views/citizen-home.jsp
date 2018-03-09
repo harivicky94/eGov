@@ -45,12 +45,12 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   ~
   --%>
-  <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
     <div class="container-fluid">
-      <div class="">
+		<div class="">
         <div class="left-menu">
           <ul class="modules-ul">
             <li class="modules-li inbox active" data-module="home">
@@ -172,7 +172,7 @@
                     <th><spring:message code="lbl.servicename" /></th>
                     <th><spring:message code="lbl.status" /></th>
                     <th><spring:message code="lbl.pendingaction" /></th>
-                    <th><spring:message code="lbl.expectedservicedelivery" /></th>
+                    <%--<th><spring:message code="lbl.expectedservicedelivery" /></th>--%>
                     <%--<th><spring:message code="lbl.description" /></th>--%>
                   </tr>
                 </thead>
@@ -201,13 +201,13 @@
 	 								</c:otherwise>
 		 						</c:choose>
 							</td>
-		                    <td>
+		                   <%-- <td>
 		 						<div>
 									<fmt:formatDate
 										value="${inboxItem.portalInbox.slaEndDate}"
 										pattern="dd/MM/yyyy" />
 							</div>
-		 					</td>
+		 					</td>--%>
 		 					<%--<td>
  								${inboxItem.portalInbox.detailedMessage}
 		 					</td>--%>
@@ -241,13 +241,13 @@
 								</c:otherwise>
 							</c:choose>
 						</td>
-						<td>
+						<%--<td>
 							<div>
 								<fmt:formatDate
 										value="${inboxItem.portalInbox.slaEndDate}"
 										pattern="dd/MM/yyyy"/>
 							</div>
-						</td>
+						</td>--%>
 							<%--<td>
                                  ${inboxItem.portalInbox.detailedMessage}
                              </td>--%>
@@ -280,13 +280,13 @@
 								</c:otherwise>
 							</c:choose>
 						</td>
-						<td>
+						<%--<td>
 							<div>
 								<fmt:formatDate
 										value="${inboxItem.portalInbox.slaEndDate}"
 										pattern="dd/MM/yyyy"/>
 							</div>
-						</td>
+						</td>--%>
 							<%--<td>
                                  ${inboxItem.portalInbox.detailedMessage}
                              </td>--%>
@@ -309,5 +309,5 @@
 	        </c:forEach>
           </div>
         </div>
-      </div>
+		</div>
     </div>
