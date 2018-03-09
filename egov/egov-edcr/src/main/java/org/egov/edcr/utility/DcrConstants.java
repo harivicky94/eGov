@@ -49,8 +49,8 @@ public class DcrConstants {
     public static final String SIDE_YARD2_DESC = "Side Yard2";
     public static final String BSMT_FRONT_YARD_DESC = "Basement Front Yard";
     public static final String BSMT_REAR_YARD_DESC = "Basement Rear Yard";
-    public static final String BSMT_SIDE_YARD1_DESC = "Basement Side Yard1";
-    public static final String BSMT_SIDE_YARD2_DESC = "Basement Side Yard2";
+    public static final String BSMT_SIDE_YARD1_DESC = "Basement Side Yard 1";
+    public static final String BSMT_SIDE_YARD2_DESC = "Basement Side Yard 2";
     public static final String BSMT_SIDE_YARD_DESC = "Basement Side Yard";
     public static final String SIDE_YARD_DESC = "Side Yard";
     public static final String BASEMENT = "Basement";
