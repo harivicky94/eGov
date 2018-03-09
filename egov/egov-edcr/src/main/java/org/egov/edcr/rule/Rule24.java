@@ -474,7 +474,7 @@ public class Rule24 extends GeneralRule {
         if (valid1 == true) {
 
             planDetail.reportOutput
-                    .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, subRule, side1Desc,
+                    .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, subRule+" Side Yard 1", side1Desc,
                             side1FieldName,
                             side1Expected,
                             min + DcrConstants.IN_METER,
@@ -483,10 +483,10 @@ public class Rule24 extends GeneralRule {
                                     ",Noc to Abut next plot:" + planDetail.getPlanInformation().getNocToAbutSide()));
         } else {
             planDetail.reportOutput
-                    .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, subRule, side1Desc,
+                    .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, subRule+" Side Yard 1", side1Desc,
                             side1FieldName,
                             side1Expected,
-                            min + DcrConstants.IN_METER,
+                            min + DcrConstants.IN_METER, 
                             Result.Not_Accepted,
                             "Opening on Side :" + planDetail.getPlanInformation().getOpeningOnSide() +
                                     ",Noc to Abut next plot:" + planDetail.getPlanInformation().getNocToAbutSide()));
@@ -495,14 +495,14 @@ public class Rule24 extends GeneralRule {
         if (valid2 == true) {
 
             planDetail.reportOutput
-                    .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, subRule, side2Desc,
+                    .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, subRule+" Side Yard 2", side2Desc,
                             side2FieldName,
                             SIDE2MINIMUM_DISTANCE.toString(),
                             max + DcrConstants.IN_METER,
                             Result.Accepted, null));
         } else {
             planDetail.reportOutput
-                    .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, subRule, side2Desc,
+                    .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, subRule+" Side Yard 2", side2Desc,
                             side2FieldName,
                             SIDE2MINIMUM_DISTANCE.toString(),
                             max + DcrConstants.IN_METER,
@@ -699,16 +699,14 @@ public class Rule24 extends GeneralRule {
                 subRep.setUseParentReportParameters(true);
                 subRep.setSplitAllowed(true);
                 drb2.addConcatenatedReport(subRep);
-                SubRuleOutput subRule24_5 =null;
-
+                SubRuleOutput subRule24_5 = new SubRuleOutput();
                 valuesMap.put(ruleOutput.getKey(), new JRBeanCollectionDataSource(ruleOutput.getSubRuleOutputs()));
                 if (ruleOutput != null && !ruleOutput.getSubRuleOutputs().isEmpty()){
                     for (SubRuleOutput subRuleOutput : ruleOutput.getSubRuleOutputs()){
                         try {
                             
                             reportStatus = reportService.getReportStatus(subRuleOutput.getRuleReportOutputs(), reportStatus);
-                            if (subRuleOutput.getKey().equalsIgnoreCase(SUB_RULE_24_5)) {
-                                subRule24_5 = new SubRuleOutput();
+                            if (subRuleOutput.getKey().equalsIgnoreCase(SUB_RULE_24_5)) { 
                                 subRule24_5.setKey(subRuleOutput.getKey());
                                 subRule24_5.setMessage(subRuleOutput.getMessage());
                                 subRule24_5.setRuleDescription(subRuleOutput.getRuleDescription());
