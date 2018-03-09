@@ -448,8 +448,10 @@ public class BPASmsAndEmailService {
 							slotApplication.getSlotDetail().getSlot().getZone().getName(),
 							bpaThirdPartyService
 									.getUserPositionByPassingPosition(
-											bpaApplication.getCurrentState().getOwnerPosition().getId())
-									.getMobileNumber() },
+									        bpaApplication.getCurrentState().getOwnerPosition().getId())
+									.getMobileNumber(),
+                            slotApplication.getApplication().getApplicationNumber()
+                    },
 					null);
 		} else {
 			mesg = bpaMessageSource.getMessage(msgKey,
