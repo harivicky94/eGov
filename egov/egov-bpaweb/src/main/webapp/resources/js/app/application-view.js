@@ -43,11 +43,25 @@ jQuery(document)
 					if($('#eDcrNumber').val()) {
                         $('#eDcrNumber').show();
                         $('.edcrApplnDetails').show();
+					} else {
+                        $('#eDcrNumber').hide();
+                        $('.edcrApplnDetails').hide();
 					}
 						//To show notification to business user/citizen on application open
 						if($('#wfstateDesc').val() == 'Scheduled For Document Scrutiny'
 							|| $('#wfstateDesc').val() == 'Rescheduled For Document Scrutiny') {
-                            $('#appointmentDateModal').html($('#appointmentDateRes').val());
+					        var appointmentDate = new Date($('#appointmentDateRes').val());
+                            var day = appointmentDate.getDate();
+                            var month = (appointmentDate.getMonth() + 1);
+                            var year = appointmentDate.getFullYear();
+                            if(day<10) {
+                                day='0'+day;
+                            }
+
+                            if(month<10) {
+                                month='0'+month;
+                            }
+                            $('#appointmentDateModal').html(day+"/"+month+"/"+year);
                             $('#appointmentTimeModal').html($('#appointmentTimeRes').val());
                             $('#myModal').modal('show');
 						}
@@ -104,6 +118,7 @@ jQuery(document)
 							&& mode == 'newappointment') {
 						$(".show-row").hide();
 						$("#Forward").hide();
+                        $("#approverDetailBody").hide();
 					}
 					if ($('#wfstateDesc').val() == 'NEW'
 							&& mode == 'newappointment') {
@@ -137,7 +152,7 @@ jQuery(document)
 						$('#approvalDepartment').removeAttr('required');
 						$('#approvalDesignation').removeAttr('required');
 						$('#approvalPosition').removeAttr('required');
-						$(".show-row").hide();
+                        $("#approverDetailBody").hide();
 					}
 
 					// When SUP updating noc details, Noc status is mandatory

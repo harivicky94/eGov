@@ -383,7 +383,7 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
         BigDecimal amountRule = BigDecimal.ONE;
         if (ST_CODE_14.equalsIgnoreCase(application.getServiceType().getCode())
                 || ST_CODE_15.equalsIgnoreCase(application.getServiceType().getCode())) {
-            amountRule = new BigDecimal(11000);
+            amountRule = new BigDecimal(2501);
         } else if (ST_CODE_05.equalsIgnoreCase(application.getServiceType().getCode())) {
             amountRule = application.getDocumentScrutiny().get(0).getExtentinsqmts();
         } else if (ST_CODE_08.equalsIgnoreCase(application.getServiceType().getCode())
@@ -398,7 +398,7 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
             else
                 amountRule = application.getBuildingDetail().get(0).getTotalPlintArea();
         }
-        return amountRule;
+        return amountRule.setScale(0, BigDecimal.ROUND_UP);
     }
 
     @RequestMapping(value = "/update-submit/{applicationNumber}", method = RequestMethod.POST)

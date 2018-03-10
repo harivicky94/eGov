@@ -82,13 +82,15 @@
 		<div class="col-sm-3 add-margin view-content">
 			<c:out value="${bpaApplication.occupancy.description}" default="N/A"></c:out>
 		</div>
-		<div class="col-sm-3 add-margin">
-			<spring:message code="lbl.edcr.number" />
-		</div>
-		<div class="col-sm-3 add-margin view-content">
-			<input type="hidden" id="eDcrNumber" value="${bpaApplication.eDcrNumber}">
-			<c:out value="${bpaApplication.eDcrNumber}" default="N/A"></c:out>
-		</div>
+		<c:if test="${bpaApplication.eDcrNumber ne null && bpaApplication.eDcrNumber ne ''}">
+			<div class="col-sm-3 add-margin">
+				<spring:message code="lbl.edcr.number" />
+			</div>
+			<div class="col-sm-3 add-margin view-content">
+				<input type="hidden" id="eDcrNumber" value="${bpaApplication.eDcrNumber}">
+				<c:out value="${bpaApplication.eDcrNumber}" default="N/A"></c:out>
+			</div>
+		</c:if>
 	</div>
 
 	<c:if test="${bpaApplication.isOneDayPermitApplication}">

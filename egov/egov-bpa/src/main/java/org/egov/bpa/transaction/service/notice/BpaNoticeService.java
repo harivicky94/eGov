@@ -451,7 +451,7 @@ public class BpaNoticeService {
         BigDecimal amountRule = BigDecimal.ONE;
         if (ST_CODE_14.equalsIgnoreCase(application.getServiceType().getCode())
                 || ST_CODE_15.equalsIgnoreCase(application.getServiceType().getCode())) {
-            amountRule = new BigDecimal(11000);
+            amountRule = new BigDecimal(2501);
         } else if (ST_CODE_05.equalsIgnoreCase(application.getServiceType().getCode())) {
             amountRule = application.getDocumentScrutiny().get(0).getExtentinsqmts();
         } else if (ST_CODE_08.equalsIgnoreCase(application.getServiceType().getCode())
@@ -461,20 +461,20 @@ public class BpaNoticeService {
                 && application.getBuildingDetail().get(0).getTotalPlintArea() != null) {
             amountRule = application.getBuildingDetail().get(0).getTotalPlintArea();
         }
-        return amountRule.intValue();
+        return amountRule.setScale(0, BigDecimal.ROUND_UP).intValue();
     }
 
     private String getApproverDesignation(final Integer amountRule) {
         String designation = StringUtils.EMPTY;
-        if (amountRule >= 0 && amountRule <= 299) {
+        if (amountRule >= 0 && amountRule <= 300) {
             designation = "Assistant Engineer";
-        } else if (amountRule >= 300 && amountRule <= 749) {
+        } else if (amountRule > 300 && amountRule <= 750) {
             designation = "Assistant Executive Engineer";
-        } else if (amountRule >= 750 && amountRule <= 1499) {
+        } else if (amountRule > 750 && amountRule <= 1500) {
             designation = "Executive Engineer";
-        } else if (amountRule >= 1500 && amountRule <= 9999) {
+        } else if (amountRule > 1500 && amountRule <= 2500) {
             designation = "Corporation Engineer";
-        } else if (amountRule >= 10000 && amountRule <= 1000000) {
+        } else if (amountRule > 2500 && amountRule <= 1000000) {
             designation = "Secretary";
         }
         return designation;
