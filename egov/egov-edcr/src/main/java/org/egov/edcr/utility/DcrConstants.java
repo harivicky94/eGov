@@ -107,4 +107,7 @@ public class DcrConstants {
 
     public static final String HABITABLE_ROOM = "Habitable Room";
 
+    public static final String ERROR_CODE_PLAN_NOT_EXIST = "EDCR - 01";
+    public static final String ERROR_MSG_PLAN_NOT_EXIST = "Dear applicant with entered E-DCR number there is no application detail found, please make sure you are using approved plan E-DCR number.";
+
 }

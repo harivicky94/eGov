@@ -56,5 +56,6 @@ import java.util.List;
 @Repository
 public interface EdcrApplicationDetailRepository extends JpaRepository<EdcrApplicationDetail, Long> {
 
-    public List<EdcrApplicationDetail> findByApplicationId(Long appNo);
+    List<EdcrApplicationDetail> findByApplicationId(Long dcrApplicationId);
+    EdcrApplicationDetail findByDcrNumber(String dcrNumber);
 }

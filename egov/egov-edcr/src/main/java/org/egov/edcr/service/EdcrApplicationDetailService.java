@@ -23,7 +23,11 @@ public class EdcrApplicationDetailService {
         edcrApplicationDetailRepository.save(edcrApplicationDetails);
     }
 
-    public List<EdcrApplicationDetail> fingByAppNo(Long appNo) {
-       return edcrApplicationDetailRepository.findByApplicationId(appNo);
+    public List<EdcrApplicationDetail> fingByDcrApplicationId(Long dcrApplicationId) {
+       return edcrApplicationDetailRepository.findByApplicationId(dcrApplicationId);
+    }
+
+    public EdcrApplicationDetail findByDcrNumber(final String dcrNumber) {
+        return edcrApplicationDetailRepository.findByDcrNumber(dcrNumber);
     }
 }

@@ -180,7 +180,7 @@ public class DcrService {
     @Transactional
     public void saveOutputReport(EdcrApplication edcrApplication, InputStream reportOutput, PlanDetail planDetail) {
 
-        List<EdcrApplicationDetail> edcrApplicationDetails = edcrApplicationDetailService.fingByAppNo(edcrApplication.getId());
+        List<EdcrApplicationDetail> edcrApplicationDetails = edcrApplicationDetailService.fingByDcrApplicationId(edcrApplication.getId());
         final String fileName = edcrApplication.getApplicationNumber() + "-v" + edcrApplicationDetails.size() + ".pdf";
 
         final FileStoreMapper fileStoreMapper = fileStoreService.store(reportOutput, fileName, "application/pdf",
