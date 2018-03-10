@@ -67,7 +67,7 @@ import org.egov.bpa.master.service.RegistrarOfficeVillageService;
 import org.egov.bpa.master.service.SlotMappingService;
 import org.egov.bpa.master.service.StakeHolderService;
 import org.egov.bpa.transaction.entity.enums.StakeHolderType;
-import org.egov.bpa.transaction.service.ApplicationBpaService;
+import org.egov.bpa.transaction.service.*;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.AssignmentAdaptor;
@@ -132,6 +132,8 @@ public class BpaAjaxController {
     private BoundaryService boundaryService;
     @Autowired
     private SlotMappingService slotMappingService;
+    @Autowired
+    private BpaThirdPartyService bpaThirdPartyService;
 
     @RequestMapping(value = "/ajax/getAdmissionFees", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
@@ -347,5 +349,11 @@ public class BpaAjaxController {
         	return true;
         else
         	return false;
+    }
+
+    @RequestMapping(value = "/validate/edcr-usedinbpa", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public Map<String, String> validateEdcrIsUsedInBpaApplication(@RequestParam final String eDcrNumber) {
+        return bpaThirdPartyService.checkIsEdcrUsedInBpaApplication(eDcrNumber);
     }
 }

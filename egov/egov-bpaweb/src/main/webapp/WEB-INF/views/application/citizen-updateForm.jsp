@@ -73,11 +73,14 @@
 					</div>
 				</div>
 				<div id="appliccation-info" class="tab-pane fade in active">
-					<div class="panel panel-primary" data-collapsed="0" id="applicantDiv">
-						<jsp:include page="applicantDetailForm.jsp"></jsp:include>
-					</div>
 					<div class="panel panel-primary" data-collapsed="0">
 						<jsp:include page="applicationDetails.jsp"></jsp:include>
+					</div>
+					<div class="panel panel-primary edcrApplnDetails" data-collapsed="0">
+						<jsp:include page="edcr-application-details-form.jsp"></jsp:include>
+					</div>
+					<div class="panel panel-primary" data-collapsed="0" id="applicantDiv">
+						<jsp:include page="applicantDetailForm.jsp"></jsp:include>
 					</div>
 					<div class="panel panel-primary" data-collapsed="0">
 						<jsp:include page="siteDetail.jsp"></jsp:include>
@@ -150,3 +153,5 @@
 	src="<cdn:url value='/resources/js/app/bpa-application-validations.js?rnd=${app_release_no}'/>"></script>
 <script
 	src="<cdn:url value='/resources/js/app/citizen-update-helper.js?rnd=${app_release_no}'/>"></script>
+<script
+		src="<cdn:url value='/resources/js/app/edcr-helper.js?rnd=${app_release_no}'/>"></script>

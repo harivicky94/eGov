@@ -40,7 +40,10 @@
 jQuery(document)
 		.ready(
 				function() {
-
+					if($('#eDcrNumber').val()) {
+                        $('#eDcrNumber').show();
+                        $('.edcrApplnDetails').show();
+					}
 						//To show notification to business user/citizen on application open
 						if($('#wfstateDesc').val() == 'Scheduled For Document Scrutiny'
 							|| $('#wfstateDesc').val() == 'Rescheduled For Document Scrutiny') {

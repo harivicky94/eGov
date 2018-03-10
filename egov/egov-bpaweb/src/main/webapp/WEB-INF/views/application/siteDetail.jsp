@@ -351,42 +351,7 @@
 			<form:hidden path="siteDetail[0].landUsageId" id="landUsageId" value="" /> 
 		</div>
 	</div>
-	
-	<div class="form-group">
-		<label class="col-sm-3 control-label text-right">Occupancy <span
-			class="mandatory"></span></label>
-		<div class="col-sm-3 add-margin">
-			<form:select path="occupancy" data-first-option="false"
-				id="occupancyapplnlevel" cssClass="form-control" required="required">
-				<form:option value="">
-					<spring:message code="lbl.select" />
-				</form:option>
-				<form:options items="${occupancyList}" itemValue="id"
-					itemLabel="description" />
-			</form:select>
-			<form:errors path="occupancy" cssClass="add-margin error-msg" />
-		</div>
-	</div>
-	<div class="form-group" id="oneDayPermitSec">  
-		<label class="col-sm-3 control-label text-right">Is One Day Permit</label>
-		<div class="col-sm-3 add-margin">
-				<form:checkbox path="isOneDayPermitApplication"
-					id="isOneDayPermitApplication" name="isOneDayPermitApplication"  value="false" />
-		</div> 
-		<div id="oneDayPermitTypeOfLandSec"> 
-			<label class="col-sm-2 control-label text-right">Type of Land<span class="mandatory"></span></label>
-			<div class="col-sm-3 add-margin">
-				 <form:select path="typeOfLand" id="typeOfLand"
-				 cssClass="form-control" cssErrorClass="form-control error"> 
-					<form:option value="">
-						<spring:message code="lbl.select" />
-					</form:option>
-					<form:options items="${oneDayPermitLandTypeList}" />
-				</form:select>
-				<form:errors path="typeOfLand" cssClass="add-margin error-msg" /> 
-			</div>
-		</div>	
-	</div>
+
 	<div class="form-group">
 		
 		<label class="col-sm-3 control-label text-right"><spring:message

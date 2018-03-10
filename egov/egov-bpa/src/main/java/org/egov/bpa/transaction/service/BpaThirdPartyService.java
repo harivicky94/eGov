@@ -39,24 +39,20 @@
  */
 package org.egov.bpa.transaction.service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import org.apache.commons.lang.*;
+import org.egov.bpa.transaction.entity.*;
+import org.egov.bpa.utils.*;
+import org.egov.eis.service.*;
+import org.egov.infra.admin.master.entity.*;
+import org.egov.infra.security.utils.*;
+import org.egov.infra.workflow.entity.*;
+import org.egov.pims.commons.*;
+import org.springframework.beans.factory.annotation.*;
+import org.springframework.context.*;
+import org.springframework.stereotype.*;
+import org.springframework.transaction.annotation.*;
 
-import org.apache.commons.lang.StringUtils;
-import org.egov.bpa.transaction.entity.BpaApplication;
-import org.egov.bpa.transaction.entity.BpaAppointmentSchedule;
-import org.egov.eis.service.EisCommonService;
-import org.egov.eis.service.PositionMasterService;
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.workflow.entity.State;
-import org.egov.infra.workflow.entity.StateHistory;
-import org.egov.pims.commons.Position;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import java.util.*;
 
 @Service
 @Transactional(readOnly = true)
@@ -77,6 +73,13 @@ public class BpaThirdPartyService {
     private EisCommonService eisCommonService;
     @Autowired
     private PositionMasterService positionMasterService;
+    @Autowired
+    private ApplicationBpaService applicationBpaService;
+    @Autowired
+    @Qualifier("parentMessageSource")
+    private MessageSource bpaMessageSource;
+    @Autowired
+    private SecurityUtils securityUtils;
 
     public List<HashMap<String, Object>> getHistory(final BpaApplication application) {
         User userObject;
@@ -189,6 +192,23 @@ public class BpaThirdPartyService {
         if (ownerPosition != null)
             return eisCommonService.getUserForPosition(ownerPosition, new Date());
         return null;
+    }
+
+    public Map<String, String> checkIsEdcrUsedInBpaApplication(final String eDcrNumber) {
+        Map<String, String> eDcrApplicationDetails = new HashMap<>();
+        BpaApplication bpaApplication = applicationBpaService.findApplicationByEDCRNumber(eDcrNumber);
+        if(null == bpaApplication) {
+            eDcrApplicationDetails.put("isExists", "false");
+            eDcrApplicationDetails.put(BpaConstants.MESSAGE, "Not used");
+        } else {
+            String message = bpaMessageSource.getMessage("msg.dcr.exist.with.appln",
+                    new String[] {securityUtils.getCurrentUser().getName(), bpaApplication.geteDcrNumber(), bpaApplication.getApplicationNumber()},
+                    null);
+            eDcrApplicationDetails.put("isExists", "true");
+			eDcrApplicationDetails.put("applnNoUsedEdcr", bpaApplication.getApplicationNumber());
+            eDcrApplicationDetails.put(BpaConstants.MESSAGE, message);
+        }
+        return eDcrApplicationDetails;
     }
 
 }

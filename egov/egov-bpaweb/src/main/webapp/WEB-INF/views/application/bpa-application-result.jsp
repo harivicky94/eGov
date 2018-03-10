@@ -65,10 +65,13 @@
 			<div class="tab-content">
 				<div id="applicant-info" class="tab-pane fade in active">
 					<div class="panel panel-primary" data-collapsed="0">
-						<jsp:include page="view-applicantdetails.jsp"></jsp:include>
+						<jsp:include page="viewapplication-details.jsp"></jsp:include>
+					</div>
+					<div class="panel panel-primary edcrApplnDetails" data-collapsed="0">
+						<jsp:include page="view-edcr-application-details.jsp"></jsp:include>
 					</div>
 					<div class="panel panel-primary" data-collapsed="0">
-						<jsp:include page="viewapplication-details.jsp"></jsp:include>
+						<jsp:include page="view-applicantdetails.jsp"></jsp:include>
 					</div>
 					<div class="panel panel-primary" data-collapsed="0">
 						<jsp:include page="view-sitedetail.jsp"></jsp:include>
@@ -111,3 +114,5 @@
 </div>
 <script
 	src="<cdn:url value='/resources/js/app/application-view.js?rnd=${app_release_no}'/>"></script>
+<script
+		src="<cdn:url value='/resources/js/app/edcr-helper.js?rnd=${app_release_no}'/>"></script>

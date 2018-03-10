@@ -56,6 +56,7 @@ public interface ApplicationBpaRepository extends JpaRepository<BpaApplication, 
 	BpaApplication findByDemand(@Param("demand") EgDemand demand);
 
 	BpaApplication findByApplicationNumber(String applicationNumber);
+	BpaApplication findApplicationByEDcrNumber(String eDcrNumber);
 
 	BpaApplication findById(Long id);
 

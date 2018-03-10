@@ -157,6 +157,8 @@ public class BpaApplication extends StateAware<Position> {
 	@Enumerated(EnumType.STRING)
     @Column(name = "typeOfLand")
     private OneDayPermitLandType typeOfLand;// Garden Land or Wet Land
+	@Length(min = 1, max = 20)
+	private String eDcrNumber;
 
 	@OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<SiteDetail> siteDetail = new ArrayList<>(0);
@@ -880,4 +882,11 @@ public class BpaApplication extends StateAware<Position> {
             this.schedulerFailedRemarks = schedulerFailedRemarks;
         }
 
+	public String geteDcrNumber() {
+		return eDcrNumber;
+	}
+
+	public void seteDcrNumber(String eDcrNumber) {
+		this.eDcrNumber = eDcrNumber;
+	}
 }

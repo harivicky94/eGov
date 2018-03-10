@@ -290,16 +290,16 @@ $(document).ready(function() {
 	}
 	
 	// making atleast one amenity should be mandatory if service type is selected as amenities 
-	$('#buttonSubmit, #bpaCreate, #bpaSave').click(function(){
+	$('#buttonSubmit, #bpaCreate, #bpaSave, #buttonSave').click(function(){
 		if($('#isOneDayPermitApplication').is(':checked')){
 			if($('#totalPlintArea').val()>300){
-				bootbox.alert("One day permit is only for Total Builtup Area less than or equl to 300. Application cannot be created.");
+				bootbox.alert("For one day permit application maximum permissible area allowed is less than or equal to 300 Sq.Mtrs. Beyond of maximum permissible area not allowed to submit application.");
 				return false;
 			}
 		}
 		var seviceTypeName = $( "#serviceType option:selected" ).text();
 		if('Amenities' == seviceTypeName && !$( "#applicationAmenity option:selected" ).val()){
-				bootbox.alert("Please Select Atleast one amenity.");
+				bootbox.alert("Please select atleast one amenity.");
 				return false; 
 		}
 	});
@@ -461,6 +461,7 @@ $(document).ready(function() {
                             $('#typeOfLand').val(landTypeDescIndex);
 						}
 						showOnePermitOnPageLoad();
+                        hideAndShowEdcrDetails();
 						return true;
 					}
 				}
@@ -593,8 +594,8 @@ $(document).ready(function() {
 	$( "#constStages" ).trigger( "change" );
 	$( ".serviceType" ).trigger( "change" );
 	$( ".applicationAmenity" ).trigger( "change" );
-
 	var serviceTypeName = $( "#serviceType option:selected" ).text();
+    hideAndShowEdcrDetails();
 	if('Addition or Extension' == serviceTypeName || 'Alteration' == serviceTypeName || 'New Construction' == serviceTypeName
 			|| 'Amenities' == serviceTypeName) {
 
@@ -613,9 +614,20 @@ $(document).ready(function() {
 				$('#oneDayPermitSec').hide();
                 $('#isOneDayPermitApplication').val(false);
 			}
+            hideAndShowEdcrDetails();
 		});
 	}
-
+	function hideAndShowEdcrDetails() {
+        if( serviceTypeName && 'New Construction' == serviceTypeName && $("#occupancyapplnlevel option:selected" ) && $("#occupancyapplnlevel option:selected" ).text() == 'Residential') {
+            $('#eDcrNumber').attr('required', true);
+        	$('#eDcrNumber').show();
+            $('.edcrApplnDetails').show();
+        } else {
+            $('#eDcrNumber').removeAttr('required');
+            $('#eDcrNumber').hide();
+            $('.edcrApplnDetails').hide();
+        }
+	}
 	function showOnePermitOnPageLoad() {
         if($("#occupancyapplnlevel option:selected" ).text() == 'Residential') {
             if($('#isOneDayPermitApplication').is(':checked')) {

@@ -446,9 +446,15 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
     public BpaApplication findByApplicationNumber(final String applicationNumber) {
         return applicationBpaRepository.findByApplicationNumber(applicationNumber);
     }
+
     public BpaApplication findById(final Long applicationId) {
         return applicationBpaRepository.findOne(applicationId);
     }
+
+    public BpaApplication findApplicationByEDCRNumber(final String eDcrNumber) {
+        return applicationBpaRepository.findApplicationByEDcrNumber(eDcrNumber);
+    }
+
     private void processAndStoreNocDocuments(final BpaApplication bpaApplication) {
         final User user = securityUtils.getCurrentUser();
         if (!bpaApplication.getApplicationNOCDocument().isEmpty() && null == bpaApplication.getApplicationNOCDocument().get(0).getId())
@@ -565,6 +571,7 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
     public void saveApplicationForScheduler(BpaApplication bpaApp) {
         applicationBpaRepository.save(bpaApp);
     }
+
 	public List<BpaApplication> findByStatusListOrderByCreatedDate(List<BpaStatus> listOfBpaStatus) {
 		return applicationBpaRepository.findByStatusListOrderByCreatedDateAsc(listOfBpaStatus);
 	}
@@ -586,25 +593,26 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         return criteria.list();
 
 	}
-	public List<BpaApplication> getBpaApplicationsForScheduleAndReSchedule(List<BpaStatus> bpaStatusList, List<Boundary> boundaryList,
-                Integer totalAvailableSlots) {
-final Criteria criteria = entityManager.unwrap(Session.class)
-        .createCriteria(BpaApplication.class, "application")
-        .createAlias("application.siteDetail", "siteDetail")
-        .createAlias("application.demand", "demand");
-criteria.add(Restrictions.in("application.status", bpaStatusList));
-criteria.add(Restrictions.in("siteDetail.adminBoundary", boundaryList));
-criteria.add(Restrictions.eq("application.isOneDayPermitApplication", false));
-criteria.add(Restrictions.ne("application.failureInScheduler", true));
 
-criteria.add(Restrictions.leProperty("demand.baseDemand", "demand.amtCollected"));
-criteria.addOrder(Order.desc("application.status"));
-criteria.addOrder(Order.asc("application.applicationDate"));
-criteria.addOrder(Order.asc("application.createdDate"));
-criteria.setMaxResults(totalAvailableSlots);
-return criteria.list();
+    public List<BpaApplication> getBpaApplicationsForScheduleAndReSchedule(List<BpaStatus> bpaStatusList, List<Boundary> boundaryList,
+                                                                           Integer totalAvailableSlots) {
+        final Criteria criteria = entityManager.unwrap(Session.class)
+                                               .createCriteria(BpaApplication.class, "application")
+                                               .createAlias("application.siteDetail", "siteDetail")
+                                               .createAlias("application.demand", "demand");
+        criteria.add(Restrictions.in("application.status", bpaStatusList));
+        criteria.add(Restrictions.in("siteDetail.adminBoundary", boundaryList));
+        criteria.add(Restrictions.eq("application.isOneDayPermitApplication", false));
+        criteria.add(Restrictions.ne("application.failureInScheduler", true));
 
-}
+        criteria.add(Restrictions.leProperty("demand.baseDemand", "demand.amtCollected"));
+        criteria.addOrder(Order.desc("application.status"));
+        criteria.addOrder(Order.asc("application.applicationDate"));
+        criteria.addOrder(Order.asc("application.createdDate"));
+        criteria.setMaxResults(totalAvailableSlots);
+        return criteria.list();
+
+    }
 	
 
 }

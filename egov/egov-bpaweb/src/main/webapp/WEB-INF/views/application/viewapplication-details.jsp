@@ -58,21 +58,56 @@
 	</div>
 </div>
 <div class="panel-body">
+	<c:if test="${bpaApplication.planPermissionNumber ne null && bpaApplication.planPermissionNumber ne ''}">
+		<div class="row add-border">
+			<div class="col-sm-3 add-margin">
+				<spring:message code="lbl.build.plan.permission.date" />
+			</div>
+			<div class="col-sm-3 add-margin view-content">
+				<fmt:formatDate value="${bpaApplication.planPermissionDate}" pattern="dd/MM/yyyy" var="planPermissionDate" />
+				<c:out value="${planPermissionDate}" default="N/A"></c:out>
+			</div>
+			<div class="col-sm-3 add-margin">
+				<spring:message code="lbl.plan.permission.no" />
+			</div>
+			<div class="col-sm-3 add-margin view-content">
+				<c:out value="${bpaApplication.planPermissionNumber}" default="N/A"></c:out>
+			</div>
+		</div>
+	</c:if>
 	<div class="row add-border">
 		<div class="col-sm-3 add-margin">
-			<spring:message code="lbl.build.plan.permission.date" />
+			<spring:message code="lbl.occupancy" />
 		</div>
 		<div class="col-sm-3 add-margin view-content">
-			<fmt:formatDate value="${bpaApplication.planPermissionDate}" pattern="dd/MM/yyyy" var="planPermissionDate" />
-			<c:out value="${planPermissionDate}" default="N/A"></c:out>
+			<c:out value="${bpaApplication.occupancy.description}" default="N/A"></c:out>
 		</div>
 		<div class="col-sm-3 add-margin">
-			<spring:message code="lbl.plan.permission.no" />
+			<spring:message code="lbl.edcr.number" />
 		</div>
 		<div class="col-sm-3 add-margin view-content">
-			<c:out value="${bpaApplication.planPermissionNumber}" default="N/A"></c:out>
+			<input type="hidden" id="eDcrNumber" value="${bpaApplication.eDcrNumber}">
+			<c:out value="${bpaApplication.eDcrNumber}" default="N/A"></c:out>
 		</div>
 	</div>
+
+	<c:if test="${bpaApplication.isOneDayPermitApplication}">
+		<div class="row add-border">
+			<div class="col-sm-3 add-margin">
+				Is One Day Permit
+			</div>
+			<div class="col-sm-3 add-margin view-content">
+				<c:out value="${bpaApplication.isOneDayPermitApplication}" default="N/A"></c:out>
+			</div>
+
+			<div class="col-sm-3 add-margin">
+				Type of Land
+			</div>
+			<div class="col-sm-3 add-margin view-content">
+				<c:out value="${bpaApplication.typeOfLand}" default="N/A"></c:out>
+			</div>
+		</div>
+	</c:if>
 
 	<div class="row add-border">
 		<div class="col-sm-3 add-margin">
