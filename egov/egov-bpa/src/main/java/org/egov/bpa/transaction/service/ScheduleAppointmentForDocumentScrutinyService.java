@@ -297,7 +297,13 @@ public class ScheduleAppointmentForDocumentScrutinyService {
     private SlotApplication buildSlotApplicationObject(BpaApplication bpaApp, SlotDetail slotDetail) {
         SlotApplication slotApplication = new SlotApplication();
         slotApplication.setActive(true);
-        slotApplication.setApplication(applicationBpaService.findByApplicationNumber(bpaApp.getApplicationNumber()));
+        //Same api used for scheduler and one day permit. In one day permit, application not yet saved. 
+        BpaApplication bpaApplication = applicationBpaService.findByApplicationNumber(bpaApp.getApplicationNumber());
+        if (bpaApplication != null)
+            slotApplication.setApplication(bpaApplication);
+        else
+            slotApplication.setApplication(bpaApp);
+
         slotApplication.setSlotDetail(slotDetail);
         if (bpaApp.getStatus().getCode().toString().equals(BpaConstants.APPLICATION_STATUS_PENDING_FOR_RESCHEDULING)) {
             slotApplication.setScheduleAppointmentType(ScheduleAppointmentType.RESCHEDULE);  
