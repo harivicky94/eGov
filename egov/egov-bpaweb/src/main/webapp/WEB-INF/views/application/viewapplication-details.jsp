@@ -99,7 +99,7 @@
 				Is One Day Permit
 			</div>
 			<div class="col-sm-3 add-margin view-content">
-				<c:out value="${bpaApplication.isOneDayPermitApplication}" default="N/A"></c:out>
+				<c:out value="${bpaApplication.isOneDayPermitApplication ? 'YES' : 'NO'}" default="N/A"></c:out>
 			</div>
 
 			<div class="col-sm-3 add-margin">

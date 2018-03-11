@@ -125,11 +125,11 @@ $(document)
 													},
 													{
 														"data" : null,
-														"sClass" : "text-center",
+														"sClass" : "text-left",
 														"render" : function(
 																data, type,
 																row, meta) {
-															var commonOptions = '<option value="">Select from Below</option><option  value=' + viewurl + row.applicationNumber + '>View</option>'
+															var commonOptions = '<option value="">Select from Below</option><option  value=' + viewurl + row.applicationNumber + '>View</option>';
 															if (row.status == 'Approved' && row.isFeeCollected) {
 																return ('<select class="dropchange">'+commonOptions+'<option  value='
 																		+ demandNoticeurl
@@ -157,8 +157,9 @@ $(document)
 					    if(url){
 					    	openPopup(url);
 					    }
-					    
-					});
+						// reset dropdown value to default
+                        $('.dropchange').val('');
+                    });
 
 					function openPopup(url)
 					{
