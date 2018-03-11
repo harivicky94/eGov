@@ -52,9 +52,11 @@ import org.egov.bpa.transaction.entity.enums.*;
 import org.egov.commons.entity.*;
 import org.egov.dcb.bean.*;
 import org.egov.demand.model.*;
+import org.egov.infra.filestore.entity.*;
 import org.egov.infra.workflow.entity.*;
 import org.egov.pims.commons.*;
 import org.hibernate.validator.constraints.*;
+import org.springframework.web.multipart.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
@@ -209,7 +211,11 @@ public class BpaApplication extends StateAware<Position> {
 	@OrderBy("id ASC")
 	@OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<SlotApplication> slotApplications = new ArrayList<>();
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@JoinTable(name = "egbpa_ts_inspn_documents", joinColumns = @JoinColumn(name = "application"), inverseJoinColumns = @JoinColumn(name = "fileStoreId"))
+	private Set<FileStoreMapper> tsInspnSupportDocs = Collections.emptySet();
 
+	private transient MultipartFile[] files;
 	private transient Long approvalDepartment;
 	private transient Long zoneId;
 	private transient Long wardId;
@@ -328,6 +334,14 @@ public class BpaApplication extends StateAware<Position> {
 
 	public void setTapalNumber(final String tapalNumber) {
 		this.tapalNumber = tapalNumber;
+	}
+
+	public MultipartFile[] getFiles() {
+		return files;
+	}
+
+	public void setFiles(MultipartFile[] files) {
+		this.files = files;
 	}
 
 	public Long getApprovalDepartment() {
@@ -764,6 +778,16 @@ public class BpaApplication extends StateAware<Position> {
 
 	public void setSlotApplications(List<SlotApplication> slotApplications) {
 		this.slotApplications = slotApplications;
+	}
+
+	public Set<FileStoreMapper> getTsInspnSupportDocs() {
+		return this.tsInspnSupportDocs.stream()
+								 .sorted(Comparator.comparing(FileStoreMapper::getId))
+								 .collect(Collectors.toSet());
+	}
+
+	public void setTsInspnSupportDocs(Set<FileStoreMapper> tsInspnSupportDocs) {
+		this.tsInspnSupportDocs = tsInspnSupportDocs;
 	}
 
 	public String getAdditionalRejectionReasons() {

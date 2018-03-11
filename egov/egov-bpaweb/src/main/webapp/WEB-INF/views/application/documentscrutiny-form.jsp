@@ -122,7 +122,7 @@
 					<a
 							href="/bpa/application/scrutiny/view/${bpaApplication.applicationNumber}"
 							class="btn btn-primary"> View Scheduled Appointment Details </a>
-				</c:if>--%>
+				</c:if>
 				<c:if test="${collectFeeValidate eq ''}">
 					<c:if test="${ bpaApplication.status.code eq 'Registered'}">
 						<a
@@ -140,7 +140,7 @@
 								href="/bpa/application/documentscrutiny/${bpaApplication.applicationNumber}"
 								class="btn btn-primary"> Document Scrutiny </a>
 					</c:if>
-				</c:if>
+				</c:if>--%>
 				<input
 						type="button" name="button2" id="button2" value="Close"
 						class="btn btn-default" onclick="window.close();"/>

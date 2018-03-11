@@ -69,3 +69,27 @@
 			</div>
 		</div>
 </div>
+
+<div class="panel-heading custom_form_panel_heading">
+	<div class="panel-title">
+		<spring:message code="lbl.appln.view.files" />
+	</div>
+</div>
+<div class="row text-center">
+	<div class="col-sm-12 add-margin view-content">
+
+        <c:set value="false" var="isDocFound"></c:set> <c:forEach
+            var="tsInspnDoc" items="${bpaApplication.tsInspnSupportDocs}" varStatus="loop">
+        <c:if test="${tsInspnDoc.fileStoreId ne null}">
+            <c:set value="true" var="isDocFound"></c:set>
+            <a target="_blank" href="/bpa/application/downloadfile/${tsInspnDoc.fileStoreId}"
+               data-gallery>${loop.index +1} - ${tsInspnDoc.fileName} </a>
+            <c:if test="${!loop.last}">,</c:if>&nbsp;
+        </c:if>
+    </c:forEach> <c:if test="${!isDocFound}">
+        N/A
+    </c:if>
+
+	</div>
+</div>
+

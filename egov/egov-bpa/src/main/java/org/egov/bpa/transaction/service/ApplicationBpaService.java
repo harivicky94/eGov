@@ -370,6 +370,13 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
             application.setTownSurveyorInspectionRequire(false);
         }
 
+        if(application.getFiles() != null && application.getFiles().length > 0) {
+            Set<FileStoreMapper> tsInspnDocs = new HashSet<>();
+            tsInspnDocs.addAll(application.getTsInspnSupportDocs());
+            tsInspnDocs.addAll(addToFileStore(application.getFiles()));
+            application.setTsInspnSupportDocs(tsInspnDocs);
+        }
+
         if (WF_REJECT_BUTTON.equalsIgnoreCase(workFlowAction)
             || WF_INITIATE_REJECTION_BUTTON.equalsIgnoreCase(workFlowAction)
             || APPLICATION_STATUS_REJECTED.equalsIgnoreCase(application.getStatus().getCode())
