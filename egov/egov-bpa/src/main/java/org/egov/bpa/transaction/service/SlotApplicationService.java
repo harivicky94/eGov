@@ -62,5 +62,9 @@ public class SlotApplicationService {
                 slotApplicationRepository.save(slotApplication);
 
         }
+        public SlotApplication findById(final Long slotApplicationId) {
+           return slotApplicationRepository.findOne(slotApplicationId);
+
+    }
 
 }

@@ -89,7 +89,7 @@ public class BpaSchedulerConfiguration extends QuartzSchedulerConfiguration {
 		scheduleAppointmentCron.setJobDetail(scheduleAppointmentJobDetail().getObject());
 		scheduleAppointmentCron.setGroup("BPA_TRIGGER_GROUP");
 		scheduleAppointmentCron.setName("BPA_SCHEDULE_APPOINTMENT_TRIGGER");
-		scheduleAppointmentCron.setCronExpression("0 */30 * * * ?"); 
+		scheduleAppointmentCron.setCronExpression("0 */10 * * * ?"); 
 		scheduleAppointmentCron.setMisfireInstruction(MISFIRE_INSTRUCTION_DO_NOTHING);
 		return scheduleAppointmentCron;
 	}
