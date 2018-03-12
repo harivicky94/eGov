@@ -145,13 +145,17 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
         Boolean validateCitizenAcceptance = (Boolean) model.asMap().get("validateCitizenAcceptance");
         if (APPLICATION_STATUS_REGISTERED.equals(application.getStatus().getCode())
             || APPLICATION_STATUS_SCHEDULED.equals(application.getStatus().getCode())
-            || APPLICATION_STATUS_RESCHEDULED.equals(application.getStatus().getCode())) {
+            || APPLICATION_STATUS_RESCHEDULED.equals(application.getStatus().getCode())
+            || APPLICATION_STATUS_APPROVED.equals(application.getStatus().getCode())) {
             if (applicationBpaService.applicationinitiatedByNonEmployee(application)
                 && applicationBpaService.checkAnyTaxIsPendingToCollect(application)) {
-                model.addAttribute(COLLECT_FEE_VALIDATE, "Please Pay Application Fees to Process Application");
+                model.addAttribute(COLLECT_FEE_VALIDATE, "Please Pay Fees to Process Application");
+                String enableOrDisablePayOnline=bpaUtils.getAppconfigValueByKeyName(BpaConstants.ENABLEONLINEPAYMENT);
+                model.addAttribute("onlinePaymentEnable", (enableOrDisablePayOnline.equalsIgnoreCase("YES") ? Boolean.TRUE : Boolean.FALSE));
             } else
                 model.addAttribute(COLLECT_FEE_VALIDATE, "");
         }
+
         if (application.getStatus() != null
                 && application.getStatus().getCode().equals(BpaConstants.APPLICATION_STATUS_CREATED) &&
                 (!isCitizen || (isCitizen && (validateCitizenAcceptance && !application.isCitizenAccepted()))))

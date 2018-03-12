@@ -194,6 +194,13 @@
 								    </a>
 							</td>
 						</c:if>
+						<input type="hidden" id="onlinePaymentEnable" value="${onlinePaymentEnable}">
+						<c:if test="${onlinePaymentEnable && isFeeCollected && (bpaApplication.status.code eq 'Registered' || bpaApplication.status.code eq 'Scheduled For Document Scrutiny' || bpaApplication.status.code eq 'Approved') }">
+							<td> <a	href="/bpa/application/bpageneratebill/${bpaApplication.applicationNumber}" class="btn btn-primary">
+								Pay Fee Online
+							</a>
+							</td>
+						</c:if>
 						<c:if test="${bpaApplication.status.code eq 'Approved' && isFeeCollected }">
 							<td> <a	href="/bpa/application/demandnotice/${bpaApplication.applicationNumber}" class="btn btn-primary">
 										 Print Demand Notice
