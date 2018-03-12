@@ -60,13 +60,7 @@
 		<div id="applicant-info" class="tab-pane fade in active">
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
-					<div class="col-md-12 panel-title text-left">
-						<button type="button" class="btn btn-secondary pull-right"
-							id="addrow">
-							<i class="fa fa-plus-circle" aria-hidden="true"></i> &nbsp;Add
-							Row
-						</button>
-					</div>
+
 				</div>
 				<div class="col-sm-12">
 					<table class="table table-bordered" id="holiday">
@@ -135,6 +129,13 @@
 							</c:choose>
 						</tbody>
 					</table>
+					<div class="col-md-12 panel-title text-left">
+						<button type="button" class="btn btn-secondary pull-right"
+								id="addrow">
+							<i class="fa fa-plus-circle" aria-hidden="true"></i> &nbsp;Add
+							Row
+						</button>
+					</div>
 				</div>
 			</div>
 		</div>
