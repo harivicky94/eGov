@@ -16,9 +16,13 @@ public class DatabaseReader extends BaseSteps implements En {
 
 
     public LoginDetails getLoginDetails(String currentUser) throws SQLException {
-        String dbquery = "select * from eg_loginTestData";
+        String dbquery = "select * from eg_logintestdata";
         Statement stmt = pageStore.dbConnection().createStatement();
         ResultSet rs = stmt.executeQuery(dbquery);
+        if (rs== null)
+        {
+            System.out.println("No data found");
+        }
         String id = null;
         String password = null;
         while (rs.next())

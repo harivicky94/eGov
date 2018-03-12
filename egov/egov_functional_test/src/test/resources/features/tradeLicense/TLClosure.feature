@@ -2,12 +2,18 @@ Feature: Trade license closure
 
 
   # Trade License Closure #
-  @Sanity @TradeLicense @LicenseClosure @Closure
+  @Sanity @TradeLicense @LicenseClosure
   Scenario Outline: Registered user choose for trade license closure
 
-    Given TL_PHS_JA logs in
+    Given CSCUser logs in
     And user will select the required screen as "Search Trade License"
     And he choose a trade license for closure as <closureDetails>
+    And he choose to close trade license
+    And he closes search screen
+    And current user logs out
+
+    When TL_PHS_JA logs in
+    And he chooses to act upon above application number
     And he forwards for approver TL_SI
     And he confirms to proceed
     And he closes the acknowledgement page
@@ -42,19 +48,18 @@ Feature: Trade license closure
 #  @Sanity @TradeLicense @LicenseClosure
   Scenario Outline: Registered user choose for trade license closure and commissioner rejects it
 
-    Given TL_PHS_JA logs in
+    Given CSCUser logs in
     And user will select the required screen as "Search Trade License"
     And he choose a trade license for closure as <closureDetails>
+    And he choose to close trade license
+    And he closes search screen
+    And current user logs out
+
+    When TL_PHS_JA logs in
+    And he chooses to act upon above application number
     And he forwards for approver TL_SI
     And he confirms to proceed
     And he closes the acknowledgement page
-    And current user logs out
-
-    When TL_PHS_SI logs in
-    And he chooses to act upon above application number
-    And he forwards for approver TL_Commissioner
-    And he confirms to proceed
-    And he closes acknowledgement page
     And current user logs out
 
     When TL_ADM_Commissioner logs in
@@ -64,9 +69,16 @@ Feature: Trade license closure
     And he closes acknowledgement page
     And current user logs out
 
-    When TL_PHS_JA logs in
+    When TL_PHS_SI logs in
     And he chooses to act upon above application number
     And he rejects the application
+    And he confirms to proceed
+    And he closes acknowledgement page
+    And current user logs out
+
+    When TL_PHS_JA logs in
+    And he chooses to act upon above application number
+    And he cancel the application
     And he confirms to proceed
     And he closes acknowledgement page
     And user will select the required screen as "Search Trade License"

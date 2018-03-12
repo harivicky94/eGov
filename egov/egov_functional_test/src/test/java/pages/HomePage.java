@@ -47,6 +47,20 @@ public class HomePage extends BasePage {
         signForm.submit();
     }
 
+    public void loginAs(LoginDetails loginDetails, String user) {
+        enterText(userNameTextBox, user, driver);
+        enterText(passwordTextBox, loginDetails.getPassword(), driver);
+//        driver.manage().deleteCookieNamed("JSESSIONID");
+        try {
+            TimeUnit.SECONDS.sleep(2);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        WebElement signForm = driver.findElement(By.id("signin-action"));
+        waitForElementToBeClickable(signForm, driver);
+        signForm.submit();
+    }
+
     public void visitWebsite() {
         driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
     }

@@ -2,7 +2,7 @@ Feature: Register Complaint
 
   As a citizen register complaint directly in website
 
-  @Sanity @Grievance @New
+  @Sanity @Grievance
   Scenario Outline: Register a Complaint with Citizen Login
 
     Given citizen logs in
@@ -10,9 +10,11 @@ Feature: Register Complaint
     And he choose to enter grievance details as <grievanceDetails>
     And user will be notified by "successfully"
     And he copies CRN and closes the acknowledgement
+    And he choose to search for above complaint
+    And he selects the user for which the above complaint has routed
     And citizen sign out
 
-    When LightingSuperintendent logs in
+    And employee logs in
     And he chooses to act upon above application number
     And he mark status as COMPLETED
     And user will be notified by "successfully"
@@ -47,19 +49,17 @@ Feature: Register Complaint
     And he choose to enter grievance details as <grievanceDetails>
     And user will be notified by "successfully"
     And he copies CRN and closes the acknowledgement
+    And user will select the required screen as "Search Grievance"
+    And he selects the user for which the above complaint has routed
+    And current user logs out
+
+    And employee logs in
     And he chooses to act upon above application number
     And he forwards for approver sanitaryInspector1
     And he verifies that application not in his inbox
     And current user logs out
 
     When TL_PHS_SI logs in
-    And he chooses to act upon above application number
-    And he marks the staus as processing
-    And he forwards for approver LightingSuperintendent
-    And he verifies that application not in his inbox
-    And current user logs out
-
-    When LightingSuperintendent logs in
     And he chooses to act upon above application number
     And he mark status as COMPLETED
     And user will be notified by "successfully"
@@ -80,22 +80,17 @@ Feature: Register Complaint
     And he choose to enter grievance details as <grievanceDetails>
     And user will be notified by "successfully"
     And he copies CRN and closes the acknowledgement
+    And he choose to search for above complaint
+    And he selects the user for which the above complaint has routed
     And citizen sign out
 
-    When LightingSuperintendent logs in
+    And employee logs in
     And he chooses to act upon above application number
     And he forwards for approver sanitaryInspector1
     And he verifies that application not in his inbox
     And current user logs out
 
     When TL_PHS_SI logs in
-    And he chooses to act upon above application number
-    And he marks the staus as processing
-    And he forwards for approver LightingSuperintendent
-    And he verifies that application not in his inbox
-    And current user logs out
-
-    When LightingSuperintendent logs in
     And he chooses to act upon above application number
     And he mark status as COMPLETED
     And user will be notified by "successfully"
@@ -116,11 +111,13 @@ Feature: Register Complaint
     And he choose to enter grievance details as <grievanceDetails>
     And user will be notified by "successfully"
     And he copies CRN and closes the acknowledgement
+    And he choose to search for above complaint
+    And he selects the user for which the above complaint has routed
     And he search complaint in his Inbox
     And he WITHDRAWN the complaint
     And citizen sign out
 
-    When LightingSuperintendent logs in
+    When employee logs in
     And he verifies that application not in his inbox
     And current user logs out
 
@@ -137,9 +134,11 @@ Feature: Register Complaint
     And he choose to enter grievance details as <grievanceDetails>
     And user will be notified by "successfully"
     And he copies CRN and closes the acknowledgement
+    And he choose to search for above complaint
+    And he selects the user for which the above complaint has routed
     And citizen sign out
 
-    When LightingSuperintendent logs in
+    And employee logs in
     And he chooses to act upon above application number
     And he mark status as REJECTED
     And user will be notified by "successfully"

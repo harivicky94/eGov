@@ -9,6 +9,10 @@ import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import pages.BasePage;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -165,7 +169,7 @@ public class TradeLicensePage extends BasePage {
 //        enterText(propertyAssessmentNumberTextBox, tradelocationDetails.getpropertyAssessmentNumber(), webDriver);
 //        propertyAssessmentNumberTextBox.sendKeys(Keys.TAB);
         Select select = new Select(location);
-        select.selectByIndex(6);
+        select.selectByIndex(5);
         location.sendKeys(Keys.TAB);
         selectAParticularFromDropDown(wardSelect, 1, webDriver);
 //        new Select(wardSelect).selectByIndex(1);
@@ -217,7 +221,10 @@ public class TradeLicensePage extends BasePage {
 
 
         enterText(remarksTextBox, tradedetails.getremarks(), webDriver);
-        enterText(tradeCommencementDateTextBox, tradedetails.gettradeCommencementDate(), webDriver);
+        Date date = Calendar.getInstance().getTime();
+        DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        String today = formatter.format(date);
+        enterText(tradeCommencementDateTextBox, today, webDriver);
 
     }
 
@@ -286,7 +293,7 @@ public class TradeLicensePage extends BasePage {
         selectFromDropDown(TradeCategoryDropBox, closureDetails.getTradeCategory(), webDriver);
         jsClick(searchButton, webDriver);
         selectFromDropDown(collectFeeDropBox, "Closure", webDriver);
-        switchToNewlyOpenedWindow(webDriver);
+        switchToPreviouslyOpenedWindow(webDriver);
     }
 
     public String getLicenseNumber() {
@@ -450,6 +457,17 @@ public class TradeLicensePage extends BasePage {
             clickOnButton(createButton, webDriver);
         } else
             clickOnButton(saveButton, webDriver);
+    }
+
+    public void chooseToCloseLicense() {
+        waitForElementToBeVisible(webDriver.findElement(By.name("approvalComment")), webDriver);
+        enterText(webDriver.findElement(By.name("approvalComment")), "Comments", webDriver);
+        clickOnButton(createButton, webDriver);
+        webDriver.switchTo().activeElement();
+        jsClick(webDriver.findElement(By.cssSelector(".btn.btn-danger")), webDriver);
+        webDriver.findElement(By.id("btnclose")).click();
+        switchToNewlyOpenedWindow(webDriver);
+        jsClick(searchButton, webDriver);
     }
 }
 

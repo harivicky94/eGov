@@ -18,3 +18,14 @@ Feature: Legacy license
     Examples:
       | tradeDetailsData         | tradeLocationData           | tradeDetailsData1        | legencyDetailsData |
       | ownerDetailsTradeLicense | locationDetailsTradeLicense | tradeDetailsTradeLicense | legencyTrade       |
+      | ownerDetailsTradeLicense | locationDetailsTradeLicense | tradeDetailsTradeLicense | legencyTrade       |
+      | ownerDetailsTradeLicense | locationDetailsTradeLicense | tradeDetailsTradeLicense | legencyTrade       |
+      | ownerDetailsTradeLicense | locationDetailsTradeLicense | tradeDetailsTradeLicense | legencyTrade       |
+      | ownerDetailsTradeLicense | locationDetailsTradeLicense | tradeDetailsTradeLicense | legencyTrade       |
+      | ownerDetailsTradeLicense | locationDetailsTradeLicense | tradeDetailsTradeLicense | legencyTrade       |
+      | ownerDetailsTradeLicense | locationDetailsTradeLicense | tradeDetailsTradeLicense | legencyTrade       |
+      | ownerDetailsTradeLicense | locationDetailsTradeLicense | tradeDetailsTradeLicense | legencyTrade       |
+      | ownerDetailsTradeLicense | locationDetailsTradeLicense | tradeDetailsTradeLicense | legencyTrade       |
+      | ownerDetailsTradeLicense | locationDetailsTradeLicense | tradeDetailsTradeLicense | legencyTrade       |
+      | ownerDetailsTradeLicense | locationDetailsTradeLicense | tradeDetailsTradeLicense | legencyTrade       |
+      | ownerDetailsTradeLicense | locationDetailsTradeLicense | tradeDetailsTradeLicense | legencyTrade       |

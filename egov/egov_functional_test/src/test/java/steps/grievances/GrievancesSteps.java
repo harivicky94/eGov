@@ -59,5 +59,12 @@ public class GrievancesSteps extends BaseSteps implements En {
 //            }
             pageStore.get(GrievancesPage.class).close();
         });
+        And("^he selects the user for which the above complaint has routed$", () -> {
+            scenarioContext.setUser(pageStore.get(GrievancesPage.class).searchComplaint(scenarioContext.getApplicationNumber()));
+            System.out.println("Username: "+scenarioContext.getUser());
+        });
+        And("^he choose to search for above complaint$", () -> {
+            pageStore.get(GrievancesPage.class).getSearchComplaintPage();
+        });
     }
 }

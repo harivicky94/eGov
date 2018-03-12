@@ -1,5 +1,6 @@
 package steps.tradeLicense;
 
+import cucumber.api.PendingException;
 import cucumber.api.java8.En;
 import entities.tradeLicense.*;
 import excelDataFiles.TradeLicenseDataReader;
@@ -125,6 +126,9 @@ public class TradeLicenseSteps extends BaseSteps implements En {
         });
         And("^he saves the application$", () -> {
             pageStore.get(TradeLicensePage.class).saveApplication();
+        });
+        And("^he choose to close trade license$", () -> {
+            pageStore.get(TradeLicensePage.class).chooseToCloseLicense();
         });
 
     }

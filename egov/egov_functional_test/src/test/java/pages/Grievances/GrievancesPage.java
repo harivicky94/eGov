@@ -62,6 +62,9 @@ public class GrievancesPage extends BasePage {
     @FindBy(linkText = "Register Grievance")
     private WebElement registerComplaint;
 
+    @FindBy(linkText = "View Grievance")
+    private WebElement viewGrievance;
+
     @FindBy(id = "ctn_no")
     private WebElement CRNNumber;
 
@@ -266,5 +269,27 @@ public class GrievancesPage extends BasePage {
     public void close() {
         clickOnButton(closeButton1, webDriver);
         switchToPreviouslyOpenedWindow(webDriver);
+    }
+
+    public String searchComplaint(String applicationNumber) {
+        enterText(searchByAppNumTextBox, applicationNumber, webDriver);
+        clickOnButton(searchComplaints, webDriver);
+        webDriver.findElement(By.cssSelector("td[class ='sorting_1']")).click();
+        switchToNewlyOpenedWindow(webDriver);
+        waitForElementToBeVisible(webDriver.findElement(By.xpath(".//*[@class='row  add-border']/div[4]")), webDriver);
+        String str = webDriver.findElement(By.xpath(".//*[@class='row  add-border']/div[4]")).getText();
+        String arr[] = str.split(":");
+        String user = arr[0];
+        webDriver.close();
+        switchToNewlyOpenedWindow(webDriver);
+        webDriver.close();
+        switchToPreviouslyOpenedWindow(webDriver);
+        return user;
+    }
+
+    public void getSearchComplaintPage() {
+        clickOnButton(newRequestLink, webDriver);
+        clickOnButton(viewGrievance, webDriver);
+        switchToNewlyOpenedWindow(webDriver);
     }
 }

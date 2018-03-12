@@ -21,7 +21,12 @@ public class HomePageSteps extends BaseSteps implements En {
             }
 //            if (System.getProperty("env").equalsIgnoreCase("qa"))
 //                loginDetails.setPassword("********");
-            pageStore.get(HomePage.class).loginAs(loginDetails);
+            if (currentUser.equals("employee")) {
+                pageStore.get(HomePage.class).loginAs(loginDetails, scenarioContext.getUser());
+            }
+            else{
+                pageStore.get(HomePage.class).loginAs(loginDetails);
+            }
             scenarioContext.setUser(currentUser);
         });
 

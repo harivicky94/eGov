@@ -6,7 +6,7 @@ Feature: Creating Master Data for Trade License
 
   Scenario: Create license category
 
-    Given commissioner logs in
+    Given TL_ADM_Commissioner logs in
     And user will select the required screen as "Create License Category"
     And he choose to enter category details
     And he creates the license category
@@ -17,7 +17,7 @@ Feature: Creating Master Data for Trade License
 
   Scenario: Create Unit of Measurement
 
-    Given commissioner logs in
+    Given TL_ADM_Commissioner logs in
     And user will select the required screen as "Create Unit Of Measurement"
     And he choose to enter create UOM details
     And he checks the Active checkbox
@@ -30,7 +30,7 @@ Feature: Creating Master Data for Trade License
 
   Scenario: Create License Sub Category
 
-    Given commissioner logs in
+    Given TL_ADM_Commissioner logs in
 
     # Create License Category
     And user will select the required screen as "Create License Category"
@@ -58,7 +58,7 @@ Feature: Creating Master Data for Trade License
   @FeeMatrix @Master
   Scenario: Create Fee Matrix
 
-   Given commissioner logs in
+   Given TL_ADM_Commissioner logs in
   # Create License Category
     And user will select the required screen as "Create License Category"
     And he choose to enter category details

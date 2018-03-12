@@ -53,9 +53,6 @@ public class PageStore {
                 Class.forName("org.postgresql.Driver");
                 conn = DriverManager.getConnection(Properties.dburl, Properties.dbuser, Properties.dbpassword);
                 System.out.println("Connected to Database successfully");
-                System.out.println("DBURL = "+Properties.dburl);
-                System.out.println("DBUser = "+Properties.dbuser);
-                System.out.println("DBPassword = "+Properties.dbpassword);
             }
         } catch (SQLException e) {
             System.out.println(e.toString());
