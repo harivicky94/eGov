@@ -500,7 +500,7 @@ public class Rule24 extends GeneralRule {
         boolean valid2 = false;
 
         if (buildingHeight.intValue() <= 7) {
-            if (planDetail.getPlanInformation().getNocToAbutSide() && !planDetail.getPlanInformation().getOpeningOnSide()) {
+            if (planDetail.getPlanInformation().getNocToAbutRear() && !planDetail.getPlanInformation().getOpeningOnRear()) {
                 expectedMin = REAR_YARD_EXPECTED_WITHNOC_NO_OPENING;
                 expectedMean = REAR_YARD_EXPECTED_WITHNOC_NO_OPENING;
                 if (min >= 0d) {
@@ -508,7 +508,7 @@ public class Rule24 extends GeneralRule {
                     valid2 = true;
 
                 }
-            } else if (!planDetail.getPlanInformation().getOpeningOnSide()) {
+            } else if (!planDetail.getPlanInformation().getOpeningOnRear()) {
                 expectedMin = REAR_YARD_EXPECTED_NO_OPENING;
                 expectedMean = REAR_YARD_EXPECTED_NO_OPENING;
                 if (min >= 0.75) {
