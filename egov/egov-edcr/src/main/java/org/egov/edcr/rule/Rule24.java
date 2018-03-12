@@ -468,7 +468,7 @@ public class Rule24 extends GeneralRule {
         } else if (buildingHeight.intValue() > 7 && buildingHeight.intValue() <= 10) {
             side1Expected = SIDE_YARD_1_EXPECTED;
             if (min >= 1) {
-                valid2 = true;
+                valid1 = true;
             }
         }
 
