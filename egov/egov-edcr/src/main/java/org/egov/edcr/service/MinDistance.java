@@ -162,9 +162,6 @@ public class MinDistance {
 
         List<Point> toremove = new ArrayList<>();
 
-        if (yardInSidePoints.isEmpty())
-            pl.getErrors().put("Set back calculation Error",
-                    "Points of " + name + " not on " + DxfFileConstants.BUILDING_FOOT_PRINT);
 
         LOG.info(name + " Outside Points-------------" + yardOutSidePoints.size() + " inside points " + yardInSidePoints.size());
         for (Point p : yardOutSidePoints)
@@ -193,7 +190,7 @@ public class MinDistance {
         // LOG.info(insidePoints.size());
 
         if (yardInSidePoints.isEmpty())
-            pl.getErrors().put("Set back calculation Error",
+            pl.getErrors().put("Set back calculation error for "+name,
                     "Points of " + name + " not properly on " + DxfFileConstants.BUILDING_FOOT_PRINT);
 
         for (Point in : insidePoints)
@@ -353,10 +350,6 @@ public class MinDistance {
 
         List<Point> toremove = new ArrayList<>();
 
-        if (yardInSidePoints.isEmpty())
-            pl.getErrors().put("Set back calculation Error",
-                    "Points of " + name + " not on " + DxfFileConstants.BUILDING_FOOT_PRINT);
-
         // LOG.info(name+" Outside Points-------------");
         for (Point p : yardOutSidePoints)
             for (Point p1 : yardInSidePoints)
@@ -384,7 +377,7 @@ public class MinDistance {
         // LOG.info(insidePoints.size());
 
         if (yardInSidePoints.isEmpty())
-            pl.getErrors().put("Set back calculation Error",
+            pl.getErrors().put("Set back calculation error for "+name,
                     "Points of " + name + " not properly on " + DxfFileConstants.BUILDING_FOOT_PRINT);
 
         for (Point in : insidePoints)

@@ -244,7 +244,7 @@ public class DcrService {
             for (Map.Entry<String, String> entry : planDetail.getErrors().entrySet()) {
                 errors.append(String.valueOf(i)).append(". ");
                 errors.append(entry.getValue());
-                errors.append("\\n");
+                errors.append("\n"); 
                 i++;
             }
         } else {
