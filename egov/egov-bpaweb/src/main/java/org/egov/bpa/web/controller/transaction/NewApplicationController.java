@@ -88,11 +88,12 @@ public class NewApplicationController extends BpaGenericApplicationController {
     public String showNewApplicationForm(@ModelAttribute final BpaApplication bpaApplication, final Model model,
             final HttpServletRequest request) {
         if (request.getSession().getAttribute("cityname") != null)
-            model.addAttribute("cityName", (String) request.getSession().getAttribute("cityname"));
+            model.addAttribute("cityName", request.getSession().getAttribute("cityname"));
         return loadFormData(bpaApplication, model);
     }
 
     private String loadFormData(final BpaApplication bpaApplication, final Model model) {
+        prepareFormData(model);
         bpaApplication.setApplicationDate(new Date());
         bpaApplication.setSource(Source.SYSTEM);
         bpaApplication.setApplicantMode(ApplicantMode.NEW);

@@ -121,6 +121,7 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
     }
 
     private String loadNewForm(final BpaApplication bpaApplication, final Model model, String serviceCode) {
+        prepareFormData(model);
         bpaApplication.setApplicationDate(new Date());
         prepareCommonModelAttribute(model, bpaApplication);
         model.addAttribute("mode", "new");

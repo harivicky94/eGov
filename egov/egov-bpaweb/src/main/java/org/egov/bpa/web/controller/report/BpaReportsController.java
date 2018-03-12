@@ -75,6 +75,7 @@ public class BpaReportsController extends BpaGenericApplicationController {
 
     @RequestMapping(value = "/servicewise-statusreport", method = RequestMethod.GET)
     public String searchStatusCountByServicetypeForm(final Model model) {
+        prepareFormData(model);
         model.addAttribute("searchBpaApplicationForm", new SearchBpaApplicationForm());
         return "search-servicewise-status-report";
     }
@@ -134,6 +135,7 @@ public class BpaReportsController extends BpaGenericApplicationController {
 
     @RequestMapping(value = "/zonewisedetails", method = RequestMethod.GET)
     public String searchZoneWiseServicesForm(final Model model) {
+        prepareFormData(model);
         model.addAttribute("searchBpaApplicationForm", new SearchBpaApplicationForm());
         return "search-zonewise-report";
     }

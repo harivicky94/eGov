@@ -51,8 +51,6 @@ import org.egov.bpa.transaction.entity.DocketDetail;
 import org.egov.bpa.transaction.entity.Inspection;
 import org.egov.bpa.transaction.service.InspectionService;
 import org.egov.bpa.utils.BpaConstants;
-import org.egov.eis.web.contract.WorkflowContainer;
-import org.egov.infra.security.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -66,9 +64,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @RequestMapping(value = "/application")
 public class ModifyInspectionController extends BpaGenericApplicationController {
-
-    @Autowired
-    private SecurityUtils securityUtils;
 
     @Autowired
     private InspectionService inspectionService;
@@ -121,7 +116,7 @@ public class ModifyInspectionController extends BpaGenericApplicationController 
         final BpaApplication application = applicationBpaService.findByApplicationNumber(applicationNumber);
         if (application != null && application.getState() != null
                 && application.getState().getValue().equalsIgnoreCase(BpaConstants.APPLICATION_STATUS_REGISTERED)) {
-            loadViewdata(model, application);
+            prepareWorkflowDataForInspection(model, application);
             model.addAttribute("loginUser", securityUtils.getCurrentUser());
             model.addAttribute(BpaConstants.APPLICATION_HISTORY,
                     bpaThirdPartyService.getHistory(application));
@@ -135,14 +130,5 @@ public class ModifyInspectionController extends BpaGenericApplicationController 
         model.addAttribute(BpaConstants.BPA_APPLICATION, application);
     }
 
-    private void loadViewdata(final Model model, final BpaApplication application) {
-        model.addAttribute("stateType", application.getClass().getSimpleName());
-        final WorkflowContainer workflowContainer = new WorkflowContainer();
-        model.addAttribute(BpaConstants.ADDITIONALRULE, BpaConstants.CREATE_ADDITIONAL_RULE_CREATE);
-        workflowContainer.setAdditionalRule(BpaConstants.CREATE_ADDITIONAL_RULE_CREATE);
-        prepareWorkflow(model, application, workflowContainer);
-        model.addAttribute("currentState", application.getCurrentState().getValue());
-        model.addAttribute(BpaConstants.BPA_APPLICATION, application);
-    }
 
 }

@@ -54,7 +54,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
 @RequestMapping(value = "/application")
-public class ViewInspectionController extends BpaGenericApplicationController {
+public class ViewInspectionController {
     private static final String SHOW_INSPECTION_DETAILS = "show-inspection-details";
 
     private static final String INSPECTION_RESULT = "inspection-details-result";

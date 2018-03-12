@@ -128,3 +128,4 @@
 	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>
 				
 <script src="<cdn:url value='/resources/js/app/servicewise-status-report-helper.js?rnd=${app_release_no}'/> "></script>
+<script src="<cdn:url value='/resources/js/app/bpa-ajax-helper.js?rnd=${app_release_no}'/> "></script>

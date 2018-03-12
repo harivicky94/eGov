@@ -66,8 +66,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping(value = "/application")
 public class InspectionController extends BpaGenericApplicationController {
     private static final String CREATEINSPECTIONDETAIL_FORM = "createinspectiondetail-form";
-    @Autowired
-    private SecurityUtils securityUtils;
 
     @Autowired
     private InspectionService inspectionService;
@@ -105,7 +103,7 @@ public class InspectionController extends BpaGenericApplicationController {
         final BpaApplication application = applicationBpaService.findByApplicationNumber(applicationNumber);
         if (application != null && application.getState() != null
                 && application.getState().getValue().equalsIgnoreCase(BpaConstants.APPLICATION_STATUS_REGISTERED)) {
-            loadViewdata(model, application);
+            prepareWorkflowDataForInspection(model, application);
             model.addAttribute("loginUser", securityUtils.getCurrentUser());
             model.addAttribute(BpaConstants.APPLICATION_HISTORY,
                     bpaThirdPartyService.getHistory(application));
@@ -128,16 +126,6 @@ public class InspectionController extends BpaGenericApplicationController {
         model.addAttribute("docketDetailErectionTower", inspection.getDocketDetailErectionTower());
         model.addAttribute("docketDetailShutter", inspection.getDocketDetailShutter());
         model.addAttribute("docketDetailRoofConversion", inspection.getDocketDetailRoofConversion());
-        model.addAttribute(BpaConstants.BPA_APPLICATION, application);
-    }
-
-    private void loadViewdata(final Model model, final BpaApplication application) {
-        model.addAttribute("stateType", application.getClass().getSimpleName());
-        final WorkflowContainer workflowContainer = new WorkflowContainer();
-        model.addAttribute(BpaConstants.ADDITIONALRULE, BpaConstants.CREATE_ADDITIONAL_RULE_CREATE);
-        workflowContainer.setAdditionalRule(BpaConstants.CREATE_ADDITIONAL_RULE_CREATE);
-        prepareWorkflow(model, application, workflowContainer);
-        model.addAttribute("currentState", application.getCurrentState().getValue());
         model.addAttribute(BpaConstants.BPA_APPLICATION, application);
     }
 

@@ -51,8 +51,8 @@ $(document)
 						var to = $('#toDate').val();
 						var applicantName = $('#applicantName').val();
 						var applicationNumber = $('#applicationNumber').val();
-						var wardId = $('#wardId').val();
-						var electionWardId = $('#electionWardId').val();
+						var wardId = $('#ward').val();
+						var electionWardId = $('#electionBoundary').val();
 						var zoneId = $('#zone').val();
 						
 						$('.report-section').removeClass('display-hide');
@@ -531,9 +531,10 @@ function updateTotalFooter(colidx, api) {
         .reduce( function (a, b) {
         return intVal(a) + intVal(b);
         } ) }
-        else{ total = 0};
-
-	// Total over this page
+    else {
+        total = 0
+    }
+    // Total over this page
 	
 	if (api.column(colidx).data().length){
         var pageTotal = api
@@ -542,9 +543,10 @@ function updateTotalFooter(colidx, api) {
             .reduce( function (a, b) {
                 return intVal(a) + intVal(b);
             } ) }
-            else{ pageTotal = 0};
-
-	// Update footer
+    else {
+        pageTotal = 0
+    }
+    // Update footer
 	jQuery(api.column(colidx).footer()).html(
 			formatNumberInr(pageTotal) + ' (' + formatNumberInr(total)
 					+ ')');

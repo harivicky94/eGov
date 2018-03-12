@@ -45,20 +45,20 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 package org.egov.bpa.web.controller.transaction;
+
 import static org.egov.bpa.utils.BpaConstants.*;
 import static org.egov.infra.utils.JsonUtils.toJSON;
 
 import java.util.*;
-import java.util.stream.*;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.egov.bpa.master.entity.enums.*;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.dto.SearchBpaApplicationForm;
 import org.egov.bpa.transaction.service.InspectionService;
 import org.egov.bpa.transaction.service.LettertoPartyService;
 import org.egov.bpa.transaction.service.SearchBpaApplicationService;
-import org.egov.bpa.utils.*;
 import org.egov.bpa.web.controller.adaptor.SearchBpaApplicationFormAdaptor;
 import org.egov.eis.entity.*;
 import org.egov.eis.service.*;
@@ -101,6 +101,7 @@ public class SearchBpaApplicationController extends BpaGenericApplicationControl
 
     @RequestMapping(value = "/search", method = RequestMethod.GET)
     public String showSearchApprovedforFee(final Model model) {
+        prepareFormData(model);
         model.addAttribute("searchBpaApplicationForm", new SearchBpaApplicationForm());
         return "search-bpa-application";
     }
@@ -137,6 +138,7 @@ public class SearchBpaApplicationController extends BpaGenericApplicationControl
 
     @RequestMapping(value = "/bpacollectfee", method = RequestMethod.GET)
     public String showCollectionPendingRecords(final Model model) {
+        prepareFormData(model);
         model.addAttribute("searchBpaApplicationForm", new SearchBpaApplicationForm());
         return "search-collect-fee";
     }
@@ -178,6 +180,7 @@ public class SearchBpaApplicationController extends BpaGenericApplicationControl
         model.addAttribute("employeeMappedZone", employeeMappedZone);
         model.addAttribute("mappedRevenueBoundries", revWards);
         model.addAttribute("mappedElectionBoundries", electionWards);
+        model.addAttribute("serviceTypeEnumList", Arrays.asList(ApplicationType.values()));
         return "search-document-scrutiny";
     }
 

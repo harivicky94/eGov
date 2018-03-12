@@ -96,23 +96,15 @@ public abstract class BpaGenericApplicationController extends GenericWorkFlowCon
     private BoundaryService boundaryService;
     @Autowired
     private ServiceTypeService serviceTypeService;
-
     @Autowired
     private OccupancyService occupancyService;
-
-    @Autowired
-    private VillageNameService villageNameService;
-
     @Autowired
     private ConstructionStagesService constructionStagesService;
-
     @Autowired
     protected CheckListDetailService checkListDetailService;
     @Autowired
     @Qualifier("fileStoreService")
     protected FileStoreService fileStoreService;
-    @Autowired
-    private BuildingCategoryService buildingCategoryService;
     @Autowired
     protected ApplicationBpaService applicationBpaService;
     @Autowired
@@ -146,113 +138,51 @@ public abstract class BpaGenericApplicationController extends GenericWorkFlowCon
     @Autowired
     protected BPASmsAndEmailService bpaSmsAndEmailService;
 
-    @ModelAttribute("occupancyList")
-    public List<Occupancy> getOccupancy() {
-        return occupancyService.findAllOrderByOrderNumber();
-    }
-
-    @ModelAttribute("zones")
-    public List<Boundary> zones() {
-        return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(ZONE,
-                REVENUE_HIERARCHY_TYPE);
-    }
-
-    @ModelAttribute("serviceTypeList")
-    public List<ServiceType> getServiceTypeList() {
-        return serviceTypeService.getAllActiveMainServiceTypes();
-    }
-
-    @ModelAttribute("amenityTypeList")
-    public List<ServiceType> getAmenityTypeList() {
-        return serviceTypeService.getAllActiveAmenities();
-    }
-
-    @ModelAttribute("buildingCategorYlist")
-    public List<BuildingCategory> getAllBuildingCategoryList() {
-        return buildingCategoryService.findAll();
-    }
-
-    @ModelAttribute("stakeHolderTypeList")
-    public List<StakeHolderType> getStakeHolderType() {
-        return Arrays.asList(StakeHolderType.values());
-    }
-
-    @ModelAttribute("governmentTypeList")
-    public List<GovernmentType> getGovernmentType() {
-        return Arrays.asList(GovernmentType.values());
-    }
-
-    @ModelAttribute("villageNames")
-    public List<VillageName> getVillage() {
-        return villageNameService.findAll();
-    }
-
-    @ModelAttribute("constStages")
-    public List<ConstructionStages> getCOnstructionStage() {
-        return constructionStagesService.findAll();
-    }
-
-    @ModelAttribute("electionwards")
-    public List<Boundary> wards() {
-         List<Boundary> boundaries = boundaryService
-                .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(WARD, ADMINISTRATION_HIERARCHY_TYPE);
-         sortBoundaryByBndryNumberAsc(boundaries);
-         return boundaries;
-    }
-
-    @ModelAttribute("wards")
-    public List<Boundary> adminWards() {
-        List<Boundary> boundaries =  boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(WARD,
-                REVENUE_HIERARCHY_TYPE);
-        sortBoundaryByBndryNumberAsc(boundaries);
-        return boundaries;
-    }
-
-    @ModelAttribute("street")
-    public List<Boundary> blocks() {
-        return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(STREET,
-                REVENUE_HIERARCHY_TYPE);
-    }
-
-    @ModelAttribute("localitys")
-    public List<Boundary> localitys() {
-        return boundaryService
+    protected void prepareFormData(Model model) {
+        model.addAttribute("occupancyList", occupancyService.findAllOrderByOrderNumber());
+        model.addAttribute("zones", boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(ZONE,
+                REVENUE_HIERARCHY_TYPE));
+        model.addAttribute("serviceTypeList", serviceTypeService.getAllActiveMainServiceTypes());
+        model.addAttribute("amenityTypeList", serviceTypeService.getAllActiveAmenities());
+        model.addAttribute("stakeHolderTypeList", Arrays.asList(StakeHolderType.values()));
+        model.addAttribute("governmentTypeList", Arrays.asList(GovernmentType.values()));
+        model.addAttribute("constStages", constructionStagesService.findAll());
+        model.addAttribute("electionwards", getElectionWards());
+        model.addAttribute("wards", getRevenueWards());
+        model.addAttribute("street", boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(STREET,
+                REVENUE_HIERARCHY_TYPE));
+        model.addAttribute("localitys", boundaryService
                 .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(LOCALITY,
-                        LOCATION_HIERARCHY_TYPE);
-    }
-    
-    private void sortBoundaryByBndryNumberAsc(List<Boundary> boundaries) {
-        boundaries.sort((Boundary b1, Boundary b2) -> b1.getBoundaryNum().compareTo(b2.getBoundaryNum()));
-    }
-
-    @ModelAttribute("applicationModes")
-    public Map<String, String> applicationModes() {
-        return getApplicationModeMap();
-    }
-
-    @ModelAttribute("buildingFloorList")
-    public List<String> getBuildingFLoorList() {
-        return getBuildingFloorsList();
-    }
-
-    @ModelAttribute("uomList")
-    public BpaUom[] getUomList() {
-        return BpaUom.values();
-    }
-
-    @ModelAttribute("applnStatusList")
-    public List<BpaStatus> getApplnStatusList() {
-        return bpaStatusService.findAllByModuleType();
-    }
-
-    @ModelAttribute("schemesList")
-    public List<BpaScheme> getSchemesList() {
-        return bpaSchemeService.findAll();
+                        LOCATION_HIERARCHY_TYPE));
+        model.addAttribute("applicationModes", getApplicationModeMap());
+        model.addAttribute("buildingFloorList", getBuildingFloorsList());
+        model.addAttribute("uomList", BpaUom.values());
+        model.addAttribute("applnStatusList", bpaStatusService.findAllByModuleType());
+        model.addAttribute("schemesList", bpaSchemeService.findAll());
+        model.addAttribute("oneDayPermitLandTypeList", Arrays.asList(OneDayPermitLandType.values()));
     }
 
     @ModelAttribute("nocStatusList")
     public NocStatus[] getNocStatusList() {
         return NocStatus.values();
+    }
+
+    public List<Boundary> getElectionWards() {
+        List<Boundary> boundaries = boundaryService
+                .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(WARD, ADMINISTRATION_HIERARCHY_TYPE);
+        sortBoundaryByBndryNumberAsc(boundaries);
+        return boundaries;
+    }
+
+    public List<Boundary> getRevenueWards() {
+        List<Boundary> boundaries = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(WARD,
+                REVENUE_HIERARCHY_TYPE);
+        sortBoundaryByBndryNumberAsc(boundaries);
+        return boundaries;
+    }
+
+    private void sortBoundaryByBndryNumberAsc(List<Boundary> boundaries) {
+        boundaries.sort((Boundary b1, Boundary b2) -> b1.getBoundaryNum().compareTo(b2.getBoundaryNum()));
     }
 
     public Map<String, String> getApplicationModeMap() {
@@ -292,6 +222,16 @@ public abstract class BpaGenericApplicationController extends GenericWorkFlowCon
         model.addAttribute("citizenOrBusinessUser", bpaUtils.logedInuseCitizenOrBusinessUser());
     }
 
+    protected void prepareWorkflowDataForInspection(final Model model, final BpaApplication application) {
+        model.addAttribute("stateType", application.getClass().getSimpleName());
+        final WorkflowContainer workflowContainer = new WorkflowContainer();
+        model.addAttribute(BpaConstants.ADDITIONALRULE, BpaConstants.CREATE_ADDITIONAL_RULE_CREATE);
+        workflowContainer.setAdditionalRule(BpaConstants.CREATE_ADDITIONAL_RULE_CREATE);
+        prepareWorkflow(model, application, workflowContainer);
+        model.addAttribute("currentState", application.getCurrentState().getValue());
+        model.addAttribute(BpaConstants.BPA_APPLICATION, application);
+    }
+
     protected void buildReceiptDetails(final BpaApplication application) {
         for (final EgDemandDetails demandDtl : application.getDemand().getEgDemandDetails())
             for (final EgdmCollectedReceipt collRecpt : demandDtl.getEgdmCollectedReceipts())
@@ -305,7 +245,8 @@ public abstract class BpaGenericApplicationController extends GenericWorkFlowCon
     }
 
     protected void buildOwnerDetails(final BpaApplication bpaApplication) {
-        List<User> users = userService.getUserByNameAndMobileNumberAndGenderForUserType(bpaApplication.getOwner().getUser().getName(),
+        List<User> users = userService.getUserByNameAndMobileNumberAndGenderForUserType(
+                bpaApplication.getOwner().getUser().getName(),
                 bpaApplication.getOwner().getUser().getMobileNumber(), bpaApplication.getOwner().getUser().getGender(),
                 UserType.CITIZEN);
         if (!users.isEmpty()) {
@@ -317,37 +258,30 @@ public abstract class BpaGenericApplicationController extends GenericWorkFlowCon
             bpaApplication.setMailPwdRequired(true);
         }
     }
-    
+
     protected String getDesinationNameByPosition(Position pos) {
         return pos.getDeptDesig() != null && pos.getDeptDesig().getDesignation() != null
-                ? pos.getDeptDesig().getDesignation().getName() : "";
+                ? pos.getDeptDesig().getDesignation().getName()
+                : "";
     }
 
     protected void getAppointmentMsgForOnedayPermit(final BpaApplication bpaApplication, Model model) {
         if (bpaApplication.getIsOneDayPermitApplication() && !bpaApplication.getSlotApplications().isEmpty()) {
-            String appmntDetailsMsg = messageSource.getMessage("msg.one.permit.schedule", new String[]{
+            String appmntDetailsMsg = messageSource.getMessage("msg.one.permit.schedule", new String[] {
                     bpaApplication.getOwner().getUser().getName(),
-                    DateUtils.getDefaultFormattedDate(bpaApplication.getSlotApplications().get(0).getSlotDetail().getSlot().getAppointmentDate()),
-                    bpaApplication.getSlotApplications().get(0).getSlotDetail().getAppointmentTime()}, LocaleContextHolder.getLocale());
+                    DateUtils.getDefaultFormattedDate(
+                            bpaApplication.getSlotApplications().get(0).getSlotDetail().getSlot().getAppointmentDate()),
+                    bpaApplication.getSlotApplications().get(0).getSlotDetail().getAppointmentTime() },
+                    LocaleContextHolder.getLocale());
             model.addAttribute("appmntDetailsMsg", appmntDetailsMsg);
         }
     }
 
-    @ModelAttribute("serviceTypeEnumList") 
-    public List<ApplicationType>  showSearchApprovedforFee() {
-		return Arrays.asList(ApplicationType.values());
-    }
-    
-    @ModelAttribute("oneDayPermitLandTypeList") 
-    public List<OneDayPermitLandType> getOneDayPermitLandType() {
-        return Arrays.asList(OneDayPermitLandType.values());
-    }
-
     protected boolean validateOnDocumentScrutiny(Model model, BpaApplication application) {
-        if(APPLICATION_STATUS_DOC_VERIFIED.equals(application.getStatus().getCode())) {
+        if (APPLICATION_STATUS_DOC_VERIFIED.equals(application.getStatus().getCode())) {
             model.addAttribute(MESSAGE, "Document verification of application is already completed.");
             return true;
-        } else if(WF_REJECT_STATE.equals(application.getStatus().getCode())) {
+        } else if (WF_REJECT_STATE.equals(application.getStatus().getCode())) {
             model.addAttribute(MESSAGE, "Application is already initiated for rejection.");
             return true;
         }
