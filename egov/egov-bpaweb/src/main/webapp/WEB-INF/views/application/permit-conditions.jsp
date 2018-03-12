@@ -71,7 +71,7 @@
 					<th><spring:message code="lbl.isrequired" /></th>
 					<th><spring:message code="lbl.condition" /></th>
 					<th>Order No./Vide No.</th>
-					<th>Dtd</th>
+					<th>Date</th>
 				</tr>
 			</thead>
 			<tbody>
