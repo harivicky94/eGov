@@ -229,7 +229,7 @@ public class BpaApplicationBillable extends AbstractBillable implements Billable
     @Override
     public String getDescription() {
 
-        return "Bpa Application Number: " + getApplication().getApplicationNumber();
+        return "BPA Application Number: " + getApplication().getApplicationNumber();
     }
 
     @Override

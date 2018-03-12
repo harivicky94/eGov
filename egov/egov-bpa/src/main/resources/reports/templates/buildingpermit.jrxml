@@ -79,14 +79,14 @@
 				<textFieldExpression><![CDATA[$P{ulbName}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="0" y="96" width="31" height="20" uuid="8c132a85-9329-402b-9b9f-e6a7ed50d5a7"/>
+				<reportElement x="0" y="96" width="180" height="20" uuid="8c132a85-9329-402b-9b9f-e6a7ed50d5a7"/>
 				<textElement>
 					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Building Plan Permission No:]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="30" y="96" width="275" height="20" uuid="d32664c0-b2ba-4011-a881-fefd4925c5ee"/>
+				<reportElement x="168" y="96" width="275" height="20" uuid="d32664c0-b2ba-4011-a881-fefd4925c5ee"/>
 				<textElement>
 					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
