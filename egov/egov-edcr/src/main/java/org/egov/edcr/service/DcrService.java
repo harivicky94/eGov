@@ -238,6 +238,7 @@ public class DcrService {
         String applicationDate = FORMATDDMMYYYY.format(dcrApplication.getApplicationDate());
 
         boolean reportStatus = false;
+        boolean finalReportStatus = true;
         StringBuilder errors = new StringBuilder();
         if (planDetail.getErrors() != null && planDetail.getErrors().size() > 0) {
             int i = 1;
@@ -246,10 +247,9 @@ public class DcrService {
                 errors.append(entry.getValue());
                 errors.append("\n"); 
                 i++;
+                finalReportStatus = false;
             }
-        } else {
-            reportStatus = true;
-        }
+        } 
 
         drb.setPageSizeAndOrientation(new Page(842, 595, true));
         final JRDataSource ds = new JRBeanCollectionDataSource(Collections.singletonList(planDetail2));
@@ -275,6 +275,10 @@ public class DcrService {
                                 dcrReportOutput.setExpectedResult(ruleReportOutput.getExpectedResult());
                                 dcrReportOutput.setActualResult(ruleReportOutput.getActualResult());
                                 dcrReportOutput.setStatus(ruleReportOutput.getStatus());
+                                
+                                if(ruleReportOutput.getStatus()!=null && ruleReportOutput.getStatus().equalsIgnoreCase("NotAccepted")) {
+                                    finalReportStatus=false; 
+                                }
                             }
                             list.add(dcrReportOutput);
                         } else {
@@ -301,36 +305,41 @@ public class DcrService {
 
             for (PlanRule pl : planRules) {
                 String rules = pl.getRules();
-                String[] ruleSet = rules.split(",");
+                String[] ruleSet = rules.split(","); 
                 for (String s : ruleSet) {
                     String ruleName = "rule" + s;
                     LOG.info(s);
                     Object ruleBean = getRuleBean(ruleName);
                     if (ruleBean != null) {
                         GeneralRule bean = (GeneralRule) ruleBean;
-                        if (bean != null)
+                        if (bean != null){
                             reportStatus = bean.generateRuleReport(planDetail, drb, valuesMap, reportStatus);
+                            if(!reportStatus) {
+                                finalReportStatus=false;
+                            }
+                            
+                        }
                     } else
                         LOG.error("Skipping rule " + ruleName + "Since rule cannot be injected");
                 }
             }
         }
 
-        reportBuilder.append("Report Status : " + (reportStatus ? "Accepted" : "Not Accepted")).append("\\n").append("\\n");
+        reportBuilder.append("Report Status : " + (finalReportStatus ? "Accepted" : "Not Accepted")).append("\\n").append("\\n");
         reportBuilder.append("Rules Verified : ").append("\\n");
-        valuesMap.put("reportStatus", (reportStatus ? "Accepted" : "Not Accepted"));
+        valuesMap.put("reportStatus", (finalReportStatus ? "Accepted" : "Not Accepted"));
         drb.setTemplateFile("/reports/templates/edcr_report.jrxml");
         drb.setMargins(5, 0, 33, 20);
-        if (reportStatus) {
+        if (finalReportStatus) {
             String dcrApplicationNumber = dcrApplicationNumberGenerator.generateEdcrApplicationNumber(dcrApplication);
             EdcrApplicationDetail edcrApplicationDetail = dcrApplication.getEdcrApplicationDetails().get(0);
             edcrApplicationDetail.setDcrNumber(dcrApplicationNumber);
         }
-        if (reportStatus) {
-            valuesMap.put("qrCode", generatePDF417Code(buildQRCodeDetails(dcrApplication, reportStatus)));
+        if (finalReportStatus) {
+            valuesMap.put("qrCode", generatePDF417Code(buildQRCodeDetails(dcrApplication, finalReportStatus)));
         }
         final DynamicReport dr = drb.build();
-        planDetail2.setEdcrPassed(reportStatus);
+        planDetail2.setEdcrPassed(finalReportStatus);
         return DynamicJasperHelper.generateJasperPrint(dr, new ClassicLayoutManager(), ds, valuesMap);
 
     }
