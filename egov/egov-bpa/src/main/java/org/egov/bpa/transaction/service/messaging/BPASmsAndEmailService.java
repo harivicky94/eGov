@@ -112,7 +112,6 @@ public class BPASmsAndEmailService {
     private BpaThirdPartyService bpaThirdPartyService;
 	@Autowired
     private BpaUtils bpaUtils;
- 
 
     public String getMunicipalityName() {
         return ApplicationThreadLocals.getMunicipalityName();
@@ -446,10 +445,7 @@ public class BPASmsAndEmailService {
 									slotApplication.getSlotDetail().getSlot().getAppointmentDate()),
 							slotApplication.getSlotDetail().getAppointmentTime(),
 							slotApplication.getSlotDetail().getSlot().getZone().getName(),
-							bpaThirdPartyService
-									.getUserPositionByPassingPosition(
-									        bpaApplication.getCurrentState().getOwnerPosition().getId())
-									.getMobileNumber(),
+                            getAppconfigValueByKeyNameForDefaultDept(),
                             slotApplication.getApplication().getApplicationNumber()
                     },
 					null);
@@ -460,12 +456,15 @@ public class BPASmsAndEmailService {
 									slotApplication.getSlotDetail().getSlot().getAppointmentDate()),
 							slotApplication.getSlotDetail().getAppointmentTime(),
 							slotApplication.getSlotDetail().getSlot().getZone().getName(),
-							bpaThirdPartyService
-									.getUserPositionByPassingPosition(
-											bpaApplication.getCurrentState().getOwnerPosition().getId())
-									.getMobileNumber() },
+                            getAppconfigValueByKeyNameForDefaultDept() },
 					null);
 		}
 		return mesg;
 	}
+
+    public String getAppconfigValueByKeyNameForDefaultDept() {
+        List<AppConfigValues> appConfigValueList = appConfigValuesService
+                .getConfigValuesByModuleAndKey(APPLICATION_MODULE_TYPE, "BPAPRIMARYDEPARTMENT");
+        return !appConfigValueList.isEmpty() ? appConfigValueList.get(0).getValue() : "";
+    }
 }
