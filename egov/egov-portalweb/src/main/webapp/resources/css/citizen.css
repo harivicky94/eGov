@@ -200,7 +200,8 @@ html body .container-fluid .left-menu .modules-ul {
   margin: 0;
   padding: 0 10px;
   text-align: center;
-  position: relative; }
+  position: relative;
+  list-style-type: none;}
 html body .container-fluid .left-menu .modules-ul .modules-li {
   padding: 20px 0;
   font-family: bold;
