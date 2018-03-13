@@ -25,10 +25,10 @@
                     </div>
                 </div>
                 <div class="row add-border">
-                    <div class="col-xs-3 add-margin"><spring:message code="lbl.service.type"/>
+                    <div class="col-xs-3 add-margin"><spring:message code="lbl.applicantname"/>
                     </div>
                     <div class="col-sm-3 add-margin view-content">
-                        <c:out value="${edcrApplication.planInformation.serviceType}" default="N/A"></c:out>
+                        <c:out value="${edcrApplication.planInformation.applicantName}" default="N/A"></c:out>
                     </div>
                     <div class="col-xs-3 add-margin"><spring:message code="lbl.occupancy"/>
                     </div>
@@ -37,13 +37,18 @@
                     </div>
                 </div>
                 <div class="row add-border">
+                    <div class="col-xs-3 add-margin"><spring:message code="lbl.service.type"/>
+                    </div>
+                    <div class="col-sm-3 add-margin view-content">
+                        <c:out value="${edcrApplication.planInformation.serviceType}" default="N/A"></c:out>
+                    </div>
                     <div class="col-xs-3 add-margin"><spring:message code="lbl.amenity.type"/>
                     </div>
                     <div class="col-sm-3 add-margin view-content">
                         <c:out value="${edcrApplication.planInformation.amenities}" default="N/A"></c:out>
                     </div>
                 </div>
-            </div>
+                </div>
         </div>
         <div class="panel panel-primary" data-collapsed="0">
             <%@ include file="view-edcr-documents.jsp" %>

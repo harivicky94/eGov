@@ -59,7 +59,7 @@
 </div>
 <div class="panel-body">
     <div class="form-group">
-        <label class="col-sm-3 control-label text-right">Re-Upload E-Dcr<span class="mandatory"></span></label>
+        <label class="col-sm-3 control-label text-right">Re-Upload E-DCR<span class="mandatory"></span></label>
         <div class="col-sm-4 add-margin">
             <div class="fileSection col-md77-4">
                 <input type="file" required="required" name="dxfFile" id="myfile" style="display:none;">
@@ -87,7 +87,15 @@
             <input type="hidden" name="edcrApplication" id="edcrApplication" value="${edcrApplication.id}">
             <input type="text" class="form-control resetValues" name="applicationNumber" id="applicationNumber" value="${edcrApplication.applicationNumber}" required="required">
         </div>
-        <label class="col-sm-2 control-label text-right"><spring:message code="lbl.occupancy" /></label>
+    </div>
+    <div class="form-group">
+        <label class="col-sm-3 control-label text-right"><spring:message code="lbl.applicantname" />
+        </label>
+        <div class="col-sm-3 add-margin">
+            <input type="text" name="planInformation.applicantName" class="form-control resetValues" id="applicantName" value="${edcrApplication.planInformation.applicantName}" readonly="readonly">
+        </div>
+        <label class="col-sm-2 control-label text-right"><spring:message code="lbl.occupancy" />
+        </label>
         <div class="col-sm-3 add-margin">
             <input type="text" name="planInformation.occupancy" class="form-control resetValues" id="occupancy" value="${edcrApplication.planInformation.occupancy}" readonly="readonly">
         </div>

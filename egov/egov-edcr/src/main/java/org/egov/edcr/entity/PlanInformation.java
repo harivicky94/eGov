@@ -31,11 +31,17 @@ public class PlanInformation extends AbstractAuditable {
     private String occupancy;
 
     private String serviceType;
+
     private String amenities;
+
     private String architectInformation;
+
     private Long acchitectId;
 
+    private String applicantName;
+
     private Boolean crzZoneArea = false;
+
     @Transient
     private Boolean securityZone = false;
 
@@ -44,10 +50,13 @@ public class PlanInformation extends AbstractAuditable {
 
     @Transient
     private Boolean nocToAbutSide=false;
+
     @Transient
     private Boolean nocToAbutRear=false;
+
     @Transient
     private Boolean openingOnSide=false;
+
     @Transient
     private Boolean openingOnRear=false;
 
@@ -174,4 +183,11 @@ public class PlanInformation extends AbstractAuditable {
         this.openingOnRear = openingOnRear;
     }
 
+    public String getApplicantName() {
+        return applicantName;
+    }
+
+    public void setApplicantName(String applicantName) {
+        this.applicantName = applicantName;
+    }
 }

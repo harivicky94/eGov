@@ -46,12 +46,12 @@
   ~
   --%>
 
-<%@ page contentType="text/html;charset=UTF-8" language="java"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
-<%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
-<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
-<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 
 <div class="panel-heading custom_form_panel_heading">
     <div class="panel-title">
@@ -59,74 +59,88 @@
 </div>
 <div class="panel-body">
     <div class="form-group">
-            <label class="col-sm-3 control-label text-right"><spring:message code="lbl.upload.edcr" /><span class="mandatory"></span></label>
-            <div class="col-sm-4 add-margin">
-                <div class="fileSection col-md77-4">
-                    <input type="file" required="required" name="dxfFile" id="myfile" style="display:none;">
-                    <p class="hide"><i class="fa fa-file-text"></i>&nbsp;&nbsp;<span id="fileName"></span></p>
-                    <button type="button" id="fileTrigger" class="btn btn-primary fullWidth">
-                        <span class="glyphicon glyphicon glyphicon-cloud-upload"></span> &nbsp;Choose a file
-                    </button>
-                    <div class="row hide fileActions">
-                        <div class="col-md-6">
-                            <button type="button" id="fileDelete" class="btn btn-primary fullWidth">
-                                <i class="fa fa-trash-o"></i> &nbsp;Delete
-                            </button>
-                        </div>
+        <label class="col-sm-3 control-label text-right"><spring:message code="lbl.upload.edcr"/><span
+                class="mandatory"></span></label>
+        <div class="col-sm-4 add-margin">
+            <div class="fileSection col-md77-4">
+                <input type="file" required="required" name="dxfFile" id="myfile" style="display:none;">
+                <p class="hide"><i class="fa fa-file-text"></i>&nbsp;&nbsp;<span id="fileName"></span></p>
+                <button type="button" id="fileTrigger" class="btn btn-primary fullWidth">
+                    <span class="glyphicon glyphicon glyphicon-cloud-upload"></span> &nbsp;Choose a file
+                </button>
+                <div class="row hide fileActions">
+                    <div class="col-md-6">
+                        <button type="button" id="fileDelete" class="btn btn-primary fullWidth">
+                            <i class="fa fa-trash-o"></i> &nbsp;Delete
+                        </button>
                     </div>
                 </div>
-                <small class="error-msg"><spring:message
-                        code="lbl.dcr.upload.help" /></small>
             </div>
-        </div>
-        <label class="col-sm-3 control-label text-right"><spring:message code="lbl.occupancy" /> <span
-                class="mandatory"></span></label>
-        <div class="col-sm-3 add-margin">
-            <input type="hidden" id="planInfoOccupancy" name="planInformation.occupancy">
-            <input type="hidden" id="architectInformation" name="planInformation.architectInformation" value="${edcrApplication.planInformation.architectInformation}">
-            <form:select path="planInformation.occupancy" data-first-option="false"
-                         id="occupancy" cssClass="form-control" disabled="true" required="required">
-                <form:option value="">
-                    <spring:message code="lbl.select" />
-                </form:option>
-                <form:options items="${occupancyList}" itemValue="description"
-                              itemLabel="description" />
-            </form:select>
-            <form:errors path="planInformation.occupancy" cssClass="add-margin error-msg" />
-        </div>
-        <label class="col-sm-2 control-label text-right"><spring:message code="lbl.service.type" /> <span class="mandatory"></span>
-        </label>
-        <div class="col-sm-3 add-margin">
-            <input type="hidden" id="planInfoServiceType" name="planInformation.serviceType">
-            <form:select path="planInformation.serviceType" data-first-option="false"
-                         id="serviceType" cssClass="form-control serviceType" disabled="true"
-                         required="required">
-                <form:option value="">
-                    <spring:message code="lbl.select" />
-                </form:option>
-                <form:options items="${serviceTypeList}" itemValue="description"
-                              itemLabel="description" />
-            </form:select>
-            <form:errors path="planInformation.serviceType" cssClass="add-margin error-msg" />
+            <small class="error-msg"><spring:message
+                    code="lbl.dcr.upload.help"/></small>
         </div>
     </div>
     <div class="form-group">
-            <label class="col-sm-3 control-label text-right"><spring:message code="lbl.amenity.type" />
-            </label>
-        <div class="col-sm-3 add-margin">
-            <form:hidden path="planInformation.amenities" id="amenities"></form:hidden>
-            <select name="" multiple id="applicationAmenity"
-                    class="form-control applicationAmenity tick-indicator">
-                <c:forEach items="${amenityTypeList}" var="amenity">
-                    <option value="${amenity.description}" title="${amenity.description}" >${amenity.description}</option>
-                </c:forEach>
-            </select>
-
-            <form:errors path="planInformation.amenities"
-                         cssClass="add-margin error-msg" />
+        <div>
+            <label class="col-sm-3 control-label text-right"><spring:message code="lbl.applicantname"/> <span
+                    class="mandatory"></span></label>
+            <div class="col-sm-3 add-margin">
+                    <form:input type="text" cssClass="form-control addremoverequired"
+                                path="planInformation.applicantName" maxlength="128" id="applicantName"
+                                required="required"/>
+                    <form:errors path="planInformation.applicantName" cssClass="error-msg"/>
+                </div>
+            <label class="col-sm-2 control-label text-right"><spring:message code="lbl.occupancy"/> <span
+                    class="mandatory"></span></label>
+            <div class="col-sm-3 add-margin">
+                <input type="hidden" id="planInfoOccupancy" name="planInformation.occupancy">
+                <input type="hidden" id="architectInformation" name="planInformation.architectInformation"
+                       value="${edcrApplication.planInformation.architectInformation}">
+                <form:select path="planInformation.occupancy" data-first-option="false"
+                             id="occupancy" cssClass="form-control" disabled="true" required="required">
+                    <form:option value="">
+                        <spring:message code="lbl.select"/>
+                    </form:option>
+                    <form:options items="${occupancyList}" itemValue="description"
+                                  itemLabel="description"/>
+                </form:select>
+                <form:errors path="planInformation.occupancy" cssClass="add-margin error-msg"/>
+            </div>
         </div>
     </div>
+    <div class="form-group">
+    <label class="col-sm-3 control-label text-right"><spring:message code="lbl.service.type"/> <span
+            class="mandatory"></span>
+    </label>
+    <div class="col-sm-3 add-margin">
+        <input type="hidden" id="planInfoServiceType" name="planInformation.serviceType">
+        <form:select path="planInformation.serviceType" data-first-option="false"
+                     id="serviceType" cssClass="form-control serviceType" disabled="true"
+                     required="required">
+            <form:option value="">
+                <spring:message code="lbl.select"/>
+            </form:option>
+            <form:options items="${serviceTypeList}" itemValue="description"
+                          itemLabel="description"/>
+        </form:select>
+        <form:errors path="planInformation.serviceType" cssClass="add-margin error-msg"/>
+    </div>
+    <label class="col-sm-2 control-label text-right"><spring:message code="lbl.amenity.type"/>
+    </label>
+    <div class="col-sm-3 add-margin">
+        <form:hidden path="planInformation.amenities" id="amenities"></form:hidden>
+        <select name="" multiple id="applicationAmenity"
+                class="form-control applicationAmenity tick-indicator">
+            <c:forEach items="${amenityTypeList}" var="amenity">
+                <option value="${amenity.description}" title="${amenity.description}">${amenity.description}</option>
+            </c:forEach>
+        </select>
 
+        <form:errors path="planInformation.amenities"
+                     cssClass="add-margin error-msg"/>
+    </div>
+</div>
+</div>
 </div>
 
 <link rel="stylesheet" href="<c:url value='/resources/app/css/edcr-style.css?rnd=${app_release_no}'/>">

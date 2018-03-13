@@ -237,6 +237,9 @@ public class DcrService {
                 ? dcrApplication.getApplicationNumber() : "NA";
         String applicationDate = FORMATDDMMYYYY.format(dcrApplication.getApplicationDate());
 
+        if (dcrApplication.getPlanInformation() != null && dcrApplication.getPlanInformation().getApplicantName() != null)
+            planDetail2.getPlanInformation().setApplicantName(dcrApplication.getPlanInformation().getApplicantName());
+
         boolean reportStatus = false;
         boolean finalReportStatus = true;
         StringBuilder errors = new StringBuilder();
@@ -287,7 +290,7 @@ public class DcrService {
                             dcrReportOutput.setDescription(subRuleOutput.getRuleDescription());
                             dcrReportOutput.setExpectedResult(null);
                             dcrReportOutput.setActualResult(subRuleOutput.getMessage());
-                            dcrReportOutput.setStatus(null);
+                            dcrReportOutput.setStatus(subRuleOutput.getResult().toString());
                             list.add(dcrReportOutput);
                         }
                     }

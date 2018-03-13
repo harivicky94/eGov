@@ -105,6 +105,7 @@ $(document)
                             $('#edcrApplication').val(response.id);
                             $('#applicationNumber').val(response.applicationNumber);
                             $('#occupancy').val(response.planInformation.occupancy);
+                            $('#applicantName').val(response.planInformation.applicantName);
                             $('#serviceType').val(response.planInformation.serviceType);
                             $('#amenities').val(response.planInformation.amenities);
                         } else {

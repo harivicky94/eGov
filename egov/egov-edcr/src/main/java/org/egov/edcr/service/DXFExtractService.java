@@ -79,7 +79,6 @@ public class DXFExtractService {
             extractBuildingDetails(pl, doc);
             extractTotalFloorArea(doc, pl);
             extractBasementDetails(pl, doc);
-
             pl.getPlot().setFrontYard(getYard(pl, doc, DxfFileConstants.FRONT_YARD));
             pl.getPlot().setRearYard(getYard(pl, doc, DxfFileConstants.REAR_YARD));
             pl.getPlot().setSideYard1(getYard(pl, doc, DxfFileConstants.SIDE_YARD_1));
@@ -418,6 +417,9 @@ public class DXFExtractService {
         if (!bldgext.isEmpty())
             for (DXFLWPolyline pline : bldgext)
                 floorArea = floorArea.add(Util.getPolyLineArea(pline));
+
+        pl.getBuilding().setTotalBuitUpArea(floorArea);
+
         List<DXFLWPolyline> bldDeduct = Util.getPolyLinesByLayer(doc, DxfFileConstants.FAR_DEDUCT);
         if (!bldDeduct.isEmpty())
             for (DXFLWPolyline pline : bldDeduct)

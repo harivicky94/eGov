@@ -37,7 +37,9 @@ public class Building extends Measurement {
     private BigDecimal floorsAboveGround;
 
     private BigDecimal distanceFromBuildingFootPrintToRoadEnd;
-    
+
+    private BigDecimal totalBuitUpArea;
+
     public BigDecimal getBuildingHeight() {
         return buildingHeight;
     }
@@ -132,6 +134,14 @@ public class Building extends Measurement {
 
     public void setOpenStairs(List<Measurement> openStairs) {
         this.openStairs = openStairs;
+    }
+
+    public BigDecimal getTotalBuitUpArea() {
+        return totalBuitUpArea;
+    }
+
+    public void setTotalBuitUpArea(BigDecimal totalBuitUpArea) {
+        this.totalBuitUpArea = totalBuitUpArea;
     }
 
     @Override
