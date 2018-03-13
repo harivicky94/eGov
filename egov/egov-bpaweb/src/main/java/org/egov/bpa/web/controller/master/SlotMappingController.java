@@ -85,9 +85,9 @@ public class SlotMappingController extends BpaGenericApplicationController {
 	}
 
 	private String loadForm(final Model model, final SlotMapping slotMapping) {
-		model.addAttribute(SLOT_MAPPING, new SlotMapping());
-		model.addAttribute("applicationTypes", Arrays.asList(ApplicationType.values()));
+		prepareFormData(model);
 		model.addAttribute("daysList", Arrays.asList(WorkingDays.values()));
+		model.addAttribute(SLOT_MAPPING, slotMapping);
 		return SLOT_MAPPING_FORM;
 	}
 
@@ -125,17 +125,13 @@ public class SlotMappingController extends BpaGenericApplicationController {
 
 	@RequestMapping(value = "/search/update", method = RequestMethod.GET)
 	public String searchEditSlotMapping(final Model model) {
-		model.addAttribute("applicationTypes", Arrays.asList(ApplicationType.values()));
-		model.addAttribute("daysList", Arrays.asList(WorkingDays.values()));
-		model.addAttribute(SLOT_MAPPING, new SlotMapping());
+		loadForm(model, new SlotMapping());
 		return SLOTMAPPING_EDIT;
 	}
 
 	@RequestMapping(value = "/search/view", method = RequestMethod.GET)
 	public String searchViewSlotMapping(final Model model) {
-		model.addAttribute("applicationTypes", Arrays.asList(ApplicationType.values()));
-		model.addAttribute("daysList", Arrays.asList(WorkingDays.values()));
-		model.addAttribute(SLOT_MAPPING, new SlotMapping());
+		loadForm(model, new SlotMapping());
 		return SEARCH_SLOTMAPPING_VIEW;
 	}
 

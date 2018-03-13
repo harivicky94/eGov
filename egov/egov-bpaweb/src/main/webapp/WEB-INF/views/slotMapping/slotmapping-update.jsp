@@ -89,7 +89,9 @@
 								<form:option value="">
 									<spring:message code="lbl.select" />
 								</form:option>
-								<form:options items="${applicationTypes}" />
+								<c:forEach items="${applicationTypes}" var="applicationType">
+									<option value="${applicationType}" >${applicationType.applicationTypeVal}</option>
+								</c:forEach>
 							</form:select>
 							<form:errors path="applType" cssClass="add-margin error-msg" />
 						</div>

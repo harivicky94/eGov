@@ -160,6 +160,7 @@ public abstract class BpaGenericApplicationController extends GenericWorkFlowCon
         model.addAttribute("applnStatusList", bpaStatusService.findAllByModuleType());
         model.addAttribute("schemesList", bpaSchemeService.findAll());
         model.addAttribute("oneDayPermitLandTypeList", Arrays.asList(OneDayPermitLandType.values()));
+        model.addAttribute("applicationTypes", Arrays.asList(ApplicationType.values()));
     }
 
     @ModelAttribute("nocStatusList")

@@ -8,7 +8,7 @@ $(document)
 									function() {
 										var applicationTypeName = $(
 												"#applType option:selected")
-												.text();
+												.val();
 										if ('ONE_DAY_PERMIT'
 												.localeCompare(applicationTypeName) == 0) {
 											$('.allservices').show();

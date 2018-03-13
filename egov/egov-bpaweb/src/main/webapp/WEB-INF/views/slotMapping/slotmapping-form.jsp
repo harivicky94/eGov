@@ -85,8 +85,8 @@
 							<select name="applType" id="applType" class="form-control"
 								required>
 								<option value=""><spring:message code="lbl.select" /></option>
-								<c:forEach items="${applicationTypes}" var="applnType">
-									<option value="${applnType}">${applnType}</option>
+								<c:forEach items="${applicationTypes}" var="applicationType">
+									<option value="${applicationType}" >${applicationType.applicationTypeVal}</option>
 								</c:forEach>
 							</select>
 							<form:errors path="applType" cssClass="error-msg" />
