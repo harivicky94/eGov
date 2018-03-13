@@ -84,7 +84,7 @@
 					<label class="col-sm-3 control-label text-right"><spring:message
 							code="lbl.description" /></label>
 					<div class="col-sm-3 add-margin">
-						<form:input class="form-control patternvalidation" maxlength="50"
+						<form:textarea class="form-control patternvalidation" rows="3" cols="30" maxlength="150"
 							id="description" path="description" />
 						<form:errors path="description" cssClass="add-margin error-msg" />
 					</div>

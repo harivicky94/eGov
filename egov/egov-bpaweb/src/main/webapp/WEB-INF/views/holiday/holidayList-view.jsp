@@ -68,7 +68,7 @@
 							data-inputmask="'mask': 'd/m/y'" readonly="true" />
 						<form:errors path="holidayDate" cssClass="add-margin error-msg" />
 					</div>
-					<label class="col-sm-3 control-label text-right"><spring:message
+					<label class="col-sm-2 control-label text-right"><spring:message
 							code="lbl.holidayType" /></label>
 					<div class="col-sm-3 add-margin">
 
@@ -78,8 +78,8 @@
 				<div class="form-group">
 					<label class="col-sm-3 control-label text-right"><spring:message
 							code="lbl.description" /></label>
-					<div class="col-sm-3 add-margin">
-						<form:input path="description" id="description" readonly="true" />
+					<div class="col-sm-2 add-margin">
+						<form:textarea path="description" rows="3" cols="30" id="description" readonly="true"  maxlength="150" />
 						<form:errors path="description" cssClass="add-margin error-msg" />
 					</div>
 					<label class="col-sm-3 control-label text-right"><spring:message
