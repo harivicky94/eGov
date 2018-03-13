@@ -445,7 +445,7 @@ public class BPASmsAndEmailService {
 									slotApplication.getSlotDetail().getSlot().getAppointmentDate()),
 							slotApplication.getSlotDetail().getAppointmentTime(),
 							slotApplication.getSlotDetail().getSlot().getZone().getName(),
-                            getAppconfigValueByKeyNameForDefaultDept(),
+                            getAppconfigValueByKeyNameForHelpLineNumber(),
                             slotApplication.getApplication().getApplicationNumber()
                     },
 					null);
@@ -456,15 +456,15 @@ public class BPASmsAndEmailService {
 									slotApplication.getSlotDetail().getSlot().getAppointmentDate()),
 							slotApplication.getSlotDetail().getAppointmentTime(),
 							slotApplication.getSlotDetail().getSlot().getZone().getName(),
-                            getAppconfigValueByKeyNameForDefaultDept() },
+                            getAppconfigValueByKeyNameForHelpLineNumber() },
 					null);
 		}
 		return mesg;
 	}
 
-    public String getAppconfigValueByKeyNameForDefaultDept() {
+    public String getAppconfigValueByKeyNameForHelpLineNumber() {
         List<AppConfigValues> appConfigValueList = appConfigValuesService
-                .getConfigValuesByModuleAndKey(APPLICATION_MODULE_TYPE, "BPAPRIMARYDEPARTMENT");
+                .getConfigValuesByModuleAndKey(APPLICATION_MODULE_TYPE, "HELPLINENUMBER");
         return !appConfigValueList.isEmpty() ? appConfigValueList.get(0).getValue() : "";
     }
 }
