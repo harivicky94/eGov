@@ -149,7 +149,8 @@
 										<c:choose>
 											<c:when
 												test="${docs.bpaFee.description eq 'Additional Fees'}">
-												<form:input class="form-control patternvalidation text-right"
+												<input type="hidden" id="currentPermitFee" value="${docs.amount}">
+												<form:input class="form-control patternvalidation text-right AdditionalFees"
 													data-pattern="number" maxlength="10"
 													id="applicationFeeDetail${status.index}amount"
 													value="${docs.amount}"

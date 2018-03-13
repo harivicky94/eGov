@@ -118,11 +118,11 @@
 					<td>
 					<form:button type="submit" id="buttonSave" class="btn btn-primary"
 							value="Save"> Save </form:button>
-					<c:if test="${citizenOrBusinessUser && bpaApplication.id !=null && bpaApplication.state==null && !isCitizen}">
+					<c:if test="${citizenOrBusinessUser && bpaApplication.id !=null && bpaApplication.state==null && !isCitizen && bpaApplication.status.code ne 'Cancelled'}">
 						<form:button type="submit" id="buttonSubmit" class="btn btn-primary"
 							value="Submit">Submit</form:button>
 						<form:button type="button" id="buttonCancel" class="btn btn-danger"
-						value="CANCEL APPLICATION"> CANCEL APPLICATION </form:button>
+						value="Cancel Application"> Cancel Application </form:button>
 					</c:if>
 						<input type="button" name="button2" id="button2" value="Close"
 							class="btn btn-default" onclick="window.close();" />

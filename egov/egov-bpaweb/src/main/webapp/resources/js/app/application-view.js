@@ -50,18 +50,21 @@ jQuery(document)
 						//To show notification to business user/citizen on application open
 						if($('#wfstateDesc').val() == 'Scheduled For Document Scrutiny'
 							|| $('#wfstateDesc').val() == 'Rescheduled For Document Scrutiny') {
-					        var appointmentDate = new Date($('#appointmentDateRes').val());
-                            var day = appointmentDate.getDate();
-                            var month = (appointmentDate.getMonth() + 1);
-                            var year = appointmentDate.getFullYear();
-                            if(day<10) {
-                                day='0'+day;
-                            }
+					        if($('#appointmentDateRes').val()) {
+                                var appointmentDate = new Date($('#appointmentDateRes').val());
+                                var day = appointmentDate.getDate();
+                                var month = appointmentDate.getMonth() + 1;
+                                var year = appointmentDate.getFullYear();
+                                if(day<10) {
+                                    day='0'+day;
+                                }
 
-                            if(month<10) {
-                                month='0'+month;
-                            }
-                            $('#appointmentDateModal').html(day+"/"+month+"/"+year);
+                                if(month<10) {
+                                    month='0'+month;
+                                }
+                                $('#appointmentDateModal').html(day+"/"+month+"/"+year);
+							}
+
                             $('#appointmentTimeModal').html($('#appointmentTimeRes').val());
                             $('#myModal').modal('show');
 						}
@@ -102,6 +105,14 @@ jQuery(document)
 							});
 						}
 					});
+
+					if($('#currentPermitFee').val()) {
+						var currentFee = $('#currentPermitFee').val();
+						var modifiedFee = $('.AdditionalFees').val();
+						if(modifiedFee < currentFee) {
+							bootbox.alert(' Modified fee amount should be greater than the Rs.'+currentFee+', only you can increase fee amount on top of system calculated fee amount if you have any additional charges.')
+						}
+					}
 
 					// By default to point update noc details tab
 					var mode = $('#mode').val();

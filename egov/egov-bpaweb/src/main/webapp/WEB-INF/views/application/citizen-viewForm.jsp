@@ -53,8 +53,8 @@
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 <div class="row">
 	<div class="col-md-12">
-			<form:form role="form" action="update-submit" method="post" modelAttribute="bpaApplication"
-			id="editWaterConnectionform"
+			<form:form role="form" action="/bpa/application/citizen/update-submit/${bpaApplication.applicationNumber}" method="post" modelAttribute="bpaApplication"
+			id="citizenViewApplicationForm"
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
 				<form:hidden path="" id="workFlowAction" name="workFlowAction"/>
@@ -173,6 +173,12 @@
 			<div class="buttonbottom" align="center">
 				<table>
 					<tr>
+						<td>
+							<c:if test="${citizenOrBusinessUser && bpaApplication.id != null && bpaApplication.state == null && bpaApplication.status.code ne 'Cancelled'}">
+							<form:button type="button" id="buttonCancel" class="btn btn-danger"
+										 value="Cancel Application"> Cancel Application </form:button>
+							</c:if>
+						</td>
 						<c:if test="${ mode eq 'showRescheduleToCitizen'}">
 							<td> <a
 									href="/bpa/application/scrutiny/reschedule/${bpaApplication.applicationNumber}"
@@ -203,13 +209,13 @@
 						</c:if>
 						<c:if test="${bpaApplication.status.code eq 'Approved' && isFeeCollected }">
 							<td> <a	href="/bpa/application/demandnotice/${bpaApplication.applicationNumber}" class="btn btn-primary">
-										 Print Demand Notice
+										 Download Demand Notice
 								    </a>
 							</td> 
 						</c:if>
 						<c:if test="${bpaApplication.status.code eq 'Order Issued to Applicant' }">
 							<td> <a	href="/bpa/application/generatepermitorder/${bpaApplication.applicationNumber}" class="btn btn-primary">
-										 Print Permit Order
+								Download Permit Order
 								    </a>
 							</td> 
 						</c:if>
@@ -217,7 +223,7 @@
 						<c:if test="${bpaApplication.status.code eq 'Cancelled' && bpaApplication.state ne null && bpaApplication.state.comments ne 'Application cancelled by citizen'
 						 	&& bpaApplication.state.comments ne 'Application is cancelled because citizen not attended for document scrutiny'}">
 							<td> <a	href="/bpa/application/rejectionnotice/${bpaApplication.applicationNumber}" class="btn btn-primary">
-										 Print Rejection Notice
+								Download Rejection Notice
 								    </a>
 							</td>
 						</c:if>
@@ -269,3 +275,5 @@
 	src="<cdn:url value='/resources/js/app/application-view.js?rnd=${app_release_no}'/>"></script>
 <script
 		src="<cdn:url value='/resources/js/app/edcr-helper.js?rnd=${app_release_no}'/>"></script>
+<script
+		src="<cdn:url value='/resources/js/app/citizen-view-helper.js?rnd=${app_release_no}'/>"></script>

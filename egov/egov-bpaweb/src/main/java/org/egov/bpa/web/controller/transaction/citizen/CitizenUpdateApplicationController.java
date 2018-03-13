@@ -188,35 +188,28 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
         bpaApplication.setApplicationAmenity(bpaApplication.getApplicationAmenityTemp());
         bpaApplication.setDemand(applicationBpaBillService.createDemand(bpaApplication));
         String enableOrDisablePayOnline = bpaUtils.getAppconfigValueByKeyName(ENABLEONLINEPAYMENT);
-        if (workFlowAction != null
-                && workFlowAction
-                        .equals(WF_LBE_SUBMIT_BUTTON)
-                && enableOrDisablePayOnline.equalsIgnoreCase("YES") && !bpaUtils.logedInuserIsCitizen()) {
+        if (workFlowAction != null && workFlowAction.equals(WF_LBE_SUBMIT_BUTTON)
+                && enableOrDisablePayOnline.equalsIgnoreCase("YES")) {
             return genericBillGeneratorService
                     .generateBillAndRedirectToCollection(bpaApplication, model);
         }
-        if (workFlowAction != null && !bpaUtils.logedInuserIsCitizen()
-                && (workFlowAction.equals(WF_LBE_SUBMIT_BUTTON)
-                        || WF_CANCELAPPLICATION_BUTTON.equalsIgnoreCase(workFlowAction))
-                && (bpaUtils.logedInuseCitizenOrBusinessUser())) {
-            if (workFlowAction.equals(WF_LBE_SUBMIT_BUTTON)) {
-                final WorkFlowMatrix wfmatrix = bpaUtils.getWfMatrixByCurrentState(bpaApplication,
+
+            if (workFlowAction != null && workFlowAction.equals(WF_LBE_SUBMIT_BUTTON)) {
+                final WorkFlowMatrix wfMatrix = bpaUtils.getWfMatrixByCurrentState(bpaApplication,
                         WF_NEW_STATE);
-                if (wfmatrix != null)
-                    approvalPosition = bpaUtils.getUserPositionIdByZone(wfmatrix.getNextDesignation(),
+                if (wfMatrix != null)
+                    approvalPosition = bpaUtils.getUserPositionIdByZone(wfMatrix.getNextDesignation(),
                             bpaApplication.getSiteDetail().get(0) != null
                                     && bpaApplication.getSiteDetail().get(0).getElectionBoundary() != null
                                             ? bpaApplication.getSiteDetail().get(0).getElectionBoundary().getId()
                                             : null);
                 bpaUtils.redirectToBpaWorkFlow(approvalPosition, bpaApplication, WF_NEW_STATE, null, null,
                         null);
-            }
-            if (WF_CANCELAPPLICATION_BUTTON.equalsIgnoreCase(workFlowAction)) {
+            } else if (workFlowAction != null && WF_CANCELAPPLICATION_BUTTON.equalsIgnoreCase(workFlowAction)) {
                 bpaApplication.setStatus(
                         applicationBpaService.getStatusByCodeAndModuleType(APPLICATION_STATUS_CANCELLED));
-                bpaUtils.updatePortalUserinbox(bpaApplication, null);
             }
-        }
+
         if (bpaApplication.getOwner().getUser() != null && bpaApplication.getOwner().getUser().getId() == null)
             buildOwnerDetails(bpaApplication);
         // To allot slot for one day permit applications
@@ -242,11 +235,10 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
             }
             model.addAttribute(MESSAGE, message);
         } else if (workFlowAction != null && workFlowAction.equals(WF_CANCELAPPLICATION_BUTTON)) {
-            model.addAttribute(MESSAGE,
-                    bpaApplication.getApplicationNumber() + " Application Cancelled Successfully.");
+            model.addAttribute(MESSAGE, " Application is cancelled by applicant itself successfully with application number "+bpaApplication.getApplicationNumber());
         } else
             model.addAttribute(MESSAGE,
-                    "Sucessfully saved with ApplicationNumber " + bpaApplication.getApplicationNumber());
+                    "Application is successfully saved with ApplicationNumber " + bpaApplication.getApplicationNumber());
         if (workFlowAction != null && workFlowAction.equals(WF_LBE_SUBMIT_BUTTON))
             bpaUtils.sendSmsEmailOnCitizenSubmit(bpaApplication);
         return BPAAPPLICATION_CITIZEN;
