@@ -118,17 +118,16 @@
 				</form:select>
 				<form:errors path="serviceType" cssClass="add-margin error-msg" />
 			</div>
-			<label class="col-sm-2 control-label text-right">Amenity Type
+			<label class="col-sm-2 control-label amenityHideShow text-right">Amenity Type
 
 			</label>
 			<div class="col-sm-3 add-margin">
 				<select name="applicationAmenityTemp" multiple id="applicationAmenity"
-					class="form-control applicationAmenity tick-indicator">
+					class="form-control applicationAmenity tick-indicator amenityHideShow">
 					<c:forEach items="${amenityTypeList}" var="amenity">
 						<option value="${amenity.id}" title="${amenity.description}" <c:if test="${fn:contains(bpaApplication.applicationAmenity, amenity)}"> Selected </c:if> >${amenity.description}</option>
 					</c:forEach>
 				</select>
-
 				<form:errors path="applicationAmenityTemp"
 					cssClass="add-margin error-msg" />
 			</div>

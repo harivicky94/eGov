@@ -45,7 +45,8 @@ var totalFloorArea;
 var extentInSqmts;
 var mixedOccupancyResponse;
 $(document).ready(function() {
-	
+
+    $('#oneDayPermitSec').hide();
 	$('.buildingdetails').hide();
 	$('.existingbuildingdetails').hide();
 	removeMandatoryForExistingBuildingDetails();
@@ -134,6 +135,7 @@ $(document).ready(function() {
 		$('.floor-details-mandatory').removeAttr('required');
 		$('.areaOfBase').hide();
 		$('.extentOfLand').show();
+
 		if('Sub-Division of plot/Land Development'.localeCompare(seviceTypeName) == 0 ){
 			hideNewAndExistingBuildingDetails();
 		} else if('Tower Construction'.localeCompare(seviceTypeName) == 0 || 'Pole Structures'.localeCompare(seviceTypeName) == 0){
@@ -223,7 +225,12 @@ $(document).ready(function() {
 	
 	// Each Amenity type validations
 	
-	$(document).on('change',"#applicationAmenity",function (){ 
+	$(document).on('change',"#applicationAmenity",function (){
+		if($('#isOneDayPermitApplication').is(':checked') && $("#applicationAmenity option:selected").val() && $("#applicationAmenity option:selected").text() != 'Roof Conversion under rule 100 or 101') {
+            resetValuesForAmenitiesOfOneDayPermit();
+			bootbox.alert("One permit is applicable only for Roof Conversion under rule 100 or 101 among amenities for others not applicable so you can't select other amenity type for one day permit application.");
+			return false;
+		}
 		loadAmenities();
 	});
 	
@@ -298,6 +305,7 @@ $(document).ready(function() {
 			}
 		}
 		var seviceTypeName = $( "#serviceType option:selected" ).text();
+
 		if('Amenities' == seviceTypeName && !$( "#applicationAmenity option:selected" ).val()){
 				bootbox.alert("Please select atleast one amenity.");
 				return false; 
@@ -602,6 +610,8 @@ $(document).ready(function() {
         	showOnePermitOnPageLoad();
 
 		$('#occupancyapplnlevel').on('change', function() {
+            $('.amenityHideShow').show();
+            resetValuesForAmenitiesOfOneDayPermit();
 			if($("#occupancyapplnlevel option:selected" ).text() == 'Residential'){
 				$('#oneDayPermitSec').show(); 
 				$('#isOneDayPermitApplication').prop('checked', false);
@@ -629,6 +639,15 @@ $(document).ready(function() {
         }
 	}
 	function showOnePermitOnPageLoad() {
+
+        if('Amenities' == $( "#serviceType option:selected" ).text())
+            $('.amenityHideShow').show();
+        else
+        	if($('#isOneDayPermitApplication').is(':checked'))
+            	$('.amenityHideShow').hide();
+        	else
+                $('.amenityHideShow').show();
+
         if($("#occupancyapplnlevel option:selected" ).text() == 'Residential') {
             if($('#isOneDayPermitApplication').is(':checked')) {
                 $('#oneDayPermitSec').show();
@@ -641,19 +660,21 @@ $(document).ready(function() {
         }
 	}
 
-    if ($('#isOneDayPermitApplication').is(':checked'))
-        $('#oneDayPermitSec').show();
-	else
-        $('#oneDayPermitSec').hide();
-
     $('#isOneDayPermitApplication').click(function() {
+        resetValuesForAmenitiesOfOneDayPermit();
 	        if ($(this).is(':checked')) {
+                if($('#isOneDayPermitApplication').val()) {
+                    $('.amenityHideShow').hide();
+                    if('Amenities'.localeCompare($( "#serviceType option:selected" ).text()) == 0)
+                        $('.amenityHideShow').show();
+                }
                 $('#typeOfLand').prop('required', true);
                 $('#oneDayPermitTypeOfLandSec').show();
                 $('#isOneDayPermitApplication').val(true);
                 if($('#zone').val()!='' && $('#electionBoundary').val()!='')
 	        		validateSlotMappingForOneDayPermit($('#zone').val(), $('#electionBoundary').val());
-	        } else{
+	        } else {
+                $('.amenityHideShow').show();
                 $('#typeOfLand').val('');
                 $('#oneDayPermitTypeOfLandSec').hide();
                 $('#isOneDayPermitApplication').prop('checked', false);
@@ -772,5 +793,11 @@ function validateFloorDetails(plinthArea) {
 			$( ".carpetArea" ).trigger( "change" );
 		}
 	}
+}
+
+function resetValuesForAmenitiesOfOneDayPermit() {
+    $('#serviceType,.applicationAmenity').trigger('change');
+    $(".applicationAmenity").val('');
+    $('#admissionfee').val(0);
 }
 

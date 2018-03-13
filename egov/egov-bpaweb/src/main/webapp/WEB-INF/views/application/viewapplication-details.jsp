@@ -99,6 +99,7 @@
 				Is One Day Permit
 			</div>
 			<div class="col-sm-3 add-margin view-content">
+				<input type="hidden" id="isOneDayPermitApplication" value="${bpaApplication.isOneDayPermitApplication}">
 				<c:out value="${bpaApplication.isOneDayPermitApplication ? 'YES' : 'NO'}" default="N/A"></c:out>
 			</div>
 
@@ -121,9 +122,11 @@
 			<c:out value="${bpaApplication.serviceType.description}"
 				default="N/A"></c:out>
 		</div>
-		<div class="col-sm-3 add-margin">Amenity Type</div>
-		<div class="col-sm-3 add-margin view-content">
-			<c:out value="${bpaApplication.amenityName}" default="N/A"></c:out>
+		<div class="amenityHideShow">
+			<div class="col-sm-3 add-margin">Amenity Type</div>
+			<div class="col-sm-3 add-margin view-content">
+				<c:out value="${bpaApplication.amenityName}" default="N/A"></c:out>
+			</div>
 		</div>
 	</div>
 	<c:if test="${ empty  bpaApplication.receipts && (bpaApplication.status.code eq 'Created' || bpaApplication.status.code eq 'Registered')}">

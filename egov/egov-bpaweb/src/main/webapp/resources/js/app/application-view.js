@@ -227,6 +227,12 @@ jQuery(document)
 					$('.show-hide').hide();
 					$('.areaOfBase').hide();
 					$('.extentOfLand').show();
+
+                    if($('#isOneDayPermitApplication').val()) {
+                        $('.amenityHideShow').hide();
+                        if('Amenities'.localeCompare(seviceTypeName) == 0)
+                            $('.amenityHideShow').show();
+					}
 					if ('New Construction'.localeCompare(seviceTypeName) == 0) {
 						$('.doorNo').hide();
 						$('.totalPlintArea').show();
