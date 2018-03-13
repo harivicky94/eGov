@@ -110,7 +110,9 @@ public class HolidayListService {
 	@SuppressWarnings("unchecked")
 	public List<Holiday> getHolidayTypeListByType(final HolidayType holidayType, final Date holidayDate) {
 		final Criteria criteria = getCurrentSession().createCriteria(Holiday.class, "holiday");
+		if (holidayType !=null)
 		criteria.add(Restrictions.eq("holiday.holidayType", holidayType));
+		if (holidayDate !=null)
 		criteria.add(Restrictions.eq("holiday.holidayDate", holidayDate));
 		return criteria.list();
 	}
@@ -156,10 +158,15 @@ public class HolidayListService {
 	}
 
 	public void validateUpdateHolidayList(final Holiday holiday, final BindingResult errors) {
+		Holiday holidayDate = holidayListRepository.findByHolidayDate(holiday.getHolidayDate());
 
-		if (checkIsHolidayAlreadyEnter(holiday.getHolidayDate())) {
+		if (holidayDate !=null && holidayDate.getId() != holiday.getId()
+				&& checkIsHolidayAlreadyEnter(holiday.getHolidayDate())){
 			errors.rejectValue("holidayDate", "msg.hol.exists");
 		}
+		/*if (checkIsHolidayAlreadyEnter(holiday.getHolidayDate())) {
+			errors.rejectValue("holidayDate", "msg.hol.exists");
+		}*/
 
 		if (!isDateAfterFourdays(holiday.getHolidayDate())) {
 			errors.rejectValue("holidayDate", "msg.fourdays.gteq");
