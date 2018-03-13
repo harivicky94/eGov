@@ -67,7 +67,7 @@
 					<label><form:checkbox path="architectAccepted"
 							id="architectAccepted" /> <form:errors path="architectAccepted"
 							cssClass="error-msg" /><span class="mandatory"></span>&nbsp;&nbsp;<spring:message
-							code="lbl.accepted" /><br>&nbsp;&nbsp;<spring:message
+							code="lbl.accepted" /><br>&nbsp;&nbsp;&nbsp;&nbsp;<spring:message
 							code="lbl.accpeted1" /></label>
 				</div>
 			</div>
