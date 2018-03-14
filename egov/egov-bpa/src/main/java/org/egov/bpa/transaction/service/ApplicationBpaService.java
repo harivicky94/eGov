@@ -42,6 +42,7 @@ package org.egov.bpa.transaction.service;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_APPROVED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CREATED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_DIGI_SIGNED;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_DOC_VERIFIED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_FIELD_INS;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_NOCUPDATED;
 import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_REJECTED;
@@ -346,9 +347,8 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         persistPostalAddress(application);
         buildSchemeLandUsage(application);
         //For one day permit
-        if (application.getIsOneDayPermitApplication() && !WF_SAVE_BUTTON.equalsIgnoreCase(workFlowAction) && 
-        		!WF_REVERT_BUTTON.equalsIgnoreCase(workFlowAction) && !WF_REJECT_BUTTON.equalsIgnoreCase(workFlowAction) &&
-        		APPLICATION_STATUS_FIELD_INS.equalsIgnoreCase(application.getStatus().getCode())) {
+        if (application.getIsOneDayPermitApplication()
+            && APPLICATION_STATUS_DOC_VERIFIED.equalsIgnoreCase(application.getStatus().getCode())) {
             bpaDemandService.generateDemandUsingSanctionFeeList(applicationFeeService
                     .saveApplicationFee(applicationBpaFeeCalculationService.calculateBpaSanctionFees(application)));
         }

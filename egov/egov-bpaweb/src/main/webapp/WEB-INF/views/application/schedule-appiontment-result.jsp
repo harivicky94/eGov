@@ -42,6 +42,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 
 <div class="alert alert-success" role="alert">
@@ -65,7 +66,8 @@
 							<spring:message code="lbl.appmnt.date" />
 						</div>
 						<div class="col-sm-3 add-margin view-content">
-							<c:out value="${appoimnt.appointmentDate}" default="N/A"></c:out>
+							<fmt:formatDate value="${appoimnt.appointmentDate}" pattern="dd/MM/yyyy" var="appointmentDate" />
+							<c:out value="${appointmentDate}" default="N/A"></c:out>
 						</div>
 						<div class="col-sm-3 add-margin">
 							<spring:message code="lbl.appmnt.time" />
