@@ -53,11 +53,16 @@ public class ReportService {
         columnStyle.setBorderBottom(Border.THIN());
         columnStyle.setBorderTop(Border.THIN());
         columnStyle.setTextColor(Color.black);
-        columnStyle.setHorizontalAlign(HorizontalAlign.LEFT);
+        columnStyle.setHorizontalAlign(HorizontalAlign.LEFT); 
         columnStyle.setFont(new Font(9, Font._FONT_TIMES_NEW_ROMAN, false));
-        columnStyle.setBorderBottom(Border.THIN());
-        columnStyle.setTransparent(false);
-        return columnStyle;
+        columnStyle.setStreching(Stretching.RELATIVE_TO_BAND_HEIGHT);   
+        columnStyle.setStretchWithOverflow(true);
+        columnStyle.setVerticalAlign(VerticalAlign.MIDDLE);
+
+        columnStyle.setTransparent(false);  
+        columnStyle.setPaddingRight(2);
+        
+        return columnStyle; 
     }
 
     public Style getVerifiedColumnStyle() {
@@ -79,8 +84,8 @@ public class ReportService {
         columnheaderStyle.setBorderBottom(Border.THIN());
         columnheaderStyle.setTextColor(Color.black);
         columnheaderStyle.setHorizontalAlign(HorizontalAlign.CENTER);
-        columnheaderStyle.setVerticalAlign(VerticalAlign.BOTTOM);
-        columnheaderStyle.setFont(new Font(10, Font._FONT_ARIAL, true));
+        columnheaderStyle.setVerticalAlign(VerticalAlign.MIDDLE);
+        columnheaderStyle.setFont(new Font(11, Font._FONT_ARIAL, true)); 
         return columnheaderStyle;
     }
 

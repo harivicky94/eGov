@@ -277,9 +277,9 @@ public class DcrService {
                             dcrReportOutput = new DcrReportOutput();
                             for (RuleReportOutput ruleReportOutput : subRuleOutput.getRuleReportOutputs()) {
                                 dcrReportOutput.setKey(subRuleOutput.getKey());
-                                dcrReportOutput.setDescription(subRuleOutput.getRuleDescription());
-                                dcrReportOutput.setExpectedResult(ruleReportOutput.getExpectedResult());
-                                dcrReportOutput.setActualResult(ruleReportOutput.getActualResult());
+                                dcrReportOutput.setDescription(subRuleOutput.getRuleDescription()+"\n");
+                                dcrReportOutput.setExpectedResult(ruleReportOutput.getExpectedResult()+"\n");
+                                dcrReportOutput.setActualResult(ruleReportOutput.getActualResult()+"\n");
                                 dcrReportOutput.setStatus(ruleReportOutput.getStatus());
                                 
                                 if(ruleReportOutput.getStatus()!=null && ruleReportOutput.getStatus().equalsIgnoreCase("NotAccepted")) {
@@ -290,9 +290,9 @@ public class DcrService {
                         } else {
                             dcrReportOutput = new DcrReportOutput();
                             dcrReportOutput.setKey(subRuleOutput.getKey());
-                            dcrReportOutput.setDescription(subRuleOutput.getRuleDescription());
+                            dcrReportOutput.setDescription(subRuleOutput.getRuleDescription()+"\n");
                             dcrReportOutput.setExpectedResult(null);
-                            dcrReportOutput.setActualResult(subRuleOutput.getMessage());
+                            dcrReportOutput.setActualResult(subRuleOutput.getMessage()+"\n");
                             dcrReportOutput.setStatus(subRuleOutput.getResult().toString());
                             list.add(dcrReportOutput);
                         }
@@ -375,14 +375,14 @@ public class DcrService {
 
         final Style columnStyle = reportService.getColumnStyle();
         final Style columnHeaderStyle = reportService.getColumnHeaderStyle();
-        drb.setTitle("BUILDING RULE SCRUTINY");
+        drb.setTitle("Building Rule Scrutiny");
         drb.setTitleStyle(titleStyle);
-        drb.addColumn("KMBR Rule No", "key", String.class.getName(), 60, columnStyle, columnHeaderStyle);
-        drb.addColumn("Rule description", "description", String.class.getName(), 135, columnStyle, columnHeaderStyle);
+        drb.addColumn("KMBR Rule No.", "key", String.class.getName(), 60, columnStyle, columnHeaderStyle);
+        drb.addColumn("Rule description", "description", String.class.getName(), 120, columnStyle, columnHeaderStyle);
         drb.addColumn("Required by Rule", "expectedResult", String.class.getName(), 120, columnStyle, columnHeaderStyle);
-        drb.addColumn("Provided as per drawings", "actualResult", String.class.getName(), 130, columnStyle, columnHeaderStyle);
-        drb.addColumn("Accepted / Not Accepted", "status", String.class.getName(), 90, columnStyle, columnHeaderStyle);
-
+        drb.addColumn("Provided as per drawings", "actualResult", String.class.getName(), 125, columnStyle, columnHeaderStyle);
+        drb.addColumn("Accepted / Not Accepted", "status", String.class.getName(), 90, columnStyle, columnHeaderStyle); 
+        drb.setUseFullPageWidth(true);
         drb.setPageSizeAndOrientation(Page.Page_Legal_Landscape());
         new JRBeanCollectionDataSource(dcrReportOutputs);
         final DJDataSource djds = new DJDataSource("subreportds", DJConstants.DATA_SOURCE_ORIGIN_PARAMETER,

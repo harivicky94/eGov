@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
-<!-- 2018-03-13T14:46:52 -->
+<!-- Created with Jaspersoft Studio version 6.5.1.final using JasperReports Library version 6.5.1  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="edcr_report" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="ccdee1e7-8a6e-4168-a80a-d10d6f4f913c">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<import value="org.egov.infra.reporting.util.*"/>
@@ -1060,7 +1059,7 @@
 					<font size="8"/>
 					<paragraph leftIndent="3"/>
 				</textElement>
-				<textFieldExpression><![CDATA[ $P{applicationNumber}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{applicationNumber}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="12" y="99" width="16" height="21" uuid="5129a90f-99e7-4600-90f7-92cd6dc3825f"/>
@@ -1136,7 +1135,7 @@
 				<textElement>
 					<font size="8"/>
 				</textElement>
-				<text><![CDATA[powered by Egovernments Foundation 2018]]></text>
+				<text><![CDATA[Powered by Egovernments Foundation 2018]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="225" y="0" width="15" height="12" uuid="68b285d7-eec7-41c7-a617-0e666c163f7a"/>
