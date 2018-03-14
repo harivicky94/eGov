@@ -171,9 +171,9 @@ public class Rule24 extends GeneralRule {
                 // check either of basement side yard present or not
                 if (planDetail.getPlot() != null
                         && (planDetail.getPlot().getBsmtSideYard1() == null
-                                || !planDetail.getPlot().getBsmtSideYard1().getPresentInDxf())
+                        || !planDetail.getPlot().getBsmtSideYard1().getPresentInDxf())
                         && (planDetail.getPlot().getBsmtSideYard2() == null
-                                || !planDetail.getPlot().getBsmtSideYard2().getPresentInDxf())) {
+                        || !planDetail.getPlot().getBsmtSideYard2().getPresentInDxf())) {
                     errors.put(DcrConstants.BSMT_SIDE_YARD_DESC,
                             prepareMessage(DcrConstants.OBJECTNOTDEFINED, DcrConstants.BSMT_SIDE_YARD_DESC));
                     planDetail.addErrors(errors);
@@ -219,30 +219,30 @@ public class Rule24 extends GeneralRule {
             for (Measurement measurement : planDetail.getBuilding().getOpenStairs()) {
                 if (measurement.getMinimumDistance().compareTo(OPENSTAIR_DISTANCE) >= 0)
                     planDetail.reportOutput
-                            .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_11, SUB_RULE_24_11_DESCRIPTION,
-                                    DcrConstants.OPEN_STAIR_DESC,
-                                    "Min" + OPENSTAIR_DISTANCE.toString()
-                                            + DcrConstants.IN_METER,
-                                    measurement.getMinimumDistance().toString()
-                                            + DcrConstants.IN_METER,
-                                    Result.Accepted, null));
+                    .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_11, SUB_RULE_24_11_DESCRIPTION,
+                            DcrConstants.OPEN_STAIR_DESC,
+                            "Min" + OPENSTAIR_DISTANCE.toString()
+                            + DcrConstants.IN_METER,
+                            measurement.getMinimumDistance().toString()
+                            + DcrConstants.IN_METER,
+                            Result.Accepted, null));
                 else
                     planDetail.reportOutput
-                            .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_11, SUB_RULE_24_11_DESCRIPTION,
-                                    DcrConstants.OPEN_STAIR_DESC,
-                                    "Min" + OPENSTAIR_DISTANCE.toString()
-                                            + DcrConstants.IN_METER,
-                                    measurement.getMinimumDistance().toString()
-                                            + DcrConstants.IN_METER,
-                                    Result.Not_Accepted, null));
+                    .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_11, SUB_RULE_24_11_DESCRIPTION,
+                            DcrConstants.OPEN_STAIR_DESC,
+                            "Min" + OPENSTAIR_DISTANCE.toString()
+                            + DcrConstants.IN_METER,
+                            measurement.getMinimumDistance().toString()
+                            + DcrConstants.IN_METER,
+                            Result.Not_Accepted, null));
             }
         }
 
     }
 
     private void rule24_12(PlanDetail planDetail) {
-        
-        
+
+
         rule24_3(planDetail, DcrConstants.BASEMENT);
         rule24_4(planDetail, DcrConstants.BASEMENT);
         rule24_5(planDetail, DcrConstants.BASEMENT);
@@ -256,52 +256,52 @@ public class Rule24 extends GeneralRule {
                     && planDetail.getPlot().getBsmtFrontYard().getMinimumDistance() != null
                     && planDetail.getPlot().getBsmtFrontYard().getMean() != null)
                 if (planDetail.getPlot().getBsmtFrontYard().getMinimumDistance().compareTo(FRONTYARDMINIMUM_DISTANCE) >= 0 &&
-                        planDetail.getPlot().getBsmtFrontYard().getMean().compareTo(FRONTYARDMEAN_DISTANCE) >= 0)
+                planDetail.getPlot().getBsmtFrontYard().getMean().compareTo(FRONTYARDMEAN_DISTANCE) >= 0)
                     planDetail.reportOutput
-                            .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_12_3, SUB_RULE_24_12_3_DESCRIPTION,
-                                    DcrConstants.BSMT_FRONT_YARD_DESC,
-                                    MEAN_MINIMUM + "(" + FRONTYARDMINIMUM_DISTANCE.toString() + "," + FRONTYARDMEAN_DISTANCE + ")"
-                                            + DcrConstants.IN_METER,
+                    .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_12_3, SUB_RULE_24_12_3_DESCRIPTION,
+                            DcrConstants.BSMT_FRONT_YARD_DESC,
+                            MEAN_MINIMUM + "(" + FRONTYARDMINIMUM_DISTANCE.toString() + "," + FRONTYARDMEAN_DISTANCE + ")"
+                                    + DcrConstants.IN_METER,
                                     "(" + planDetail.getPlot().getBsmtFrontYard().getMinimumDistance().toString() + "," +
                                             planDetail.getPlot().getBsmtFrontYard().getMean().toString() + ")"
                                             + DcrConstants.IN_METER,
-                                    Result.Accepted, null));
+                                            Result.Accepted, null));
                 else
                     planDetail.reportOutput
-                            .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_12_3, SUB_RULE_24_12_3_DESCRIPTION,
-                                    DcrConstants.BSMT_FRONT_YARD_DESC,
-                                    MEAN_MINIMUM + "(" + FRONTYARDMINIMUM_DISTANCE.toString() + "," + FRONTYARDMEAN_DISTANCE + ")"
-                                            + DcrConstants.IN_METER,
+                    .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_12_3, SUB_RULE_24_12_3_DESCRIPTION,
+                            DcrConstants.BSMT_FRONT_YARD_DESC,
+                            MEAN_MINIMUM + "(" + FRONTYARDMINIMUM_DISTANCE.toString() + "," + FRONTYARDMEAN_DISTANCE + ")"
+                                    + DcrConstants.IN_METER,
                                     "(" + planDetail.getPlot().getBsmtFrontYard().getMinimumDistance().toString() + "," +
                                             planDetail.getPlot().getBsmtFrontYard().getMean().toString() + ")"
                                             + DcrConstants.IN_METER,
-                                    Result.Not_Accepted, null));
+                                            Result.Not_Accepted, null));
         } else if (planDetail.getPlot() != null && planDetail.getPlot().getFrontYard() != null &&
                 planDetail.getPlot().getFrontYard().getPresentInDxf()
                 && planDetail.getPlot().getFrontYard().getMinimumDistance() != null
                 && planDetail.getPlot().getFrontYard().getMean() != null)
             if (planDetail.getPlot().getFrontYard().getMinimumDistance().compareTo(FRONTYARDMINIMUM_DISTANCE) >= 0 &&
-                    planDetail.getPlot().getFrontYard().getMean().compareTo(FRONTYARDMEAN_DISTANCE) >= 0)
+            planDetail.getPlot().getFrontYard().getMean().compareTo(FRONTYARDMEAN_DISTANCE) >= 0)
                 planDetail.reportOutput
-                        .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_3, SUB_RULE_24_3_DESCRIPTION,
-                                DcrConstants.FRONT_YARD_DESC,
-                                MEAN_MINIMUM + "(" + FRONTYARDMINIMUM_DISTANCE.toString() + "," + FRONTYARDMEAN_DISTANCE + ")"
-                                        + DcrConstants.IN_METER,
+                .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_3, SUB_RULE_24_3_DESCRIPTION,
+                        DcrConstants.FRONT_YARD_DESC,
+                        MEAN_MINIMUM + "(" + FRONTYARDMINIMUM_DISTANCE.toString() + "," + FRONTYARDMEAN_DISTANCE + ")"
+                                + DcrConstants.IN_METER,
                                 "(" + planDetail.getPlot().getFrontYard().getMinimumDistance().toString() + "," +
                                         planDetail.getPlot().getFrontYard().getMean().toString() + ")"
                                         + DcrConstants.IN_METER,
-                                Result.Accepted, null));
+                                        Result.Accepted, null));
             else
                 planDetail.reportOutput
-                        .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_3, SUB_RULE_24_3_DESCRIPTION,
-                                DcrConstants.FRONT_YARD_DESC,
-                                MEAN_MINIMUM + "(" + FRONTYARDMINIMUM_DISTANCE.toString() + "," + FRONTYARDMEAN_DISTANCE + ")"
-                                        + DcrConstants.IN_METER,
+                .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_3, SUB_RULE_24_3_DESCRIPTION,
+                        DcrConstants.FRONT_YARD_DESC,
+                        MEAN_MINIMUM + "(" + FRONTYARDMINIMUM_DISTANCE.toString() + "," + FRONTYARDMEAN_DISTANCE + ")"
+                                + DcrConstants.IN_METER,
                                 "(" + planDetail.getPlot().getFrontYard().getMinimumDistance().toString() + "," +
                                         planDetail.getPlot().getFrontYard().getMean().toString() + ")"
                                         + DcrConstants.IN_METER,
 
-                                Result.Not_Accepted, null));
+                                        Result.Not_Accepted, null));
     }
 
     private void rule24_5(PlanDetail planDetail, String type) {
@@ -382,24 +382,28 @@ public class Rule24 extends GeneralRule {
             valid2 = true;
 
         if (buildingHeight.intValue() <= 7) {
-            if (planDetail.getPlanInformation().getNocToAbutSide() && !planDetail.getPlanInformation().getOpeningOnSide()) {
-                side1Expected = SIDE_YARD_1_EXPECTED_WITHNOC_NO_OPENING;
-                if (min >= 0d) {
-                    valid1 = true;
 
-                }
-            } else if (!planDetail.getPlanInformation().getOpeningOnSide()) {
-                side1Expected = SIDE_YARD_1_EXPECTED_NO_OPENING;
-                if (min >= 0.75) {
-                    valid1 = true;
-
-                }
-            } else {
+            if (min >= 1)
+            {
+                valid1 = true;
                 side1Expected = SIDE_YARD_1_EXPECTED;
-                if (min >= 1) {
-                    valid1 = true;
 
-                }
+            }
+            else 
+            {
+                    side1Expected = SIDE_YARD_1_EXPECTED_NO_OPENING;
+                    if (!planDetail.getPlanInformation().getOpeningOnSide() &&  min >= 0.75)
+                    {
+                        valid1 = true;
+                    }
+                    else if (planDetail.getPlanInformation().getNocToAbutSide() && !planDetail.getPlanInformation().getOpeningOnSide()) 
+                    {
+                    side1Expected = SIDE_YARD_1_EXPECTED_WITHNOC_NO_OPENING;
+                        if (min >= 0d)
+                        {
+                            valid1 = true;
+                        }
+                    } 
             }
 
         } else if (buildingHeight.intValue() > 7 && buildingHeight.intValue() <= 10) {
@@ -417,36 +421,36 @@ public class Rule24 extends GeneralRule {
         if (valid1 == true) {
 
             planDetail.reportOutput
-                    .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, subRule + " Side Yard 1", side1Desc,
-                            side1FieldName,
-                            side1Expected,
-                            min + DcrConstants.IN_METER,
-                            Result.Accepted, message));
+            .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, subRule + " Side Yard 1", side1Desc,
+                    side1FieldName,
+                    side1Expected,
+                    min + DcrConstants.IN_METER,
+                    Result.Accepted, message));
         } else {
             planDetail.reportOutput
-                    .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, subRule + " Side Yard 1", side1Desc,
-                            side1FieldName,
-                            side1Expected,
-                            min + DcrConstants.IN_METER,
-                            Result.Not_Accepted, message));
+            .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, subRule + " Side Yard 1", side1Desc,
+                    side1FieldName,
+                    side1Expected,
+                    min + DcrConstants.IN_METER,
+                    Result.Not_Accepted, message));
 
         }
         if (valid2 == true) {
 
             planDetail.reportOutput
-                    .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, subRule + " Side Yard 2", side2Desc,
-                            side2FieldName,
-                            SIDE2MINIMUM_DISTANCE.toString()+DcrConstants.IN_METER,
-                            max + DcrConstants.IN_METER,
-                            Result.Accepted, null));
+            .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, subRule + " Side Yard 2", side2Desc,
+                    side2FieldName,
+                    SIDE2MINIMUM_DISTANCE.toString()+DcrConstants.IN_METER,
+                    max + DcrConstants.IN_METER,
+                    Result.Accepted, null));
         } else {
             planDetail.reportOutput
-                    .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, subRule + " Side Yard 2", side2Desc,
-                            side2FieldName,
-                            SIDE2MINIMUM_DISTANCE.toString()+DcrConstants.IN_METER,
-                            max + DcrConstants.IN_METER,
-                            Result.Not_Accepted,
-                            null));
+            .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, subRule + " Side Yard 2", side2Desc,
+                    side2FieldName,
+                    SIDE2MINIMUM_DISTANCE.toString()+DcrConstants.IN_METER,
+                    max + DcrConstants.IN_METER,
+                    Result.Not_Accepted,
+                    null));
 
         }
 
@@ -500,36 +504,38 @@ public class Rule24 extends GeneralRule {
         boolean valid2 = false;
 
         if (buildingHeight.intValue() <= 7) {
-            if (planDetail.getPlanInformation().getNocToAbutRear() && !planDetail.getPlanInformation().getOpeningOnRear()) {
-                expectedMin = REAR_YARD_EXPECTED_WITHNOC_NO_OPENING;
-                expectedMean = REAR_YARD_EXPECTED_WITHNOC_NO_OPENING;
-                if (min >= 0d) {
-                    valid1 = true;
-                    valid2 = true;
+            
+            expectedMin = REAR_YARD_EXPECTED_MIN;
+            expectedMean = REAR_YARD_EXPECTED_MEAN;
+            if (min >= 1 &&  mean >= 1.5) {
+                valid1 = true;valid2 = true;
 
-                }
-            } else if (!planDetail.getPlanInformation().getOpeningOnRear()) {
-                expectedMin = REAR_YARD_EXPECTED_NO_OPENING;
-                expectedMean = REAR_YARD_EXPECTED_NO_OPENING;
-                if (min >= 0.75) {
-                    valid1 = true;
+            }else{
+                if (!planDetail.getPlanInformation().getOpeningOnRear()) {
+                    expectedMin = REAR_YARD_EXPECTED_NO_OPENING;
+                    expectedMean = REAR_YARD_EXPECTED_NO_OPENING;
+                    if (min >= 0.75 && mean >= .75 ) {
+                        valid1 = true;
+                        valid2 = true;
+                    }else
+                    {
+                       
+                        if (planDetail.getPlanInformation().getNocToAbutRear() && !planDetail.getPlanInformation().getOpeningOnRear()) {
+                            expectedMin = REAR_YARD_EXPECTED_WITHNOC_NO_OPENING;
+                            expectedMean = REAR_YARD_EXPECTED_WITHNOC_NO_OPENING;
+                            if (min >= 0d) {
+                                valid1 = true;
+                                valid2 = true;
 
-                }
-                if (mean >= .75) {
-                    valid2 = true;
-
-                }
-            } else {
-                expectedMin = REAR_YARD_EXPECTED_MIN;
-                expectedMean = REAR_YARD_EXPECTED_MEAN;
-                if (min >= 1) {
-                    valid1 = true;
-
-                }
-                if (mean >= 1.5) {
-                    valid2 = true;
-
-                }
+                            }
+                        
+                    }
+                     
+                } 
+          
+            
+                
+            }  
             }
 
         } else if (buildingHeight.intValue() > 7 && buildingHeight.intValue() <= 10) {
@@ -553,24 +559,24 @@ public class Rule24 extends GeneralRule {
         if (valid1 && valid2) {
 
             planDetail.reportOutput
-                    .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, subRule, yardDesc,
-                            yardFieldName,
-                            MINIMUM_MEAN + "(" + expectedMin + "," + expectedMean + ")"
-                                    + DcrConstants.IN_METER,
+            .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, subRule, yardDesc,
+                    yardFieldName,
+                    MINIMUM_MEAN + "(" + expectedMin + "," + expectedMean + ")"
+                            + DcrConstants.IN_METER,
                             "(" + min + "," +
                                     mean + ")"
                                     + DcrConstants.IN_METER,
-                            Result.Accepted, message));
+                                    Result.Accepted, message));
         } else {
             planDetail.reportOutput
-                    .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, subRule, yardDesc,
-                            yardFieldName,
-                            MINIMUM_MEAN + "(" + expectedMin + "," + expectedMean + ")"
-                                    + DcrConstants.IN_METER,
+            .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, subRule, yardDesc,
+                    yardFieldName,
+                    MINIMUM_MEAN + "(" + expectedMin + "," + expectedMean + ")"
+                            + DcrConstants.IN_METER,
                             "(" + min + "," +
                                     mean + ")"
                                     + DcrConstants.IN_METER,
-                            Result.Not_Accepted, message));
+                                    Result.Not_Accepted, message));
         }
 
     }
@@ -585,50 +591,50 @@ public class Rule24 extends GeneralRule {
                     && planDetail.getPlot().getBsmtRearYard().getMinimumDistance() != null
                     && planDetail.getPlot().getBsmtRearYard().getMean() != null)
                 if (planDetail.getPlot().getBsmtRearYard().getMinimumDistance().compareTo(rearYardMin) >= 0 &&
-                        planDetail.getPlot().getBsmtRearYard().getMean().compareTo(rearYardMean) >= 0)
+                planDetail.getPlot().getBsmtRearYard().getMean().compareTo(rearYardMean) >= 0)
                     planDetail.reportOutput
-                            .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_12_4, SUB_RULE_24_12_4_DESCRIPTION,
-                                    DcrConstants.BSMT_REAR_YARD_DESC,
-                                    MEAN_MINIMUM + "(" + rearYardMin.toString() + "," + rearYardMean + ")"
-                                            + DcrConstants.IN_METER,
+                    .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_12_4, SUB_RULE_24_12_4_DESCRIPTION,
+                            DcrConstants.BSMT_REAR_YARD_DESC,
+                            MEAN_MINIMUM + "(" + rearYardMin.toString() + "," + rearYardMean + ")"
+                                    + DcrConstants.IN_METER,
                                     "(" + planDetail.getPlot().getBsmtRearYard().getMinimumDistance().toString() + "," +
                                             planDetail.getPlot().getBsmtRearYard().getMean().toString() + ")"
                                             + DcrConstants.IN_METER,
-                                    Result.Accepted, null));
+                                            Result.Accepted, null));
                 else
                     planDetail.reportOutput
-                            .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_12_4, SUB_RULE_24_12_4_DESCRIPTION,
-                                    DcrConstants.BSMT_REAR_YARD_DESC,
-                                    MEAN_MINIMUM + "(" + rearYardMin.toString() + "," + rearYardMean + ")"
-                                            + DcrConstants.IN_METER,
+                    .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_12_4, SUB_RULE_24_12_4_DESCRIPTION,
+                            DcrConstants.BSMT_REAR_YARD_DESC,
+                            MEAN_MINIMUM + "(" + rearYardMin.toString() + "," + rearYardMean + ")"
+                                    + DcrConstants.IN_METER,
                                     "(" + planDetail.getPlot().getBsmtRearYard().getMinimumDistance().toString() + "," +
                                             planDetail.getPlot().getBsmtRearYard().getMean().toString() + ")"
                                             + DcrConstants.IN_METER,
-                                    Result.Not_Accepted, null));
+                                            Result.Not_Accepted, null));
 
         } else if (planDetail.getPlot() != null && planDetail.getPlot().getRearYard() != null &&
                 planDetail.getPlot().getRearYard().getPresentInDxf()
                 && planDetail.getPlot().getRearYard().getMinimumDistance() != null
                 && planDetail.getPlot().getRearYard().getMean() != null)
             if (planDetail.getPlot().getRearYard().getMinimumDistance().compareTo(rearYardMin) >= 0 &&
-                    planDetail.getPlot().getRearYard().getMean().compareTo(rearYardMean) >= 0)
+            planDetail.getPlot().getRearYard().getMean().compareTo(rearYardMean) >= 0)
                 planDetail.reportOutput
-                        .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_4, SUB_RULE_24_4_DESCRIPTION,
-                                DcrConstants.REAR_YARD_DESC,
-                                MEAN_MINIMUM + "(" + rearYardMin.toString() + "," + rearYardMean + ")"
-                                        + DcrConstants.IN_METER,
+                .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_4, SUB_RULE_24_4_DESCRIPTION,
+                        DcrConstants.REAR_YARD_DESC,
+                        MEAN_MINIMUM + "(" + rearYardMin.toString() + "," + rearYardMean + ")"
+                                + DcrConstants.IN_METER,
                                 "(" + planDetail.getPlot().getRearYard().getMinimumDistance().toString() + "," +
                                         planDetail.getPlot().getRearYard().getMean().toString() + ")" + DcrConstants.IN_METER,
-                                Result.Accepted, null));
+                                        Result.Accepted, null));
             else
                 planDetail.reportOutput
-                        .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_4, SUB_RULE_24_4_DESCRIPTION,
-                                DcrConstants.REAR_YARD_DESC,
-                                MEAN_MINIMUM + "(" + rearYardMin.toString() + "," + rearYardMean + ")"
-                                        + DcrConstants.IN_METER,
+                .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_4, SUB_RULE_24_4_DESCRIPTION,
+                        DcrConstants.REAR_YARD_DESC,
+                        MEAN_MINIMUM + "(" + rearYardMin.toString() + "," + rearYardMean + ")"
+                                + DcrConstants.IN_METER,
                                 "(" + planDetail.getPlot().getRearYard().getMinimumDistance().toString() + "," +
                                         planDetail.getPlot().getRearYard().getMean().toString() + ")" + DcrConstants.IN_METER,
-                                Result.Not_Accepted, null));
+                                        Result.Not_Accepted, null));
     }
 
     private void rule24_4_LessThan7WithoutOpeningNoc(PlanDetail planDetail, BigDecimal rearYardMin, String type) {
@@ -637,76 +643,76 @@ public class Rule24 extends GeneralRule {
                     planDetail.getPlot().getBsmtRearYard().getPresentInDxf()
                     && planDetail.getPlot().getBsmtRearYard().getMinimumDistance() != null)
                 if (planDetail.getPlot().getBsmtRearYard().getMinimumDistance().compareTo(rearYardMin) >= 0
-                        && planDetail.getPlanInformation().getNocToAbutRear())
+                && planDetail.getPlanInformation().getNocToAbutRear())
                     planDetail.reportOutput
-                            .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_4, SUB_RULE_24_4_DESCRIPTION,
-                                    DcrConstants.BSMT_REAR_YARD_DESC,
-                                    "Minimum " + "(" + rearYardMin.toString() + ")"
-                                            + DcrConstants.IN_METER,
+                    .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_4, SUB_RULE_24_4_DESCRIPTION,
+                            DcrConstants.BSMT_REAR_YARD_DESC,
+                            "Minimum " + "(" + rearYardMin.toString() + ")"
+                                    + DcrConstants.IN_METER,
                                     "(" + planDetail.getPlot().getBsmtRearYard().getMinimumDistance().toString() + "," +
                                             planDetail.getPlot().getBsmtRearYard().getMean().toString() + ")"
                                             + DcrConstants.IN_METER,
-                                    Result.Accepted, null));
+                                            Result.Accepted, null));
                 else
                     planDetail.reportOutput
-                            .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_4, SUB_RULE_24_4_DESCRIPTION,
-                                    DcrConstants.BSMT_REAR_YARD_DESC,
-                                    "Minimum " + "(" + REARYARDMINIMUM_DISTANCE_WITHOUTOPENING_NOC.toString() + ")"
-                                            + DcrConstants.IN_METER + "NOC is not present ",
+                    .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_4, SUB_RULE_24_4_DESCRIPTION,
+                            DcrConstants.BSMT_REAR_YARD_DESC,
+                            "Minimum " + "(" + REARYARDMINIMUM_DISTANCE_WITHOUTOPENING_NOC.toString() + ")"
+                                    + DcrConstants.IN_METER + "NOC is not present ",
                                     "(" + planDetail.getPlot().getBsmtRearYard().getMinimumDistance().toString() + "," +
                                             planDetail.getPlot().getBsmtRearYard().getMean().toString() + ")"
                                             + DcrConstants.IN_METER,
-                                    Result.Not_Accepted, null));
+                                            Result.Not_Accepted, null));
         } else if (planDetail.getPlot() != null && planDetail.getPlot().getRearYard() != null &&
                 planDetail.getPlot().getRearYard().getPresentInDxf()
                 && planDetail.getPlot().getRearYard().getMinimumDistance() != null)
             if (planDetail.getPlot().getRearYard().getMinimumDistance().compareTo(rearYardMin) >= 0
-                    && planDetail.getPlanInformation().getNocToAbutRear())
+            && planDetail.getPlanInformation().getNocToAbutRear())
                 planDetail.reportOutput
-                        .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_4, SUB_RULE_24_4_DESCRIPTION,
-                                DcrConstants.REAR_YARD_DESC,
-                                "Minimum " + "(" + rearYardMin.toString() + ")"
-                                        + DcrConstants.IN_METER,
+                .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_4, SUB_RULE_24_4_DESCRIPTION,
+                        DcrConstants.REAR_YARD_DESC,
+                        "Minimum " + "(" + rearYardMin.toString() + ")"
+                                + DcrConstants.IN_METER,
                                 "(" + planDetail.getPlot().getRearYard().getMinimumDistance().toString() + "," +
                                         planDetail.getPlot().getRearYard().getMean().toString() + ")" + DcrConstants.IN_METER,
-                                Result.Accepted, null));
+                                        Result.Accepted, null));
             else
                 planDetail.reportOutput
-                        .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_4, SUB_RULE_24_4_DESCRIPTION,
-                                DcrConstants.REAR_YARD_DESC,
-                                "Minimum " + "(" + REARYARDMINIMUM_DISTANCE_WITHOUTOPENING_NOC.toString() + ")"
-                                        + DcrConstants.IN_METER + "NOC is not present ",
+                .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_4, SUB_RULE_24_4_DESCRIPTION,
+                        DcrConstants.REAR_YARD_DESC,
+                        "Minimum " + "(" + REARYARDMINIMUM_DISTANCE_WITHOUTOPENING_NOC.toString() + ")"
+                                + DcrConstants.IN_METER + "NOC is not present ",
                                 "(" + planDetail.getPlot().getRearYard().getMinimumDistance().toString() + "," +
                                         planDetail.getPlot().getRearYard().getMean().toString() + ")" + DcrConstants.IN_METER,
-                                Result.Not_Accepted, null));
+                                        Result.Not_Accepted, null));
     }
 
     private void rule24_4_LessThan7_WithoutOpeningCorrespondingFloor(PlanDetail planDetail, String type) {
         if (DcrConstants.BASEMENT.equalsIgnoreCase(type))
             if (planDetail.getPlot() != null && planDetail.getPlot().getBsmtRearYard() != null &&
-                    planDetail.getPlot().getBsmtRearYard().getPresentInDxf()
-                    && planDetail.getPlot().getBsmtRearYard().getMinimumDistance() != null
-                    && planDetail.getPlot().getBsmtRearYard().getMean() != null) {
+            planDetail.getPlot().getBsmtRearYard().getPresentInDxf()
+            && planDetail.getPlot().getBsmtRearYard().getMinimumDistance() != null
+            && planDetail.getPlot().getBsmtRearYard().getMean() != null) {
 
                 if (planDetail.getPlot().getBsmtRearYard().getMinimumDistance()
                         .compareTo(REARYARDMINIMUM_DISTANCE_WITHOUTOPENING_CORRESPONDINGFLOOR) >= 0)
                     planDetail.reportOutput
-                            .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_4, SUB_RULE_24_4_DESCRIPTION,
-                                    DcrConstants.BSMT_REAR_YARD_DESC,
-                                    "Minimum" + "(" + REARYARDMINIMUM_DISTANCE_WITHOUTOPENING_CORRESPONDINGFLOOR.toString(),
-                                    "(" + planDetail.getPlot().getBsmtRearYard().getMinimumDistance().toString() +
-                                            planDetail.getPlot().getBsmtRearYard().getMean().toString() + ")"
-                                            + DcrConstants.IN_METER,
-                                    Result.Accepted, null));
+                    .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_4, SUB_RULE_24_4_DESCRIPTION,
+                            DcrConstants.BSMT_REAR_YARD_DESC,
+                            "Minimum" + "(" + REARYARDMINIMUM_DISTANCE_WITHOUTOPENING_CORRESPONDINGFLOOR.toString(),
+                            "(" + planDetail.getPlot().getBsmtRearYard().getMinimumDistance().toString() +
+                            planDetail.getPlot().getBsmtRearYard().getMean().toString() + ")"
+                            + DcrConstants.IN_METER,
+                            Result.Accepted, null));
                 else
                     planDetail.reportOutput
-                            .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_4, SUB_RULE_24_4_DESCRIPTION,
-                                    DcrConstants.BSMT_REAR_YARD_DESC,
-                                    "Minimum" + "(" + REARYARDMINIMUM_DISTANCE_WITHOUTOPENING_CORRESPONDINGFLOOR.toString(),
-                                    "(" + planDetail.getPlot().getBsmtRearYard().getMinimumDistance().toString() +
-                                            planDetail.getPlot().getBsmtRearYard().getMean().toString() + ")"
-                                            + DcrConstants.IN_METER,
-                                    Result.Not_Accepted, null));
+                    .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_4, SUB_RULE_24_4_DESCRIPTION,
+                            DcrConstants.BSMT_REAR_YARD_DESC,
+                            "Minimum" + "(" + REARYARDMINIMUM_DISTANCE_WITHOUTOPENING_CORRESPONDINGFLOOR.toString(),
+                            "(" + planDetail.getPlot().getBsmtRearYard().getMinimumDistance().toString() +
+                            planDetail.getPlot().getBsmtRearYard().getMean().toString() + ")"
+                            + DcrConstants.IN_METER,
+                            Result.Not_Accepted, null));
 
             } else if (planDetail.getPlot() != null && planDetail.getPlot().getRearYard() != null &&
                     planDetail.getPlot().getRearYard().getPresentInDxf()
@@ -715,22 +721,22 @@ public class Rule24 extends GeneralRule {
                 if (planDetail.getPlot().getRearYard().getMinimumDistance()
                         .compareTo(REARYARDMINIMUM_DISTANCE_WITHOUTOPENING_CORRESPONDINGFLOOR) >= 0)
                     planDetail.reportOutput
-                            .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_4, SUB_RULE_24_4_DESCRIPTION,
-                                    DcrConstants.REAR_YARD_DESC,
-                                    "Minimum" + "(" + REARYARDMINIMUM_DISTANCE_WITHOUTOPENING_CORRESPONDINGFLOOR.toString(),
-                                    "(" + planDetail.getPlot().getRearYard().getMinimumDistance().toString() +
-                                            planDetail.getPlot().getRearYard().getMean().toString() + ")"
-                                            + DcrConstants.IN_METER,
-                                    Result.Accepted, null));
+                    .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_4, SUB_RULE_24_4_DESCRIPTION,
+                            DcrConstants.REAR_YARD_DESC,
+                            "Minimum" + "(" + REARYARDMINIMUM_DISTANCE_WITHOUTOPENING_CORRESPONDINGFLOOR.toString(),
+                            "(" + planDetail.getPlot().getRearYard().getMinimumDistance().toString() +
+                            planDetail.getPlot().getRearYard().getMean().toString() + ")"
+                            + DcrConstants.IN_METER,
+                            Result.Accepted, null));
                 else
                     planDetail.reportOutput
-                            .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_4, SUB_RULE_24_4_DESCRIPTION,
-                                    DcrConstants.REAR_YARD_DESC,
-                                    "Minimum" + "(" + REARYARDMINIMUM_DISTANCE_WITHOUTOPENING_CORRESPONDINGFLOOR.toString(),
-                                    "(" + planDetail.getPlot().getRearYard().getMinimumDistance().toString() +
-                                            planDetail.getPlot().getRearYard().getMean().toString() + ")"
-                                            + DcrConstants.IN_METER,
-                                    Result.Not_Accepted, null));
+                    .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_4, SUB_RULE_24_4_DESCRIPTION,
+                            DcrConstants.REAR_YARD_DESC,
+                            "Minimum" + "(" + REARYARDMINIMUM_DISTANCE_WITHOUTOPENING_CORRESPONDINGFLOOR.toString(),
+                            "(" + planDetail.getPlot().getRearYard().getMinimumDistance().toString() +
+                            planDetail.getPlot().getRearYard().getMean().toString() + ")"
+                            + DcrConstants.IN_METER,
+                            Result.Not_Accepted, null));
     }
 
     @Override
@@ -746,11 +752,11 @@ public class Rule24 extends GeneralRule {
                     stringBuilder.append("Description : ").append(ruleOutput.getRuleDescription()).append("\\n");
                 drb.setMargins(5, 0, 10, 10);
                 drb.setTitle("Rule : " + ruleOutput.getKey() + "\\n")
-                        .setSubtitle(stringBuilder.toString())
-                        .setPrintBackgroundOnOddRows(false).setWhenNoData("", null)
-                        .setTitleStyle(reportService.getTitleStyle())
-                        .setSubtitleStyle(reportService.getSubTitleStyle())
-                        .setSubtitleHeight(30);
+                .setSubtitle(stringBuilder.toString())
+                .setPrintBackgroundOnOddRows(false).setWhenNoData("", null)
+                .setTitleStyle(reportService.getTitleStyle())
+                .setSubtitleStyle(reportService.getSubTitleStyle())
+                .setSubtitleHeight(30);
 
                 new JRBeanCollectionDataSource(ruleOutput.getSubRuleOutputs());
                 final DJDataSource djds = new DJDataSource(ruleOutput.getKey(), DJConstants.DATA_SOURCE_ORIGIN_PARAMETER,
@@ -816,11 +822,11 @@ public class Rule24 extends GeneralRule {
 
         drb.setMargins(10, 10, 10, 10);
         drb.setTitle("SubRule : " + subRuleOutput.getKey())
-                .setSubtitle(stringBuilder.toString())
-                .setPrintBackgroundOnOddRows(false).setWhenNoData("", null)
-                .setTitleStyle(reportService.getTitleStyle())
-                .setSubtitleStyle(reportService.getSubTitleStyle())
-                .setSubtitleHeight(30).setTitleHeight(40);
+        .setSubtitle(stringBuilder.toString())
+        .setPrintBackgroundOnOddRows(false).setWhenNoData("", null)
+        .setTitleStyle(reportService.getTitleStyle())
+        .setSubtitleStyle(reportService.getSubTitleStyle())
+        .setSubtitleHeight(30).setTitleHeight(40);
 
         if (subRuleOutput.getRuleReportOutputs() != null && !subRuleOutput.getRuleReportOutputs().isEmpty()) {
 
@@ -872,11 +878,11 @@ public class Rule24 extends GeneralRule {
         }
         if (buildingOutSideBoundary)
             pl.reportOutput
-                    .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_10, SUB_RULE_24_10_DESCRIPTION,
-                            DcrConstants.BUILDING_FOOT_PRINT,
-                            DcrConstants.BUILDING_FOOT_PRINT + " Should be inside Plot Boundary",
-                            DcrConstants.BUILDING_FOOT_PRINT + " is outside Plot Boundary",
-                            Result.Not_Accepted, null));
+            .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_10, SUB_RULE_24_10_DESCRIPTION,
+                    DcrConstants.BUILDING_FOOT_PRINT,
+                    DcrConstants.BUILDING_FOOT_PRINT + " Should be inside Plot Boundary",
+                    DcrConstants.BUILDING_FOOT_PRINT + " is outside Plot Boundary",
+                    Result.Not_Accepted, null));
 
         Iterator shadeIterator = pl.getBuilding().getShade().getPolyLine().getVertexIterator();
         Boolean shadeOutSideBoundary = false;
@@ -890,19 +896,19 @@ public class Rule24 extends GeneralRule {
         }
         if (shadeOutSideBoundary)
             pl.reportOutput
-                    .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_10, SUB_RULE_24_10_DESCRIPTION,
-                            DcrConstants.SHADE,
-                            DcrConstants.SHADE + " Should be inside Plot Boundary",
-                            DcrConstants.SHADE + " is outside Plot Boundary",
-                            Result.Not_Accepted, null));
+            .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_10, SUB_RULE_24_10_DESCRIPTION,
+                    DcrConstants.SHADE,
+                    DcrConstants.SHADE + " Should be inside Plot Boundary",
+                    DcrConstants.SHADE + " is outside Plot Boundary",
+                    Result.Not_Accepted, null));
 
         if (!shadeOutSideBoundary && !buildingOutSideBoundary)
             pl.reportOutput
-                    .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_10, SUB_RULE_24_10_DESCRIPTION,
-                            DcrConstants.BUILDING_FOOT_PRINT,
-                            DcrConstants.SHADE + "," + DcrConstants.BUILDING_FOOT_PRINT + "  Should be inside Plot Boundary",
-                            DcrConstants.SHADE + "," + DcrConstants.BUILDING_FOOT_PRINT + "  are  inside Plot Boundary",
-                            Result.Accepted, null));
+            .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_10, SUB_RULE_24_10_DESCRIPTION,
+                    DcrConstants.BUILDING_FOOT_PRINT,
+                    DcrConstants.SHADE + "," + DcrConstants.BUILDING_FOOT_PRINT + "  Should be inside Plot Boundary",
+                    DcrConstants.SHADE + "," + DcrConstants.BUILDING_FOOT_PRINT + "  are  inside Plot Boundary",
+                    Result.Accepted, null));
 
     }
 
@@ -920,7 +926,7 @@ public class Rule24 extends GeneralRule {
             if (floor.getExterior() == null) {
                 continue;
             }
-            // LOG.info("ext wall points");
+            // if(LOG.isDebugEnabled()) LOG.debug("ext wall points");
             // DXFLWPolyline extWall = floor.getExterior().getPolyLine();
             vertices = Util.pointsOnPolygon(floor.getExterior().getPolyLine());
 
@@ -944,10 +950,10 @@ public class Rule24 extends GeneralRule {
                     habitable: while (habitableRoomPointItr.hasNext()) {
 
                         DXFVertex next = (DXFVertex) habitableRoomPointItr.next();
-                        // LOG.info(" Contains "+next.getPoint().getX()+","+next.getPoint().getY());
+                        // if(LOG.isDebugEnabled()) LOG.debug(" Contains "+next.getPoint().getX()+","+next.getPoint().getY());
                         if (extPoints.contains(next.getPoint())) {
                             // Point point = extPoints.get(extPoints.indexOf(next.getPoint()));
-                            // LOG.info("Contains found+" +point.getX() +","+point.getY());
+                            // if(LOG.isDebugEnabled()) LOG.debug("Contains found+" +point.getX() +","+point.getY());
                             habitable = true;
                             break habitable;
 
@@ -968,13 +974,13 @@ public class Rule24 extends GeneralRule {
                         habitableRoomLoop2: while (habitableRoomPointItr2.hasNext()) {
 
                             DXFVertex next = (DXFVertex) habitableRoomPointItr2.next();
-                            // LOG.info(" Hroorm "+next.getPoint().getX()+","+next.getPoint().getY());
-                            // LOG.info("Looping"+extPoints.size());
+                            // if(LOG.isDebugEnabled()) LOG.debug(" Hroorm "+next.getPoint().getX()+","+next.getPoint().getY());
+                            // if(LOG.isDebugEnabled()) LOG.debug("Looping"+extPoints.size());
                             for (Point p : extPoints) {
-                                // LOG.info("Comparing"+p.getX()+","+p.getY());
-                                // LOG.info("next"+next.getPoint().getX()+","+next.getPoint().getY());
+                                // if(LOG.isDebugEnabled()) LOG.debug("Comparing"+p.getX()+","+p.getY());
+                                // if(LOG.isDebugEnabled()) LOG.debug("next"+next.getPoint().getX()+","+next.getPoint().getY());
                                 if (Util.pointsEqualsWith2PercentError(p, next.getPoint())) {
-                                    // LOG.info("Matched");
+                                    // if(LOG.isDebugEnabled()) LOG.debug("Matched");
                                     habitable = true;
                                     break habitable1;
 
@@ -983,10 +989,10 @@ public class Rule24 extends GeneralRule {
                             }
                             if (!habitable) {
                                 for (Point p : openSpacePoints) {
-                                    // LOG.info("Comparing"+p.getX()+","+p.getY());
-                                    // LOG.info("next"+next.getPoint().getX()+","+next.getPoint().getY());
+                                    // if(LOG.isDebugEnabled()) LOG.debug("Comparing"+p.getX()+","+p.getY());
+                                    // if(LOG.isDebugEnabled()) LOG.debug("next"+next.getPoint().getX()+","+next.getPoint().getY());
                                     if (Util.pointsEqualsWith2PercentError(p, next.getPoint())) {
-                                        // LOG.info("Matched");
+                                        // if(LOG.isDebugEnabled()) LOG.debug("Matched");
                                         habitable = true;
                                         break habitable1;
 
@@ -1000,17 +1006,17 @@ public class Rule24 extends GeneralRule {
 
                     if (!habitable) {
 
-                        LOG.info("since rooom is not habitable " + habitableRoomNo + " floor no" + floor.getName());
+                        if(LOG.isDebugEnabled()) LOG.debug("since rooom is not habitable " + habitableRoomNo + " floor no" + floor.getName());
                         faileCount++;
 
                         pl.reportOutput
-                                .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_1, SUB_RULE_24_1_DESCRIPTION,
-                                        DcrConstants.HABITABLE_ROOM,
-                                        DcrConstants.HABITABLE_ROOM
-                                                + " shall abut on an exterior or interior open space or verandah ",
-                                        DcrConstants.HABITABLE_ROOM + " number " + habitableRoomNo + " in " + floor.getName()
-                                                + " is not abuting an exterior or interior open space or verandah",
-                                        Result.Not_Accepted, null));
+                        .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_1, SUB_RULE_24_1_DESCRIPTION,
+                                DcrConstants.HABITABLE_ROOM,
+                                DcrConstants.HABITABLE_ROOM
+                                + " shall abut on an exterior or interior open space or verandah ",
+                                DcrConstants.HABITABLE_ROOM + " number " + habitableRoomNo + " in " + floor.getName()
+                                + " is not abuting an exterior or interior open space or verandah",
+                                Result.Not_Accepted, null));
                     }
 
                 }
@@ -1019,21 +1025,21 @@ public class Rule24 extends GeneralRule {
         }
         if (faileCount > 0) {
             pl.reportOutput
-                    .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_1, SUB_RULE_24_1_DESCRIPTION,
-                            DcrConstants.HABITABLE_ROOM,
-                            DcrConstants.HABITABLE_ROOM + " shall abut on an exterior or interior open space or verandah ",
-                            " " + faileCount + " " + DcrConstants.HABITABLE_ROOM
-                                    + " (s)  not abuting an exterior or interior open space or verandah",
-                            Result.Not_Accepted, null));
+            .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_1, SUB_RULE_24_1_DESCRIPTION,
+                    DcrConstants.HABITABLE_ROOM,
+                    DcrConstants.HABITABLE_ROOM + " shall abut on an exterior or interior open space or verandah ",
+                    " " + faileCount + " " + DcrConstants.HABITABLE_ROOM
+                    + " (s)  not abuting an exterior or interior open space or verandah",
+                    Result.Not_Accepted, null));
         } else {
 
             pl.reportOutput
-                    .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_1, SUB_RULE_24_1_DESCRIPTION,
-                            DcrConstants.HABITABLE_ROOM,
-                            DcrConstants.HABITABLE_ROOM + " shall abut on an exterior or interior open space or verandah ",
-                            " All " + DcrConstants.HABITABLE_ROOM
-                                    + " (s)  are abuting an exterior or interior open space or verandah",
-                            Result.Accepted, null));
+            .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_1, SUB_RULE_24_1_DESCRIPTION,
+                    DcrConstants.HABITABLE_ROOM,
+                    DcrConstants.HABITABLE_ROOM + " shall abut on an exterior or interior open space or verandah ",
+                    " All " + DcrConstants.HABITABLE_ROOM
+                    + " (s)  are abuting an exterior or interior open space or verandah",
+                    Result.Accepted, null));
 
         }
 

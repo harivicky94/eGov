@@ -155,7 +155,7 @@ public class DXFExtractService {
          * Util.print(residentialDeduct, "residentialDeduct_"+j++); boolean contains = false; Iterator buildingIterator =
          * residentialDeduct.getVertexIterator(); while (buildingIterator.hasNext()) { DXFVertex dxfVertex = (DXFVertex)
          * buildingIterator.next(); Point point = dxfVertex.getPoint(); if (RayCast.contains(pointsOfPlot, new double[] {
-         * point.getX(), point.getY() }) == true) { // LOG.info(" above res contains "+point.getX()+","+point.getY()); contains =
+         * point.getX(), point.getY() }) == true) { // if(LOG.isDebugEnabled()) LOG.debug(" above res contains "+point.getX()+","+point.getY()); contains =
          * true; // removeDeduction.add(residentialDeduct); Measurement measurement = new Measurement();
          * measurement.setPolyLine(residentialDeduct); floorUnit.getDeductions().add(measurement); } } if (contains) {
          * System.out.println("current deduct " + deduction + "    :add deduct for rest unit " + i + " area added" +
@@ -215,10 +215,10 @@ public class DXFExtractService {
         if (layerPresent) {
             List<DXFLWPolyline> bldparking = Util.getPolyLinesByLayer(doc, DxfFileConstants.PARKING_SLOT);
             if (!bldparking.isEmpty()) {
-                LOG.info("Parking slot ");
+                if(LOG.isDebugEnabled()) LOG.debug("Parking slot ");
                 for (DXFLWPolyline pline : bldparking) {
-                    LOG.info("Width:"+pline.getBounds().getWidth());
-                    LOG.info("Height"+pline.getBounds().getHeight());
+                    if(LOG.isDebugEnabled()) LOG.debug("Width:"+pline.getBounds().getWidth());
+                    if(LOG.isDebugEnabled()) LOG.debug("Height"+pline.getBounds().getHeight());
                     Measurement measurement = new Measurement();
                     measurement.setWidth(BigDecimal.valueOf(pline.getBounds().getWidth()));
                     measurement.setHeight(BigDecimal.valueOf(pline.getBounds().getHeight()));
@@ -425,7 +425,7 @@ public class DXFExtractService {
             for (DXFLWPolyline pline : bldDeduct)
                 floorArea = floorArea.subtract(Util.getPolyLineArea(pline));
 
-        LOG.info("floorArea:" + floorArea);
+        if(LOG.isDebugEnabled()) LOG.debug("floorArea:" + floorArea);
         pl.getBuilding().setTotalFloorArea(floorArea);
 
         if (pl.getPlot().getArea() != null) {
@@ -451,7 +451,7 @@ public class DXFExtractService {
                         pl.getPlanInformation().getPlotArea(),
                         DcrConstants.DECIMALDIGITS_MEASUREMENTS, DcrConstants.ROUNDMODE_MEASUREMENTS);
                 pl.getBuilding().setCoverage(coverage);
-                LOG.info("coverage:" + coverage);
+                if(LOG.isDebugEnabled()) LOG.debug("coverage:" + coverage);
             } else {
                 pl.addError(DxfFileConstants.COVERGAE_DEDUCT,
                         "Cannot calculate coverage as " + DxfFileConstants.BUILDING_FOOT_PRINT
@@ -473,7 +473,7 @@ public class DXFExtractService {
             yard.setArea(Util.getPolyLineArea(yard.getPolyLine()));
             yard.setMean(yard.getArea().divide(BigDecimal.valueOf(yard.getPolyLine().getBounds().getWidth()), 5,
                     RoundingMode.HALF_UP));
-            LOG.info(yardName + " Mean " + yard.getMean());
+            if(LOG.isDebugEnabled()) LOG.debug(yardName + " Mean " + yard.getMean());
             yard.setPresentInDxf(true);
 
         } else

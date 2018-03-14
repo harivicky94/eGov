@@ -182,10 +182,10 @@ public class Util {
                     DXFDimension line = (DXFDimension) dxfEntity;
                     String dimensionBlock = line.getDimensionBlock();
                     DXFBlock dxfBlock = dxfDocument.getDXFBlock(dimensionBlock);
-                    LOG.info("BLOCK data" + dxfBlock.getDescription());
+                    if(LOG.isDebugEnabled()) LOG.debug("BLOCK data" + dxfBlock.getDescription());
                     DXFDimensionStyle dxfDimensionStyle = dxfDocument.getDXFDimensionStyle(line.getDimensionStyleID());
-                    LOG.info("---" + dxfDimensionStyle.getProperty(DXFDimensionStyle.PROPERTY_DIMEXO));
-                    // LOG.info(line.getInclinationHelpLine()+"HELP LINE"+line.getDimensionText()
+                    if(LOG.isDebugEnabled()) LOG.debug("---" + dxfDimensionStyle.getProperty(DXFDimensionStyle.PROPERTY_DIMEXO));
+                    // if(LOG.isDebugEnabled()) LOG.debug(line.getInclinationHelpLine()+"HELP LINE"+line.getDimensionText()
                     // +"--"+line.getLayerName()+"--"+line.getDimensionArea());
 
                     if (name.contains(line.getLayerName().toUpperCase()))
@@ -388,7 +388,7 @@ public class Util {
             while (dxfLayerIterator.hasNext()) {
                 DXFLayer next = (DXFLayer) dxfLayerIterator.next();
                 DXFLayer planInfoLayer = doc.getDXFLayer(next.getName());
-                // LOG.info("----------"+planInfoLayer.getName()+"---------------------------------------------------");
+                // if(LOG.isDebugEnabled()) LOG.debug("----------"+planInfoLayer.getName()+"---------------------------------------------------");
                 if (planInfoLayer != null) {
                     List texts = planInfoLayer.getDXFEntities(DXFConstants.ENTITY_TYPE_MTEXT);
                     if (texts != null) {
@@ -396,7 +396,7 @@ public class Util {
 
                         while (iterator.hasNext()) {
                             DXFText text = (DXFText) iterator.next();
-                            // LOG.info("Mtext :"+text.getText());
+                            // if(LOG.isDebugEnabled()) LOG.debug("Mtext :"+text.getText());
                         }
                     }
 
@@ -410,18 +410,18 @@ public class Util {
                 LOG.error("No Layer Found with name" + layerName);
 
             DXFLayer planInfoLayer = doc.getDXFLayer(layerName);
-            // LOG.info(planInfoLayer.getName());
+            // if(LOG.isDebugEnabled()) LOG.debug(planInfoLayer.getName());
             if (planInfoLayer != null) {
                 List texts = planInfoLayer.getDXFEntities(DXFConstants.ENTITY_TYPE_MTEXT);
 
-                // LOG.info("Texts list is null ");
+                // if(LOG.isDebugEnabled()) LOG.debug("Texts list is null ");
                 DXFText text = null;
                 if (texts != null) {
                     Iterator iterator = texts.iterator();
 
                     while (iterator.hasNext()) {
                         text = (DXFText) iterator.next();
-                        // LOG.info("Mtext :"+text.getText());
+                        // if(LOG.isDebugEnabled()) LOG.debug("Mtext :"+text.getText());
                         if (text != null && text.getText() != null) {
                             param = text.getText();
                             /*
@@ -456,9 +456,9 @@ public class Util {
 
                 param = text.getText();
                 param = param.replace(s, "#");
-                // LOG.info(param);
+                // if(LOG.isDebugEnabled()) LOG.debug(param);
                 if (param.contains("#P"))
-                    // LOG.info("inside");
+                    // if(LOG.isDebugEnabled()) LOG.debug("inside");
                     split = param.split("#P");
                 else {
                     split = new String[1];
@@ -469,7 +469,7 @@ public class Util {
 
                     String[] data = element.split("=");
                     if (data.length == 2)
-                        // LOG.info(data[0]+"---"+data[1]);
+                        // if(LOG.isDebugEnabled()) LOG.debug(data[0]+"---"+data[1]);
                         planInfoProperties.put(data[0], data[1]);
                     else {
                         // throw new RuntimeException("Plan info sheet data not following standard '=' for " +param);
@@ -565,45 +565,45 @@ public class Util {
     public static void print(DXFLWPolyline yard, String name) {
         if (yard != null) {
             Iterator vertexIterator = yard.getVertexIterator();
-            LOG.info("Points on the " + name);
-            LOG.info("Max x: " + yard.getBounds().getMaximumX() +" Min x:"+yard.getBounds().getMinimumX());
-            LOG.info("Max y: " + yard.getBounds().getMaximumY() +" Min x:"+yard.getBounds().getMinimumY());
+            if(LOG.isDebugEnabled()) LOG.debug("Points on the " + name);
+            if(LOG.isDebugEnabled()) LOG.debug("Max x: " + yard.getBounds().getMaximumX() +" Min x:"+yard.getBounds().getMinimumX());
+            if(LOG.isDebugEnabled()) LOG.debug("Max y: " + yard.getBounds().getMaximumY() +" Min x:"+yard.getBounds().getMinimumY());
             
             
             while (vertexIterator.hasNext()) {
                 DXFVertex next = (DXFVertex) vertexIterator.next();
-                LOG.info(next.getPoint().getX() + "," + next.getPoint().getY());
-               // LOG.info(next.getX() + "," + next.getY());
+                if(LOG.isDebugEnabled()) LOG.debug(next.getPoint().getX() + "," + next.getPoint().getY());
+               // if(LOG.isDebugEnabled()) LOG.debug(next.getX() + "," + next.getY());
             }
         }
 
     }
 
     public static void print(HashMap<String, String> errors) {
-        LOG.info(errors.getClass().getName());
+        if(LOG.isDebugEnabled()) LOG.debug(errors.getClass().getName());
         Iterator<Entry<String, String>> iterator = errors.entrySet().iterator();
         while (iterator.hasNext()) {
             Entry<String, String> next = iterator.next();
-            LOG.info(next.getKey() + "---" + next.getValue());
+            if(LOG.isDebugEnabled()) LOG.debug(next.getKey() + "---" + next.getValue());
         }
     }
 
     public static void print(ReportOutput ro) {
         try {
-            LOG.info("ReportOutput");
+            if(LOG.isDebugEnabled()) LOG.debug("ReportOutput");
             if (ro.getRuleOutPuts() != null)
                 for (RuleOutput rp : ro.getRuleOutPuts()) {
-                    LOG.info(rp.key + " -- " + rp.getMessage() + " -- " + rp.getResult());
+                    if(LOG.isDebugEnabled()) LOG.debug(rp.key + " -- " + rp.getMessage() + " -- " + rp.getResult());
                     if (rp.getSubRuleOutputs() != null)
                         for (SubRuleOutput so : rp.getSubRuleOutputs()) {
-                            LOG.info(so.key + " , " + so.message + " , " + so.ruleDescription);
+                            if(LOG.isDebugEnabled()) LOG.debug(so.key + " , " + so.message + " , " + so.ruleDescription);
                             List<RuleReportOutput> ruleReportOutputs = so.ruleReportOutputs;
                             if (ruleReportOutputs != null)
                                 for (RuleReportOutput rro : ruleReportOutputs) {
-                                    LOG.info("Actual: " + rro.actualResult);
-                                    LOG.info("Expected: " + rro.expectedResult);
-                                    LOG.info("Filed Verified: " + rro.fieldVerified);
-                                    LOG.info("Status: " + rro.status);
+                                    if(LOG.isDebugEnabled()) LOG.debug("Actual: " + rro.actualResult);
+                                    if(LOG.isDebugEnabled()) LOG.debug("Expected: " + rro.expectedResult);
+                                    if(LOG.isDebugEnabled()) LOG.debug("Filed Verified: " + rro.fieldVerified);
+                                    if(LOG.isDebugEnabled()) LOG.debug("Status: " + rro.status);
 
                                 }
                         }
@@ -614,7 +614,7 @@ public class Util {
             LOG.error("Ignoring since it is logging error", e);
         }
 
-        LOG.info("ReportOutput Completed");
+        if(LOG.isDebugEnabled()) LOG.debug("ReportOutput Completed");
 
     }
     
@@ -622,20 +622,20 @@ public class Util {
     {
      for(Floor floor:floors)
      {
-//         LOG.info("Floor Name"+floor.getName());
+//         if(LOG.isDebugEnabled()) LOG.debug("Floor Name"+floor.getName());
          if(floor.getExterior()!=null)
          {
-         LOG.info("Ext points Count"+floor.getExterior().getPolyLine().getVertexCount());
-         LOG.info("maxx  : "+floor.getExterior().getPolyLine().getBounds().getMaximumX()+" minx :  "+floor.getExterior().getPolyLine().getBounds().getMinimumX());
-         LOG.info("maxy  : "+floor.getExterior().getPolyLine().getBounds().getMaximumY()+" minx :  "+floor.getExterior().getPolyLine().getBounds().getMinimumY());
+         if(LOG.isDebugEnabled()) LOG.debug("Ext points Count"+floor.getExterior().getPolyLine().getVertexCount());
+         if(LOG.isDebugEnabled()) LOG.debug("maxx  : "+floor.getExterior().getPolyLine().getBounds().getMaximumX()+" minx :  "+floor.getExterior().getPolyLine().getBounds().getMinimumX());
+         if(LOG.isDebugEnabled()) LOG.debug("maxy  : "+floor.getExterior().getPolyLine().getBounds().getMaximumY()+" minx :  "+floor.getExterior().getPolyLine().getBounds().getMinimumY());
           print(floor.getExterior().getPolyLine(),floor.getName());
          }
-         LOG.info("Habitable Rooms count"+floor.getHabitableRooms().size());
+         if(LOG.isDebugEnabled()) LOG.debug("Habitable Rooms count"+floor.getHabitableRooms().size());
          int i=0;
          for(Room r:floor.getHabitableRooms())
          {
-             LOG.info("maxx  : "+r.getPolyLine().getBounds().getMaximumX()+" minx :  "+r.getPolyLine().getBounds().getMinimumX());
-             LOG.info("maxy  : "+r.getPolyLine().getBounds().getMaximumY()+" minx :  "+r.getPolyLine().getBounds().getMinimumY());
+             if(LOG.isDebugEnabled()) LOG.debug("maxx  : "+r.getPolyLine().getBounds().getMaximumX()+" minx :  "+r.getPolyLine().getBounds().getMinimumX());
+             if(LOG.isDebugEnabled()) LOG.debug("maxy  : "+r.getPolyLine().getBounds().getMaximumY()+" minx :  "+r.getPolyLine().getBounds().getMinimumY());
              print(r.getPolyLine(),floor.getName()+"_Room_"+i++);
          }
          
@@ -644,13 +644,13 @@ public class Util {
     }
 
     public static void print(PlanDetail pl) {
-        LOG.info("Set Backs");
-        LOG.info("Front Yard \n " + pl.getPlot().getFrontYard());
-        LOG.info("Side Yard1 \n " + pl.getPlot().getSideYard1());
-        LOG.info("Side Yard2 \n " + pl.getPlot().getSideYard2());
-        LOG.info("Rear Yard \n " + pl.getPlot().getRearYard());
-        LOG.info(pl.getElectricLine());
-        LOG.info(pl.getBuilding());
+        if(LOG.isDebugEnabled()) LOG.debug("Set Backs");
+        if(LOG.isDebugEnabled()) LOG.debug("Front Yard \n " + pl.getPlot().getFrontYard());
+        if(LOG.isDebugEnabled()) LOG.debug("Side Yard1 \n " + pl.getPlot().getSideYard1());
+        if(LOG.isDebugEnabled()) LOG.debug("Side Yard2 \n " + pl.getPlot().getSideYard2());
+        if(LOG.isDebugEnabled()) LOG.debug("Rear Yard \n " + pl.getPlot().getRearYard());
+        if(LOG.isDebugEnabled()) LOG.debug(pl.getElectricLine());
+        if(LOG.isDebugEnabled()) LOG.debug(pl.getBuilding());
         
     }
   
@@ -674,7 +674,7 @@ public class Util {
 
             points.add(point1);
 
-            // LOG.info(name+"===Shape=="+shape[i][0]+"--"+shape[i][1]);
+            // if(LOG.isDebugEnabled()) LOG.debug(name+"===Shape=="+shape[i][0]+"--"+shape[i][1]);
             i++;
 
         }
@@ -691,7 +691,7 @@ public class Util {
 
         for (Point in : yardInSidePoints) {
 
-            // LOG.info(" IN: "+ in.getX()+","+in.getY());
+            // if(LOG.isDebugEnabled()) LOG.debug(" IN: "+ in.getX()+","+in.getY());
             if (old == null) {
                 old = in;
                 first = in;
@@ -702,10 +702,10 @@ public class Util {
              * if (first.equals(in)) continue;
              */
 
-            // LOG.info("Points for line ------"+old.getX()+","+old.getY() +" And "+ in.getX()+","+in.getY());
+            // if(LOG.isDebugEnabled()) LOG.debug("Points for line ------"+old.getX()+","+old.getY() +" And "+ in.getX()+","+in.getY());
             double distance = MathUtils.distance(old, in);
 
-            // LOG.info("Distance"+distance);
+            // if(LOG.isDebugEnabled()) LOG.debug("Distance"+distance);
 
             for (double j = .01; j < distance; j = j + .01) {
                 point1 = new Point();
@@ -713,7 +713,7 @@ public class Util {
                 point1.setX((1 - t) * old.getX() + t * in.getX());
                 point1.setY((1 - t) * old.getY() + t * in.getY());
                 myPoints.add(point1);
-                // LOG.info(point1.getX()+"---"+point1.getY());
+                // if(LOG.isDebugEnabled()) LOG.debug(point1.getX()+"---"+point1.getY());
             }
 
             old = in;

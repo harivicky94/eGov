@@ -16,6 +16,8 @@ import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.engine.type.SplitTypeEnum;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.edcr.autonumber.DcrApplicationNumberGenerator;
@@ -85,7 +87,7 @@ public class DcrService {
 
     public PlanDetail process(File dxf1File, EdcrApplication dcrApplication) {
 
-        LOG.info("hello ");
+        if(LOG.isDebugEnabled()) LOG.debug("hello ");
         // TODO:
         // BASIC VALIDATION
 
@@ -111,7 +113,7 @@ public class DcrService {
             String[] ruleSet = rules.split(",");
             for (String s : ruleSet) {
                 String ruleName = "rule" + s;
-                LOG.info(s);
+                if(LOG.isDebugEnabled()) LOG.debug(s);
                 Object ruleBean = getRuleBean(ruleName);
                 if (ruleBean != null) {
                     GeneralRule bean = (GeneralRule) ruleBean;
@@ -163,6 +165,7 @@ public class DcrService {
 
         final ReportOutput reportOutput = null;
         JasperPrint jasper;
+       // jasper.setProperty("SplitType", SplitTypeEnum.STRETCH.toString());
         InputStream reportStream = null;
         try {
             jasper = prepareReportData(planDetail, dcrApplication);
@@ -311,7 +314,7 @@ public class DcrService {
                 String[] ruleSet = rules.split(","); 
                 for (String s : ruleSet) {
                     String ruleName = "rule" + s;
-                    LOG.info(s);
+                    if(LOG.isDebugEnabled()) LOG.debug(s);
                     Object ruleBean = getRuleBean(ruleName);
                     if (ruleBean != null) {
                         GeneralRule bean = (GeneralRule) ruleBean;
