@@ -88,7 +88,7 @@ public class LocalDriver {
         }
 
         if (isLinux()) {
-            System.setProperty("webdriver.chrome.driver", "src/test/java/drivers/chromedriver_linux");
+            System.setProperty("webdriver.chrome.driver", "src/test/java/drivers/chromedriver");
             return;
 
         }

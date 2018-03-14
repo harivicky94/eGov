@@ -48,6 +48,9 @@ public class PropertyDetailsPageSteps extends BaseSteps implements En {
             ApprovalDetails approverDetails = new ExcelReader(approvalDetailsTestDataFileName).getApprovalDetails(approvalDetailsDataId);
             pageStore.get(ApprovalDetailsPage.class).enterApproverDetails(approverDetails);
         });
+        And("^he click on Forward Button$", () -> {
+            pageStore.get(PropertyDetailsPage.class).clickForward();
+        });
         And("^he forwards for approval to (.*)$", (String approvalDetailsDataId) -> {
             ApprovalDetails approverDetails = new ExcelReader(approvalDetailsTestDataFileName).getApprovalDetails(approvalDetailsDataId);
             pageStore.get(ApprovalDetailsPage.class).enterApproverDetails(approverDetails);
@@ -130,6 +133,7 @@ public class PropertyDetailsPageSteps extends BaseSteps implements En {
            pageStore.get(PropertyDetailsPage.class).checkDoorNumber();
            pageStore.get(PropertyDetailsPage.class).clickOnFloorDetailsCheckBox();
         });
+
 
 
     }

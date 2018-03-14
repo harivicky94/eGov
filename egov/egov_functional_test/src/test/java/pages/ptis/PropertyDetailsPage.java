@@ -4,6 +4,7 @@ import entities.ptis.*;
 import org.junit.Assert;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.ui.Select;
 import pages.BasePage;
 
 import java.util.List;
@@ -167,6 +168,9 @@ public class PropertyDetailsPage extends BasePage {
 
     @FindBy(css = "input[id='Forward'][type='submit']")
     private WebElement forwardButton;
+
+    @FindBy(css = "input[id='Forward'][type='submit']")
+    private WebElement clickForwardButton;
 
     @FindBy(id = "Approve")
     private WebElement approveButton;
@@ -339,17 +343,17 @@ public class PropertyDetailsPage extends BasePage {
     }
 
     public void enterPropertyAddressDetails(PropertyAddressDetails addressDetails) {
-        selectFromDropDown(localitySelection, addressDetails.getLocality(), webDriver);
-        selectFromDropDown(zoneNumberSelection, addressDetails.getZoneNumber(), webDriver);
-        selectFromDropDown(electionWardSeletion, addressDetails.getElectionWard(), webDriver);
+        selectAParticularFromDropDown(localitySelection, 5, webDriver);
+        selectAParticularFromDropDown(zoneNumberSelection, 1, webDriver );
+        selectAParticularFromDropDown(electionWardSeletion, 1, webDriver);
         enterText(doorNumberTextBox,"#"+get6DigitRandomInt(), webDriver);
         enterText(pincodeTextBox, addressDetails.getPincode(), webDriver);
     }
 
     public void enterAssessmentDetails(AssessmentDetails assessmentDetails) {
         selectFromDropDown(reasonForCreationSelection, assessmentDetails.getReasonForCreation(), webDriver);
-        enterText(extentOfSiteTextBox, assessmentDetails.getExtentOfSite(), webDriver);
         enterText(occupancyCertificateNumberTextBox, assessmentDetails.getOccupancyCertificateNumber(), webDriver);
+        enterText(extentOfSiteTextBox, assessmentDetails.getExtentOfSite(), webDriver);
     }
 
     public void selectAmenities(Amenities amenities) {
@@ -366,12 +370,11 @@ public class PropertyDetailsPage extends BasePage {
         if (hasAmenity && !element.isSelected())
             element.click();
     }
-
     public void enterConstructionTypeDetails(ConstructionTypeDetails constructionTypeDetails) {
-        selectFromDropDown(floorTypeSelection, constructionTypeDetails.getFloorType(), webDriver);
-        selectFromDropDown(roofTypeSelection, constructionTypeDetails.getRoofType(), webDriver);
-        selectFromDropDown(woodTypeSelection, constructionTypeDetails.getWoodType(), webDriver);
-        selectFromDropDown(wallTypeSelection, constructionTypeDetails.getWallType(), webDriver);
+        selectAParticularFromDropDown(floorTypeSelection, 2, webDriver);
+        selectAParticularFromDropDown(roofTypeSelection, 2, webDriver);
+        selectAParticularFromDropDown(woodTypeSelection, 2, webDriver);
+        selectAParticularFromDropDown(wallTypeSelection, 2, webDriver);
     }
 
     public void enterFloorDetails(FloorDetails floorDetails) {
@@ -379,7 +382,7 @@ public class PropertyDetailsPage extends BasePage {
         selectFromDropDown(classificationOfBuildingSelection, floorDetails.getClassificationOfBuilding(), webDriver);
         selectFromDropDown(natureOfUsageSelection, floorDetails.getNatureOfUsage(), webDriver);
 //        enterText(firmNameTextBox, floorDetails.getFirmName(), webDriver);
-        selectFromDropDown(occupancySelection, floorDetails.getOccupancy(), webDriver);
+        selectAParticularFromDropDown(occupancySelection, 1, webDriver);
         enterText(occupantNameTextBox, floorDetails.getOccupantName(), webDriver);
         enterDate(constructionDateTextBox, floorDetails.getConstructionDate(), webDriver);
         constructionDateTextBox.sendKeys(Keys.TAB);
@@ -404,6 +407,9 @@ public class PropertyDetailsPage extends BasePage {
         uploadFile(PhotoOfAssessment, System.getProperty("user.dir") + "/src/test/resources/dataFiles/PTISTestData.xlsx", webDriver);
     }
 
+    public void clickForward() {
+        clickOnButton(clickForwardButton, webDriver);
+    }
     public void forward() {
         clickOnButton(applicationCheckBox,webDriver);
         if(forwardButton.isEnabled()) {
@@ -413,7 +419,6 @@ public class PropertyDetailsPage extends BasePage {
             clickOnButton(forwardButton, webDriver);
         }
     }
-
     public void approve() {
         clickOnButton(approveButton, webDriver);
     }
@@ -423,7 +428,6 @@ public class PropertyDetailsPage extends BasePage {
         waitForElementToBeVisible(commAssessmentNo1, webDriver);
         return commAssessmentNo1.getText();
     }
-
     public void digitallySign() {
         clickOnButton(signButton, webDriver);
     }
@@ -434,7 +438,6 @@ public class PropertyDetailsPage extends BasePage {
         webDriver.close();
         switchToPreviouslyOpenedWindow(webDriver);
     }
-
     public void checkNoOfRecords() {
         Boolean isPresent = webDriver.findElements(By.id("currentRowObject")).size() > 0;
         if (isPresent) {
@@ -628,6 +631,5 @@ public class PropertyDetailsPage extends BasePage {
     public void checkDoorNumber() {
         enterText(doorNumberTextBox,"#"+get6DigitRandomInt(),webDriver);
     }
-
 
 }

@@ -9,21 +9,25 @@ Feature: Create New Property
   @Sanity @PropertyTax @new
   Scenario Outline: Registered user creating a new property in the system
 
-    Given PTISJuniorAssistant logs in
+    Given CSCUser logs in
     And user will select the required screen as "Create New Property"
     And he enters property header details as <propertyHeaderDetails>
     And he enters owner details for the first owner as <ownerDetails>
     And he enters property address details as <propertyAddressDetails>
     And he enters assessment details as <assessmentDetails>
-
     And he enters amenities as <amenitiesDetails>
     And he enters construction type details as <constructionTypeDetails>
     And he enters floor details as <floorDetails>
     And he click on floors Details entered
     And he enters document type details as <documentDetails>
-    And he forwards for approval to PTISBillCollector
+    And he click on Forward Button
     And he will copy the acknowledgement message with assessment number createProperty-create
-    Then user will be notified by "Successfully"
+    And current user logs out
+
+    And PTISJuniorAssistant logs in
+    And he chooses to act upon above assessment number
+    And he forwards for approval to PTISBillCollector
+    And current user closes acknowledgement
     And current user logs out
 
     When PTISBillCollector logs in
@@ -34,7 +38,7 @@ Feature: Create New Property
 
     When PTISRevenueInspector logs in
     And he chooses to act upon above assessment number
-    And he forwards for approval to revenueOfficer
+    And he forwards for approval to PTISRevenueOfficer
     And current user closes acknowledgement
     And current user logs out
 
