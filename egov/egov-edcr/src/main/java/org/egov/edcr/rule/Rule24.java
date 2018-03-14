@@ -370,7 +370,7 @@ public class Rule24 extends GeneralRule {
         BigDecimal buildingHeight = planDetail.getBuilding().getBuildingHeight();
         double min = 0;
         double max = 0;
-        if (sideYard1.getMinimumDistance().doubleValue() > sideYard1.getMinimumDistance().doubleValue()) {
+        if (sideYard2.getMinimumDistance().doubleValue() > sideYard1.getMinimumDistance().doubleValue()) {
             min = sideYard1.getMinimumDistance().doubleValue();
             max = sideYard2.getMinimumDistance().doubleValue();
         } else {
