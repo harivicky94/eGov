@@ -172,10 +172,10 @@ $(document)
 																data, type,
 																row, meta) {
 																if(!row.isFeeCollected && !row.rescheduledByEmployee && !row.onePermitApplication){
-                                                                    return '<button type="button" class="btn btn-xs btn-secondary documentScrutiny" value='
+                                                                    return '<button type="button" class="btn btn-xs btn-secondary documentScrutiny pull-left"  value='
                                                                         + documentScrutinyUrl
                                                                         + row.applicationNumber
-                                                                        + '><span class="glyphicon glyphicon-view"></span>&nbsp;Document Scrutiny</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<button type="button" class="btn btn-xs btn-secondary ReSchedule" value='+rescheduleUrl+row.applicationNumber+'><span class="glyphicon glyphicon-view"></span>&nbsp;Re-Schedule</button>';
+                                                                        + '><span class="glyphicon glyphicon-view"></span>&nbsp;Document Scrutiny</button><br /><br /><button type="button" class="btn btn-xs btn-secondary ReSchedule pull-left" value='+rescheduleUrl+row.applicationNumber+'><span class="glyphicon glyphicon-view"></span>&nbsp;Re-Schedule</button>';
 																} else if(row.isFeeCollected){
                                                                     return '<button type="button" class="btn btn-xs btn-secondary documentScrutiny" value="feePending"><span class="glyphicon glyphicon-view"></span>&nbsp;Document Scrutiny</button>';
                                                                 } else {

@@ -123,12 +123,12 @@ $(document)
 															
 															if ((row.status == 'Approved' || row.status == 'Registered' || row.status == 'Scheduled For Document Scrutiny'
 																	|| row.status == 'Rescheduled For Document Scrutiny' || row.status == 'Pending For Rescheduling For Document Scrutiny') && row.isFeeCollected) {
-																return '<button type="button" class="btn btn-xs btn-secondary dropchange" value='
+																return '<button type="button" class="btn btn-xs btn-secondary dropchange pull-left" value='
 																+ collecturl
 																+ row.applicationNumber
 																+ '><span class="glyphicon glyphicon-view"></span>&nbsp;Collect Fee</button>';
 															} else {
-																return '<button type="button" class="btn btn-xs btn-secondary dropchange" value='
+																return '<button type="button" class="btn btn-xs btn-secondary dropchange pull-left" value='
 																+ viewurl
 																+ row.applicationNumber
 																+ '><span class="glyphicon glyphicon-view"></span>&nbsp;View</button>';
