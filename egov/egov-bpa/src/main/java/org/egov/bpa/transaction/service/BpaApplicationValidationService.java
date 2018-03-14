@@ -329,17 +329,17 @@ public class BpaApplicationValidationService {
         StringBuilder floorAreaBuilder = new StringBuilder();
         for (Entry<String, BigDecimal[]> floorDescSet : floorMap.entrySet()) {
             String floorDesc = floorDescSet.getKey();
-            BigDecimal permissableCoveredArea = floorDescSet.getValue()[0].setScale(SCALING_FACTOR, BigDecimal.ROUND_HALF_UP);
-            BigDecimal floorArea = floorDescSet.getValue()[1].setScale(SCALING_FACTOR, BigDecimal.ROUND_HALF_UP);
-            BigDecimal extentInSqmts = application.getSiteDetail().get(0).getExtentinsqmts().setScale(SCALING_FACTOR, BigDecimal.ROUND_HALF_UP);
-            BigDecimal weightedCoverage = permissableCoveredArea.divide(floorArea, SCALING_FACTOR, BigDecimal.ROUND_HALF_UP);
-            BigDecimal coverageProvided = floorArea.divide(extentInSqmts, 4, BigDecimal.ROUND_DOWN).multiply(new BigDecimal(100)).setScale(SCALING_FACTOR, BigDecimal.ROUND_HALF_UP);
+            BigDecimal permissableCoveredArea = floorDescSet.getValue()[0];
+            BigDecimal plinthArea = floorDescSet.getValue()[1];
+            BigDecimal extentInSqmts = application.getSiteDetail().get(0).getExtentinsqmts();
+            BigDecimal weightedCoverage = permissableCoveredArea.divide(plinthArea, BigDecimal.ROUND_HALF_UP);
+            BigDecimal coverageProvided = plinthArea.divide(extentInSqmts, BigDecimal.ROUND_HALF_UP).multiply(new BigDecimal(100));
             BigDecimal permitedFloorArea = (weightedCoverage.multiply(extentInSqmts)
                     .divide(new BigDecimal(100))).setScale(SCALING_FACTOR, BigDecimal.ROUND_HALF_UP);
 
-            if (coverageProvided.compareTo(weightedCoverage) > 0) {
-                floorDescBuilder.append(floorDesc).append(",");
-                floorAreaBuilder.append(permitedFloorArea.setScale(SCALING_FACTOR, BigDecimal.ROUND_HALF_UP)).append(",");
+            if (plinthArea.setScale(SCALING_FACTOR, BigDecimal.ROUND_HALF_UP).compareTo(permitedFloorArea) > 0) {
+                floorDescBuilder.append(floorDesc).append(", ");
+                floorAreaBuilder.append(permitedFloorArea).append(", ");
             }
         }
         if (floorDescBuilder.length() > 0) {
