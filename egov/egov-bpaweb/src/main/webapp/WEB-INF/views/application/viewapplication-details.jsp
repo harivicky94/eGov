@@ -125,7 +125,7 @@
 		<div class="amenityHideShow">
 			<div class="col-sm-3 add-margin">Amenity Type</div>
 			<div class="col-sm-3 add-margin view-content">
-				<c:out value="${bpaApplication.amenityName}" default="N/A"></c:out>
+				<c:out value="${bpaApplication.amenityName ne '' ?  bpaApplication.amenityName : 'N/A'}"></c:out>
 			</div>
 		</div>
 	</div>
