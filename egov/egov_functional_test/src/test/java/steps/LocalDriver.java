@@ -83,7 +83,7 @@ public class LocalDriver {
             return;
         }
         if (isMac()) {
-            System.setProperty("webdriver.chrome.driver", "src/test/java/drivers/chromedriver");
+            System.setProperty("webdriver.chrome.driver", "src/test/java/drivers/chromedriver_Mac");
             return;
         }
 
