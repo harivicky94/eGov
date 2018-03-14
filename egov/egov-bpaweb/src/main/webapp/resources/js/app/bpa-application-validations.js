@@ -793,5 +793,6 @@ function validateFloorDetails(plinthArea) {
 function resetValuesForAmenitiesOfOneDayPermit() {
     $(".applicationAmenity").val('');
     $('#admissionfee').val(0);
+    $('#serviceType,.applicationAmenity').trigger('change');
 }
 
