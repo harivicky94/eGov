@@ -225,12 +225,7 @@ $(document).ready(function() {
 	
 	// Each Amenity type validations
 	
-	$(document).on('change',"#applicationAmenity",function (){
-		if($('#isOneDayPermitApplication').is(':checked') && $("#applicationAmenity option:selected").val() && $("#applicationAmenity option:selected").text() != 'Roof Conversion under rule 100 or 101') {
-            resetValuesForAmenitiesOfOneDayPermit();
-			bootbox.alert("One permit is applicable only for Roof Conversion under rule 100 or 101 among amenities for others not applicable so you can't select other amenity type for one day permit application.");
-			return false;
-		}
+	$(document).on('change',"#applicationAmenity",function () {
 		loadAmenities();
 	});
 	
@@ -796,8 +791,8 @@ function validateFloorDetails(plinthArea) {
 }
 
 function resetValuesForAmenitiesOfOneDayPermit() {
-    $('#serviceType,.applicationAmenity').trigger('change');
     $(".applicationAmenity").val('');
     $('#admissionfee').val(0);
+    $('#serviceType,.applicationAmenity').trigger('change');
 }
 

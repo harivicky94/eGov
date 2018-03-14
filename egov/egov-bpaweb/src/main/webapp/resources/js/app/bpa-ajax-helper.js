@@ -181,6 +181,11 @@ $(document).ready(
 			});
 			$('#schemes').trigger("change");
 			$('#serviceType,.applicationAmenity').change(function() {
+                if($('#isOneDayPermitApplication').is(':checked') && $("#applicationAmenity option:selected").val() && $("#applicationAmenity option:selected").text() != 'Roof Conversion under rule 100 or 101') {
+                    resetValuesForAmenitiesOfOneDayPermit();
+                    bootbox.alert("One permit is applicable only for Roof Conversion under rule 100 or 101 among amenities for others not applicable so you can't select other amenity type for one day permit application.");
+                    return false;
+                }
 				var servicesAndAmenities =[];
 				servicesAndAmenities.push($('#serviceType').val());
 				$.each($("#applicationAmenity option:selected"), function(idx){     
