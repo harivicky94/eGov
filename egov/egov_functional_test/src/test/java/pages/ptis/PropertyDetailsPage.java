@@ -523,8 +523,6 @@ public class PropertyDetailsPage extends BasePage {
             case "searchWithZoneAndWardNumber":
                 selectFromDropDown(zoneId, searchDetails.getSearchValue1(), webDriver);
                 selectFromDropDown(wardId, searchDetails.getSearchValue2(), webDriver);
-                enterText(houseNumTextBoxForSearch, searchDetails.getSearchValue3(), webDriver);
-                enterText(ownerNameTextBoxForSearch, searchDetails.getSearchValue4(), webDriver);
                 clickOnButton(searchButtonByZoneAndWard, webDriver);
                 break;
 

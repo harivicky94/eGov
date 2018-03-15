@@ -92,16 +92,16 @@ public class PTISDataReader extends ExcelReader {
                 String zone = values[0];
                 String ward = values[1];
 
-                String value1 = getCellData(searchDetailsSheet, dataRow, "searchValue2").getStringCellValue();
-                String[] values1 = value1.split(";");
-                String houseNo = values1[0];
-                String ownerName = values1[1];
+//                String value1 = getCellData(searchDetailsSheet, dataRow, "searchValue2").getStringCellValue();
+//               String[] values1 = value1.split(";");
+////                String houseNo = values1[0];
+////                String ownerName = values1[0];
 
                 searchDetails = new SearchDetailsBuilder()
                         .withZoneNumber(zone)
                         .withWardNumber(ward)
-                        .withHouseNo(houseNo)
-                        .withOwnerName(ownerName)
+//                        .withHouseNo(houseNo)
+//                        .withOwnerName(ownerName)
                         .build();
 
                 break;
