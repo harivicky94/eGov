@@ -81,11 +81,13 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.WordUtils;
 import org.egov.bpa.master.entity.ServiceType;
+import org.egov.bpa.transaction.entity.ApplicationFeeDetail;
 import org.egov.bpa.transaction.entity.ApplicationPermitConditions;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.BpaNotice;
 import org.egov.bpa.transaction.entity.BuildingDetail;
 import org.egov.bpa.transaction.entity.Response;
+import org.egov.bpa.transaction.entity.dto.PermitFeeHelper;
 import org.egov.bpa.transaction.entity.enums.PermitConditionType;
 import org.egov.bpa.transaction.repository.BpaNoticeRepository;
 import org.egov.bpa.transaction.service.ApplicationBpaService;
@@ -309,9 +311,30 @@ public class BpaNoticeService {
                 getValidityDescription(bpaApplication.getServiceType().getCode(), bpaApplication.getPlanPermissionDate()));
         reportParams.put("isBusinessUser", bpaUtils.logedInuseCitizenOrBusinessUser());
         reportParams.put("designation", getApproverDesignation(getAmountRuleByServiceType(bpaApplication)));
-        reportParams.put("qrCode",generatePDF417Code(buildQRCodeDetails(bpaApplication)));
+        reportParams.put("qrCode", generatePDF417Code(buildQRCodeDetails(bpaApplication)));
+        if(bpaApplication.getIsOneDayPermitApplication())
+            reportParams.put("permitOrderTitle", "ONE DAY BUILDING PERMIT");
+        else
+            reportParams.put("permitOrderTitle", "BUILDING PERMIT");
+        if(!bpaApplication.getApplicationFee().isEmpty())
+            reportParams.put("permitFeeDetails", getPermitFeeDetails(bpaApplication));
 
         return reportParams;
+    }
+
+    private List<PermitFeeHelper> getPermitFeeDetails(final BpaApplication application) {
+        List<PermitFeeHelper> permitFeeDetails = new ArrayList<>();
+        if(!application.getApplicationFee().get(0).getApplicationFeeDetail().isEmpty()) {
+            for(EgDemandDetails demandDetails : application.getDemand().getEgDemandDetails()) {
+                if(demandDetails.getAmount().compareTo(BigDecimal.ZERO) > 0) {
+                    PermitFeeHelper feeHelper = new PermitFeeHelper();
+                    feeHelper.setFeeDescription(demandDetails.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster());
+                    feeHelper.setAmount(demandDetails.getAmount());
+                    permitFeeDetails.add(feeHelper);
+                }
+            }
+        }
+        return permitFeeDetails;
     }
 
     private String buildQRCodeDetails(final BpaApplication bpaApplication) {

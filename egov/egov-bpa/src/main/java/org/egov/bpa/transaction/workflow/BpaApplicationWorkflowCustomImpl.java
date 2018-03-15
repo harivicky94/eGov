@@ -162,7 +162,11 @@ public abstract class BpaApplicationWorkflowCustomImpl implements BpaApplication
         } else if (BpaConstants.WF_APPROVE_BUTTON.equalsIgnoreCase(workFlowAction)
                    && (BpaConstants.APPLICATION_STATUS_APPROVED.equalsIgnoreCase(application.getStatus().getCode())
                        || BpaConstants.APPLICATION_STATUS_NOCUPDATED.equalsIgnoreCase(application.getStatus().getCode()))) {
-            wfmatrix = bpaApplicationWorkflowService.getWfMatrix(application.getStateType(), null, amountRule,
+            if(!bpaUtils.checkAnyTaxIsPendingToCollect(application))
+                wfmatrix = bpaApplicationWorkflowService.getWfMatrix(application.getStateType(), null, null,
+                        additionalRule, "Final Approval Process initiated", "Permit Fee Collection Pending");
+            else
+                wfmatrix = bpaApplicationWorkflowService.getWfMatrix(application.getStateType(), null, amountRule,
                     additionalRule, application.getCurrentState().getValue(), application.getState().getNextAction());
 
             BpaStatus status = bpaStatusService

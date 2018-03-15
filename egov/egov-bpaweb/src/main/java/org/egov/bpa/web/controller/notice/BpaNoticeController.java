@@ -60,6 +60,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.egov.bpa.transaction.service.ApplicationBpaService;
 import org.egov.bpa.transaction.service.notice.BpaNoticeService;
 import org.egov.bpa.utils.BpaConstants;
+import org.egov.infra.admin.master.service.*;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.web.utils.WebUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,6 +85,8 @@ public class BpaNoticeController {
     private ApplicationBpaService applicationBpaService;
     @Autowired
     private BpaNoticeService bpaReportService;
+    @Autowired
+    private CityService cityService;
 
     @GetMapping("/application/demandnotice/{applicationNumber}")
     @ResponseBody
@@ -126,11 +129,8 @@ public class BpaNoticeController {
 
     private Map<String, Object> buildUlbDetails(HttpServletRequest request) {
         final Map<String, Object> ulbDetailsReportParams = new HashMap<>();
-        final String url = WebUtils.extractRequestDomainURL(request, false);
-        final String cityLogo = url.concat(BpaConstants.IMAGE_CONTEXT_PATH)
-                .concat((String) request.getSession().getAttribute("citylogo"));
         ulbDetailsReportParams.put("cityName", request.getSession().getAttribute("cityname").toString());
-        ulbDetailsReportParams.put("logoPath", cityLogo);
+        ulbDetailsReportParams.put("logoPath", cityService.getCityLogoAsStream());
         ulbDetailsReportParams.put("ulbName", request.getSession().getAttribute("citymunicipalityname").toString());
         return ulbDetailsReportParams;
     }

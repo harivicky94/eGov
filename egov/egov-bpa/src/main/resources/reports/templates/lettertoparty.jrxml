@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-10-04T12:21:34 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="lettertoparty" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="19a6b87f-b0aa-4611-908a-14a81b44cdbb">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="148"/>
+	<property name="ireport.y" value="0"/>
 	<import value="org.egov.infra.reporting.util.ReportUtil"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["/work/collections/reports/templates/"]]></defaultValueExpression>
@@ -16,7 +14,7 @@
 	</parameter>
 	<parameter name="ulbName" class="java.lang.String"/>
 	<parameter name="cityName" class="java.lang.String"/>
-	<parameter name="logoPath" class="java.lang.String"/>
+	<parameter name="logoPath" class="java.io.InputStream"/>
 	<parameter name="lpReason" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[]]>
@@ -49,8 +47,8 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$P{ulbName}]]></textFieldExpression>
 			</textField>
-			<image hAlign="Center" vAlign="Middle" onErrorType="Blank">
-				<reportElement x="25" y="4" width="60" height="57" uuid="6c4499dd-ad89-4393-a514-a9ee452c2290"/>
+			<image>
+				<reportElement x="8" y="0" width="60" height="60" uuid="434901eb-07c1-4c6e-9545-ccba42fb3aaf"/>
 				<imageExpression><![CDATA[$P{logoPath}]]></imageExpression>
 			</image>
 		</band>
@@ -160,7 +158,7 @@
 				<textFieldExpression><![CDATA["	"+$F{lpDesc}]]></textFieldExpression>
 			</textField>
 		</band>
-		<band height="97">
+		<band height="111">
 			<textField isStretchWithOverflow="true">
 				<reportElement x="0" y="7" width="544" height="46" uuid="169be3a7-3d60-4d60-9ed1-815067b41d80">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
@@ -172,19 +170,26 @@
 				<textFieldExpression><![CDATA["Failure to comply with the above requirements within "+$F{lastReplyDate}+ " will lead to disposal of the above application on its merits without further intimation."]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="0" y="77" width="174" height="20" uuid="55c16c50-7e31-4887-801f-f25af859a0d7"/>
+				<reportElement x="0" y="91" width="174" height="20" uuid="55c16c50-7e31-4887-801f-f25af859a0d7"/>
 				<textElement markup="none">
 					<font fontName="SansSerif" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["LP No : "+$F{lpNumber}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="353" y="76" width="202" height="19" uuid="a93bb901-4fd1-4826-8a28-e43449d401ad"/>
-				<textElement>
+				<reportElement x="202" y="72" width="342" height="19" uuid="a93bb901-4fd1-4826-8a28-e43449d401ad"/>
+				<textElement textAlignment="Center">
 					<font fontName="SansSerif" isBold="true"/>
 				</textElement>
-				<text><![CDATA[ Asst. Executive Engineer (T.P.)]]></text>
+				<text><![CDATA[Secretary]]></text>
 			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="202" y="91" width="342" height="20" uuid="3202b92b-e649-43f6-bf1e-e6a80a7d1fbb"/>
+				<textElement textAlignment="Center" markup="none">
+					<font fontName="SansSerif" size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ulbName}]]></textFieldExpression>
+			</textField>
 		</band>
 	</detail>
 </jasperReport>

@@ -40,7 +40,7 @@
 package org.egov.bpa.master.entity.enums;
 
 public enum ApplicationType {
-	ONE_DAY_PERMIT("One day permit"), ALL_OTHER_SERVICES("Regular");
+	ALL_OTHER_SERVICES("Regular"), ONE_DAY_PERMIT("One day permit");
     
     private final String applicationTypeVal;
 

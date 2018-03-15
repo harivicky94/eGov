@@ -44,7 +44,7 @@
 				<text><![CDATA[Floor Description]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="108" y="8" width="97" height="20" uuid="fd1f515e-7883-4a1c-a599-edcefe2589b3"/>
+				<reportElement x="161" y="8" width="86" height="20" uuid="fd1f515e-7883-4a1c-a599-edcefe2589b3"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -58,7 +58,7 @@
 				<text><![CDATA[Builtup Area]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="393" y="8" width="141" height="20" isRemoveLineWhenBlank="true" uuid="77d1d689-de26-4dc4-8545-6876675b6532">
+				<reportElement x="413" y="8" width="141" height="20" isRemoveLineWhenBlank="true" uuid="77d1d689-de26-4dc4-8545-6876675b6532">
 					<printWhenExpression><![CDATA[$P{occupancy}.equals("Mixed")]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -74,7 +74,7 @@
 				<text><![CDATA[Occupancy]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="205" y="8" width="97" height="20" uuid="ff1dbc87-c60d-4298-bd5d-37604909a212"/>
+				<reportElement x="247" y="8" width="85" height="20" uuid="ff1dbc87-c60d-4298-bd5d-37604909a212"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -88,7 +88,7 @@
 				<text><![CDATA[Floor Area]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="302" y="8" width="91" height="20" uuid="537d223b-9b73-4696-81fa-b55e4912d522"/>
+				<reportElement x="332" y="8" width="81" height="20" uuid="537d223b-9b73-4696-81fa-b55e4912d522"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -100,6 +100,20 @@
 					<paragraph leftIndent="5"/>
 				</textElement>
 				<text><![CDATA[Carpet Area]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="108" y="8" width="53" height="20" uuid="6b3d08c4-3eca-4403-9c83-6c86418037f6"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" isBold="true"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<text><![CDATA[Level]]></text>
 			</staticText>
 		</band>
 	</columnHeader>
@@ -117,10 +131,10 @@
 					<font fontName="SansSerif" isBold="false"/>
 					<paragraph leftIndent="5"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{floorDescription}+" "+$F{floorNumber}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{floorDescription}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00">
-				<reportElement x="108" y="0" width="97" height="20" uuid="e334a36a-db6e-4738-9e02-ffc7f0265596"/>
+				<reportElement x="161" y="0" width="86" height="20" uuid="e334a36a-db6e-4738-9e02-ffc7f0265596"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -134,7 +148,7 @@
 				<textFieldExpression><![CDATA[$F{plinthArea}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="393" y="0" width="141" height="20" isRemoveLineWhenBlank="true" uuid="f62f57a3-50db-4119-9916-14f2dd4288cb">
+				<reportElement x="413" y="0" width="141" height="20" isRemoveLineWhenBlank="true" uuid="f62f57a3-50db-4119-9916-14f2dd4288cb">
 					<printWhenExpression><![CDATA[$P{occupancy}.equals("Mixed")]]></printWhenExpression>
 				</reportElement>
 				<box>
@@ -150,7 +164,7 @@
 				<textFieldExpression><![CDATA[$F{occupancy}.getDescription()]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00">
-				<reportElement x="205" y="0" width="97" height="20" uuid="38bd136a-1dca-4cfc-ae84-e33ecea7a6e4"/>
+				<reportElement x="247" y="0" width="85" height="20" uuid="38bd136a-1dca-4cfc-ae84-e33ecea7a6e4"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -164,7 +178,7 @@
 				<textFieldExpression><![CDATA[$F{floorArea}]]></textFieldExpression>
 			</textField>
 			<textField pattern="#,##0.00">
-				<reportElement x="302" y="0" width="91" height="20" uuid="4844f8da-bbbf-4082-b9db-460b517ac119"/>
+				<reportElement x="332" y="0" width="81" height="20" uuid="4844f8da-bbbf-4082-b9db-460b517ac119"/>
 				<box>
 					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
@@ -176,6 +190,20 @@
 					<paragraph leftIndent="5"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{carpetArea}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="108" y="0" width="53" height="20" uuid="cbc9594e-426b-41d7-8788-79f2f8dd9a64"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="SansSerif" isBold="false"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{floorNumber}]]></textFieldExpression>
 			</textField>
 		</band>
 	</detail>

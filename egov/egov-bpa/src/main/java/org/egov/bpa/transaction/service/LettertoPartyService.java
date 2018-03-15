@@ -47,6 +47,7 @@ import org.egov.bpa.transaction.service.messaging.BPASmsAndEmailService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.utils.BpaUtils;
 import org.egov.commons.service.FinancialYearService;
+import org.egov.infra.admin.master.service.*;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
@@ -82,6 +83,8 @@ public class LettertoPartyService {
     private BPASmsAndEmailService bpaSmsAndEmailService;
     @Autowired
     private ReportService reportService;
+    @Autowired
+    private CityService cityService;
 
     @Autowired
     public LettertoPartyService(final LettertoPartyRepository lettertoPartyRepository) {
@@ -171,11 +174,8 @@ public class LettertoPartyService {
     }
 
     public Map<String, Object> buildReportParameters(final LettertoParty lettertoParty, HttpServletRequest request) {
-        final Map<String, Object> reportParams = new HashMap<>();
-        final String url = WebUtils.extractRequestDomainURL(request, false);
-        final String cityLogo = url.concat(BpaConstants.IMAGE_CONTEXT_PATH)
-                .concat((String) request.getSession().getAttribute("citylogo"));
-        reportParams.put("logoPath", cityLogo);
+        final Map<String, Object> reportParams = new HashMap<>();      	
+        reportParams.put("logoPath", cityService.getCityLogoAsStream());
         reportParams.put("cityName", request.getSession().getAttribute("cityname").toString());
         reportParams.put("ulbName", request.getSession().getAttribute("citymunicipalityname").toString());
         reportParams.put("lpReason",

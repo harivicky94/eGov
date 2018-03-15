@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.5.1.final using JasperReports Library version 6.5.1  -->
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2018-03-15T20:10:45 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="buildingpermit" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="576a1e58-ecb3-4d56-971a-5d1fe019af29">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -33,6 +34,9 @@
 	<parameter name="permitConditions" class="java.lang.String"/>
 	<parameter name="additionalNotes" class="java.lang.String"/>
 	<parameter name="qrCode" class="java.io.File"/>
+	<parameter name="permitFeeDetails" class="java.util.List"/>
+	<parameter name="logoPath" class="java.io.InputStream"/>
+	<parameter name="permitOrderTitle" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -51,42 +55,42 @@
 	<title>
 		<band height="145" splitType="Stretch">
 			<textField>
-				<reportElement x="35" y="11" width="452" height="20" uuid="0c350090-2eb2-4cb8-a172-f52fdc4324ba"/>
+				<reportElement x="63" y="11" width="370" height="20" uuid="0c350090-2eb2-4cb8-a172-f52fdc4324ba"/>
 				<textElement textAlignment="Center">
 					<font fontName="SansSerif" size="11" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["APPENDIX C"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="44" y="30" width="452" height="20" uuid="860ffd1a-527b-4be5-aeaf-3e6dab016dad"/>
+				<reportElement x="63" y="30" width="370" height="20" uuid="860ffd1a-527b-4be5-aeaf-3e6dab016dad"/>
 				<textElement textAlignment="Center">
 					<font fontName="SansSerif" size="12" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["See Rule 11 (3)"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="43" y="52" width="452" height="20" uuid="13d1ee09-016a-44b3-a70c-eeaa9b66affd"/>
+				<reportElement x="63" y="49" width="370" height="20" uuid="13d1ee09-016a-44b3-a70c-eeaa9b66affd"/>
 				<textElement textAlignment="Center">
 					<font fontName="SansSerif" size="11" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["BUILDING PERMIT"]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{permitOrderTitle}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="-8" y="71" width="555" height="20" uuid="5dfe528d-792c-4b15-8716-5ce4671fb539"/>
+				<reportElement x="1" y="71" width="553" height="20" uuid="5dfe528d-792c-4b15-8716-5ce4671fb539"/>
 				<textElement textAlignment="Center">
 					<font fontName="SansSerif" size="12" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{ulbName}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="0" y="96" width="180" height="20" uuid="8c132a85-9329-402b-9b9f-e6a7ed50d5a7"/>
+				<reportElement x="0" y="96" width="116" height="20" uuid="8c132a85-9329-402b-9b9f-e6a7ed50d5a7"/>
 				<textElement>
 					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Building Plan Permission No:]]></text>
+				<text><![CDATA[Plan Permission No :]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="168" y="96" width="275" height="20" uuid="d32664c0-b2ba-4011-a881-fefd4925c5ee"/>
+				<reportElement x="116" y="96" width="222" height="20" uuid="d32664c0-b2ba-4011-a881-fefd4925c5ee"/>
 				<textElement>
 					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
@@ -100,7 +104,7 @@
 				<text><![CDATA[Dated : ]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="458" y="96" width="97" height="20" uuid="c9a26c74-1b40-4ffb-b03c-3e4e887c3b9a"/>
+				<reportElement x="457" y="96" width="98" height="20" uuid="c9a26c74-1b40-4ffb-b03c-3e4e887c3b9a"/>
 				<textElement textAlignment="Center">
 					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
@@ -114,10 +118,14 @@
 				<textFieldExpression><![CDATA["Ref :-  Application Dated "+$P{applicationDate}+" from smt/sri "+$P{applicantName}]]></textFieldExpression>
 			</textField>
 			<image>
-				<reportElement x="0" y="10" width="150" height="70" uuid="8b09590f-cf8d-4a41-ba7d-bce7902173f9">
+				<reportElement x="433" y="6" width="122" height="43" uuid="8b09590f-cf8d-4a41-ba7d-bce7902173f9">
 					<property name="qrCode" value="$P{qrCode}"/>
 				</reportElement>
 				<imageExpression><![CDATA[$P{qrCode}]]></imageExpression>
+			</image>
+			<image>
+				<reportElement x="0" y="11" width="60" height="60" uuid="ac206e46-6930-479b-88cd-c4a07891707f"/>
+				<imageExpression><![CDATA[$P{logoPath}]]></imageExpression>
 			</image>
 		</band>
 	</title>
@@ -144,7 +152,7 @@
 		</band>
 		<band height="35">
 			<subreport>
-				<reportElement x="0" y="0" width="544" height="35" isRemoveLineWhenBlank="true" uuid="1f313474-b095-4a9a-891c-f4a17562ea2b">
+				<reportElement x="0" y="0" width="555" height="35" isRemoveLineWhenBlank="true" uuid="1f313474-b095-4a9a-891c-f4a17562ea2b">
 					<printWhenExpression><![CDATA[new Boolean($F{applicationFloorDetails}.size()!= 0)]]></printWhenExpression>
 				</reportElement>
 				<subreportParameter name="occupancy">
@@ -155,62 +163,75 @@
 				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("buildingfloordetailssubreport.jasper")]]></subreportExpression>
 			</subreport>
 		</band>
-		<band height="57">
+		<band height="36">
+			<subreport>
+				<reportElement x="0" y="1" width="555" height="35" isRemoveLineWhenBlank="true" uuid="d3ebd9d8-02af-4302-afb9-3d0b794e5c27">
+					<printWhenExpression><![CDATA[new Boolean($P{permitFeeDetails}.size()!= 0)]]></printWhenExpression>
+				</reportElement>
+				<subreportParameter name="occupancy">
+					<subreportParameterExpression><![CDATA[$P{occupancy}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{permitFeeDetails},false)]]></dataSourceExpression>
+				<returnValue subreportVariable="PAGE_NUMBER" toVariable="SUB_REPORT_ROW_CNT"/>
+				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("bpapermitfeedetails.jasper")]]></subreportExpression>
+			</subreport>
+		</band>
+		<band height="51">
 			<textField isStretchWithOverflow="true">
-				<reportElement x="254" y="37" width="301" height="20" uuid="4213243a-d32f-4648-ba1e-69dc4646e124"/>
+				<reportElement x="254" y="31" width="301" height="20" uuid="4213243a-d32f-4648-ba1e-69dc4646e124"/>
 				<textElement textAlignment="Right">
 					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Signature And Name Of  "+$P{designation}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="0" y="37" width="65" height="20" uuid="88c253a2-442f-42a8-9afe-f04c263186c9"/>
+				<reportElement x="0" y="31" width="65" height="20" uuid="88c253a2-442f-42a8-9afe-f04c263186c9"/>
 				<textElement>
 					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Date        : ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="1" y="17" width="64" height="20" uuid="6c96b9c6-b85d-4e84-af29-c5487095c25a"/>
+				<reportElement x="1" y="11" width="64" height="20" uuid="6c96b9c6-b85d-4e84-af29-c5487095c25a"/>
 				<textElement>
 					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Place        : ]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="65" y="18" width="133" height="20" uuid="5fe18618-e612-4fd2-b48f-af737f6fbef0"/>
+				<reportElement x="65" y="12" width="133" height="20" uuid="5fe18618-e612-4fd2-b48f-af737f6fbef0"/>
 				<textElement>
 					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{cityName}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="65" y="38" width="133" height="19" uuid="1a71a025-e5b0-4afd-8eb8-7783f75cee86"/>
+				<reportElement x="65" y="32" width="133" height="19" uuid="1a71a025-e5b0-4afd-8eb8-7783f75cee86"/>
 				<textElement>
 					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{currentDate}]]></textFieldExpression>
 			</textField>
 		</band>
-		<band height="19">
+		<band height="22">
 			<textField isStretchWithOverflow="true">
-				<reportElement x="0" y="0" width="555" height="19" uuid="2b2b25e5-a5a3-4cd1-9a1e-ac2a185f56aa"/>
+				<reportElement x="0" y="3" width="555" height="19" uuid="2b2b25e5-a5a3-4cd1-9a1e-ac2a185f56aa"/>
 				<textElement textAlignment="Justified">
 					<font fontName="SansSerif" size="10" isBold="true" isItalic="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{certificateValidity}]]></textFieldExpression>
 			</textField>
 		</band>
-		<band height="82">
+		<band height="77">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="0" y="32" width="555" height="50" isRemoveLineWhenBlank="true" uuid="ddf1c398-b89d-4848-a77a-00127ab0084d"/>
+				<reportElement x="0" y="27" width="555" height="50" isRemoveLineWhenBlank="true" uuid="ddf1c398-b89d-4848-a77a-00127ab0084d"/>
 				<textElement textAlignment="Justified">
 					<font fontName="SansSerif" size="10" isBold="false" isItalic="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{additionalNotes}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="0" y="13" width="83" height="19" uuid="4f8885ad-48ed-402b-bfb3-0593a059f2e5"/>
+				<reportElement x="0" y="8" width="83" height="19" uuid="4f8885ad-48ed-402b-bfb3-0593a059f2e5"/>
 				<textElement>
 					<font fontName="SansSerif" size="10" isBold="true"/>
 				</textElement>
