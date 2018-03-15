@@ -68,6 +68,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -328,7 +330,8 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
         if (workFlowAction != null
                 && workFlowAction
                         .equals(WF_LBE_SUBMIT_BUTTON)
-                && onlinePaymentEnable) {
+                && onlinePaymentEnable && bpaApplicationRes.getAdmissionfeeAmount() != null
+                && bpaApplicationRes.getAdmissionfeeAmount().compareTo(BigDecimal.ZERO) == 1) {
             return genericBillGeneratorService
                     .generateBillAndRedirectToCollection(bpaApplication, model);
         }

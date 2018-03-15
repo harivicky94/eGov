@@ -68,6 +68,8 @@ import javax.validation.Valid;
 
 import static org.egov.bpa.utils.BpaConstants.*;
 
+import java.math.BigDecimal;
+
 @Controller
 @RequestMapping(value = "/application")
 public class CitizenUpdateApplicationController extends BpaGenericApplicationController {
@@ -189,7 +191,8 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
         bpaApplication.setDemand(applicationBpaBillService.createDemand(bpaApplication));
         String enableOrDisablePayOnline = bpaUtils.getAppconfigValueByKeyName(ENABLEONLINEPAYMENT);
         if (workFlowAction != null && workFlowAction.equals(WF_LBE_SUBMIT_BUTTON)
-                && enableOrDisablePayOnline.equalsIgnoreCase("YES")) {
+                && enableOrDisablePayOnline.equalsIgnoreCase("YES") && bpaApplication.getAdmissionfeeAmount() != null
+                && bpaApplication.getAdmissionfeeAmount().compareTo(BigDecimal.ZERO) == 1) {
             return genericBillGeneratorService
                     .generateBillAndRedirectToCollection(bpaApplication, model);
         }

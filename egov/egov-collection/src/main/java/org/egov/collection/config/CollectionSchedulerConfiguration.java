@@ -82,15 +82,10 @@ public class CollectionSchedulerConfiguration extends QuartzSchedulerConfigurati
         collectionScheduler.setSchedulerName("collection-scheduler");
         collectionScheduler.setAutoStartup(true);
         collectionScheduler.setOverwriteExistingJobs(true);
-        collectionScheduler.setTriggers(
-                axisReconciliationCronTrigger().getObject(),
-                atomReconciliationCronTrigger().getObject(),
-                remittanceCashInstrumentCronTrigger0().getObject(),
-                remittanceCashInstrumentCronTrigger1().getObject(),
-                remittanceDDInstrumentCronTrigger0().getObject(),
-                remittanceDDInstrumentCronTrigger1().getObject(),
-                remittanceChequeInstrumentCronTrigger0().getObject(),
-                remittanceChequeInstrumentCronTrigger1().getObject());
+        //Commenting for time being - Waiting for clarification on the status api from payment gateway
+        //Registering only pnb trigger
+       /* collectionScheduler.setTriggers(
+                pnbReconciliationCronTrigger().getObject());*/
         return collectionScheduler;
     }
 
