@@ -127,10 +127,10 @@ $(document).ready(function() {
                     },
                     callback : function(result) {
                         if (result) {
-                            $('.loader-class').modal('show', {
-                                backdrop : 'static'
-                            });
                             if ($('#scrutinyReScheduleForm').valid()) {
+                                $('.loader-class').modal('show', {
+                                    backdrop : 'static'
+                                });
                                 document.forms[0].submit();
                             } else {
                                 e.stopPropagation();
