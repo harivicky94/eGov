@@ -32,24 +32,49 @@ public class DataEntryAcknowledgementPage extends BasePage {
     private WebElement generalTaxTextBox;
 
     @FindBy(name = "demandDetailBeanList[1].actualAmount")
-    private WebElement libraryCessTextBox;
+    private WebElement scavengingTaxTextBox;
 
     @FindBy(name = "demandDetailBeanList[2].actualAmount")
-    private WebElement educationCessTextBox;
+    private WebElement drainageTaxTextBox;
 
     @FindBy(name = "demandDetailBeanList[3].actualAmount")
-    private WebElement unauthorizedPenaltyTextBox;
-
-    @FindBy(name = "demandDetailBeanList[4].installment.id")
-    private WebElement secondInstallmentDropBox;
+    private WebElement lightingTaxTextBox;
 
     @FindBy(name = "demandDetailBeanList[4].actualAmount")
-    private WebElement secondGeneralTaxTextBox;
+    private WebElement waterTaxTextBox;
+
     @FindBy(name = "demandDetailBeanList[5].actualAmount")
-    private WebElement secondLibraryCessTextBox;
+    private WebElement libraryCessTextBox;
+
     @FindBy(name = "demandDetailBeanList[6].actualAmount")
-    private WebElement secondEducationCessTextBox;
+    private WebElement educationCessTextBox;
+
     @FindBy(name = "demandDetailBeanList[7].actualAmount")
+    private WebElement unauthorizedPenaltyTextBox;
+
+    @FindBy(name = "demandDetailBeanList[8].installment.id")
+    private WebElement secondInstallmentDropBox;
+
+    @FindBy(name = "demandDetailBeanList[8].actualAmount")
+    private WebElement secondGeneralTaxTextBox;
+
+    @FindBy(name = "demandDetailBeanList[9].actualAmount")
+    private WebElement secondScavengingTaxTextBox;
+
+    @FindBy(name = "demandDetailBeanList[10].actualAmount")
+    private WebElement secondDrainageTaxTextBox;
+
+    @FindBy(name = "demandDetailBeanList[11].actualAmount")
+    private WebElement secondLightingTaxTextBox;
+
+    @FindBy(name = "demandDetailBeanList[12].actualAmount")
+    private WebElement secondWaterTaxTextBox;
+
+    @FindBy(name = "demandDetailBeanList[13].actualAmount")
+    private WebElement secondLibraryCessTextBox;
+    @FindBy(name = "demandDetailBeanList[14].actualAmount")
+    private WebElement secondEducationCessTextBox;
+    @FindBy(name = "demandDetailBeanList[15].actualAmount")
     private WebElement secondUnauthorizedPenaltyTextBox;
 
     @FindBy(id = "remarks")
@@ -90,12 +115,20 @@ public class DataEntryAcknowledgementPage extends BasePage {
     public void enterAddDemandDetails() {
         selectFromDropDown(installmentDropBox, "2017-2018-1", driver);
         enterText(generalTaxTextBox, "300", driver);
+        enterText(scavengingTaxTextBox, "50", driver);
+        enterText(drainageTaxTextBox, "40", driver);
+        enterText(lightingTaxTextBox, "50", driver);
+        enterText(waterTaxTextBox, "25", driver);
         enterText(libraryCessTextBox, "200", driver);
         enterText(educationCessTextBox, "100", driver);
         enterText(unauthorizedPenaltyTextBox, "50", driver);
         clickOnButton(addEditDemandButton, driver);
         selectFromDropDown(secondInstallmentDropBox, "2017-2018-2", driver);
         enterText(secondGeneralTaxTextBox, "350", driver);
+        enterText(secondScavengingTaxTextBox, "30", driver);
+        enterText(secondDrainageTaxTextBox, "40", driver);
+        enterText(secondLightingTaxTextBox, "50", driver);
+        enterText(secondWaterTaxTextBox, "25", driver);
         enterText(secondLibraryCessTextBox, "250", driver);
         enterText(secondEducationCessTextBox, "150", driver);
         enterText(secondUnauthorizedPenaltyTextBox, "100", driver);

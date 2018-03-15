@@ -66,7 +66,7 @@ Feature: Create New Property
 
    # DATA ENTRY SCREEN #
 
-  @Sanity @PropertyTax
+  @Sanity @PropertyTax @new
   Scenario: Registered user create property through data entry screen
 
     Given PTISCommissioner logs in
