@@ -134,7 +134,10 @@ $(document)
 													},
 													{
 														"data" : "applicationDate",
-														"sClass" : "text-left"
+														"sClass" : "text-left",
+                                                        render: function (data) {
+                                                            return data.split("-").reverse().join("/");
+                                                        }
 													},
 													{
 														"data" : "serviceType",
