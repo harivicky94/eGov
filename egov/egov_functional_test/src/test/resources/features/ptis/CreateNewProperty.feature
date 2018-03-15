@@ -6,7 +6,7 @@ Feature: Create New Property
 
   # CREATE NEW PROPERTY SCREEN #
 
-  @Sanity @PropertyTax @new
+  @Sanity @PropertyTax @new @test
   Scenario Outline: Registered user creating a new property in the system
 
     Given CSCUser logs in
