@@ -30,11 +30,23 @@ public class PlanDetail {
     private List<Lane> laneRoads = new ArrayList<>();
     
     private HashMap<String, String> errors = new HashMap<>();
+    private HashMap<String, String> noObjectionCertificates= new HashMap<>();
+
     private HashMap<String, String> generalInformation = new HashMap<>();
     private Basement basement;
     private List<Measurement> parkingSlots= new ArrayList<>();
     private List<FloorUnit> floorUnits= new ArrayList<>();
     
+
+ 
+
+    public HashMap<String, String> getNoObjectionCertificates() {
+        return noObjectionCertificates;
+    }
+
+    public void setNoObjectionCertificates(HashMap<String, String> noObjectionCertificates) {
+        this.noObjectionCertificates = noObjectionCertificates;
+    }
 
     public List<CulDeSacRoad> getCuldeSacRoads() {
         return culdeSacRoads;
@@ -108,6 +120,15 @@ public class PlanDetail {
     public void addErrors(Map<String, String> errors) {
         if (errors != null)
             getErrors().putAll(errors);
+    }
+    public void addNocs(Map<String, String> nocs) {
+        if (noObjectionCertificates != null)
+            getNoObjectionCertificates().putAll(nocs);
+    }
+    public void addNoc(String key, String value) {
+
+        if (noObjectionCertificates != null)
+            getNoObjectionCertificates().put(key, value);
     }
 
     public void addError(String key, String value) {

@@ -256,8 +256,8 @@ public class Util {
             }
 
             }
-        if (BigDecimal.ZERO.compareTo(value) == 0)
-            pl.addError(name, "Dimension value is invalid for layer " + name);
+     /*   if (BigDecimal.ZERO.compareTo(value) == 0)
+            pl.addError(name, "Dimension value is invalid for layer " + name);*/
         return value;
 
     }

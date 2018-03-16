@@ -1,27 +1,27 @@
 package org.egov.edcr.service;
 
-import ar.com.fdvs.dj.core.DJConstants;
-import ar.com.fdvs.dj.core.DynamicJasperHelper;
-import ar.com.fdvs.dj.core.layout.ClassicLayoutManager;
-import ar.com.fdvs.dj.domain.DJDataSource;
-import ar.com.fdvs.dj.domain.DynamicReport;
-import ar.com.fdvs.dj.domain.Style;
-import ar.com.fdvs.dj.domain.builders.FastReportBuilder;
-import ar.com.fdvs.dj.domain.constants.Font;
-import ar.com.fdvs.dj.domain.constants.HorizontalAlign;
-import ar.com.fdvs.dj.domain.constants.Page;
-import ar.com.fdvs.dj.domain.constants.VerticalAlign;
-import ar.com.fdvs.dj.domain.entities.Subreport;
-import net.sf.jasperreports.engine.JRDataSource;
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperPrint;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-import net.sf.jasperreports.engine.type.SplitTypeEnum;
+import static org.egov.infra.security.utils.SecureCodeUtils.generatePDF417Code;
+
+import java.io.File;
+import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.edcr.autonumber.DcrApplicationNumberGenerator;
-import org.egov.edcr.entity.*;
+import org.egov.edcr.entity.DcrReportOutput;
+import org.egov.edcr.entity.EdcrApplication;
+import org.egov.edcr.entity.EdcrApplicationDetail;
+import org.egov.edcr.entity.PlanDetail;
+import org.egov.edcr.entity.PlanRule;
+import org.egov.edcr.entity.RuleOutput;
+import org.egov.edcr.entity.SubRuleOutput;
 import org.egov.edcr.entity.utility.RuleReportOutput;
 import org.egov.edcr.rule.GeneralRule;
 import org.egov.edcr.utility.DcrConstants;
@@ -39,12 +39,22 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.File;
-import java.io.InputStream;
-import java.text.SimpleDateFormat;
-import java.util.*;
-
-import static org.egov.infra.security.utils.SecureCodeUtils.generatePDF417Code;
+import ar.com.fdvs.dj.core.DJConstants;
+import ar.com.fdvs.dj.core.DynamicJasperHelper;
+import ar.com.fdvs.dj.core.layout.ClassicLayoutManager;
+import ar.com.fdvs.dj.domain.DJDataSource;
+import ar.com.fdvs.dj.domain.DynamicReport;
+import ar.com.fdvs.dj.domain.Style;
+import ar.com.fdvs.dj.domain.builders.FastReportBuilder;
+import ar.com.fdvs.dj.domain.constants.Font;
+import ar.com.fdvs.dj.domain.constants.HorizontalAlign;
+import ar.com.fdvs.dj.domain.constants.Page;
+import ar.com.fdvs.dj.domain.constants.VerticalAlign;
+import ar.com.fdvs.dj.domain.entities.Subreport;
+import net.sf.jasperreports.engine.JRDataSource;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 /*General rule class contains validations which are required for all types of building plans*/
 @Service
@@ -254,10 +264,21 @@ public class DcrService {
         boolean reportStatus = false;
         boolean finalReportStatus = true;
         StringBuilder errors = new StringBuilder();
+        StringBuilder nocs = new StringBuilder();
+        if (planDetail.getNoObjectionCertificates() != null && planDetail.getNoObjectionCertificates().size() > 0) {
+            int i = 1;
+            for (Map.Entry<String, String> entry : planDetail.getNoObjectionCertificates().entrySet()) {
+                nocs.append(String.valueOf(i)).append(". ");
+                nocs.append(entry.getValue());
+                nocs.append("\n"); 
+                i++;
+            }
+        }
+        
         if (planDetail.getErrors() != null && planDetail.getErrors().size() > 0) {
             int i = 1;
             for (Map.Entry<String, String> entry : planDetail.getErrors().entrySet()) {
-                errors.append(String.valueOf(i)).append(". ");
+                errors.append(String.valueOf(i)).append(". "); 
                 errors.append(entry.getValue());
                 errors.append("\n"); 
                 i++;
@@ -274,6 +295,8 @@ public class DcrService {
         valuesMap.put("applicationDate", applicationDate);
         valuesMap.put("errors", planDetail.getErrors());
         valuesMap.put("errorString", errors.toString());
+        valuesMap.put("nocString", nocs.toString());
+        valuesMap.put("nocs", planDetail.getNoObjectionCertificates());
         valuesMap.put("cityLogo", cityService.getCityLogoURL());
         valuesMap.put("currentYear", new LocalDate().getYear());
 

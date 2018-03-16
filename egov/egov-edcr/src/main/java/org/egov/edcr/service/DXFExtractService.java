@@ -828,7 +828,7 @@ public class DXFExtractService {
          * {
          */
         BigDecimal dimension = Util.getSingleDimensionValueByLayer(doc, DxfFileConstants.HORIZ_CLEAR_OHE2, pl);
-        if (dimension != null) {
+        if (dimension != null && dimension.compareTo(BigDecimal.ZERO) > 0) {
             line.setHorizontalDistance(dimension);
             line.setPresentInDxf(true);
         }
@@ -840,7 +840,7 @@ public class DXFExtractService {
         // Util.getMtextByLayerName(doc, DxfFileConstants.VERT_CLEAR_OHE);
 
         BigDecimal dimensionVerticle = Util.getSingleDimensionValueByLayer(doc, DxfFileConstants.VERT_CLEAR_OHE, pl);
-        if (dimensionVerticle != null) {
+        if (dimensionVerticle != null && dimensionVerticle.compareTo(BigDecimal.ZERO) > 0) {
             line.setVerticalDistance(dimensionVerticle);
             line.setPresentInDxf(true);
         }
@@ -861,9 +861,10 @@ public class DXFExtractService {
 
             }
         else {
-            if (dimension != null || dimensionVerticle != null)
-                pl.addError("VOLTAGE", "Voltage is not mentioned for the " + DxfFileConstants.HORIZ_CLEAR_OHE2 + " or "
-                        + DxfFileConstants.VERT_CLEAR_OHE);
+            if (dimension != null && dimension.compareTo(BigDecimal.ZERO) > 0)
+                pl.addError("VOLTAGE", "Voltage is not mentioned for the " + DxfFileConstants.HORIZ_CLEAR_OHE2);
+            if (dimensionVerticle != null && dimensionVerticle.compareTo(BigDecimal.ZERO) > 0)
+                pl.addError("VOLTAGE", "Voltage is not mentioned for the " + DxfFileConstants.VERT_CLEAR_OHE);
         }
         pl.setElectricLine(line);
 
