@@ -55,16 +55,16 @@ public class Rule61 extends GeneralRule {
             planDetail.getBuilding() != null && planDetail.getBuilding().getFloorsAboveGround() != null)
             if (planDetail.getBuilding().getFloorsAboveGround().compareTo(MAXIMUM_NUMBER_OF_FLOORS) <= 0)
                 planDetail.reportOutput
-                        .add(buildRuleOutputWithSubRule(DcrConstants.RULE61, DcrConstants.RULE61, RULE_61_DESCRIPTION,
+                        .add(buildRuleOutputWithSubRule(DcrConstants.RULE61, "61", RULE_61_DESCRIPTION,
                                 DcrConstants.MAXIMUM_NUMBEROF_FLOOR,
-                                MAXIMUM_NUMBER_OF_FLOORS.toString(),
+                              "Up to "+  MAXIMUM_NUMBER_OF_FLOORS.toString(),
                                 planDetail.getBuilding().getFloorsAboveGround().toString(),
-                                Result.Accepted, null));
+                                Result.Accepted, null));    
             else
                 planDetail.reportOutput
-                        .add(buildRuleOutputWithSubRule(DcrConstants.RULE61, DcrConstants.RULE61, RULE_61_DESCRIPTION,
+                        .add(buildRuleOutputWithSubRule(DcrConstants.RULE61, "61", RULE_61_DESCRIPTION,
                                 DcrConstants.MAXIMUM_NUMBEROF_FLOOR,
-                                MAXIMUM_NUMBER_OF_FLOORS.toString(),
+                                "Up to "+  MAXIMUM_NUMBER_OF_FLOORS.toString(),
                                 planDetail.getBuilding().getFloorsAboveGround().toString(),
                                 Result.Not_Accepted, null));
 

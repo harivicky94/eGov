@@ -263,12 +263,13 @@ public class DXFExtractService {
                         floor.getOpenSpaces().add(openSpace);
                     }
                 }
-            pl.getBuilding().getFloors().add(floor);
+            if(!floor.getHabitableRooms().isEmpty() ||  !floor.getOpenSpaces().isEmpty() || floor.getExterior()!=null)
+                pl.getBuilding().getFloors().add(floor);
 
         }
-        pl.getBuilding().setMaxFloor(BigDecimal.valueOf(floorNo));
+        pl.getBuilding().setMaxFloor( BigDecimal.valueOf(pl.getBuilding().getFloors().size()));
 
-        pl.getBuilding().setFloorsAboveGround(BigDecimal.valueOf(floorNo - 1));
+        pl.getBuilding().setFloorsAboveGround(BigDecimal.valueOf(pl.getBuilding().getFloors().size()));
 
         int negetivFloorNo = 0;
         while (layer != null) {
@@ -300,11 +301,12 @@ public class DXFExtractService {
                         floor.getOpenSpaces().add(openSpace);
                     }
                 }
-            pl.getBuilding().getFloors().add(floor);
+            if(!floor.getHabitableRooms().isEmpty() ||  !floor.getOpenSpaces().isEmpty() || floor.getExterior()!=null)
+                        pl.getBuilding().getFloors().add(floor);
 
         }
 
-        pl.getBuilding().setTotalFloors(BigDecimal.valueOf(Math.abs(negetivFloorNo) + floorNo));
+        pl.getBuilding().setTotalFloors(BigDecimal.valueOf(pl.getBuilding().getFloors().size()) );
     }
 
     private void extractBuildingDetails(PlanDetail pl, DXFDocument doc) {
