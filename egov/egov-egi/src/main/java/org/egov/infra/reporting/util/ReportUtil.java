@@ -111,6 +111,10 @@ public final class ReportUtil {
         return Thread.currentThread().getContextClassLoader().getResourceAsStream(IMAGES_BASE_PATH + imageName);
     }
 
+    public static String getImageURL(String imagePathWithContextRoot) {
+        return getDomainURL()+imagePathWithContextRoot;
+    }
+
     public static String getCityName() {
         return getMunicipalityName();
     }

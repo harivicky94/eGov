@@ -26,9 +26,12 @@ import org.egov.edcr.entity.utility.RuleReportOutput;
 import org.egov.edcr.rule.GeneralRule;
 import org.egov.edcr.utility.DcrConstants;
 import org.egov.edcr.utility.Util;
+import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.reporting.engine.ReportOutput;
+import org.egov.infra.reporting.util.ReportUtil;
+import org.joda.time.LocalDate;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -76,6 +79,11 @@ public class DcrService {
 
     @Value("${edcr.client.subreport}")
     private boolean clientSpecificSubReport;
+
+    @Autowired
+    private CityService cityService;
+
+    private ReportUtil reportUtil;
 
     public PlanDetail getPlanDetail() {
         return planDetail;
@@ -255,7 +263,7 @@ public class DcrService {
                 i++;
                 finalReportStatus = false;
             }
-        } 
+        }
 
         drb.setPageSizeAndOrientation(new Page(842, 595, true));
         final JRDataSource ds = new JRBeanCollectionDataSource(Collections.singletonList(planDetail2));
@@ -266,6 +274,11 @@ public class DcrService {
         valuesMap.put("applicationDate", applicationDate);
         valuesMap.put("errors", planDetail.getErrors());
         valuesMap.put("errorString", errors.toString());
+        valuesMap.put("cityLogo", cityService.getCityLogoURL());
+        valuesMap.put("currentYear", new LocalDate().getYear());
+
+        String imageURL = reportUtil.getImageURL("/egi/resources/global/images/egov_logo_brown.png");
+        valuesMap.put("egovLogo", imageURL);
 
         if (clientSpecificSubReport) {
             List<DcrReportOutput> list = new ArrayList<>();
