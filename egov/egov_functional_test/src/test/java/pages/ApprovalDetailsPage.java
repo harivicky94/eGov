@@ -28,9 +28,6 @@ public class ApprovalDetailsPage extends BasePage {
     @FindBy(linkText = "Close")
     private WebElement closeButton;
 
-//    @FindBy(css = "textarea[name='approvalComent']")
-//    private WebElement approverRemarkTextBox;
-
     @FindBy(id = "Approve")
     private WebElement approveButton;
 

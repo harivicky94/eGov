@@ -476,10 +476,10 @@ public class PropertyDetailsPage extends BasePage {
     }
 
     public void enterEditFloorDetails(EditFloorDetails floorDetails) {
-        selectFromDropDown(floorNumberSelection, floorDetails.getEditfloorNumber(), webDriver);
-        selectFromDropDown(classificationOfBuildingSelection, floorDetails.getEditclassificationOfBuilding(), webDriver);
+        selectAParticularFromDropDown(floorNumberSelection, 7, webDriver);
+        selectAParticularFromDropDown(classificationOfBuildingSelection, 4, webDriver );
 //        selectFromDropDown(natureOfUsageSelection, floorDetails.getEditnatureOfUsage(), webDriver);
-        selectFromDropDown(occupancySelection, floorDetails.getEditoccupancy(), webDriver);
+        selectAParticularFromDropDown(occupancySelection, 1, webDriver);
         enterText(editoccupantNameTextBox, floorDetails.getEditoccupantName(), webDriver);
         enterDate(editconstructionDateTextBox, floorDetails.getEditconstructionDate(), webDriver);
         enterDate(editeffectiveFromDateTextBox, floorDetails.getEditeffectiveFromDate(), webDriver);

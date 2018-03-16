@@ -10,10 +10,6 @@ import steps.BaseSteps;
 public class AdditionSteps extends BaseSteps implements En {
     public AdditionSteps() {
 
-//        And("^he searches for assessment with number \"([^\"]*)\"$", (String arg0) -> {
-//            pageStore.get(PropertyDetailsPage.class).searchAssessmentNumber(scenarioContext.getDataScreenAssessmentNumber());
-//            pageStore.get(PropertyDetailsPage.class).search();
-//        });
         And("^he updates assessment details as (\\w+)$", (String assessmentDetailsDataName) -> {
             EditAssessmentDetails assessmentDetails = new PTISDataReader(ptisTestDataFileName).getEditAssessmentDetails(assessmentDetailsDataName);
             pageStore.get(PropertyDetailsPage.class).enterEditAssessmentDetails(assessmentDetails);
@@ -27,10 +23,6 @@ public class AdditionSteps extends BaseSteps implements En {
             pageStore.get(PropertyDetailsPage.class).searchAssessmentNumber(scenarioContext.getDataScreenAssessmentNumber());
             pageStore.get(PropertyDetailsPage.class).search();
         });
-//        And("^he will copy application and assessment number$", () -> {
-//           scenarioContext.setActualMessage(pageStore.get(PropertyDetailsPage.class).getAssessmentApplicationNo());
-//            pageStore.get(PropertyAcknowledgementPage.class).close();
-//        });
 
     }
 }

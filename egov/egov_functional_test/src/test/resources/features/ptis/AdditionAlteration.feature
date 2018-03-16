@@ -5,11 +5,11 @@ Feature: Addition Alteration of a property
 
    ### ADDITION ALTERATION SCREEN ###
 
-#  @Sanity @PropertyTax
-  @WIP
+  @Sanity @PropertyTax
+
   Scenario Outline: Registered user Update existing property
 
-    Given commissioner logs in
+    Given PTISCommissioner logs in
     And user will select the required screen as "Data entry screen" with condition as "ptis"
     And he creates a new assessment for a private residential property
     Then dataEntry Details saved successfully
@@ -17,36 +17,41 @@ Feature: Addition Alteration of a property
     And he choose to close the dataentry acknowledgement screen
     And current user logs out
 
-    Given juniorAssistant logs in
+    Given CSCUser logs in
     And user will select the required screen as "Addition/Alteration of Assessment"
     And he searches for assessment with number
     And he updates assessment details as <editAssessmentDetails>
     And he enters amenities as <amenitiesDetails>
     And he enters Floor Details as <editFloorDetails>
-    And he forwards for approval to billCollector
+    And he click on Forward Button
     And he will copy the acknowledgement message with assessment number modifyProperty-forward
-    Then user will be notified by "successfully"
     And current user logs out
 
-    When billCollector logs in
+    And PTISJuniorAssistant logs in
     And he chooses to act upon above assessment number
-    And he forwards for approval to revenueInspector
+    And he forwards for approval to PTISBillCollector
     And current user closes acknowledgement
     And current user logs out
 
-    When revenueInspector logs in
+    When PTISBillCollector logs in
     And he chooses to act upon above assessment number
-    And he forwards for approval to revenueOfficer
+    And he forwards for approval to PTISRevenueInspector
     And current user closes acknowledgement
     And current user logs out
 
-    When revenueOfficer logs in
+    When PTISRevenueInspector logs in
     And he chooses to act upon above assessment number
-    And he forwards for approval to commissioner
+    And he forwards for approval to PTISRevenueOfficer
     And current user closes acknowledgement
     And current user logs out
 
-    When commissioner logs in
+    When PTISRevenueOfficer logs in
+    And he chooses to act upon above assessment number
+    And he forwards for approval to PTISCommissioner
+    And current user closes acknowledgement
+    And current user logs out
+
+    When PTISCommissioner logs in
     And he chooses to act upon above assessment number
     And he approved the property with remarks addition "property approved"
     And current user closes acknowledgement
@@ -57,10 +62,6 @@ Feature: Addition Alteration of a property
     When commissioner closes acknowledgement
     And current user logs out
 
-    And juniorAssistant logs in
-    And he chooses to act upon above assessment number
-    And he generates a notice
-    And current user logs out
 
     Examples:
       | editAssessmentDetails      | amenitiesDetails | editFloorDetails             |
