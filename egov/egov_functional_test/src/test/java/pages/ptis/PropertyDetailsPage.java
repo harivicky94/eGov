@@ -40,6 +40,9 @@ public class PropertyDetailsPage extends BasePage {
     @FindBy(id = "gender")
     private WebElement genderSelection;
 
+    @FindBy(css = "input[id='emailId'][type='text']")
+    private WebElement emailId;
+
     @FindBy(id = "emailId")
     private WebElement emailIdTextBox;
 
@@ -337,7 +340,7 @@ public class PropertyDetailsPage extends BasePage {
         mobileNumberTextBox.sendKeys("94488" + get6DigitRandomInt());
         enterText(ownerNameTextBox, ownerDetails.getOwnerName(), webDriver);
         selectFromDropDown(genderSelection, ownerDetails.getGender().toUpperCase(), webDriver);
-        enterText(webDriver.findElement(By.cssSelector("input[id='emailId'][type='text']")),ownerDetails.getEmailAddress(),webDriver);
+        enterText(emailId, ownerDetails.getEmailAddress(), webDriver);
         selectFromDropDown(guardianRelationSelection, ownerDetails.getGuardianRelation(), webDriver);
         enterText(guardianTextBox, ownerDetails.getGuardianName(), webDriver);
     }

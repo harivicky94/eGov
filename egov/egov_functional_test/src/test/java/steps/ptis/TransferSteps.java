@@ -18,8 +18,8 @@ public class TransferSteps extends BaseSteps implements En {
             pageStore.get(PropertyDetailsPage.class).payCash();
             pageStore.get(PropertyAcknowledgementPage.class).close1();
         });
-        And("^he chooses Registration already done button$", () -> {
-            pageStore.get(TransferDetailsPage.class).chooseRegistrationAlreadyDone();
+        And("^he enters Claimant Transferee details$", () -> {
+            pageStore.get(TransferDetailsPage.class).enterTransfereeDetails();
         });
         And("^he enters registration details for the property (\\w+)$", (String registrationDetailsDataId) -> {
             RegistrationDetails registrationDetails = new PTISDataReader(ptisTestDataFileName).getRegistrationDetails(registrationDetailsDataId);

@@ -2,6 +2,7 @@ package pages.ptis;
 
 import entities.ptis.RegistrationDetails;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -23,7 +24,18 @@ public class TransferDetailsPage extends BasePage {
     @FindBy(id = "address")
     private WebElement propertyAddressTextBox;
     @FindBy(id = "mobileNumber")
-    private WebElement transferMobileNumber;
+    private WebElement transfereeMobileNumber;
+    @FindBy(id = "ownerName")
+    private WebElement transfereeOwnerName;
+    @FindBy(id = "gender")
+    private WebElement transfereeGender;
+    @FindBy(id = "emailId")
+    private WebElement transfereeEmail;
+    @FindBy(id = "guardianRelation")
+    private WebElement transfereeGuardianRelation;
+    @FindBy(id = "save_transfereeInfosProxy_0__transferee_guardian")
+    private WebElement transfereeGuardian;
+
     @FindBy(id = "plotArea")
     private WebElement registeredPlotAreaTextBox;
     @FindBy(id = "plinthArea")
@@ -68,19 +80,23 @@ public class TransferDetailsPage extends BasePage {
     private WebElement declarationCheckBox;
     @FindBy(css = "input[id=check]")
     private WebElement permisesUsedCheckBoxButton;
+    @FindBy(className = "btn btn-primary")
+    private WebElement transfereeOk;
 
     public TransferDetailsPage(WebDriver webdriver) {
         this.webdriver = webdriver;
     }
 
-    public void chooseRegistrationAlreadyDone() {
-        waitForElementToBeClickable(registrationAlreadyDoneButton, webdriver);
-        registrationAlreadyDoneButton.click();
+    public void enterTransfereeDetails() {
+        enterText(transfereeMobileNumber, "9071"+get6DigitRandomInt(), webdriver);
+        enterText(transfereeOwnerName, "lenkaBablu", webdriver);
+        selectFromDropDown(transfereeGender, "MALE", webdriver);
+        enterText(transfereeEmail, "lenka@gmail.com", webdriver);
+        selectFromDropDown(transfereeGuardianRelation, "Father", webdriver);
+        enterText(transfereeGuardian, "Ramesh", webdriver);
     }
 
     public void enterRegistrationDetails(RegistrationDetails registrationDetails) {
-
-        enterText(transferMobileNumber, "9071254913", webdriver);
         enterText(sellerExecutantNameTextBox, registrationDetails.getSellerExecutantName(), webdriver);
         enterText(buyerClaimantNameTextBox, registrationDetails.getBuyerClaimantName(), webdriver);
         enterText(doorNoTextBox, registrationDetails.getDoorNo(), webdriver);
@@ -97,6 +113,7 @@ public class TransferDetailsPage extends BasePage {
         enterText(registrationDocumentDateTextBox, registrationDetails.getRegistrationDocumentDate(), webdriver);
         enterText(partiesConsiderationValueTextBox, registrationDetails.getPartiesConsiderationValue(), webdriver);
         enterText(departmentGuidelinesValueTextBox, registrationDetails.getDepartmentGuidelinesValue(), webdriver);
+        departmentGuidelinesValueTextBox.sendKeys(Keys.TAB);
     }
 
     public void enterEnclosureDetails() {
@@ -165,4 +182,6 @@ public class TransferDetailsPage extends BasePage {
     public void clickOnPremisesCheckBox() {
        clickOnButton(permisesUsedCheckBoxButton,webdriver);
     }
+
+
 }
