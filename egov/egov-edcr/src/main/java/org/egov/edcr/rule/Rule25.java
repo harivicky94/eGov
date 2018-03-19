@@ -65,15 +65,15 @@ public class Rule25 extends GeneralRule {
                 if (nonNotifiedRoad.getDistanceFromCenterToPlot() != null)
                     if (nonNotifiedRoad.getDistanceFromCenterToPlot().compareTo(five) >= 0)
                         planDetail.reportOutput
-                                .add(buildRuleOutputWithSubRule(DcrConstants.RULE25, SUB_RULE_25_1, SUB_RULE_25_1_DESCRIPTION,
+                                .add(buildRuleOutputWithSubRule(DcrConstants.RULE25, SUB_RULE_25_1, DcrConstants.NONNOTIFIED_ROAD +SUB_RULE_25_1_DESCRIPTION,
                                         DcrConstants.NONNOTIFIED_SHORTESTDISTINCTTOROADFROMCENTER,
-                                        "Min. " + five.toString() + DcrConstants.IN_METER,
+                                         "Min. " + five.toString() + DcrConstants.IN_METER,
                                         nonNotifiedRoad.getDistanceFromCenterToPlot().toString()
                                                 + DcrConstants.IN_METER,
                                         Result.Accepted, null));
                     else
                         planDetail.reportOutput
-                                .add(buildRuleOutputWithSubRule(DcrConstants.RULE25, SUB_RULE_25_1, SUB_RULE_25_1_DESCRIPTION,
+                                .add(buildRuleOutputWithSubRule(DcrConstants.RULE25, SUB_RULE_25_1, DcrConstants.NONNOTIFIED_ROAD +SUB_RULE_25_1_DESCRIPTION,
                                         DcrConstants.NONNOTIFIED_SHORTESTDISTINCTTOROADFROMCENTER,
                                         "Min. " + five.toString() + DcrConstants.IN_METER,
                                         nonNotifiedRoad.getDistanceFromCenterToPlot().toString()
@@ -88,7 +88,7 @@ public class Rule25 extends GeneralRule {
                 if (notifiedRoad.getDistanceFromCenterToPlot() != null)
                     if (notifiedRoad.getDistanceFromCenterToPlot().compareTo(five) >= 0)
                         planDetail.reportOutput
-                                .add(buildRuleOutputWithSubRule(DcrConstants.RULE25, SUB_RULE_25_1, SUB_RULE_25_1_DESCRIPTION,
+                                .add(buildRuleOutputWithSubRule(DcrConstants.RULE25, SUB_RULE_25_1, DcrConstants.NOTIFIED_ROAD +SUB_RULE_25_1_DESCRIPTION,
                                         DcrConstants.NOTIFIED_SHORTESTDISTINCTTOROADFROMCENTER,
                                         "Min. " + five.toString() + DcrConstants.IN_METER,
                                         notifiedRoad.getDistanceFromCenterToPlot().toString()
@@ -96,7 +96,7 @@ public class Rule25 extends GeneralRule {
                                         Result.Accepted, null));
                     else
                         planDetail.reportOutput
-                                .add(buildRuleOutputWithSubRule(DcrConstants.RULE25, SUB_RULE_25_1, SUB_RULE_25_1_DESCRIPTION,
+                                .add(buildRuleOutputWithSubRule(DcrConstants.RULE25, SUB_RULE_25_1, DcrConstants.NOTIFIED_ROAD +SUB_RULE_25_1_DESCRIPTION,
                                         DcrConstants.NOTIFIED_SHORTESTDISTINCTTOROADFROMCENTER,
                                         "Min. " + five.toString() + DcrConstants.IN_METER,
                                         notifiedRoad.getDistanceFromCenterToPlot().toString()
@@ -117,7 +117,7 @@ public class Rule25 extends GeneralRule {
 
                     if (culdeSac.getDistanceFromCenterToPlot().compareTo(comparisionDecimal) >= 0)
                         planDetail.reportOutput
-                                .add(buildRuleOutputWithSubRule(DcrConstants.RULE25, SUB_RULE_25_1, SUB_RULE_25_1_DESCRIPTION,
+                                .add(buildRuleOutputWithSubRule(DcrConstants.RULE25, SUB_RULE_25_1, DcrConstants.CULDESAC_ROAD +SUB_RULE_25_1_DESCRIPTION,
                                         DcrConstants.CULDESAC_SHORTESTDISTINCTTOROADFROMCENTER,
                                         "Min. " + comparisionDecimal.toString() + DcrConstants.IN_METER,
                                         culdeSac.getDistanceFromCenterToPlot().toString()
@@ -125,7 +125,7 @@ public class Rule25 extends GeneralRule {
                                         Result.Accepted, null));
                     else
                         planDetail.reportOutput
-                                .add(buildRuleOutputWithSubRule(DcrConstants.RULE25, SUB_RULE_25_1, SUB_RULE_25_1_DESCRIPTION,
+                                .add(buildRuleOutputWithSubRule(DcrConstants.RULE25, SUB_RULE_25_1, DcrConstants.CULDESAC_ROAD + SUB_RULE_25_1_DESCRIPTION,
                                         DcrConstants.CULDESAC_SHORTESTDISTINCTTOROADFROMCENTER,
                                         "Min. " + comparisionDecimal.toString() + DcrConstants.IN_METER,
                                         culdeSac.getDistanceFromCenterToPlot().toString()
@@ -141,7 +141,7 @@ public class Rule25 extends GeneralRule {
                 if (lane.getDistanceFromCenterToPlot() != null)
                     if (lane.getDistanceFromCenterToPlot().compareTo(onePointFive) >= 0)
                         planDetail.reportOutput
-                                .add(buildRuleOutputWithSubRule(DcrConstants.RULE25, SUB_RULE_25_1, SUB_RULE_25_1_DESCRIPTION,
+                                .add(buildRuleOutputWithSubRule(DcrConstants.RULE25, SUB_RULE_25_1,  DcrConstants.LANE_ROAD +SUB_RULE_25_1_DESCRIPTION,
                                         DcrConstants.LANE_SHORTESTDISTINCTTOROADFROMCENTER,
                                         "Min. " + onePointFive.toString() + DcrConstants.IN_METER,
                                         lane.getDistanceFromCenterToPlot().toString()
@@ -149,7 +149,7 @@ public class Rule25 extends GeneralRule {
                                         Result.Accepted, null));
                     else
                         planDetail.reportOutput
-                                .add(buildRuleOutputWithSubRule(DcrConstants.RULE25, SUB_RULE_25_1, SUB_RULE_25_1_DESCRIPTION,
+                                .add(buildRuleOutputWithSubRule(DcrConstants.RULE25, SUB_RULE_25_1,  DcrConstants.LANE_ROAD +SUB_RULE_25_1_DESCRIPTION,
                                         DcrConstants.LANE_SHORTESTDISTINCTTOROADFROMCENTER,
                                         "Min. " + onePointFive.toString() + DcrConstants.IN_METER,
                                         lane.getDistanceFromCenterToPlot().toString()

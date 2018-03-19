@@ -39,7 +39,7 @@ public class Rule26 extends GeneralRule {
 
     private static final BigDecimal a = BigDecimal.valueOf(1.8);
     private static final String SUB_RULE_26_DESCRIPTION = "Prohibition for constructions abutting public roads.";
-    private static final String SUB_RULE_26 = "Rule 26";
+    private static final String SUB_RULE_26 = "26"; 
     private static final String SUB_RULE_26A = "26A";
     private static final String SUB_RULE_26A_DESCRIPTION = "Waste Disposal";
 
@@ -68,7 +68,7 @@ public class Rule26 extends GeneralRule {
                     if (notifiedRoad.getShortestDistanceToRoad() == null ||
                             notifiedRoad.getShortestDistanceToRoad().compareTo(BigDecimal.ZERO) <= 0) {
                         errors.put(DcrConstants.NOTIFIED_SHORTESTDISTINCTTOROAD,
-                                prepareMessage(DcrConstants.OBJECTNOTDEFINED, "Notified " + DcrConstants.SHORTESTDISTINCTTOROAD));
+                                prepareMessage(DcrConstants.OBJECTNOTDEFINED, DcrConstants.NOTIFIED_SHORTESTDISTINCTTOROAD));
                         planDetail.addErrors(errors);
                     }
             if (planDetail.getNonNotifiedRoads() != null &&
@@ -78,7 +78,7 @@ public class Rule26 extends GeneralRule {
                             nonNotifiedRoad.getShortestDistanceToRoad().compareTo(BigDecimal.ZERO) <= 0) {
                         errors.put(DcrConstants.NONNOTIFIED_SHORTESTDISTINCTTOROAD,
                                 prepareMessage(DcrConstants.OBJECTNOTDEFINED,
-                                        "Non Notified " + DcrConstants.SHORTESTDISTINCTTOROAD));
+                                        DcrConstants.NONNOTIFIED_SHORTESTDISTINCTTOROAD));
                         planDetail.addErrors(errors);
                     }
             if (planDetail.getLaneRoads() != null &&
@@ -87,7 +87,7 @@ public class Rule26 extends GeneralRule {
                     if (laneRoad.getShortestDistanceToRoad() == null ||
                             laneRoad.getShortestDistanceToRoad().compareTo(BigDecimal.ZERO) <= 0) {
                         errors.put(DcrConstants.LANE_SHORTESTDISTINCTTOROAD,
-                                prepareMessage(DcrConstants.OBJECTNOTDEFINED, "Lane " + DcrConstants.SHORTESTDISTINCTTOROAD));
+                                prepareMessage(DcrConstants.OBJECTNOTDEFINED,DcrConstants.LANE_SHORTESTDISTINCTTOROAD));
                         planDetail.addErrors(errors);
                     }
             if (planDetail.getCuldeSacRoads() != null &&
@@ -97,7 +97,7 @@ public class Rule26 extends GeneralRule {
                             culdSac.getShortestDistanceToRoad().compareTo(BigDecimal.ZERO) <= 0) {
                         errors.put(DcrConstants.CULD_SAC_SHORTESTDISTINCTTOROAD,
                                 prepareMessage(DcrConstants.OBJECTNOTDEFINED,
-                                        "Cul-de-sac " + DcrConstants.SHORTESTDISTINCTTOROAD));
+                                        DcrConstants.CULD_SAC_SHORTESTDISTINCTTOROAD ));
                         planDetail.addErrors(errors);
                     }
         }
@@ -148,7 +148,7 @@ public class Rule26 extends GeneralRule {
                         notifiedRoad.getShortestDistanceToRoad().compareTo(BigDecimal.ZERO) > 0)
                     if (notifiedRoad.getShortestDistanceToRoad().compareTo(three) >= 0)
                         planDetail.reportOutput
-                                .add(buildRuleOutputWithSubRule(DcrConstants.RULE26, SUB_RULE_26, SUB_RULE_26_DESCRIPTION,
+                                .add(buildRuleOutputWithSubRule(DcrConstants.RULE26, SUB_RULE_26, DcrConstants.NOTIFIED_ROAD +SUB_RULE_26_DESCRIPTION,
                                         DcrConstants.NOTIFIED_SHORTESTDISTINCTTOROAD,
                                         "Min. " + three.toString() + DcrConstants.IN_METER,
                                         notifiedRoad.getShortestDistanceToRoad().toString()
@@ -156,7 +156,7 @@ public class Rule26 extends GeneralRule {
                                         Result.Accepted, null));
                     else
                         planDetail.reportOutput
-                                .add(buildRuleOutputWithSubRule(DcrConstants.RULE26, SUB_RULE_26, SUB_RULE_26_DESCRIPTION,
+                                .add(buildRuleOutputWithSubRule(DcrConstants.RULE26, SUB_RULE_26,DcrConstants.NOTIFIED_ROAD + SUB_RULE_26_DESCRIPTION,
                                         DcrConstants.NOTIFIED_SHORTESTDISTINCTTOROAD,
                                         "Min. " + three.toString() + DcrConstants.IN_METER,
                                         notifiedRoad.getShortestDistanceToRoad().toString()
@@ -171,7 +171,7 @@ public class Rule26 extends GeneralRule {
                         nonNotifiedRoad.getShortestDistanceToRoad().compareTo(BigDecimal.ZERO) > 0)
                     if (nonNotifiedRoad.getShortestDistanceToRoad().compareTo(three) >= 0)
                         planDetail.reportOutput
-                                .add(buildRuleOutputWithSubRule(DcrConstants.RULE26, SUB_RULE_26, SUB_RULE_26_DESCRIPTION,
+                                .add(buildRuleOutputWithSubRule(DcrConstants.RULE26, SUB_RULE_26, DcrConstants.NONNOTIFIED_ROAD +SUB_RULE_26_DESCRIPTION,
                                         DcrConstants.NONNOTIFIED_SHORTESTDISTINCTTOROAD,
                                         "Min. " + three.toString() + DcrConstants.IN_METER,
                                         nonNotifiedRoad.getShortestDistanceToRoad().toString()
@@ -179,7 +179,7 @@ public class Rule26 extends GeneralRule {
                                         Result.Accepted, null));
                     else
                         planDetail.reportOutput
-                                .add(buildRuleOutputWithSubRule(DcrConstants.RULE26, SUB_RULE_26, SUB_RULE_26_DESCRIPTION,
+                                .add(buildRuleOutputWithSubRule(DcrConstants.RULE26, SUB_RULE_26, DcrConstants.NONNOTIFIED_ROAD +SUB_RULE_26_DESCRIPTION,
                                         DcrConstants.NONNOTIFIED_SHORTESTDISTINCTTOROAD,
                                         "Min. " + three.toString() + DcrConstants.IN_METER,
                                         nonNotifiedRoad.getShortestDistanceToRoad().toString()
@@ -194,7 +194,7 @@ public class Rule26 extends GeneralRule {
                         culd_sac.getShortestDistanceToRoad().compareTo(BigDecimal.ZERO) > 0)
                     if (culd_sac.getShortestDistanceToRoad().compareTo(TWO_MTR) >= 0)
                         planDetail.reportOutput
-                                .add(buildRuleOutputWithSubRule(DcrConstants.RULE26, SUB_RULE_26, SUB_RULE_26_DESCRIPTION,
+                                .add(buildRuleOutputWithSubRule(DcrConstants.RULE26, SUB_RULE_26, DcrConstants.CULDESAC_ROAD +SUB_RULE_26_DESCRIPTION,
                                         DcrConstants.CULD_SAC_SHORTESTDISTINCTTOROAD,
                                         "Min. " + TWO_MTR.toString() + DcrConstants.IN_METER,
                                         culd_sac.getShortestDistanceToRoad().toString()
@@ -202,7 +202,7 @@ public class Rule26 extends GeneralRule {
                                         Result.Accepted, null));
                     else
                         planDetail.reportOutput
-                                .add(buildRuleOutputWithSubRule(DcrConstants.RULE26, SUB_RULE_26, SUB_RULE_26_DESCRIPTION,
+                                .add(buildRuleOutputWithSubRule(DcrConstants.RULE26, SUB_RULE_26, DcrConstants.CULD_DE_SAC +SUB_RULE_26_DESCRIPTION,
                                         DcrConstants.CULD_SAC_SHORTESTDISTINCTTOROAD,
                                         "Min. " + TWO_MTR.toString() + DcrConstants.IN_METER,
                                         culd_sac.getShortestDistanceToRoad().toString()
@@ -217,7 +217,7 @@ public class Rule26 extends GeneralRule {
                         lane.getShortestDistanceToRoad().compareTo(BigDecimal.ZERO) > 0)
                     if (lane.getShortestDistanceToRoad().compareTo(ONE_ANDHALF_MTR) >= 0)
                         planDetail.reportOutput
-                                .add(buildRuleOutputWithSubRule(DcrConstants.RULE26, SUB_RULE_26, SUB_RULE_26_DESCRIPTION,
+                                .add(buildRuleOutputWithSubRule(DcrConstants.RULE26, SUB_RULE_26, DcrConstants.LANE_ROAD +SUB_RULE_26_DESCRIPTION,
                                         DcrConstants.LANE_SHORTESTDISTINCTTOROAD,
                                         "Min. " + ONE_ANDHALF_MTR.toString() + DcrConstants.IN_METER,
                                         lane.getShortestDistanceToRoad().toString()
@@ -225,7 +225,7 @@ public class Rule26 extends GeneralRule {
                                         Result.Accepted, null));
                     else
                         planDetail.reportOutput
-                                .add(buildRuleOutputWithSubRule(DcrConstants.RULE26, SUB_RULE_26, SUB_RULE_26_DESCRIPTION,
+                                .add(buildRuleOutputWithSubRule(DcrConstants.RULE26, SUB_RULE_26, DcrConstants.LANE_ROAD +SUB_RULE_26_DESCRIPTION,
                                         DcrConstants.LANE_SHORTESTDISTINCTTOROAD,
                                         "Min. " + ONE_ANDHALF_MTR.toString() + DcrConstants.IN_METER,
                                         lane.getShortestDistanceToRoad().toString()

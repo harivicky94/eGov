@@ -13,7 +13,7 @@ public class DcrConstants {
 
     public static final String LANE_SHORTESTDISTINCTTOROAD = "Lane road, Shortest Distance ";
     public static final String NONNOTIFIED_SHORTESTDISTINCTTOROAD = "Non notified road,Shortest Distance ";
-    public static final String CULD_SAC_SHORTESTDISTINCTTOROAD = "Culd sac road,Shortest Distance ";
+    public static final String CULD_SAC_SHORTESTDISTINCTTOROAD = "Cul-de-sac road,Shortest Distance ";
 
     public static final String RULE23 = "RULE23";
     public static final String RULE25 = "RULE25";
@@ -110,4 +110,10 @@ public class DcrConstants {
     public static final String ERROR_CODE_PLAN_NOT_EXIST = "EDCR - 01";
     public static final String ERROR_MSG_PLAN_NOT_EXIST = "Dear applicant with entered E-DCR number there is no application detail found, please make sure you are using approved plan E-DCR number.";
     public static final String HORIZONTAL_ELECTRICLINE_DISTANCE_NOC = "NOC from Chief Electrical Inspector or an officer authorized by him shall be obtained. ";
+    public static final String NOTIFIED_ROAD = "Notified road ";
+    public static final String NONNOTIFIED_ROAD = "Non Notified road ";
+    public static final String CULDESAC_ROAD = "Cul-de-sac road ";
+    public static final String LANE_ROAD = "Lane road ";
+
+
 }
