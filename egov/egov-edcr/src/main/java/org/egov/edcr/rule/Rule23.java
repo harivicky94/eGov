@@ -149,7 +149,12 @@ public class Rule23 extends GeneralRule {
                     }
                      
                 } else if (planDetail.getElectricLine().getHorizontalDistance() == null && planDetail.getElectricLine().getVerticalDistance() != null) {
-                            processVerticalDistance(planDetail);
+                    boolean verticalDistancePassed= processVerticalDistance(planDetail);
+                    if(verticalDistancePassed) {
+                        HashMap<String, String> noc= new HashMap<>();
+                        noc.put(DcrConstants.HORIZONTAL_ELECTRICLINE_DISTANCE,DcrConstants.HORIZONTAL_ELECTRICLINE_DISTANCE_NOC);
+                        planDetail.addNocs(noc);
+                            }
                         }
             }
 
