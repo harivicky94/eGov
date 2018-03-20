@@ -2,7 +2,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="bpaDemandNotice1" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="020c52d2-8151-4206-9f0e-c68a0e78927a">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="107"/>
+	<property name="ireport.y" value="0"/>
 	<import value="org.egov.infra.reporting.util.*"/>
 	<import value="org.egov.infstr.utils.*"/>
 	<parameter name="ulbName" class="java.lang.String"/>
@@ -23,7 +23,7 @@
 	</parameter>
 	<parameter name="demandResponseList" class="java.util.List" isForPrompting="false"/>
 	<parameter name="serviceTypeForDmd" class="java.lang.String"/>
-	<parameter name="logoPath" class="java.lang.String"/>
+	<parameter name="logoPath" class="java.io.InputStream"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -47,8 +47,8 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$P{bpademandtitle}]]></textFieldExpression>
 			</textField>
-			<image hAlign="Center" vAlign="Middle" onErrorType="Blank">
-				<reportElement x="5" y="10" width="60" height="57" uuid="3a427151-96e6-4496-8574-ace19ab07522"/>
+			<image>
+				<reportElement x="0" y="8" width="60" height="60" uuid="c2276e9e-fa92-4532-8ff3-dae9932a4693"/>
 				<imageExpression><![CDATA[$P{logoPath}]]></imageExpression>
 			</image>
 		</band>
