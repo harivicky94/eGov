@@ -359,6 +359,37 @@ jQuery(document)
                                                     }
                                                 });
                                             return false;
+                                        } else if (action == 'Generate Rejection Notice') {
+                                            bootbox
+                                                .confirm({
+                                                    message : 'Please make sure, you added all required Rejection Notice conditions and going to generate rejection notice.',
+                                                    buttons : {
+                                                        'cancel' : {
+                                                            label : 'No',
+                                                            className : 'btn-danger'
+                                                        },
+                                                        'confirm' : {
+                                                            label : 'Yes',
+                                                            className : 'btn-primary'
+                                                        }
+                                                    },
+                                                    callback : function(result) {
+                                                        if (result) {
+                                                            var rejectionReasonsLength = $('.rejectionReasons:checked').length;
+                                                            if(rejectionReasonsLength <= 0){
+                                                                $('.rejectionReason').show();
+                                                                bootbox.alert('Atleast one rejection reason is mandatory');
+                                                                return true;
+                                                            } else {
+                                                                validateOnApproveAndForward(validator, action);
+                                                            }
+                                                        } else {
+                                                            e.stopPropagation();
+                                                            e.preventDefault();
+                                                        }
+                                                    }
+                                                });
+                                            return false;
                                         } else {
                                             validateOnApproveAndForward(validator, action);
 										}
@@ -436,7 +467,7 @@ function validateOnApproveAndForward(validator, action) {
             var chkbxLength = $('.modifiablePermitConditions:checked').length;
             var chkbxLength1 = $('.staticPermitConditions:checked').length;
             if(chkbxLength <= 0 && chkbxLength1 <= 0){
-                bootbox.alert('Please select atleast one permit condition is mandatory');
+                bootbox.alert('Atleast one permit condition is mandatory');
                 return false;
             }
         }
