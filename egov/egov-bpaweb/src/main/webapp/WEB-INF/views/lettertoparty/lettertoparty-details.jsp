@@ -42,6 +42,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
 <div class="panel-heading">
 	<div class="panel-title"><spring:message code="lbl.lp.raised.details" /></div>
@@ -50,107 +51,110 @@
 <div class="panel-body custom">
 	<table class="table table-bordered  multiheadertbl" id="vacantLandTable">
 		<thead>
-			<tr>
-				<th><spring:message code="lbl.slno" /></th>
-				<th><spring:message code="lbl.lp.no" /></th>
-				<th><spring:message code="lbl.lp.date" /></th>
-				<th><spring:message code="lbl.lp.reason" /></th>
-				<th><spring:message code="lbl.lp.sentdate" /></th>
-				<th><spring:message code="lbl.modify" /></th>	
-				<th><spring:message code="lbl.lpprint" /></th>
-				<th><spring:message code="lbl.lpreplydate" /></th>
-				<th><spring:message code="lbl.lpreply" /></th>
-				<th><spring:message code="lbl.lpreply.print" /></th>
-				<th><spring:message code="lbl.action" /></th>
-			</tr>
-			</thead>
+		<tr>
+			<th><spring:message code="lbl.slno"/></th>
+			<th><spring:message code="lbl.lp.no"/></th>
+			<th><spring:message code="lbl.lp.date"/></th>
+			<th><spring:message code="lbl.lp.reason"/></th>
+			<th><spring:message code="lbl.lp.sentdate"/></th>
+			<th><spring:message code="lbl.modify"/></th>
+			<th><spring:message code="lbl.lpprint"/></th>
+			<th><spring:message code="lbl.lpreplydate"/></th>
+			<th><spring:message code="lbl.lpreply"/></th>
+			<th><spring:message code="lbl.lpreply.print"/></th>
+			<th><spring:message code="lbl.action"/></th>
+		</tr>
+		</thead>
 		<tbody>
 		<c:choose>
 			<c:when test="${not empty lettertopartylist}">
-				<c:forEach items="${lettertopartylist}" var="lp" varStatus="status">
+				<c:forEach items="${lettertopartylist}" var="inspn" varStatus="status">
 					<tr id="lprow">
 						<td align="center">${status.index+1}</td>
 						<td align="center"><span class="bold">
-							<c:out	value="${lp.lpNumber}" /></span></td>
+							<c:out value="${inspn.lpNumber}"/></span></td>
 						<td align="center"><span class="bold">
-								<c:out value="${lp.letterDate}" /></span></td>
-							<td><span class="bold"> <c:forEach
-										items="${lp.lpReason}" var="lpReason" varStatus="status">
-										<c:out value="${lpReason.description}" />
-										<c:if test="${!status.last}">,</c:if>
-									</c:forEach>
+							<fmt:formatDate value="${inspn.letterDate}" pattern="dd/MM/yyyy" var="letterDate"/>
+								<c:out value="${letterDate}"/></span></td>
+						<td><span class="bold"> <c:forEach
+								items="${inspn.lpReason}" var="lpReason" varStatus="status">
+							<c:out value="${lpReason.description}"/>
+							<c:if test="${!status.last}">,</c:if>
+						</c:forEach>
 							</span></td>
-							<td align="center">
-						       <c:choose>
-									<c:when test="${lp.sentDate !=null }">
-									   <c:out value="${lp.sentDate}"></c:out>
-									</c:when>
-									<c:otherwise>
-										 <a	href="/bpa/lettertoparty/capturesentdate/${lp.id}">
-												<i class="fa fa-pencil" aria-hidden="true"></i> 
-												<spring:message code="lbl.save.lpsentdate" />
-									     </a>
-									</c:otherwise>
-							 </c:choose>
+						<td align="center">
+							<c:choose>
+								<c:when test="${inspn.sentDate !=null }">
+									<fmt:formatDate value="${inspn.sentDate}" pattern="dd/MM/yyyy" var="sentDate"/>
+									<c:out value="${sentDate}"></c:out>
+								</c:when>
+								<c:otherwise>
+									<a href="/bpa/lettertoparty/capturesentdate/${inspn.id}">
+										<i class="fa fa-pencil" aria-hidden="true"></i>
+										<spring:message code="lbl.save.lpsentdate"/>
+									</a>
+								</c:otherwise>
+							</c:choose>
 						</td>
 						<td align="center">
-						       <c:choose>
-									<c:when test="${lp.sentDate !=null }">
-									  LP Sent
-									</c:when>	
-									<c:otherwise>
-						      			 <a	href="/bpa/lettertoparty/update/${bpaApplication.applicationNumber}">
-												<i class="fa fa-pencil" aria-hidden="true"></i> Modify
-									     </a>
-									</c:otherwise>
-							 </c:choose>
+							<c:choose>
+								<c:when test="${inspn.sentDate !=null }">
+									LP Sent
+								</c:when>
+								<c:otherwise>
+									<a href="/bpa/lettertoparty/update/${bpaApplication.applicationNumber}">
+										<i class="fa fa-pencil" aria-hidden="true"></i> Modify
+									</a>
+								</c:otherwise>
+							</c:choose>
 						</td>
 						<td align="center">
-							   <a href="/bpa/lettertoparty/lettertopartyprint/lp?pathVar=${lp.id}">
-									<i class="fa fa-print" aria-hidden="true"></i>
-								    <spring:message code="lbl.print" />
-								</a>
+							<a href="/bpa/lettertoparty/lettertopartyprint/lp?pathVar=${inspn.id}">
+								<i class="fa fa-print" aria-hidden="true"></i>
+								<spring:message code="lbl.print"/>
+							</a>
 						</td>
 						<td align="center">
-									<c:if test="${lp.sentDate !=null }">
-										<c:out value="${lp.replyDate}"></c:out>
-									</c:if>	
+							<c:if test="${inspn.sentDate !=null }">
+								<fmt:formatDate value="${inspn.replyDate}" pattern="dd/MM/yyyy" var="replyDate"/>
+								<c:out value="${replyDate}"></c:out>
+							</c:if>
 						</td>
 						<td align="center">
-						      <c:choose>
-									<c:when test="${lp.replyDate !=null }">
-									 	 LP Reply Received
-									</c:when>	
-									<c:otherwise>
-						     		 <a	href="/bpa/lettertoparty/lettertopartyreply/${lp.id}">
-												<i class="fa fa-pencil" aria-hidden="true"></i> LP Reply
-								    </a>
-								    </c:otherwise>
-							 </c:choose>	    
+							<c:choose>
+								<c:when test="${inspn.replyDate !=null }">
+									LP Reply Received
+								</c:when>
+								<c:otherwise>
+									<a href="/bpa/lettertoparty/lettertopartyreply/${inspn.id}">
+										<i class="fa fa-pencil" aria-hidden="true"></i> LP Reply
+									</a>
+								</c:otherwise>
+							</c:choose>
 						</td>
 						<td align="center">
-							   <a href="/bpa/lettertoparty/lettertopartyprint/lpreply?pathVar=${lp.id}">
-									<i class="fa fa-print" aria-hidden="true"></i>
-								    <spring:message code="lbl.print" />
-								</a>
+							<a href="/bpa/lettertoparty/lettertopartyprint/lpreply?pathVar=${inspn.id}">
+								<i class="fa fa-print" aria-hidden="true"></i>
+								<spring:message code="lbl.print"/>
+							</a>
 						</td>
 						<td align="center"><a
-							onclick="window.open('/bpa/lettertoparty/viewdetails/lpreply/${lp.id}','view','width=600, height=400,scrollbars=yes')">
-								<i class="fa fa-file-o" aria-hidden="true"> <spring:message
-										code="lbl.view" /></i>
+								onclick="window.open('/bpa/lettertoparty/viewdetails/lpreply/${inspn.id}','view','width=600, height=400,scrollbars=yes')">
+							<i class="fa fa-file-o" aria-hidden="true"> <spring:message
+									code="lbl.view"/></i>
 						</a></td>
 					</tr>
 				</c:forEach>
 			</c:when>
 			<c:otherwise>
 				<div class="col-md-12 col-xs-6  panel-title">
-					<spring:message code="lbl.no.lp" />
+					<spring:message code="lbl.no.lp"/>
 				</div>
 			</c:otherwise>
 		</c:choose>
-	</tbody>
+		</tbody>
 	</table>
 </div>
 <script
-	src="<cdn:url value='/resources/js/app/lettertoparty.js?rnd=${app_release_no}'/> "></script>
+		src="<cdn:url value='/resources/js/app/lettertoparty.js?rnd=${app_release_no}'/> "></script>
 

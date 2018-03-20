@@ -42,6 +42,7 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
 <div class="panel-heading">
 	<div class="panel-title"> Letter To Party Details raised by different officials :-</div>
@@ -50,70 +51,73 @@
 <div class="panel-body custom">
 	<table class="table table-bordered  multiheadertbl" id="vacantLandTable">
 		<thead>
-			<tr>
-				<th><spring:message code="lbl.slno" /></th>
-				<th><spring:message code="lbl.lp.no" /></th>
-				<th><spring:message code="lbl.lp.date" /></th>
-				<th><spring:message code="lbl.lp.reason" /></th>
-				<th><spring:message code="lbl.lp.sentdate" /></th>
-				<th><spring:message code="lbl.lpprint" /></th>
-				<th><spring:message code="lbl.lpreplydate" /></th>
-				<th><spring:message code="lbl.lpreply.print" /></th>
-				<th><spring:message code="lbl.action" /></th>
-			</tr>
-			</thead>
+		<tr>
+			<th><spring:message code="lbl.slno"/></th>
+			<th><spring:message code="lbl.lp.no"/></th>
+			<th><spring:message code="lbl.lp.date"/></th>
+			<th><spring:message code="lbl.lp.reason"/></th>
+			<th><spring:message code="lbl.lp.sentdate"/></th>
+			<th><spring:message code="lbl.lpprint"/></th>
+			<th><spring:message code="lbl.lpreplydate"/></th>
+			<th><spring:message code="lbl.lpreply.print"/></th>
+			<th><spring:message code="lbl.action"/></th>
+		</tr>
+		</thead>
 		<tbody>
 		<c:choose>
 			<c:when test="${not empty lettertopartylist}">
-				<c:forEach items="${lettertopartylist}" var="lp" varStatus="status">
+				<c:forEach items="${lettertopartylist}" var="inspn" varStatus="status">
 					<tr id="lprow">
 						<td align="center">${status.index+1}</td>
 						<td align="center"><span class="bold">
-							<c:out	value="${lp.lpNumber}" /></span></td>
+							<c:out value="${inspn.lpNumber}"/></span></td>
 						<td align="center"><span class="bold">
-								<c:out value="${lp.letterDate}" default="N/A" /></span></td>
-							<td><span class="bold"> <c:forEach
-										items="${lp.lpReason}" var="lpReason" varStatus="status">
-										<c:out value="${lpReason.description}" default="N/A"/>
-										<c:if test="${!status.last}">,</c:if>
-									</c:forEach>
+								<fmt:formatDate value="${inspn.letterDate}" pattern="dd/MM/yyyy" var="letterDate"/>
+								<c:out value="${letterDate}" default="N/A"/></span></td>
+						<td><span class="bold"> <c:forEach
+								items="${inspn.lpReason}" var="lpReason" varStatus="status">
+							<c:out value="${lpReason.description}" default="N/A"/>
+							<c:if test="${!status.last}">,</c:if>
+						</c:forEach>
 							</span></td>
-							<td align="center">
-						      <c:out value="${lp.sentDate}" default="N/A"></c:out>
-						</td>
-						
 						<td align="center">
-							   <a href="/bpa/lettertoparty/lettertopartyprint/lp?pathVar=${lp.id}">
-									<i class="fa fa-print" aria-hidden="true"></i>
-								    <spring:message code="lbl.print" />
-								</a>
+							<fmt:formatDate value="${inspn.sentDate}" pattern="dd/MM/yyyy" var="sentDate"/>
+							<c:out value="${sentDate}" default="N/A"></c:out>
+						</td>
+
+						<td align="center">
+							<a href="/bpa/lettertoparty/lettertopartyprint/lp?pathVar=${inspn.id}">
+								<i class="fa fa-print" aria-hidden="true"></i>
+								<spring:message code="lbl.print"/>
+							</a>
 						</td>
 						<td align="center">
-										<c:out value="${lp.replyDate}" default="N/A"></c:out>
+							<fmt:formatDate value="${inspn.replyDate}" pattern="dd/MM/yyyy" var="replyDate"/>
+							<c:out value="${replyDate}" default="N/A"></c:out>
 						</td>
-						
+
 						<td align="center">
-							   <a href="/bpa/lettertoparty/lettertopartyprint/lpreply?pathVar=${lp.id}">
-									<i class="fa fa-print" aria-hidden="true"></i>
-								    <spring:message code="lbl.print" />
-								</a>
+							<a href="/bpa/lettertoparty/lettertopartyprint/lpreply?pathVar=${inspn.id}">
+								<i class="fa fa-print" aria-hidden="true"></i>
+								<spring:message code="lbl.print"/>
+							</a>
 						</td>
 						<td align="center"><a
-							onclick="window.open('/bpa/lettertoparty/viewdetails/lpreply/${lp.id}','view','width=600, height=400,scrollbars=yes')">
-								<spring:message code="lbl.view" />
+								onclick="window.open('/bpa/lettertoparty/viewdetails/lpreply/${inspn.id}','view','width=600, height=400,scrollbars=yes')">
+							<spring:message code="lbl.view"/>
 						</a></td>
 					</tr>
 				</c:forEach>
 			</c:when>
 			<c:otherwise>
 				<div class="col-md-12 col-xs-6  panel-title">
-					<spring:message code="lbl.no.lp" />
+					<spring:message code="lbl.no.lp"/>
 				</div>
 			</c:otherwise>
 		</c:choose>
-	</tbody>
+		</tbody>
 	</table>
 </div>
 <script
-	src="<cdn:url value='/resources/js/app/lettertoparty.js?rnd=${app_release_no}'/> "></script>
+		src="<cdn:url value='/resources/js/app/lettertoparty.js?rnd=${app_release_no}'/> "></script>
 

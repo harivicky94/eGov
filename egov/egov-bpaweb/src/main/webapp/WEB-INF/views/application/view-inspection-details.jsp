@@ -42,6 +42,8 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+
 <br>
 <div align="center" class="overflow-x-scroll">
 	<input type="hidden" name="applicationNumber" id="applicationNumber"
@@ -58,22 +60,23 @@
 		<tbody>
 			<c:choose>
 				<c:when test="${not empty inspectionList}">
-					<c:forEach items="${inspectionList}" var="lp" varStatus="status">
+					<c:forEach items="${inspectionList}" var="inspn" varStatus="status">
 						<tr id="lprow">
 							<td align="center">${status.index+1}</td>
 							<td align="center"><span class="bold"> <c:out
-										value="${lp.inspectionNumber}" /></span></td>
-							<td align="center"><span class="bold"> <c:out
-										value="${lp.inspectionDate}" /></span></td>
+										value="${inspn.inspectionNumber}" /></span></td>
+							<td align="center"><span class="bold">
+								<fmt:formatDate value="${inspn.inspectionDate}" pattern="dd/MM/yyyy" var="inspectionDate"/>
+								<c:out value="${inspectionDate}" /></span></td>
 							<td align="center"><a
-								onclick="window.open('/bpa/application/showinspectiondetails/${lp.id}','view','width=600, height=400,scrollbars=yes')">
+								onclick="window.open('/bpa/application/showinspectiondetails/${inspn.id}','view','width=600, height=400,scrollbars=yes')">
 									View
 							</a></td>
 						</tr>
 					</c:forEach>
 				</c:when>
 				<c:otherwise>
-					<div class="col-md-12 col-xs-6  panel-title">No Inspection
+					<div class="col-md-12 col-xs-6  panel-title">No Inspection Details
 						Found</div>
 				</c:otherwise>
 			</c:choose>
