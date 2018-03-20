@@ -1,23 +1,5 @@
 package org.egov.edcr.rule;
 
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.egov.edcr.entity.PlanDetail;
-import org.egov.edcr.entity.Result;
-import org.egov.edcr.entity.RuleOutput;
-import org.egov.edcr.entity.SubRuleOutput;
-import org.egov.edcr.entity.measurement.NonNotifiedRoad;
-import org.egov.edcr.entity.measurement.NotifiedRoad;
-import org.egov.edcr.service.ReportService;
-import org.egov.edcr.utility.DcrConstants;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.stereotype.Service;
-
 import ar.com.fdvs.dj.core.DJConstants;
 import ar.com.fdvs.dj.core.layout.ClassicLayoutManager;
 import ar.com.fdvs.dj.domain.DJDataSource;
@@ -26,6 +8,22 @@ import ar.com.fdvs.dj.domain.builders.FastReportBuilder;
 import ar.com.fdvs.dj.domain.entities.Subreport;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import org.egov.edcr.constants.DxfFileConstants;
+import org.egov.edcr.entity.*;
+import org.egov.edcr.entity.measurement.NonNotifiedRoad;
+import org.egov.edcr.entity.measurement.NotifiedRoad;
+import org.egov.edcr.entity.measurement.Yard;
+import org.egov.edcr.service.ReportService;
+import org.egov.edcr.utility.DcrConstants;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class Rule62 extends GeneralRule {
@@ -36,17 +34,21 @@ public class Rule62 extends GeneralRule {
     private static final BigDecimal REARYARDMINIMUM_DISTANCE = BigDecimal.valueOf(0.5);
     private static final BigDecimal REARYARDMEAN_DISTANCE = BigDecimal.valueOf(1);
 
-    private static final BigDecimal SIDE1MINIMUM_DISTANCE = BigDecimal.valueOf(0.9);
-    private static final BigDecimal SIDE2MINIMUM_DISTANCE = BigDecimal.valueOf(0.6);
+    public static final BigDecimal SIDE_2_MINIMUM_DISTANCE = BigDecimal.valueOf(0.9);
     private static final String SUB_RULE_62_2 = "62(2)";
-    private static final String SUB_RULE_62_2DESCRIPTION = "Any Side yard validation";
     private static final String SUB_RULE_62_1 = "62(1)";
     private static final String SUB_RULE_62_1DESCRIPTION = "Minimum distance between plot boundary and abutting Street.";
     private static final String SUB_RULE_62_1A = "62(1)A";
     private static final String SUB_RULE_62_1A_DESCRIPTION = "Front yard validation";
     private static final String SUB_RULE_62_3 = "62(3)";
     private static final String SUB_RULE_62_3_DESCRIPTION = "Rear yard validation";
-    private String MEAN_MINIMUM = "(Minimum distince,Mean distance) ";
+    private static final String SIDE_YARD_1_EXPECTED = " Minimum 0.6 MTR ";
+
+    private String MEAN_MINIMUM = "(Minimum distance,Mean distance) ";
+    private static final String SIDE_YARD_1_DESC = "Minimum open space on Side 1";
+    private static final String SIDE_YARD_2_DESC = "Minimum open space on Side 2";
+
+    private static final String SIDE_YARD_1_EXPECTED_WITHNOC_NO_OPENING = "Minimum 0.6 MTR With No opening on side up and NOC to Abut next plot";
 
     @Autowired
     private ReportService reportService;
@@ -59,51 +61,51 @@ public class Rule62 extends GeneralRule {
 
             // If either notified or non notified road width not defined, then show error.
             if ((planDetail.getNotifiedRoads() == null || planDetail.getNonNotifiedRoads() == null) &&
-                !(planDetail.getNotifiedRoads().size() > 0 ||
-                  planDetail.getNonNotifiedRoads().size() > 0)) {
+                    !(planDetail.getNotifiedRoads().size() > 0 ||
+                            planDetail.getNonNotifiedRoads().size() > 0)) {
                 errors.put(DcrConstants.RULE62,
                         prepareMessage(DcrConstants.OBJECTNOTDEFINED, DcrConstants.ROAD));
                 planDetail.addErrors(errors);
             }
             if (planDetail.getNotifiedRoads() != null &&
-                planDetail.getNotifiedRoads().size() > 0)
+                    planDetail.getNotifiedRoads().size() > 0)
                 for (NotifiedRoad notifiedRoad : planDetail.getNotifiedRoads())
                     if (notifiedRoad.getShortestDistanceToRoad() == null ||
-                        notifiedRoad.getShortestDistanceToRoad().compareTo(BigDecimal.ZERO) <= 0) {
+                            notifiedRoad.getShortestDistanceToRoad().compareTo(BigDecimal.ZERO) <= 0) {
                         errors.put(DcrConstants.NOTIFIED_SHORTESTDISTINCTTOROAD,
                                 prepareMessage(DcrConstants.OBJECTNOTDEFINED, DcrConstants.SHORTESTDISTINCTTOROAD));
                         planDetail.addErrors(errors);
                     }
             if (planDetail.getNonNotifiedRoads() != null &&
-                planDetail.getNonNotifiedRoads().size() > 0)
+                    planDetail.getNonNotifiedRoads().size() > 0)
                 for (NonNotifiedRoad nonNotifiedRoad : planDetail.getNonNotifiedRoads())
                     if (nonNotifiedRoad.getShortestDistanceToRoad() == null ||
-                        nonNotifiedRoad.getShortestDistanceToRoad().compareTo(BigDecimal.ZERO) <= 0) {
+                            nonNotifiedRoad.getShortestDistanceToRoad().compareTo(BigDecimal.ZERO) <= 0) {
                         errors.put(DcrConstants.NONNOTIFIED_SHORTESTDISTINCTTOROAD,
                                 prepareMessage(DcrConstants.OBJECTNOTDEFINED, DcrConstants.SHORTESTDISTINCTTOROAD));
                         planDetail.addErrors(errors);
                     }
 
             if (planDetail.getPlot() != null && (planDetail.getPlot().getFrontYard() == null ||
-                                                 !planDetail.getPlot().getFrontYard().getPresentInDxf())) {
+                    !planDetail.getPlot().getFrontYard().getPresentInDxf())) {
                 errors.put(DcrConstants.FRONT_YARD_DESC,
                         prepareMessage(DcrConstants.OBJECTNOTDEFINED, DcrConstants.FRONT_YARD_DESC));
                 planDetail.addErrors(errors);
             }
             if (planDetail.getPlot() != null && (planDetail.getPlot().getSideYard1() == null ||
-                                                 !planDetail.getPlot().getSideYard1().getPresentInDxf())) {
+                    !planDetail.getPlot().getSideYard1().getPresentInDxf())) {
                 errors.put(DcrConstants.SIDE_YARD1_DESC,
                         prepareMessage(DcrConstants.OBJECTNOTDEFINED, DcrConstants.SIDE_YARD1_DESC));
                 planDetail.addErrors(errors);
             }
             if (planDetail.getPlot() != null && (planDetail.getPlot().getSideYard2() == null ||
-                                                 !planDetail.getPlot().getSideYard2().getPresentInDxf())) {
+                    !planDetail.getPlot().getSideYard2().getPresentInDxf())) {
                 errors.put(DcrConstants.SIDE_YARD2_DESC,
                         prepareMessage(DcrConstants.OBJECTNOTDEFINED, DcrConstants.SIDE_YARD2_DESC));
                 planDetail.addErrors(errors);
             }
             if (planDetail.getPlot() != null && (planDetail.getPlot().getRearYard() == null ||
-                                                 !planDetail.getPlot().getRearYard().getPresentInDxf())) {
+                    !planDetail.getPlot().getRearYard().getPresentInDxf())) {
                 errors.put(DcrConstants.REAR_YARD_DESC,
                         prepareMessage(DcrConstants.OBJECTNOTDEFINED, DcrConstants.REAR_YARD_DESC));
                 planDetail.addErrors(errors);
@@ -116,7 +118,7 @@ public class Rule62 extends GeneralRule {
 
     private String prepareMessage(String code, String args) {
         return edcrMessageSource.getMessage(code,
-                new String[] { args }, LocaleContextHolder.getLocale());
+                new String[]{args}, LocaleContextHolder.getLocale());
         // return code+" "+args;
     }
 
@@ -124,14 +126,12 @@ public class Rule62 extends GeneralRule {
     public PlanDetail process(PlanDetail planDetail) {
         rule62_1(planDetail);
         rule62_1A(planDetail);
-        if (planDetail != null && planDetail.getPlanInformation() != null
-            && planDetail.getPlanInformation().getOpeningOnSide())
-            rule62_2(planDetail);
+        rule62_2(planDetail);
         rule62_3(planDetail);
         return planDetail;
     }
 
-    private void rule62_2(PlanDetail planDetail) {
+    /*private void rule62_2(PlanDetail planDetail) {
         BigDecimal sideyard1 = BigDecimal.ZERO;
         BigDecimal sideyard2 = BigDecimal.ZERO;
 
@@ -142,12 +142,12 @@ public class Rule62 extends GeneralRule {
         // Some side may be not defined.
 
         if (planDetail.getPlot() != null && planDetail.getPlot().getSideYard1() != null &&
-            planDetail.getPlot().getSideYard1().getPresentInDxf()
-            && planDetail.getPlot().getSideYard1().getMinimumDistance() != null)
+                planDetail.getPlot().getSideYard1().getPresentInDxf()
+                && planDetail.getPlot().getSideYard1().getMinimumDistance() != null)
             sideyard1 = planDetail.getPlot().getSideYard1().getMinimumDistance();
         if (planDetail.getPlot() != null && planDetail.getPlot().getSideYard2() != null &&
-            planDetail.getPlot().getSideYard2().getPresentInDxf()
-            && planDetail.getPlot().getSideYard2().getMinimumDistance() != null)
+                planDetail.getPlot().getSideYard2().getPresentInDxf()
+                && planDetail.getPlot().getSideYard2().getMinimumDistance() != null)
             sideyard2 = planDetail.getPlot().getSideYard2().getMinimumDistance();
 
         if (sideyard1.compareTo(sideyard2) > 0) {
@@ -157,7 +157,7 @@ public class Rule62 extends GeneralRule {
                                 DcrConstants.SIDE_YARD1_DESC,
                                 SIDE1MINIMUM_DISTANCE.toString() + DcrConstants.IN_METER,
                                 sideyard1.toString()
-                                + DcrConstants.IN_METER,
+                                        + DcrConstants.IN_METER,
                                 Result.Not_Accepted, null));
             else
                 planDetail.reportOutput
@@ -165,7 +165,7 @@ public class Rule62 extends GeneralRule {
                                 DcrConstants.SIDE_YARD1_DESC,
                                 SIDE1MINIMUM_DISTANCE.toString() + DcrConstants.IN_METER,
                                 sideyard1.toString()
-                                + DcrConstants.IN_METER,
+                                        + DcrConstants.IN_METER,
                                 Result.Accepted, null));
 
             if (sideyard2.compareTo(SIDE2MINIMUM_DISTANCE) < 0)
@@ -174,7 +174,7 @@ public class Rule62 extends GeneralRule {
                                 DcrConstants.SIDE_YARD2_DESC,
                                 SIDE2MINIMUM_DISTANCE.toString() + DcrConstants.IN_METER,
                                 sideyard2.toString()
-                                + DcrConstants.IN_METER,
+                                        + DcrConstants.IN_METER,
                                 Result.Verify, null));
             else
                 planDetail.reportOutput
@@ -182,7 +182,7 @@ public class Rule62 extends GeneralRule {
                                 DcrConstants.SIDE_YARD2_DESC,
                                 SIDE2MINIMUM_DISTANCE.toString() + DcrConstants.IN_METER,
                                 sideyard2.toString()
-                                + DcrConstants.IN_METER,
+                                        + DcrConstants.IN_METER,
                                 Result.Accepted, null));
 
         } else {
@@ -192,7 +192,7 @@ public class Rule62 extends GeneralRule {
                                 DcrConstants.SIDE_YARD2_DESC,
                                 SIDE1MINIMUM_DISTANCE.toString() + DcrConstants.IN_METER,
                                 sideyard2.toString()
-                                + DcrConstants.IN_METER,
+                                        + DcrConstants.IN_METER,
                                 Result.Not_Accepted, null));
             else
                 planDetail.reportOutput
@@ -200,7 +200,7 @@ public class Rule62 extends GeneralRule {
                                 DcrConstants.SIDE_YARD2_DESC,
                                 SIDE1MINIMUM_DISTANCE.toString() + DcrConstants.IN_METER,
                                 sideyard2.toString()
-                                + DcrConstants.IN_METER,
+                                        + DcrConstants.IN_METER,
                                 Result.Accepted, null));
 
             if (sideyard1.compareTo(SIDE2MINIMUM_DISTANCE) < 0)
@@ -209,7 +209,7 @@ public class Rule62 extends GeneralRule {
                                 DcrConstants.SIDE_YARD1_DESC,
                                 SIDE2MINIMUM_DISTANCE.toString() + DcrConstants.IN_METER,
                                 sideyard1.toString()
-                                + DcrConstants.IN_METER,
+                                        + DcrConstants.IN_METER,
                                 Result.Verify, null));
             else
                 planDetail.reportOutput
@@ -217,18 +217,18 @@ public class Rule62 extends GeneralRule {
                                 DcrConstants.SIDE_YARD1_DESC,
                                 SIDE2MINIMUM_DISTANCE.toString() + DcrConstants.IN_METER,
                                 sideyard1.toString()
-                                + DcrConstants.IN_METER,
+                                        + DcrConstants.IN_METER,
                                 Result.Accepted, null));
 
         }
 
-    }
+    }*/
 
     private void rule62_1(PlanDetail planDetail) {
         // If both roads are not defined.
         if (planDetail.getNotifiedRoads() != null &&
-            !(planDetail.getNotifiedRoads().size() > 0 ||
-              planDetail.getNonNotifiedRoads().size() > 0))
+                !(planDetail.getNotifiedRoads().size() > 0 ||
+                        planDetail.getNonNotifiedRoads().size() > 0))
             planDetail.reportOutput
                     .add(buildRuleOutputWithSubRule(DcrConstants.RULE62, SUB_RULE_62_1, SUB_RULE_62_1DESCRIPTION,
                             DcrConstants.ROAD,
@@ -237,17 +237,17 @@ public class Rule62 extends GeneralRule {
                             Result.Verify, DcrConstants.ROAD + DcrConstants.OBJECTNOTDEFINED_DESC));
 
         else if (planDetail.getNotifiedRoads() != null &&
-                 planDetail.getNotifiedRoads().size() > 0)
+                planDetail.getNotifiedRoads().size() > 0)
             for (NotifiedRoad notifiedRoad : planDetail.getNotifiedRoads())
                 if (notifiedRoad.getShortestDistanceToRoad() != null &&
-                    notifiedRoad.getShortestDistanceToRoad().compareTo(BigDecimal.ZERO) > 0)
+                        notifiedRoad.getShortestDistanceToRoad().compareTo(BigDecimal.ZERO) > 0)
                     if (notifiedRoad.getShortestDistanceToRoad().compareTo(_NOTIFIEDROADDISTINCE) >= 0)
                         planDetail.reportOutput
                                 .add(buildRuleOutputWithSubRule(DcrConstants.RULE62, SUB_RULE_62_1, SUB_RULE_62_1DESCRIPTION,
                                         DcrConstants.NOTIFIED_SHORTESTDISTINCTTOROAD,
                                         _NOTIFIEDROADDISTINCE.toString() + DcrConstants.IN_METER,
                                         notifiedRoad.getShortestDistanceToRoad().toString()
-                                        + DcrConstants.IN_METER,
+                                                + DcrConstants.IN_METER,
                                         Result.Accepted, null));
                     else
                         planDetail.reportOutput
@@ -255,21 +255,21 @@ public class Rule62 extends GeneralRule {
                                         DcrConstants.NOTIFIED_SHORTESTDISTINCTTOROAD,
                                         _NOTIFIEDROADDISTINCE.toString() + DcrConstants.IN_METER,
                                         notifiedRoad.getShortestDistanceToRoad().toString()
-                                        + DcrConstants.IN_METER,
+                                                + DcrConstants.IN_METER,
                                         Result.Not_Accepted, null));
         // If non notified road present then check 2 mts distance should maintain
         if (planDetail.getNonNotifiedRoads() != null &&
-            planDetail.getNonNotifiedRoads().size() > 0)
+                planDetail.getNonNotifiedRoads().size() > 0)
             for (NonNotifiedRoad nonNotifiedRoad : planDetail.getNonNotifiedRoads())
                 if (nonNotifiedRoad.getShortestDistanceToRoad() != null &&
-                    nonNotifiedRoad.getShortestDistanceToRoad().compareTo(BigDecimal.ZERO) > 0)
+                        nonNotifiedRoad.getShortestDistanceToRoad().compareTo(BigDecimal.ZERO) > 0)
                     if (nonNotifiedRoad.getShortestDistanceToRoad().compareTo(_NONNOTIFIEDROADDISTINCE) >= 0)
                         planDetail.reportOutput
                                 .add(buildRuleOutputWithSubRule(DcrConstants.RULE62, SUB_RULE_62_1, SUB_RULE_62_1DESCRIPTION,
                                         DcrConstants.NONNOTIFIED_SHORTESTDISTINCTTOROAD,
                                         _NONNOTIFIEDROADDISTINCE.toString() + DcrConstants.IN_METER,
                                         nonNotifiedRoad.getShortestDistanceToRoad().toString()
-                                        + DcrConstants.IN_METER,
+                                                + DcrConstants.IN_METER,
                                         Result.Accepted, null));
                     else
                         planDetail.reportOutput
@@ -277,61 +277,180 @@ public class Rule62 extends GeneralRule {
                                         DcrConstants.NONNOTIFIED_SHORTESTDISTINCTTOROAD,
                                         _NONNOTIFIEDROADDISTINCE.toString() + DcrConstants.IN_METER,
                                         nonNotifiedRoad.getShortestDistanceToRoad().toString()
-                                        + DcrConstants.IN_METER,
+                                                + DcrConstants.IN_METER,
                                         Result.Not_Accepted, null));
     }
 
     private void rule62_1A(PlanDetail planDetail) {
 
         if (planDetail.getPlot() != null && planDetail.getPlot().getFrontYard() != null &&
-            planDetail.getPlot().getFrontYard().getPresentInDxf()
-            && planDetail.getPlot().getFrontYard().getMinimumDistance() != null
-            && planDetail.getPlot().getFrontYard().getMean() != null)
+                planDetail.getPlot().getFrontYard().getPresentInDxf()
+                && planDetail.getPlot().getFrontYard().getMinimumDistance() != null
+                && planDetail.getPlot().getFrontYard().getMean() != null)
             if (planDetail.getPlot().getFrontYard().getMinimumDistance().compareTo(FRONTYARDMINIMUM_DISTANCE) >= 0 &&
-                planDetail.getPlot().getFrontYard().getMean().compareTo(FRONTYARDMEAN_DISTANCE) >= 0)
+                    planDetail.getPlot().getFrontYard().getMean().compareTo(FRONTYARDMEAN_DISTANCE) >= 0)
                 planDetail.reportOutput
                         .add(buildRuleOutputWithSubRule(DcrConstants.RULE62, SUB_RULE_62_1A, SUB_RULE_62_1A_DESCRIPTION,
                                 DcrConstants.FRONT_YARD_DESC,
                                 MEAN_MINIMUM + "(" + FRONTYARDMINIMUM_DISTANCE.toString() + "," + FRONTYARDMEAN_DISTANCE + ")"
-                                + DcrConstants.IN_METER,
+                                        + DcrConstants.IN_METER,
                                 "(" + planDetail.getPlot().getFrontYard().getMinimumDistance().toString() + "," +
-                                planDetail.getPlot().getFrontYard().getMean().toString() + ")" + DcrConstants.IN_METER,
+                                        planDetail.getPlot().getFrontYard().getMean().toString() + ")" + DcrConstants.IN_METER,
                                 Result.Accepted, null));
             else
                 planDetail.reportOutput
                         .add(buildRuleOutputWithSubRule(DcrConstants.RULE62, SUB_RULE_62_1A, SUB_RULE_62_1A_DESCRIPTION,
                                 DcrConstants.FRONT_YARD_DESC,
                                 MEAN_MINIMUM + "(" + FRONTYARDMINIMUM_DISTANCE.toString() + "," + FRONTYARDMEAN_DISTANCE + ")"
-                                + DcrConstants.IN_METER,
+                                        + DcrConstants.IN_METER,
                                 "(" + planDetail.getPlot().getFrontYard().getMinimumDistance().toString() + "," +
-                                planDetail.getPlot().getFrontYard().getMean().toString() + ")" + DcrConstants.IN_METER,
+                                        planDetail.getPlot().getFrontYard().getMean().toString() + ")" + DcrConstants.IN_METER,
                                 Result.Not_Accepted, null));
+    }
+
+    private void rule62_2(PlanDetail planDetail) {
+
+        Yard sideYard1 = null;
+        Yard sideYard2 = null;
+        String subRule = "";
+        String side1Desc = "";
+        String side2Desc = "";
+        String side1FieldName = "";
+        String side2FieldName = "";
+        String side1Expected = "";
+        String side2Expected = "";
+        if (planDetail.getPlot() == null)
+            return;
+
+        Plot plot = planDetail.getPlot();
+
+        subRule = SUB_RULE_62_2;
+        if (plot.getSideYard1() == null)
+            return;
+        sideYard1 = plot.getSideYard1();
+
+        if (plot.getSideYard2() == null)
+            return;
+        sideYard2 = plot.getSideYard2();
+        side1Desc = SIDE_YARD_1_DESC;
+        side2Desc = SIDE_YARD_2_DESC;
+        side1FieldName = DcrConstants.SIDE_YARD1_DESC;
+        side2FieldName = DcrConstants.SIDE_YARD2_DESC;
+
+        if (sideYard1.getMean() == null)
+            return;
+
+        if (sideYard1.getMinimumDistance() == null)
+            return;
+
+        if (sideYard2.getMean() == null)
+            return;
+
+        if (sideYard2.getMinimumDistance() == null)
+            return;
+
+        if (planDetail.getPlot() == null || planDetail.getPlot().getArea() == null)
+            return;
+
+        Boolean valid1 = false;
+        Boolean valid2 = false;
+        BigDecimal plotArea = planDetail.getPlot().getArea();
+        double min;
+        double max;
+
+        if (sideYard2.getMinimumDistance().doubleValue() > sideYard1.getMinimumDistance().doubleValue()) {
+            min = sideYard1.getMinimumDistance().doubleValue();
+            max = sideYard2.getMinimumDistance().doubleValue();
+        } else {
+            min = sideYard2.getMinimumDistance().doubleValue();
+            max = sideYard1.getMinimumDistance().doubleValue();
+        }
+
+        if (max >= 0.9)
+            valid2 = true;
+
+        if (plotArea.intValue() <= 125) {
+            if (min >= 0.6) {
+                valid1 = true;
+                side1Expected = SIDE_YARD_1_EXPECTED;
+            } else {
+                side1Expected = SIDE_YARD_1_EXPECTED;
+                if (!planDetail.getPlanInformation().getOpeningOnSide() && min >= 0.6) {
+                    valid1 = true;
+                } else if (planDetail.getPlanInformation().getNocToAbutSide() && !planDetail.getPlanInformation().getOpeningOnSide()) {
+                    side1Expected = SIDE_YARD_1_EXPECTED_WITHNOC_NO_OPENING;
+                    if (min >= 0) {
+                        valid1 = true;
+                    }
+                }
+            }
+        }
+
+        String noc = planDetail.getPlanInformation().getNocToAbutSide() ? "Yes" : "No";
+        String message = DxfFileConstants.NOC_TO_ABUT_SIDE + ": " + noc;
+
+        if (valid1 == true) {
+
+            planDetail.reportOutput
+                    .add(buildRuleOutputWithSubRule(DcrConstants.RULE62, subRule, side1Desc,
+                            side1FieldName,
+                            side1Expected,
+                            min + DcrConstants.IN_METER,
+                            Result.Accepted, message));
+        } else {
+            planDetail.reportOutput
+                    .add(buildRuleOutputWithSubRule(DcrConstants.RULE62, subRule, side1Desc,
+                            side1FieldName,
+                            side1Expected,
+                            min + DcrConstants.IN_METER,
+                            Result.Not_Accepted, message));
+
+        }
+        if (valid2 == true) {
+
+            planDetail.reportOutput
+                    .add(buildRuleOutputWithSubRule(DcrConstants.RULE62, subRule, side2Desc,
+                            side2FieldName,
+                            SIDE_2_MINIMUM_DISTANCE.toString() + DcrConstants.IN_METER,
+                            max + DcrConstants.IN_METER,
+                            Result.Accepted, null));
+        } else {
+            planDetail.reportOutput
+                    .add(buildRuleOutputWithSubRule(DcrConstants.RULE62, subRule, side2Desc,
+                            side2FieldName,
+                            SIDE_2_MINIMUM_DISTANCE.toString() + DcrConstants.IN_METER,
+                            max + DcrConstants.IN_METER,
+                            Result.Not_Accepted,
+                            null));
+
+        }
+
     }
 
     private void rule62_3(PlanDetail planDetail) {
 
         if (planDetail.getPlot() != null && planDetail.getPlot().getRearYard() != null &&
-            planDetail.getPlot().getRearYard().getPresentInDxf()
-            && planDetail.getPlot().getRearYard().getMinimumDistance() != null
-            && planDetail.getPlot().getRearYard().getMean() != null)
+                planDetail.getPlot().getRearYard().getPresentInDxf()
+                && planDetail.getPlot().getRearYard().getMinimumDistance() != null
+                && planDetail.getPlot().getRearYard().getMean() != null)
             if (planDetail.getPlot().getRearYard().getMinimumDistance().compareTo(REARYARDMINIMUM_DISTANCE) >= 0 &&
-                planDetail.getPlot().getRearYard().getMean().compareTo(REARYARDMEAN_DISTANCE) >= 0)
+                    planDetail.getPlot().getRearYard().getMean().compareTo(REARYARDMEAN_DISTANCE) >= 0)
                 planDetail.reportOutput
                         .add(buildRuleOutputWithSubRule(DcrConstants.RULE62, SUB_RULE_62_3, SUB_RULE_62_3_DESCRIPTION,
                                 DcrConstants.REAR_YARD_DESC,
                                 MEAN_MINIMUM + "(" + REARYARDMINIMUM_DISTANCE.toString() + "," + REARYARDMEAN_DISTANCE + ")"
-                                + DcrConstants.IN_METER,
+                                        + DcrConstants.IN_METER,
                                 "(" + planDetail.getPlot().getRearYard().getMinimumDistance().toString() + "," +
-                                planDetail.getPlot().getRearYard().getMean().toString() + ")" + DcrConstants.IN_METER,
+                                        planDetail.getPlot().getRearYard().getMean().toString() + ")" + DcrConstants.IN_METER,
                                 Result.Accepted, null));
             else
-                planDetail.reportOutput  
+                planDetail.reportOutput
                         .add(buildRuleOutputWithSubRule(DcrConstants.RULE62, SUB_RULE_62_3, SUB_RULE_62_3_DESCRIPTION,
                                 DcrConstants.REAR_YARD_DESC,
                                 MEAN_MINIMUM + "(" + REARYARDMINIMUM_DISTANCE.toString() + "," + REARYARDMEAN_DISTANCE + ")"
-                                + DcrConstants.IN_METER,
+                                        + DcrConstants.IN_METER,
                                 "(" + planDetail.getPlot().getRearYard().getMinimumDistance().toString() + "," +
-                                planDetail.getPlot().getRearYard().getMean().toString() + ")" + DcrConstants.IN_METER,
+                                        planDetail.getPlot().getRearYard().getMean().toString() + ")" + DcrConstants.IN_METER,
                                 Result.Not_Accepted, null));
     }
 
@@ -348,11 +467,11 @@ public class Rule62 extends GeneralRule {
                     stringBuilder.append("Description : ").append(ruleOutput.getRuleDescription()).append("\\n");
                 drb.setMargins(5, 0, 10, 10);
                 drb.setTitle("Rule : " + ruleOutput.getKey() + "\\n")
-                   .setSubtitle(stringBuilder.toString())
-                   .setPrintBackgroundOnOddRows(false).setWhenNoData("", null)
-                   .setTitleStyle(reportService.getTitleStyle())
-                   .setSubtitleStyle(reportService.getSubTitleStyle())
-                   .setSubtitleHeight(30);
+                        .setSubtitle(stringBuilder.toString())
+                        .setPrintBackgroundOnOddRows(false).setWhenNoData("", null)
+                        .setTitleStyle(reportService.getTitleStyle())
+                        .setSubtitleStyle(reportService.getSubTitleStyle())
+                        .setSubtitleHeight(30);
 
                 new JRBeanCollectionDataSource(ruleOutput.getSubRuleOutputs());
                 final DJDataSource djds = new DJDataSource(ruleOutput.getKey(), DJConstants.DATA_SOURCE_ORIGIN_PARAMETER,
@@ -379,7 +498,7 @@ public class Rule62 extends GeneralRule {
                         }
                 break;
             }
-       return reportStatus;
+        return reportStatus;
     }
 
     public Subreport generateSubRuleReport(final SubRuleOutput subRuleOutput, FastReportBuilder drb2, Map valuesMap)
@@ -396,11 +515,11 @@ public class Rule62 extends GeneralRule {
 
         drb.setMargins(0, 10, 10, 10);
         drb.setTitle("SubRule : " + subRuleOutput.getKey())
-           .setSubtitle(stringBuilder.toString())
-           .setPrintBackgroundOnOddRows(false).setWhenNoData("", null)
-           .setTitleStyle(reportService.getTitleStyle())
-           .setSubtitleStyle(reportService.getSubTitleStyle())
-           .setSubtitleHeight(30).setTitleHeight(40);
+                .setSubtitle(stringBuilder.toString())
+                .setPrintBackgroundOnOddRows(false).setWhenNoData("", null)
+                .setTitleStyle(reportService.getTitleStyle())
+                .setSubtitleStyle(reportService.getSubTitleStyle())
+                .setSubtitleHeight(30).setTitleHeight(40);
 
 
         if (subRuleOutput.getRuleReportOutputs() != null && !subRuleOutput.getRuleReportOutputs().isEmpty()) {
@@ -425,6 +544,5 @@ public class Rule62 extends GeneralRule {
         subRep.setSplitAllowed(true);
         return subRep;
     }
-
 
 }
