@@ -522,7 +522,7 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         }
     }
 
-    protected Set<FileStoreMapper> addToFileStore(final MultipartFile[] files) {
+    public Set<FileStoreMapper> addToFileStore(final MultipartFile[] files) {
         if (ArrayUtils.isNotEmpty(files))
             return Arrays.asList(files).stream().filter(file -> !file.isEmpty()).map(file -> {
                 try {

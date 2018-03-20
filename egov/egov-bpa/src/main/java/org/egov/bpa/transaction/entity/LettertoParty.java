@@ -33,20 +33,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 import org.egov.bpa.master.entity.LpReason;
@@ -109,6 +96,7 @@ public class LettertoParty extends AbstractAuditable {
 
     @OneToMany(mappedBy = "letterToParty", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private final List<AutoDcrMap> autoDcrMap = new ArrayList<AutoDcrMap>(0);
+    @OrderBy("id ASC")
     @OneToMany(mappedBy = "lettertoParty", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<LettertoPartyDocument> lettertoPartyDocument = new ArrayList<>(0);
     private String currentStateValueOfLP;

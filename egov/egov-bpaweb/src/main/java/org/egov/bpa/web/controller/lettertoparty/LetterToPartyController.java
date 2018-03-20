@@ -41,17 +41,14 @@ package org.egov.bpa.web.controller.lettertoparty;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
-import java.util.Arrays;
-import java.util.Collections;
+
 import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.egov.bpa.master.entity.CheckListDetail;
 import org.egov.bpa.master.entity.LpReason;
 import org.egov.bpa.master.service.CheckListDetailService;
@@ -67,8 +64,6 @@ import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.utils.BpaUtils;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.workflow.entity.StateHistory;
@@ -86,7 +81,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -255,19 +249,6 @@ public class LetterToPartyController {
         return LETTERTOPARTY_RESULT;
     }
 
-    protected Set<FileStoreMapper> addToFileStore(final MultipartFile[] files) {
-        if (ArrayUtils.isNotEmpty(files))
-            return Arrays.asList(files).stream().filter(file -> !file.isEmpty()).map(file -> {
-                try {
-                    return fileStoreService.store(file.getInputStream(), file.getOriginalFilename(),
-                            file.getContentType(), BpaConstants.FILESTORE_MODULECODE);
-                } catch (final Exception e) {
-                    throw new ApplicationRuntimeException("Error occurred while getting inputstream", e);
-                }
-            }).collect(Collectors.toSet());
-        else
-            return Collections.emptySet();
-    }
 
     protected void processAndStoreLetterToPartyDocuments(final LettertoParty lettertoParty) {
         if (!lettertoParty.getLettertoPartyDocument().isEmpty())
@@ -275,7 +256,10 @@ public class LetterToPartyController {
                 lettertoPartyDocument.setChecklistDetail(
                         checkListDetailService.load(lettertoPartyDocument.getChecklistDetail().getId()));
                 lettertoPartyDocument.setLettertoParty(lettertoParty);
-                lettertoPartyDocument.setSupportDocs(addToFileStore(lettertoPartyDocument.getFiles()));
+                if(lettertoPartyDocument.getFiles() != null && lettertoPartyDocument.getFiles().length > 0) {
+                    lettertoPartyDocument.setSupportDocs(applicationBpaService.addToFileStore(lettertoPartyDocument.getFiles()));
+                    lettertoPartyDocument.setIssubmitted(true);
+                }
             }
     }
 

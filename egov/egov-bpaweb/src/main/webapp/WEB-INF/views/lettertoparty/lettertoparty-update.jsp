@@ -98,7 +98,7 @@
 						</div>
 						<div class="form-group">
 							<div class="col-sm-3 add-margin">
-								<spring:message code="lbl.lpsentdate" />
+								<spring:message code="lbl.lpsentdate" /><span class="mandatory"></span>
 							</div>
 							<div class="col-sm-3 add-margin">
 								<form:input path="sentDate" class="form-control datepicker"
@@ -246,5 +246,7 @@
 	src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
 <link rel="stylesheet"
 	href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>">
+<script
+		src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/moment.min.js' context='/egi'/>"></script>
 <script
 	src="<cdn:url value='/resources/js/app/lettertoparty.js?rnd=${app_release_no}'/> "></script>

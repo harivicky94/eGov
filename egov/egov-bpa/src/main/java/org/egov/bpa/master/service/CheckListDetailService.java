@@ -72,12 +72,10 @@ public class CheckListDetailService {
         return checkListDetailRepository.getOne(id);
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
     public List<CheckListDetail> findActiveCheckListByServiceType(final Long serviceTypeId, final String checklistType) {
         return checkListDetailRepository.findActiveCheckListByServiceType(serviceTypeId, checklistType);
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
     public List<CheckListDetail> findActiveCheckListByChecklistType(final String checklistType) {
         return checkListDetailRepository.findActiveCheckListByChecklistType(checklistType);
     }
