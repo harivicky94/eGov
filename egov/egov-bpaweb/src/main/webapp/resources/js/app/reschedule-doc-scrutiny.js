@@ -112,37 +112,37 @@ $(document).ready(function() {
                 });
             return false;
         } else if (action == 'Re-Schedule') {
-            bootbox
-                .confirm({
-                    message : 'Please confirm, do you really going to Re-Schedule appointment ?',
-                    buttons : {
-                        'cancel' : {
-                            label : 'No',
-                            className : 'btn-danger'
+            if ($('#scrutinyReScheduleForm').valid()) {
+                bootbox
+                    .confirm({
+                        message: 'Please confirm, do you really going to Re-Schedule appointment ?',
+                        buttons: {
+                            'cancel': {
+                                label: 'No',
+                                className: 'btn-danger'
+                            },
+                            'confirm': {
+                                label: 'Yes',
+                                className: 'btn-primary'
+                            }
                         },
-                        'confirm' : {
-                            label : 'Yes',
-                            className : 'btn-primary'
-                        }
-                    },
-                    callback : function(result) {
-                        if (result) {
-                            if ($('#scrutinyReScheduleForm').valid()) {
-                                $('.loader-class').modal('show', {
-                                    backdrop : 'static'
-                                });
-                                document.forms[0].submit();
+                        callback: function (result) {
+                            if (result) {
+                                    $('.loader-class').modal('show', {
+                                        backdrop: 'static'
+                                    });
+                                    document.forms[0].submit();
                             } else {
                                 e.stopPropagation();
                                 e.preventDefault();
                             }
-
-                        } else {
-                            e.stopPropagation();
-                            e.preventDefault();
                         }
-                    }
-                });
+                    });
+            }else {
+                e.stopPropagation();
+                e.preventDefault();
+            }
+
             return false;
         }
     });
@@ -183,7 +183,7 @@ $(document).ready(function() {
 
     $('#appointmentTime').change(function (event) {
         if($('#appointmentDate') && $('#appointmentTime')) {
-           var previousAppointmentDate = moment($('#previousAppointmentDate').val(),[ "YYYYY-MM-DD" ]);
+            var previousAppointmentDate = moment($('#previousAppointmentDate').val(),[ "YYYYY-MM-DD" ]);
             var selectedAppointmentDate = moment($('#appointmentDate').val(),[ "DD/MM/YYYY" ]);
             var previousAppointmentTime = getAppointmentTime($('#previousAppointmentTime').val());
             var selectedAppointmentTime = getAppointmentTime($(this).val());
