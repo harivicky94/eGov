@@ -61,7 +61,7 @@
 	<c:if
 		test="${bpaApplication.serviceType.code ne '14' && bpaApplication.serviceType.code ne '15'}">
 		<div class="panel-heading">
-			<div class="panel-title">Permit Conidtions Type - I</div>
+			<div class="panel-title">Permit Conditions Type - I</div>
 		</div>
 		<table class="table table-bordered  multiheadertbl"
 			id="bpaDynamicPermitConditions">
@@ -159,7 +159,7 @@
 			</tbody>
 		</table>
 		<div class="panel-heading">
-			<div class="panel-title">Permit Conidtions Type - II</div>
+			<div class="panel-title">Permit Conditions Type - II</div>
 		</div>
 		<table class="table table-bordered  multiheadertbl"
 			id="bpaStaticPermitConditions">

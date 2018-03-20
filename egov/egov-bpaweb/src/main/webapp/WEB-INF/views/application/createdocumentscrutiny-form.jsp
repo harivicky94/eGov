@@ -69,6 +69,8 @@
 					data-tabidx=0><spring:message code='lbl.document.scrutiny' /></a></li>
 				<li><a data-toggle="tab" href="#document-info" data-tabidx=1><spring:message
 							code='title.documentdetail' /></a></li>
+				<li><a data-toggle="tab" href="#checklist-info" data-tabidx=2><spring:message
+						code='lbl.noc.doc.details' /></a></li>
 				</ul>
 			<div class="tab-content">
 				<div id="doc-scrutiny-info" class="tab-pane fade in active">
@@ -254,6 +256,11 @@
 				<div id="document-info" class="tab-pane fade">
 					<div class="panel panel-primary" data-collapsed="0">
 						<jsp:include page="bpaDocumentDetails.jsp"></jsp:include>
+					</div>
+				</div>
+				<div id="checklist-info" class="tab-pane fade">
+					<div class="panel panel-primary" data-collapsed="0">
+						<jsp:include page="noc-document-updation.jsp"></jsp:include>
 					</div>
 				</div>
 			</div>
