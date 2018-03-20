@@ -93,7 +93,7 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
 
     private static final String IS_CITIZEN = "isCitizen";
 
-    private static final String SUPERINTENDANT_NOT_EXISTS = "No Superintendant exists to forward the application.";
+    private static final String SUPERINTENDANT_NOT_EXISTS = "No officials assigned to process this application.";
 
     private static final String MSG_PORTAL_FORWARD_REGISTRATION = "msg.portal.forward.registration";
 
@@ -330,8 +330,7 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
         if (workFlowAction != null
                 && workFlowAction
                         .equals(WF_LBE_SUBMIT_BUTTON)
-                && onlinePaymentEnable && bpaApplicationRes.getAdmissionfeeAmount() != null
-                && bpaApplicationRes.getAdmissionfeeAmount().compareTo(BigDecimal.ZERO) == 1) {
+                && onlinePaymentEnable && bpaUtils.checkAnyTaxIsPendingToCollect(bpaApplicationRes)) {
             return genericBillGeneratorService
                     .generateBillAndRedirectToCollection(bpaApplication, model);
         }
