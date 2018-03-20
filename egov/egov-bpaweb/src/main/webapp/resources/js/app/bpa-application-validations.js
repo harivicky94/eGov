@@ -385,10 +385,10 @@ $(document).ready(function() {
     $('#workCompletionDate').on('changeDate', function() {
 
         if (!$('#workCommencementDate').val()) {
-            bootbox.alert("Please enter work Commencement Date");
+            bootbox.alert("Please enter work starting date");
             $('#workCompletionDate').val('').datepicker("refresh");
         } else if ($('#workCommencementDate').val() && moment($('#workCompletionDate').val(),'DD/MM/YYYY').isSameOrBefore(moment($('#workCommencementDate').val(),'DD/MM/YYYY'))) {
-        	bootbox.alert("Work completion date should be greater than the work commencement date");
+        	bootbox.alert("Work completion date should be greater than the work starting date");
             $('#workCompletionDate').val('').datepicker("refresh");
         }
     });
