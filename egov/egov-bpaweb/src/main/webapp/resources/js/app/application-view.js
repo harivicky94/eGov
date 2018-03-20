@@ -173,7 +173,10 @@ jQuery(document)
                     }
 
 					var tabfocus;
-					if ($('#showUpdateNoc').val()) {
+					if($('#wfstateDesc').val() == 'LP Created'
+						|| $('#wfstateDesc').val() == 'LP Reply Received') {
+                        tabfocus = '#view-lp';
+					} else if ($('#showUpdateNoc').val()) {
 						tabfocus = '#checklist-info';
 					} else if ($('#showPermitConditions').val()) {
                         tabfocus = '#permit-conditions';

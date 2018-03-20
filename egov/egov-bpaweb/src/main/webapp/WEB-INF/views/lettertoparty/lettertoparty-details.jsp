@@ -44,7 +44,7 @@
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 
 <div class="panel-heading">
-	<div class="panel-title"> Letter To Party Details raised by different officials :-</div>
+	<div class="panel-title"><spring:message code="lbl.lp.raised.details" /></div>
 </div>
 
 <div class="panel-body custom">

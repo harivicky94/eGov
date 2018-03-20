@@ -48,9 +48,45 @@ jQuery(document).ready(function($) {
 	$("#buttonCreateSubmit").click(function(e){ 
 		validateDate();
 		return true;
-	});  
-	
-	$('#sentDate').on('changeDate', function(e) {
+	});
+
+    var validator=$("#lettertoPartyReplyform").validate({
+        highlight: function(element, errorClass) {
+            $(element).fadeOut(function() {
+                $(element).fadeIn();
+            });
+        }
+    });
+
+    $("#btnLPReply").click(function(e){
+        if ($('#lettertoPartyReplyform').valid() && validateUploadFilesMandatory()) {
+            return true;
+        } else {
+            $errorInput=undefined;
+
+            $.each(validator.invalidElements(), function(index, elem){
+
+                if(!$(elem).is(":visible") && !$(elem).val() && index==0
+                    && $(elem).closest('div').find('.bootstrap-tagsinput').length > 0){
+                    $errorInput=$(elem);
+                    console.log("Error Elements", $errorInput);
+                }
+
+                if(!$(elem).is(":visible") && !$(elem).closest('div.panel-body').is(":visible")){
+                    $(elem).closest('div.panel-body').show();
+                    console.log("elem", $(elem));
+                }
+            });
+
+            if($errorInput)
+                $errorInput.tagsinput('focus');
+            validator.focusInvalid();
+
+            return false;
+		}
+    });
+
+    $('#sentDate').on('changeDate', function(e) {
 		validateDate();
 	});
 	$('#replyDate').on('changeDate', function(e) {

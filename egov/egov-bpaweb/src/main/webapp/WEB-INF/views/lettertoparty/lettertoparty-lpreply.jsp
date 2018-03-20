@@ -42,8 +42,10 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+
 <form:form role="form" action="/bpa/lettertoparty/lettertopartyreply"
-	method="post" modelAttribute="lettertoParty" id="lettertoPartyform"
+	method="post" modelAttribute="lettertoParty" id="lettertoPartyReplyform"
 	cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
 	<div class="row">
@@ -77,7 +79,7 @@
 						<input type="hidden" id='lettertoParty' name="lettertoParty"
 							value="${lettertoParty.id}">
 					</div>
-					<div class="form-group">
+					<div class="row add-border">
 						<div class="col-sm-3 add-margin">
 							<spring:message code="lbl.lpreason" />
 						</div>
@@ -96,7 +98,7 @@
 						</div>
 						<form:hidden path="sentDate" id="sentDate" value="${sentDate}" />
 					</div>
-					<div class="form-group">
+					<div class="row add-border">
 						<div class="col-sm-3 add-margin">
 							<spring:message code="lbl.lpdescription" />
 						</div>
@@ -105,7 +107,7 @@
 						</div>
 					</div>
 
-					<div class="form-group">
+					<div class="row add-border">
 						<div class="col-sm-3 add-margin">
 							<spring:message code="lbl.lpreplydate" /><span class="mandatory"></span>
 						</div>
@@ -120,43 +122,45 @@
 								<div class="col-sm-3 add-margin">
 									<form:textarea path="lpReplyRemarks"
 										class="form-control patternvalidation" data-pattern="alphanumericspecialcharacters"
-										rows="5" id="lpDesc" maxlength="1024" />
+										rows="5" id="lpDesc" maxlength="1016" />
 									<form:errors path="lpReplyRemarks" cssClass="error-msg" />
 								</div>
 					</div>
 				</div>
+			</div>
+			<div class="panel panel-primary" data-collapsed="0">
+				<div class="panel-heading custom_form_panel_heading">
+					<div class="panel-title">
+						<spring:message code="lbl.encloseddocuments" />
+						-
+						<spring:message code="lbl.checklist" />
+					</div>
+				</div>
 
-				<c:choose>
-					<c:when test="${!lettertoPartyDocument.isEmpty()}">
-						<div class="panel-heading custom_form_panel_heading">
-							<div class="panel-title">
-								<spring:message code="lbl.encloseddocuments" />
-								-
-								<spring:message code="lbl.checklist" />
-							</div>
-						</div>
+				<div class="panel-body">
 						<div class="form-group">
-							<div class="col-sm-2 text-center view-content">
+							<div class="col-sm-2 view-content">
 								<spring:message code="lbl.documentname" />
 							</div>
-							<div class="col-sm-2  text-center view-content">
+							<div class="col-sm-2 view-content">
 								<spring:message code="lbl.isrequested" />
 							</div>
 							<%--<div class="col-sm-2 text-center view-content">
 								<spring:message code="lbl.issubmitted" />
 							</div>--%>
-							<div class="col-sm-2 text-center view-content">
+							<div class="col-sm-4 view-content">
 								<spring:message code="lbl.remarks" />
 							</div>
-							<div class="col-sm-2 text-center view-content">
+							<div class="col-sm-4 view-content">
 								<spring:message code="lbl.attachdocument" />
-								<div class="add-margin error-msg text-center">
+								<div class="add-margin error-msg">
 									<font size="2"> <spring:message code="lbl.mesg.document" />
 									</font>
 								</div>
 							</div>
 						</div>
-
+						<c:choose>
+							<c:when test="${!lettertoPartyDocument.isEmpty()}">
 						<c:forEach var="lpdoc" items="${lettertopartydocList}"
 							varStatus="status">
 							<form:hidden
@@ -165,10 +169,8 @@
 							<form:hidden
 								path="lettertoPartyDocument[${status.index}].checklistDetail"
 								id="checklist" value="${doc.id}" />
-							<tr>
-								<td>
 									<div class="form-group">
-										<div class="col-sm-2 add-margin check-text text-center">
+										<div class="col-sm-2 add-margin check-text">
 											<c:out value="${lpdoc.checklistDetail.description}" />
 											<form:hidden
 												id="lettertoPartyDocument${status.index}checklistDetail"
@@ -179,7 +181,7 @@
 												path="lettertoPartyDocument[${status.index}].checklistDetail.isMandatory"
 												value="${lpdoc.checklistDetail.isMandatory}" />
 										</div>
-										<div class="col-sm-2 add-margin text-center">
+										<div class="col-sm-2 add-margin">
 											<form:checkbox
 												id="lettertoPartyDocument${status.index}isrequested"
 												path="lettertoPartyDocument[${status.index}].isrequested"
@@ -193,42 +195,79 @@
 												value="lettertoPartyDocument${status.index}issubmitted" />
 										</div>--%>
 
-										<div class="col-sm-2 add-margin text-center">
+										<div class="col-sm-4 add-margin">
 											<form:textarea class="form-control patternvalidation"
-												data-pattern="alphanumericspecialcharacters" maxlength="256"
-												id="lettertoPartyDocument${status.index}remarks"
+												data-pattern="alphanumericspecialcharacters" maxlength="248"
+												id="lettertoPartyDocument${status.index}remarks" rows="3"
 												path="lettertoPartyDocument[${status.index}].remarks" />
 											<form:errors
 												path="lettertoPartyDocument[${status.index}].remarks"
 												cssClass="add-margin error-msg" />
 										</div>
 
-										<div class="col-sm-2 add-margin text-center">
-											<c:choose>
-												<c:when test="${lpdoc.checklistDetail.isMandatory}">
-													<input type="file" id="file${status.index}id"
-														name="lettertoPartyDocument[${status.index}].files"
-														class="file-ellipsis upload-file" required="required">
-												</c:when>
-												<c:otherwise>
-													<input type="file" id="file${status.index}id"
-														name="lettertoPartyDocument[${status.index}].files"
-														class="file-ellipsis upload-file">
-												</c:otherwise>
-											</c:choose>
-											<form:errors
-												path="lettertoPartyDocument[${status.index}].files"
-												cssClass="add-margin error-msg" />
+										<div class="col-sm-4 add-margin">
+												<div class="files-upload-container"
+													 data-file-max-size="5"
+													 <c:if test="${lpdoc.isrequested eq true && fn:length(lpdoc.getSupportDocs()) eq 0}">required</c:if>
+													 data-allowed-extenstion="doc,docx,xls,xlsx,rtf,pdf,txt,zip,jpeg,jpg,png,gif,tiff">
+													<div class="files-viewer">
+
+														<c:forEach items="${lpdoc.getSupportDocs()}" var="file" varStatus="status1">
+															<div class="file-viewer" data-toggle="tooltip"
+																 data-placement="top" title="${file.fileName}">
+																<a class="download" target="_blank"
+																   href="/bpa/application/downloadfile/${file.fileStoreId}"></a>
+
+																<c:choose>
+																	<c:when test="${file.contentType eq 'application/pdf'}">
+																		<i class="fa fa-file-pdf-o" aria-hidden="true"></i>
+																	</c:when>
+																	<c:when test="${file.contentType eq 'application/txt'}">
+																		<i class="fa fa-file-text-o" aria-hidden="true"></i>
+																	</c:when>
+																	<c:when
+																			test="${file.contentType eq 'application/rtf' || file.contentType eq 'application/doc' || file.contentType eq 'application/docx' || file.contentType eq 'application/msword' || file.contentType eq 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'}">
+																		<i class="fa fa-file-word-o" aria-hidden="true"></i>
+																	</c:when>
+																	<c:when test="${file.contentType eq 'application/zip'}">
+																		<i class="fa fa-file-archive-o" aria-hidden="true"></i>
+																	</c:when>
+																	<c:when
+																			test="${file.contentType eq 'image/jpg' || file.contentType eq 'image/jpeg' || file.contentType eq 'image/png' || file.contentType eq 'image/gif' || file.contentType eq 'image/tiff'}">
+																		<i class="fa fa-picture-o" aria-hidden="true"></i>
+																	</c:when>
+																	<c:when
+																			test="${file.contentType eq 'application/xls' || file.contentType eq 'application/xlsx' || file.contentType eq 'application/vnd.ms-excel'}">
+																		<i class="fa fa-file-excel-o" aria-hidden="true"></i>
+																	</c:when>
+																	<c:otherwise>
+																		<i class="fa fa-file-o" aria-hidden="true"></i>
+																	</c:otherwise>
+																</c:choose>
+																<span class="doc-numbering">${status1.index+1}</span>
+															</div>
+														</c:forEach>
+
+														<a href="javascript:void(0);" class="file-add"
+														   data-unlimited-files="true"
+														   data-file-input-name="lettertoPartyDocument[${status.index}].files">
+															<i class="fa fa-plus"></i>
+														</a>
+
+													</div>
+												</div>
 										</div>
-									</div>
+
+										</div>
 						</c:forEach>
 					</c:when>
 				</c:choose>
+				</div>
 			</div>
 		</div>
-	</div>
+		</div>
 	<div class="text-center">
-		<button type='submit' class='btn btn-primary' id="buttonSubmit">
+		<button type='submit' class='btn btn-primary' id="btnLPReply">
 			<spring:message code='lbl.update' />
 		</button>
 
@@ -241,12 +280,23 @@
 	</div>
 </form:form>
 
+<!-- The Modal -->
+<div id="imgModel" class="image-modal">
+	<span class="closebtn">&times;</span> <img class="modal-content"
+											   id="previewImg">
+	<div id="caption"></div>
+</div>
 
+<script
+		src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
 <script
 	src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
 <link rel="stylesheet"
 	href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>">
 <script
-	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/moment.min.js' context='/egi'/>"></script>	
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/moment.min.js' context='/egi'/>"></script>
+<link rel="stylesheet" href="<c:url value='/resources/css/bpa-style.css?rnd=${app_release_no}'/>">
 <script
 	src="<cdn:url value='/resources/js/app/lettertoparty.js?rnd=${app_release_no}'/> "></script>
+<script
+		src="<cdn:url value='/resources/js/app/document-upload-helper.js?rnd=${app_release_no}'/>"></script>

@@ -61,13 +61,13 @@
 			<c:forEach items="${lettertopartydocList}" var="docs"
 				varStatus="status">
 				<div class="form-group">
-					<div class="col-sm-4 text-center">
+					<div class="col-sm-4">
 						<c:out value="${docs.checklistDetail.description}" />
 					</div>
-					<div class="col-sm-4 text-center">
+					<div class="col-sm-4">
 						<c:out value="${docs.remarks}" />
 					</div>
-					<div class="col-sm-4 text-center">
+					<div class="col-sm-4">
 						<c:set value="false" var="isDocFound"></c:set>
 						<c:forEach items="${docs.getSupportDocs()}" var="file">
 							<c:set value="true" var="isDocFound"></c:set>

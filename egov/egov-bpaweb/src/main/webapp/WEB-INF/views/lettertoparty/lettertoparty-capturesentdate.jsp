@@ -104,9 +104,9 @@
 								<c:out value="${lettertoParty.lastReplyDate}" />
 							</div>
 						</div>
-						<div class="form-group">
+						<div class="row add-border">
 							<div class="col-sm-3 add-margin">
-								<spring:message code="lbl.lpsentdate" />
+								<spring:message code="lbl.lpsentdate" /><span class="mandatory"></span>
 							</div>
 							<div class="col-sm-3 add-margin">
 								<form:input path="sentDate" class="form-control datepicker"
@@ -129,7 +129,8 @@
 </div>
 </form:form>
 
-
+<script
+		src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
 <script
 	src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
 <link rel="stylesheet"

@@ -91,7 +91,7 @@
 								<div class="col-sm-3 add-margin">
 									<form:textarea path="lpDesc"
 										class="form-control patternvalidation" data-pattern="alphanumericspecialcharacters"
-										rows="5" id="lpDesc" maxlength="1024"/>
+										rows="5" id="lpDesc" maxlength="1016"/>
 									<form:errors path="lpDesc" cssClass="error-msg" />
 								</div>
 							</div>
@@ -118,26 +118,26 @@
 									</div>
 								</div>
 								<div class="form-group view-content header-color hidden-xs">
-									<div class="col-sm-2 text-center">
+									<div class="col-sm-3">
 										<spring:message code="lbl.documentname" />
 									</div>
-									<div class="col-sm-2 text-center">
+									<div class="col-sm-2">
 										<spring:message code="lbl.isrequested"  />
 									</div>
 									<%--<div class="col-sm-2 text-center">
 										<spring:message code="lbl.issubmitted" />
 									</div>--%>
-									<div class="col-sm-2 text-center">
+									<div class="col-sm-7">
 										<spring:message code="lbl.remarks" />
 									</div>
-									<div class="col-sm-2 text-center">
+									<%--<div class="col-sm-2 text-center">
 										<spring:message code="lbl.attachdocument" />
 										<div class="add-margin error-msg text-center">
 											<font size="2"> <spring:message
 													code="lbl.mesg.document" />
 											</font>
 										</div>
-									</div>
+									</div>--%>
 								</div>
 								<c:forEach var="lpdoc" items="${lettertopartydocList}"
 									varStatus="status">
@@ -148,7 +148,7 @@
 										path="lettertoPartyDocument[${status.index}].checklistDetail"
 										id="checklist" value="${doc.id}" />
 											<div class="form-group">
-												<div class="col-sm-2 add-margin check-text text-center">
+												<div class="col-sm-3 add-margin check-text">
 													<c:forEach var="chk" items="${checkListDetailList}">
 														<c:if test="${lpdoc.checklistDetail.id == chk.id}">
 															<c:out value="${chk.description}" />
@@ -176,9 +176,9 @@
 														value="lettertoPartyDocument${status.index}issubmitted" />
 												</div>--%>
 
-												<div class="col-sm-2 add-margin text-center">
+												<div class="col-sm-7 add-margin">
 													<form:textarea class="form-control patternvalidation"
-																   data-pattern="alphanumericspecialcharacters" maxlength="256"
+																   data-pattern="alphanumericspecialcharacters" maxlength="248"
 														id="lettertoPartyDocument${status.index}remarks"
 														path="lettertoPartyDocument[${status.index}].remarks" />
 													<c:out value="${doc.id}"></c:out>
@@ -187,7 +187,7 @@
 														cssClass="add-margin error-msg" />
 												</div>
 
-												<div class="col-sm-2 add-margin text-center">
+												<%--<div class="col-sm-2 add-margin text-center">
 													<c:choose>
 														<c:when test="${chk.isMandatory}">
 															<input type="file" id="file${status.index}id"
@@ -203,9 +203,9 @@
 													<form:errors
 														path="lettertoPartyDocument[${status.index}].files"
 														cssClass="add-margin error-msg" />
-												</div>
+												</div>--%>
 
-												<div class="col-sm-2">
+												<%--<div class="col-sm-2">
 													<c:set value="false" var="isDocFound"></c:set>
 													<c:forEach items="${lpdoc.getSupportDocs()}" var="file">
 														<c:set value="true" var="isDocFound"></c:set>
@@ -216,7 +216,7 @@
 													<c:if test="${!isDocFound}">
 										NA
 									</c:if>
-												</div>
+												</div>--%>
 											</div>
 								</c:forEach>
 							</c:when>
@@ -239,6 +239,8 @@
 </div>
 </form:form>
 
+<script
+		src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
 <link rel="stylesheet" href="<c:url value='/resources/css/bpa-style.css?rnd=${app_release_no}'/>">
 <script
 	src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>

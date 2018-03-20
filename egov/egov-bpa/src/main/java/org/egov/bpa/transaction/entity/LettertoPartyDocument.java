@@ -39,9 +39,8 @@
  */
 package org.egov.bpa.transaction.entity;
 
-import java.util.Collections;
-import java.util.Date;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.*;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -155,7 +154,10 @@ public class LettertoPartyDocument extends AbstractAuditable {
     }
 
     public Set<FileStoreMapper> getSupportDocs() {
-        return supportDocs;
+        return this.supportDocs
+                .stream()
+                .sorted(Comparator.comparing(FileStoreMapper::getId))
+                .collect(Collectors.toSet());
     }
 
     public void setSupportDocs(final Set<FileStoreMapper> supportDocs) {
