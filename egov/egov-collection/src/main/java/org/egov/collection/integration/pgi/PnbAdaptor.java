@@ -152,12 +152,15 @@ public class PnbAdaptor implements PaymentGatewayAdaptor {
 		try {
 			pnbResMsgDTO = objAWLMEAPI.getTransactionStatus(collectionApplicationProperties.pnbMid(),
 					onlinePayment.getReceiptHeader().getId().toString(), onlinePayment.getTransactionNumber(),
-					collectionApplicationProperties.pnbEncryptionKey(),null);
+					collectionApplicationProperties.pnbEncryptionKey(),System.getProperty("pnb.payment.integration.prop"));
 			pnbResponse.setAuthStatus(pnbResMsgDTO.getStatusCode().equals("S")
 					? CollectionConstants.PGI_AUTHORISATION_CODE_SUCCESS : pnbResMsgDTO.getStatusCode());
 			pnbResponse.setErrorDescription(pnbResMsgDTO.getStatusDesc());
 			pnbResponse.setAdditionalInfo6(pnbResMsgDTO.getAddField2().replace("-", "").replace("/", ""));
-			pnbResponse.setReceiptId(pnbResMsgDTO.getOrderId());
+			if(pnbResMsgDTO.getOrderId().equalsIgnoreCase("NA"))
+				pnbResponse.setReceiptId(onlinePayment.getReceiptHeader().getId().toString());
+			else	
+				pnbResponse.setReceiptId(pnbResMsgDTO.getOrderId());
 
 			// Success
 			if (pnbResponse.getAuthStatus().equals(CollectionConstants.PGI_AUTHORISATION_CODE_SUCCESS)) {
