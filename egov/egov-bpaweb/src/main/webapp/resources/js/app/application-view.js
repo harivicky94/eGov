@@ -48,8 +48,8 @@ jQuery(document)
                         $('.edcrApplnDetails').hide();
 					}
 						//To show notification to business user/citizen on application open
-						if($('#wfstateDesc').val() == 'Scheduled For Document Scrutiny'
-							|| $('#wfstateDesc').val() == 'Rescheduled For Document Scrutiny') {
+						if($('#applicationStatus').val() == 'Scheduled For Document Scrutiny'
+							|| $('#applicationStatus').val() == 'Rescheduled For Document Scrutiny') {
 					        if($('#appointmentDateRes').val()) {
                                 var appointmentDate = new Date($('#appointmentDateRes').val());
                                 var day = appointmentDate.getDate();

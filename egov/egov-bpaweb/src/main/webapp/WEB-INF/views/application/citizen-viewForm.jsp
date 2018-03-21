@@ -67,8 +67,8 @@
 					</c:if>
 				</c:forEach>
 				<input type="hidden" id="collectFeeValidate" value="${collectFeeValidate}" />
-				<input type="hidden" name="citizenOrBusinessUser"
-				value="${citizenOrBusinessUser}">
+				<input type="hidden" name="citizenOrBusinessUser" value="${citizenOrBusinessUser}">
+				<input type="hidden" id="applicationStatus" value="${bpaApplication.status.code}">
 			<ul class="nav nav-tabs" id="settingstab">
 				<li class="active"><a data-toggle="tab"
 					href="#appliccation-info" data-tabidx=0><spring:message
