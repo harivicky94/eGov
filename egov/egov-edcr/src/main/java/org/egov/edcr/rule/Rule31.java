@@ -13,6 +13,7 @@ import org.egov.edcr.entity.SubRuleOutput;
 import org.egov.edcr.service.ReportService;
 import org.egov.edcr.utility.DcrConstants;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 
 import ar.com.fdvs.dj.core.DJConstants;
@@ -89,9 +90,9 @@ public class Rule31 extends GeneralRule {
     }
 
     private String prepareMessage(String code, String args) {
-        /*
-         * return edcrMessageSource.getMessage(code, new String[] { args }, LocaleContextHolder.getLocale());
-         */ return args;
+        
+          return edcrMessageSource.getMessage(code, new String[] { args }, LocaleContextHolder.getLocale());
+          //return args;
     }
 
     @Override
@@ -107,7 +108,7 @@ public class Rule31 extends GeneralRule {
         floorAreaRatio = planDetail.getBuilding().getFar();
 
         // currently we arer using occupany as RESIDENTIAL,
-        if (floorAreaRatio.compareTo(BigDecimal.ZERO) > 0 && planDetail.getPlanInformation().getOccupancy() != null
+        if (floorAreaRatio!=null && floorAreaRatio.compareTo(BigDecimal.ZERO) > 0 && planDetail.getPlanInformation().getOccupancy() != null
             && planDetail.getPlanInformation().getOccupancy().toUpperCase().equals(DcrConstants.RESIDENTIAL))
             // 3) If occupany is A1 FAR should be less than 4, with additional fee of @ Rs.5000 x (FAR-3)*PLot area
             if (floorAreaRatio.compareTo(four) <= 0) {

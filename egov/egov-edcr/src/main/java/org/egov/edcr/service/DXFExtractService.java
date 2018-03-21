@@ -496,8 +496,12 @@ public class DXFExtractService {
             pi.setArchitectInformation(planInfoProperties.get(DxfFileConstants.ARCHITECT_NAME));
         String plotArea = planInfoProperties.get(DxfFileConstants.PLOT_AREA);
 
-        if (plotArea == null)
+        if (plotArea == null){
+            Plot plot = new Plot();
             pl.addError(DxfFileConstants.PLOT_AREA, DxfFileConstants.PLOT_AREA + " is not defined in the Plan Information Layer");
+            plot.setPresentInDxf(false);
+            pl.setPlot(plot);
+        }
         else
             try {
                 Plot plot = new Plot();
