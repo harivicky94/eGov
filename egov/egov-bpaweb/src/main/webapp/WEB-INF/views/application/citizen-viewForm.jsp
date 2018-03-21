@@ -220,8 +220,7 @@
 							</td> 
 						</c:if>
 						
-						<c:if test="${bpaApplication.status.code eq 'Cancelled' && bpaApplication.state ne null && bpaApplication.state.comments ne 'Application cancelled by citizen'
-						 	&& bpaApplication.state.comments ne 'Application is cancelled because citizen not attended for document scrutiny'}">
+						<c:if test="${bpaApplication.status.code eq 'Cancelled' && bpaApplication.state ne null}">
 							<td> <a	href="/bpa/application/rejectionnotice/${bpaApplication.applicationNumber}" class="btn btn-primary">
 								Download Rejection Notice
 								    </a>
