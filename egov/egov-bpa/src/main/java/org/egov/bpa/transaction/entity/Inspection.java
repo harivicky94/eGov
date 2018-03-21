@@ -228,7 +228,7 @@ public class Inspection extends AbstractAuditable {
     @JoinTable(name = "egbpa_inspectiondocs", joinColumns = @JoinColumn(name = "inspectionid"), inverseJoinColumns = @JoinColumn(name = "filestoreid"))
     private Set<FileStoreMapper> inspectionSupportDocs = Collections.emptySet();
     private transient Map<Long, String> encodedImages = new HashMap<>() ;
-    private boolean isBoundaryDrawingSubmitted;
+    private boolean boundaryDrawingSubmitted;
     private boolean rightToMakeConstruction;
     @Length(min = 1, max = 128)
     private String typeofLand;
@@ -820,11 +820,11 @@ public class Inspection extends AbstractAuditable {
     }
 
     public boolean isBoundaryDrawingSubmitted() {
-        return isBoundaryDrawingSubmitted;
+        return boundaryDrawingSubmitted;
     }
 
-    public void setBoundaryDrawingSubmitted(boolean isBoundaryDrawingSubmitted) {
-        this.isBoundaryDrawingSubmitted = isBoundaryDrawingSubmitted;
+    public void setBoundaryDrawingSubmitted(boolean boundaryDrawingSubmitted) {
+        this.boundaryDrawingSubmitted = boundaryDrawingSubmitted;
     }
 
     public boolean isRightToMakeConstruction() {

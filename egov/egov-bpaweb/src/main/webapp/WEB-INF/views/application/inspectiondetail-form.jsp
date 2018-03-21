@@ -948,10 +948,9 @@
 	<label class="col-sm-3 control-label text-right"><spring:message
 			code="lbl.dimensionofplot" /></label>
 	<div class="col-sm-3 add-margin">
-		<form:radiobutton path="boundaryDrawingSubmitted" value="true" />
+		<form:radiobutton path="boundaryDrawingSubmitted" value="true" checked="checked"/>
 		<spring:message code="lbl.yes" />
-		<form:radiobutton path="boundaryDrawingSubmitted" value="false"
-			checked="checked" />
+		<form:radiobutton path="boundaryDrawingSubmitted" value="false" />
 		<spring:message code="lbl.no" />
 		<form:errors path="boundaryDrawingSubmitted"
 			cssClass="add-margin error-msg" />
