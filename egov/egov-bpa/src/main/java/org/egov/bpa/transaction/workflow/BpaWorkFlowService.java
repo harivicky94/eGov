@@ -237,7 +237,7 @@ public class BpaWorkFlowService {
         return json == null || json.get("tsInitiatorPos") == null ? 0 : Long.valueOf(json.get("tsInitiatorPos").toString());
     }
 
-    public Position getApproverPositionOnReject(final BpaApplication application, final String currentState) {
+    public Position getApproverPositionOfElectionWardByCurrentState(final BpaApplication application, final String currentState) {
         WorkFlowMatrix wfMatrix = bpaUtils.getWfMatrixByCurrentState(application, currentState);
         return bpaUtils.getUserPositionByZone(wfMatrix.getNextDesignation(),
                 application.getSiteDetail().get(0) != null

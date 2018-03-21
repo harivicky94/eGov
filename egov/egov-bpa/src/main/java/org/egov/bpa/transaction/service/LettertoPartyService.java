@@ -40,7 +40,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.egov.bpa.autonumber.LettertoPartyNumberGenerator;
 import org.egov.bpa.autonumber.LettertoPartyReplyAckNumberGenerator;
 import org.egov.bpa.master.entity.LpReason;
-import org.egov.bpa.transaction.entity.BpaApplication;
+import org.egov.bpa.transaction.entity.*;
 import org.egov.bpa.transaction.entity.LettertoParty;
 import org.egov.bpa.transaction.repository.LettertoPartyRepository;
 import org.egov.bpa.transaction.service.messaging.BPASmsAndEmailService;
@@ -52,7 +52,6 @@ import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
-import org.egov.infra.web.utils.WebUtils;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -92,12 +91,10 @@ public class LettertoPartyService {
     }
 
     @Transactional
-    public LettertoParty save(final LettertoParty lettertoParty) {
-        Long approverPosition;
+    public LettertoParty save(final LettertoParty lettertoParty, final Long approverPosition) {
         if (lettertoParty.getLpNumber() == null || "".equals(lettertoParty.getLpNumber())) {
             lettertoParty.setLetterDate(new Date());
             lettertoParty.setLpNumber(generateLettertpPartyNumber());
-            approverPosition = getDocScutinyUser(lettertoParty.getApplication());
             bpaUtils.redirectToBpaWorkFlow(approverPosition, lettertoParty.getApplication(), BpaConstants.LETTERTOPARTYINITIATE,
                     LETTER_TO_PARTY_INITIATE, BpaConstants.LETTERTOPARTYINITIATE, null);
             bpaSmsAndEmailService.sendSMSAndEmailToApplicantForLettertoparty(lettertoParty.getApplication());
@@ -152,7 +149,7 @@ public class LettertoPartyService {
     }
 
     public ResponseEntity<byte[]> generateReport(final LettertoParty lettertoParty, String type,
-            final HttpServletRequest request) {
+                                                 final HttpServletRequest request) {
         ReportRequest reportInput = null;
         ReportOutput reportOutput;
         if (lettertoParty != null) {

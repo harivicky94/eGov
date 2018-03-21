@@ -449,7 +449,7 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
         } // For one day permit, on reject from AE it's forwarded to SUP (workflow user) 
         else if (WF_REJECT_BUTTON.equalsIgnoreCase(workFlowAction)) {
         	if(!bpaApplication.getIsOneDayPermitApplication()){
-        		pos = bpaWorkFlowService.getApproverPositionOnReject(bpaApplication, WF_REJECT_STATE);
+        		pos = bpaWorkFlowService.getApproverPositionOfElectionWardByCurrentState(bpaApplication, WF_REJECT_STATE);
                 approvalPosition = pos.getId();
         	} else if (bpaApplication.getIsOneDayPermitApplication() && null != request.getParameter(APPRIVALPOSITION) && !"".equals(request.getParameter(APPRIVALPOSITION)))
         			approvalPosition = Long.valueOf(request.getParameter(APPRIVALPOSITION));

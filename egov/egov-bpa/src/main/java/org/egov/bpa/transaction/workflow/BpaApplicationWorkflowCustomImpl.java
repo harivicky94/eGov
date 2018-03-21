@@ -195,7 +195,7 @@ public abstract class BpaApplicationWorkflowCustomImpl implements BpaApplication
         } else if (BpaConstants.WF_INITIATE_REJECTION_BUTTON.equalsIgnoreCase(workFlowAction)) {
         	//For one day permit, position need not be set 
         	if(!application.getIsOneDayPermitApplication()) 
-        		pos = bpaWorkFlowService.getApproverPositionOnReject(application, BpaConstants.REJECT_BY_CLERK);
+        		pos = bpaWorkFlowService.getApproverPositionOfElectionWardByCurrentState(application, BpaConstants.REJECT_BY_CLERK);
             wfmatrix = bpaApplicationWorkflowService.getWfMatrix(application.getStateType(), null,
                     null, additionalRule, BpaConstants.REJECT_BY_CLERK, null);
             application.setStatus(getStatusByPassingCode(BpaConstants.WF_REJECT_STATE));
@@ -241,8 +241,9 @@ public abstract class BpaApplicationWorkflowCustomImpl implements BpaApplication
         } else if (BpaConstants.LPREPLYRECEIVED.equalsIgnoreCase(workFlowAction)) {
             List<LettertoParty> lettertoParties = lettertoPartyService.findByBpaApplicationOrderByIdDesc(application);
             StateHistory<Position> stateHistory = bpaWorkFlowService.getStateHistoryToGetLPInitiator(application, lettertoParties);
-            wfmatrix = bpaApplicationWorkflowService.getWfMatrix(application.getStateType(), null, amountRule, additionalRule,
-                    lettertoParties.get(0).getCurrentStateValueOfLP(), lettertoParties.get(0).getPendingAction());
+            /*wfmatrix = bpaApplicationWorkflowService.getWfMatrix(application.getStateType(), null, amountRule, additionalRule,
+                    lettertoParties.get(0).getCurrentStateValueOfLP(), lettertoParties.get(0).getPendingAction());*/
+            wfmatrix = workFlowMatrixService.getWorkFlowObjectbyId(bpaWorkFlowService.getPreviousWfMatrixId(application));
             if(null == wfmatrix)
                 wfmatrix = bpaApplicationWorkflowService.getWfMatrix(application.getStateType(), null, null, additionalRule,
                         lettertoParties.get(0).getCurrentStateValueOfLP(), null);

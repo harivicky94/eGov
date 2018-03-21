@@ -53,13 +53,13 @@ import org.egov.bpa.master.entity.CheckListDetail;
 import org.egov.bpa.master.entity.LpReason;
 import org.egov.bpa.master.service.CheckListDetailService;
 import org.egov.bpa.master.service.LpReasonService;
-import org.egov.bpa.transaction.entity.BpaApplication;
+import org.egov.bpa.transaction.entity.*;
 import org.egov.bpa.transaction.entity.LettertoParty;
-import org.egov.bpa.transaction.entity.LettertoPartyDocument;
 import org.egov.bpa.transaction.service.ApplicationBpaService;
 import org.egov.bpa.transaction.service.BpaThirdPartyService;
 import org.egov.bpa.transaction.service.LettertoPartyDocumentService;
 import org.egov.bpa.transaction.service.LettertoPartyService;
+import org.egov.bpa.transaction.workflow.*;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.utils.BpaUtils;
 import org.egov.eis.service.PositionMasterService;
@@ -106,11 +106,11 @@ public class LetterToPartyController {
     static final String LPREPLYCHK = "lpreply";
 
     @Autowired
-    ApplicationBpaService applicationBpaService;
+    private ApplicationBpaService applicationBpaService;
     @Autowired
-    LpReasonService lpReasonService;
+    private LpReasonService lpReasonService;
     @Autowired
-    LettertoPartyService lettertoPartyService;
+    private LettertoPartyService lettertoPartyService;
     @Autowired
     private CheckListDetailService checkListDetailService;
     @Autowired
@@ -128,6 +128,8 @@ public class LetterToPartyController {
     protected BpaThirdPartyService bpaThirdPartyService;
     @Autowired
     private BpaUtils bpaUtils;
+    @Autowired
+    private BpaWorkFlowService bpaWorkFlowService;
 
     @ModelAttribute("lpReasonList")
     public List<LpReason> getLpReasonList() {
@@ -183,11 +185,9 @@ public class LetterToPartyController {
                 lettertoParty.setPendingAction(existingLpParty.getPendingAction());
             }
         }
-
-        lettertoPartyService.save(lettertoParty);
-        Long approverPosition = lettertoPartyService.getDocScutinyUser(lettertoParty.getApplication());
-        Position pos = positionMasterService.getPositionById(approverPosition);
-        User user = bpaThirdPartyService.getUserPositionByPassingPosition(approverPosition);
+        Position pos = bpaWorkFlowService.getApproverPositionOfElectionWardByCurrentState(lettertoParty.getApplication(), "LP Initiated");
+        lettertoPartyService.save(lettertoParty, pos.getId());
+        User user = bpaThirdPartyService.getUserPositionByPassingPosition(pos.getId());
         String message = messageSource.getMessage(MSG_LP_FORWARD_CREATE, new String[] {
                 user != null ? user.getUsername().concat("~")
                         .concat(getApproverDesigName(pos))
@@ -231,9 +231,9 @@ public class LetterToPartyController {
 
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public String updateLettertoparty(@ModelAttribute final LettertoParty lettertoparty, final Model model,
-            final HttpServletRequest request, final BindingResult errors, final RedirectAttributes redirectAttributes) {
+                                      final HttpServletRequest request, final BindingResult errors, final RedirectAttributes redirectAttributes) {
         processAndStoreLetterToPartyDocuments(lettertoparty);
-        lettertoPartyService.save(lettertoparty);
+        lettertoPartyService.save(lettertoparty, lettertoparty.getApplication().getState().getOwnerPosition().getId());
         redirectAttributes.addFlashAttribute(MESSAGE,
                 messageSource.getMessage(MSG_LETTERTOPARTY_UPDATE_SUCCESS, null, null));
         return REDIRECT_LETTERTOPARTY_RESULT + lettertoparty.getId();
@@ -302,9 +302,9 @@ public class LetterToPartyController {
 
     @RequestMapping(value = "/lettertopartyreply", method = RequestMethod.POST)
     public String createLettertoPartyReply(@ModelAttribute final LettertoParty lettertoparty, final Model model,
-            final HttpServletRequest request, final BindingResult errors, final RedirectAttributes redirectAttributes) {
+                                           final HttpServletRequest request, final BindingResult errors, final RedirectAttributes redirectAttributes) {
         processAndStoreLetterToPartyDocuments(lettertoparty);
-        LettertoParty lettertopartyRes = lettertoPartyService.save(lettertoparty);
+        LettertoParty lettertopartyRes = lettertoPartyService.save(lettertoparty, lettertoparty.getApplication().getState().getOwnerPosition().getId());
         bpaUtils.updatePortalUserinbox(lettertopartyRes.getApplication(), null);
         redirectAttributes.addFlashAttribute(MESSAGE,
                 messageSource.getMessage(MSG_LETTERTOPARTY_REPLY_SUCCESS, null, null));
