@@ -62,10 +62,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.*;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+
+import static org.egov.bpa.utils.BpaConstants.ST_CODE_05;
+import static org.egov.bpa.utils.BpaConstants.ST_CODE_08;
+import static org.egov.bpa.utils.BpaConstants.ST_CODE_09;
+import static org.egov.bpa.utils.BpaConstants.ST_CODE_14;
+import static org.egov.bpa.utils.BpaConstants.ST_CODE_15;
 
 @Service
 @Transactional(readOnly = true)
@@ -243,6 +250,28 @@ public class BpaWorkFlowService {
                 application.getSiteDetail().get(0) != null
                 && application.getSiteDetail().get(0).getElectionBoundary() != null
                 ? application.getSiteDetail().get(0).getElectionBoundary().getId() : null);
+    }
+
+    public BigDecimal getAmountRuleByServiceType(final BpaApplication application) {
+        BigDecimal amountRule = BigDecimal.ONE;
+        if (ST_CODE_14.equalsIgnoreCase(application.getServiceType().getCode())
+            || ST_CODE_15.equalsIgnoreCase(application.getServiceType().getCode())) {
+            amountRule = new BigDecimal(2501);
+        } else if (ST_CODE_05.equalsIgnoreCase(application.getServiceType().getCode())) {
+            amountRule = application.getDocumentScrutiny().get(0).getExtentinsqmts();
+        } else if (ST_CODE_08.equalsIgnoreCase(application.getServiceType().getCode())
+                   || ST_CODE_09.equalsIgnoreCase(application.getServiceType().getCode())) {
+            amountRule = BigDecimal.ONE;
+        } else if (!application.getBuildingDetail().isEmpty()
+                   && application.getBuildingDetail().get(0).getTotalPlintArea() != null) {
+            if (!application.getExistingBuildingDetails().isEmpty()
+                && application.getExistingBuildingDetails().get(0).getTotalPlintArea() != null)
+                amountRule = application.getBuildingDetail().get(0).getTotalPlintArea()
+                                        .add(application.getExistingBuildingDetails().get(0).getTotalPlintArea());
+            else
+                amountRule = application.getBuildingDetail().get(0).getTotalPlintArea();
+        }
+        return amountRule.setScale(0, BigDecimal.ROUND_UP);
     }
 
 }

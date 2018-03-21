@@ -145,8 +145,7 @@ jQuery(document)
 						|| $('#wfstateDesc').val() == 'Town Surveyor Inspection Initiated'
 						|| $('#wfstateDesc').val() == 'Rejection initiated by clerk') {
 						$("#approverDetailBody").hide();
-					} else if($('#wfstateDesc').val() == 'Permit Fee paid'
-						|| $('#wfstateDesc').val() == 'Permit Fee Collected') {
+					} else if($('#isOneDayPermitApplication').val() == 'true' && $('#wfstateDesc').val() == 'Permit Fee Collected') {
                         removeWorkFlowMandatoryAndHideDepartmentDetails();
                         $("#approverDetailBody").hide();
 					}

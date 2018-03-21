@@ -129,8 +129,8 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
             model.addAttribute("createlettertoparty", true);
         }
 
-        if (APPLICATION_STATUS_APPROVED.equals(application.getStatus().getCode())
-                || APPLICATION_STATUS_DIGI_SIGNED.equalsIgnoreCase(application.getStatus().getCode())) {
+        if (!bpaUtils.checkAnyTaxIsPendingToCollect(application) && (APPLICATION_STATUS_APPROVED.equals(application.getStatus().getCode())
+                || APPLICATION_STATUS_DIGI_SIGNED.equalsIgnoreCase(application.getStatus().getCode()))) {
             model.addAttribute("showpermitconditions", true);
             model.addAttribute("permitConditions", permitConditionsService
                     .findByConditionTypeOrderByOrderNumberAsc(PermitConditionType.STATIC_PERMITCONDITION.name()));
@@ -341,12 +341,12 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
 	                        && !APPLICATION_STATUS_APPROVED.equals(application.getStatus().getCode()) && !lettertoParties.isEmpty()
 	                        && APPLICATION_STATUS_NOCUPDATED
 	                                .equals(lettertoParties.get(0).getCurrentApplnStatus().getCode()))) {
-	            workflowContainer.setAmountRule(getAmountRuleByServiceType(application));
+	            workflowContainer.setAmountRule(bpaWorkFlowService.getAmountRuleByServiceType(application));
 	            workflowContainer.setPendingActions(application.getState().getNextAction());
-	        } /*else if (APPLICATION_STATUS_APPROVED.equals(application.getStatus().getCode())
+	        } else if (APPLICATION_STATUS_APPROVED.equals(application.getStatus().getCode())
 	                && !APPLICATION_STATUS_RECORD_APPROVED.equalsIgnoreCase(application.getState().getValue())) {
-	            workflowContainer.setAmountRule(getAmountRuleByServiceType(application));
-	        }*/
+	            workflowContainer.setAmountRule(bpaWorkFlowService.getAmountRuleByServiceType(application));
+	        }
 			// Town surveyor workflow
 			if (WF_TS_INSPECTION_INITIATED.equalsIgnoreCase(application.getStatus().getCode())) {
 				workflowContainer.setPendingActions(WF_TS_APPROVAL_PENDING);
@@ -377,28 +377,6 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
         model.addAttribute("admissionFee", applicationBpaService.setAdmissionFeeAmountForRegistrationWithAmenities(
                 application.getServiceType().getId(), application.getApplicationAmenity()));
         buildReceiptDetails(application);
-    } 
-
-    private BigDecimal getAmountRuleByServiceType(final BpaApplication application) {
-        BigDecimal amountRule = BigDecimal.ONE;
-        if (ST_CODE_14.equalsIgnoreCase(application.getServiceType().getCode())
-                || ST_CODE_15.equalsIgnoreCase(application.getServiceType().getCode())) {
-            amountRule = new BigDecimal(2501);
-        } else if (ST_CODE_05.equalsIgnoreCase(application.getServiceType().getCode())) {
-            amountRule = application.getDocumentScrutiny().get(0).getExtentinsqmts();
-        } else if (ST_CODE_08.equalsIgnoreCase(application.getServiceType().getCode())
-                || ST_CODE_09.equalsIgnoreCase(application.getServiceType().getCode())) {
-            amountRule = BigDecimal.ONE;
-        } else if (!application.getBuildingDetail().isEmpty()
-                && application.getBuildingDetail().get(0).getTotalPlintArea() != null) {
-            if (!application.getExistingBuildingDetails().isEmpty()
-                    && application.getExistingBuildingDetails().get(0).getTotalPlintArea() != null)
-                amountRule = application.getBuildingDetail().get(0).getTotalPlintArea()
-                        .add(application.getExistingBuildingDetails().get(0).getTotalPlintArea());
-            else
-                amountRule = application.getBuildingDetail().get(0).getTotalPlintArea();
-        }
-        return amountRule.setScale(0, BigDecimal.ROUND_UP);
     }
 
     @RequestMapping(value = "/update-submit/{applicationNumber}", method = RequestMethod.POST)

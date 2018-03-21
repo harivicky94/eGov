@@ -289,7 +289,7 @@ public class BpaNoticeService {
         reportParams.put("certificateValidity",
                 getValidityDescription(bpaApplication.getServiceType().getCode(), bpaApplication.getPlanPermissionDate()));
         reportParams.put("isBusinessUser", bpaUtils.logedInuseCitizenOrBusinessUser());
-        reportParams.put("designation", getApproverDesignation(getAmountRuleByServiceType(bpaApplication)));
+        reportParams.put("designation", getApproverDesignation(bpaWorkFlowService.getAmountRuleByServiceType(bpaApplication).intValue()));
         reportParams.put("qrCode", generatePDF417Code(buildQRCodeDetails(bpaApplication)));
         if(bpaApplication.getIsOneDayPermitApplication())
             reportParams.put("permitOrderTitle", "ONE DAY BUILDING PERMIT");
@@ -319,7 +319,7 @@ public class BpaNoticeService {
     private String buildQRCodeDetails(final BpaApplication bpaApplication) {
     	StringBuilder qrCodeValue = new StringBuilder();
     	qrCodeValue = !StringUtils.isEmpty(bpaApplication.getPlanPermissionNumber()) ? qrCodeValue.append("Permit number : ").append(bpaApplication.getPlanPermissionNumber()).append("\n") : qrCodeValue.append("Permit number : ").append("N/A").append("\n");
-    	qrCodeValue = getAmountRuleByServiceType(bpaApplication) != null ? qrCodeValue.append("Approved by : ").append(getApproverDesignation(getAmountRuleByServiceType(bpaApplication))).append("\n") : qrCodeValue.append("Approved by : ").append("N/A").append("\n");
+    	qrCodeValue = bpaWorkFlowService.getAmountRuleByServiceType(bpaApplication) != null ? qrCodeValue.append("Approved by : ").append(getApproverDesignation(bpaWorkFlowService.getAmountRuleByServiceType(bpaApplication).intValue())).append("\n") : qrCodeValue.append("Approved by : ").append("N/A").append("\n");
     	qrCodeValue = bpaApplication.getPlanPermissionDate() != null ? qrCodeValue.append("Date of issue of permit : ").append(bpaApplication.getPlanPermissionDate()).append("\n") : qrCodeValue.append("Date of issue of permit : ").append("N/A").append("\n");
     	qrCodeValue = !StringUtils.isEmpty(getApproverName(bpaApplication)) ? qrCodeValue.append("Name of approver : ").append(getApproverName(bpaApplication)).append("\n") : qrCodeValue.append("Name of approver : ").append("N/A").append("\n");
     	return qrCodeValue.toString();
@@ -456,23 +456,6 @@ public class BpaNoticeService {
         return fmt.print(permissionDate.plusYears(Integer.valueOf(noOfYears)));
     }
 
-    private Integer getAmountRuleByServiceType(final BpaApplication application) {
-        BigDecimal amountRule = BigDecimal.ONE;
-        if (ST_CODE_14.equalsIgnoreCase(application.getServiceType().getCode())
-                || ST_CODE_15.equalsIgnoreCase(application.getServiceType().getCode())) {
-            amountRule = new BigDecimal(2501);
-        } else if (ST_CODE_05.equalsIgnoreCase(application.getServiceType().getCode())) {
-            amountRule = application.getDocumentScrutiny().get(0).getExtentinsqmts();
-        } else if (ST_CODE_08.equalsIgnoreCase(application.getServiceType().getCode())
-                || ST_CODE_09.equalsIgnoreCase(application.getServiceType().getCode())) {
-            amountRule = BigDecimal.ONE;
-        } else if (!application.getBuildingDetail().isEmpty()
-                && application.getBuildingDetail().get(0).getTotalPlintArea() != null) {
-            amountRule = application.getBuildingDetail().get(0).getTotalPlintArea();
-        }
-        return amountRule.setScale(0, BigDecimal.ROUND_UP).intValue();
-    }
-
     private String getApproverDesignation(final Integer amountRule) {
         String designation = StringUtils.EMPTY;
         if (amountRule >= 0 && amountRule <= 300) {
@@ -491,7 +474,7 @@ public class BpaNoticeService {
     
     private String getApproverName(final BpaApplication application) {
     	StateHistory<Position> stateHistory = application.getStateHistory().stream()
-                .filter(history -> history.getOwnerPosition().getDeptDesig().getDesignation().getName().equalsIgnoreCase(getApproverDesignation(getAmountRuleByServiceType(application))))
+                .filter(history -> history.getOwnerPosition().getDeptDesig().getDesignation().getName().equalsIgnoreCase(getApproverDesignation(bpaWorkFlowService.getAmountRuleByServiceType(application).intValue())))
                 .findAny().orElse(null);
     	return stateHistory != null ? bpaWorkFlowService.getApproverAssignment(stateHistory.getOwnerPosition()).getEmployee().getName() : null;
     }
