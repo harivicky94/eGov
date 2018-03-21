@@ -41,6 +41,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 
@@ -69,7 +70,8 @@
 							<spring:message code="lbl.letterdate" />
 						</div>
 						<div class="col-sm-3 add-margin view-content">
-							<c:out value="${lettertoParty.letterDate}"></c:out>
+							<fmt:formatDate value="${lettertoParty.letterDate}" pattern="dd/MM/yyyy" var="letterDate" />
+							<c:out value="${letterDate}"></c:out>
 						</div>
 						<form:hidden path="application" id="applicationId"
 							value="${application.id}" />
@@ -94,7 +96,8 @@
 							<spring:message code="lbl.lpsentdate" />
 						</div>
 						<div class="col-sm-3 add-margin  view-content">
-							<c:out value="${lettertoParty.sentDate}"></c:out>
+							<fmt:formatDate value="${lettertoParty.sentDate}" pattern="dd/MM/yyyy" var="sentDate" />
+							<c:out value="${sentDate}"></c:out>
 						</div>
 						<form:hidden path="sentDate" id="sentDate" value="${sentDate}" />
 					</div>

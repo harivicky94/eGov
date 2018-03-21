@@ -40,6 +40,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 <form:form role="form" action="/bpa/lettertoparty/update" method="post"
@@ -67,7 +68,8 @@
 								<spring:message code="lbl.lp.date" />
 							</div>
 							<div class="col-sm-3 add-margin view-content">
-								<c:out value="${lettertoParty.letterDate}"></c:out>
+								<fmt:formatDate value="${lettertoParty.letterDate}" pattern="dd/MM/yyyy" var="letterDate" />
+								<c:out value="${letterDate}"></c:out>
 							</div>
 							
 							<form:hidden path="application" id="applicationId"
@@ -101,7 +103,8 @@
 								<spring:message code="lbl.lastreplydate" />
 							</div>
 							<div class="col-sm-3 add-margin view-content">
-								<c:out value="${lettertoParty.lastReplyDate}" />
+								<fmt:formatDate value="${lettertoParty.lastReplyDate}" pattern="dd/MM/yyyy" var="lastReplyDate" />
+								<c:out value="${lastReplyDate}"></c:out>
 							</div>
 						</div>
 						<div class="row add-border">

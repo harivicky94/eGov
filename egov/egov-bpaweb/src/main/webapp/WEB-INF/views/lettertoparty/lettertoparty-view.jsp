@@ -39,6 +39,7 @@
   --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
@@ -64,7 +65,8 @@
                         <spring:message code="lbl.lpsentdate"/>
                     </div>
                     <div class="col-sm-3 add-margin view-content">
-                        <c:out value="${lettertoParty.sentDate}" default="N/A"></c:out>
+                        <fmt:formatDate value="${lettertoParty.sentDate}" pattern="dd/MM/yyyy" var="sentDate" />
+                        <c:out value="${sentDate}" default="N/A"></c:out>
                     </div>
                     <%-- </c:if> --%>
                     <input type="hidden" id='lettertoParty' name="lettertoParty"
@@ -98,7 +100,8 @@
                                 <spring:message code="lbl.lpreplydate"/>
                             </div>
                             <div class="col-sm-3 add-margin view-content">
-                                <c:out value="${lettertoParty.replyDate}" default="N/A"></c:out>
+                                <fmt:formatDate value="${lettertoParty.replyDate}" pattern="dd/MM/yyyy" var="replyDate" />
+                                <c:out value="${replyDate}" default="N/A"></c:out>
                             </div>
                     </c:if>
                 </div>
