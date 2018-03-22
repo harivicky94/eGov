@@ -44,16 +44,19 @@ public class PropertyDetailsPageSteps extends BaseSteps implements En {
             FloorDetails floorDetails = new PTISDataReader(ptisTestDataFileName).getFloorDetails(floorDetailsDataId);
             pageStore.get(PropertyDetailsPage.class).enterFloorDetails(floorDetails);
         });
-        And("^he enters approval details as (\\w+)$", (String approvalDetailsDataId) -> {
+        And("^he enters transaction approver details as (\\w+)$", (String approvalDetailsDataId) -> {
             ApprovalDetails approverDetails = new ExcelReader(approvalDetailsTestDataFileName).getApprovalDetails(approvalDetailsDataId);
             pageStore.get(ApprovalDetailsPage.class).enterApproverDetails(approverDetails);
+            pageStore.get(TransferDetailsPage.class).selectDeclarationCheckBox();
+            pageStore.get(ApprovalDetailsPage.class).forward();
         });
         And("^he click on Forward Button$", () -> {
             pageStore.get(PropertyDetailsPage.class).clickForward();
         });
         And("^he forwards for approval to (.*)$", (String approvalDetailsDataId) -> {
             ApprovalDetails approverDetails = new ExcelReader(approvalDetailsTestDataFileName).getApprovalDetails(approvalDetailsDataId);
-            pageStore.get(ApprovalDetailsPage.class).enterApproverDetails(approverDetails);
+            pageStore.get(ApprovalDetailsPage.class).enterApprovalDetails(approverDetails);
+            pageStore.get(TransferDetailsPage.class).selectDeclarationCheckBox();
             pageStore.get(PropertyDetailsPage.class).forward();
         });
         And("^he approved the property with remarks \"([^\"]*)\"$", (String remarks) -> {
@@ -120,6 +123,7 @@ public class PropertyDetailsPageSteps extends BaseSteps implements En {
         And("^he enters the floor details checkbox$", () -> {
             pageStore.get(PropertyDetailsPage.class).enterExtentOfSiteValue();
 
+
             pageStore.get(PropertyDetailsPage.class).clickOnFloorDetailsCheckBox();
         });
         And("^he checks the validations for all textBoxes$", () -> {
@@ -133,8 +137,6 @@ public class PropertyDetailsPageSteps extends BaseSteps implements En {
            pageStore.get(PropertyDetailsPage.class).checkDoorNumber();
            pageStore.get(PropertyDetailsPage.class).clickOnFloorDetailsCheckBox();
         });
-
-
 
     }
 }

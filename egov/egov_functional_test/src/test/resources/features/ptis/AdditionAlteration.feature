@@ -66,4 +66,3 @@ Feature: Addition Alteration of a property
     Examples:
       | editAssessmentDetails      | amenitiesDetails | editFloorDetails             |
       | assessmentAdditionProperty | all              | firstFloorAdditionaltaration |
-

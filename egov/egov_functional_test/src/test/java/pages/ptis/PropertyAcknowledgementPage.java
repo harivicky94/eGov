@@ -45,7 +45,7 @@ public class PropertyAcknowledgementPage extends BasePage {
             clickOnButton(closeButton, driver);
         } catch (StaleElementReferenceException e) {
             WebElement element = driver.findElement(By.cssSelector("input[value='Close'][type='button']"));
-//            WebElement element = driver.findElement(By.cssSelector("a[class='btn btn-default']"));
+//           WebElement element = driver.findElement(By.cssSelector("a[class='btn btn-default']"));
             waitForElementToBeClickable(element, driver);
             element.click();
         }
@@ -58,7 +58,7 @@ public class PropertyAcknowledgementPage extends BasePage {
 
     public void close1() {
         clickOnButton(propertyCloseButton, driver);
-        await().atMost(5, SECONDS).until(() -> driver.getWindowHandles().size() == 1);
+        await().atMost(10, SECONDS).until(() -> driver.getWindowHandles().size() == 1);
         for (String winHandle : driver.getWindowHandles()) {
             driver.switchTo().window(winHandle);
         }

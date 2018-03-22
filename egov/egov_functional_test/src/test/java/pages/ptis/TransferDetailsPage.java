@@ -87,6 +87,8 @@ public class TransferDetailsPage extends BasePage {
         this.webdriver = webdriver;
     }
 
+
+
     public void enterTransfereeDetails() {
         enterText(transfereeMobileNumber, "9071"+get6DigitRandomInt(), webdriver);
         enterText(transfereeOwnerName, "lenkaBablu", webdriver);

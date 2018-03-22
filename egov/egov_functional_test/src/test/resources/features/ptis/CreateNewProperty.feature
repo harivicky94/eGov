@@ -54,11 +54,11 @@ Feature: Create New Property
     Then create property details get saved successfully by generating assesssment number
     And he will copy the acknowledgement message with assessment number createProperty-forward
     Then user will be notified by "Successfully"
-
-    And he chooses to act upon above assessment number
-    And he does a digital signature
-    When commissioner closes acknowledgement
-    And current user logs out
+#
+#    And he chooses to act upon above assessment number
+#    And he does a digital signature
+#    When commissioner closes acknowledgement
+#    And current user logs out
 
     Examples:
       | propertyHeaderDetails | ownerDetails | propertyAddressDetails | assessmentDetails     | amenitiesDetails | constructionTypeDetails | floorDetails | documentDetails |

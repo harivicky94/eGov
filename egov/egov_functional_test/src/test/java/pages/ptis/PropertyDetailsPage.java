@@ -172,7 +172,7 @@ public class PropertyDetailsPage extends BasePage {
     @FindBy(css = "input[id='Forward'][type='submit']")
     private WebElement forwardButton;
 
-    @FindBy(css = "input[id='Forward'][type='submit']")
+    @FindBy(id = "Forward")
     private WebElement clickForwardButton;
 
     @FindBy(id = "Approve")
