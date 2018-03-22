@@ -47,46 +47,34 @@
 package org.egov.bpa.web.controller.transaction;
 
 import org.apache.commons.lang.StringUtils;
-import org.egov.bpa.master.entity.*;
-import org.egov.bpa.master.entity.enums.ApplicationType;
+import org.egov.bpa.master.entity.enums.*;
 import org.egov.bpa.master.service.*;
-import org.egov.bpa.transaction.entity.BpaApplication;
-import org.egov.bpa.transaction.entity.BpaStatus;
+import org.egov.bpa.transaction.entity.*;
 import org.egov.bpa.transaction.entity.enums.*;
 import org.egov.bpa.transaction.service.*;
-import org.egov.bpa.transaction.service.collection.BpaDemandService;
-import org.egov.bpa.transaction.service.messaging.BPASmsAndEmailService;
-import org.egov.bpa.transaction.workflow.BpaWorkFlowService;
+import org.egov.bpa.transaction.service.collection.*;
+import org.egov.bpa.transaction.service.messaging.*;
+import org.egov.bpa.transaction.workflow.*;
 import org.egov.bpa.utils.*;
-import org.egov.dcb.bean.Receipt;
-import org.egov.demand.model.EgDemandDetails;
-import org.egov.demand.model.EgdmCollectedReceipt;
-import org.egov.eis.web.contract.WorkflowContainer;
-import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
-import org.egov.infra.admin.master.entity.AppConfigValues;
-import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.service.AppConfigValueService;
-import org.egov.infra.admin.master.service.BoundaryService;
-import org.egov.infra.admin.master.service.UserService;
-import org.egov.infra.filestore.service.FileStoreService;
-import org.egov.infra.persistence.entity.enums.UserType;
-import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.dcb.bean.*;
+import org.egov.demand.model.*;
+import org.egov.eis.web.contract.*;
+import org.egov.eis.web.controller.workflow.*;
+import org.egov.infra.admin.master.entity.*;
+import org.egov.infra.admin.master.service.*;
+import org.egov.infra.filestore.service.*;
+import org.egov.infra.persistence.entity.enums.*;
+import org.egov.infra.security.utils.*;
 import org.egov.infra.utils.*;
-import org.egov.infra.workflow.entity.StateAware;
-import org.egov.pims.commons.Position;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.egov.infra.workflow.entity.*;
+import org.egov.pims.commons.*;
+import org.springframework.beans.factory.annotation.*;
 import org.springframework.context.i18n.*;
-import org.springframework.context.support.ResourceBundleMessageSource;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.context.support.*;
+import org.springframework.ui.*;
+import org.springframework.web.bind.annotation.*;
 
-import javax.validation.*;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.egov.bpa.utils.BpaConstants.*;
 
@@ -279,7 +267,13 @@ public abstract class BpaGenericApplicationController extends GenericWorkFlowCon
     }
 
     protected boolean validateOnDocumentScrutiny(Model model, BpaApplication application) {
-        if (APPLICATION_STATUS_DOC_VERIFIED.equals(application.getStatus().getCode())) {
+        Optional<SlotApplication> activeSlotApplication = application.getSlotApplications().stream().reduce((slotApp1, slotApp2) -> slotApp2);
+        if (activeSlotApplication.isPresent() && activeSlotApplication.get().getSlotDetail().getSlot().getAppointmentDate().after(new Date())) {
+            model.addAttribute(MESSAGE, messageSource.getMessage("msg.validate.doc.scrutiny", new String[] {
+                            application.getApplicationNumber(), activeSlotApplication.get().getSlotDetail().getSlot().getAppointmentDate().toString() },
+                    LocaleContextHolder.getLocale()));
+            return true;
+        } else if (APPLICATION_STATUS_DOC_VERIFIED.equals(application.getStatus().getCode())) {
             model.addAttribute(MESSAGE, "Document verification of application is already completed.");
             return true;
         } else if (WF_REJECT_STATE.equals(application.getStatus().getCode())) {

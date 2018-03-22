@@ -42,10 +42,8 @@ package org.egov.bpa.web.controller.transaction;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.bpa.master.service.AppointmentLocationsService;
-import org.egov.bpa.transaction.entity.BpaApplication;
-import org.egov.bpa.transaction.entity.BpaAppointmentSchedule;
+import org.egov.bpa.transaction.entity.*;
 
-import org.egov.bpa.transaction.entity.SlotDetail;
 import org.egov.bpa.transaction.entity.dto.ScheduleScrutiny;
 import org.egov.bpa.transaction.entity.enums.AppointmentSchedulePurpose;
 import org.egov.bpa.transaction.service.BpaAppointmentScheduleService;
@@ -208,13 +206,16 @@ public class ScheduleAppointmentController extends BpaGenericApplicationControll
         BpaApplication application = applicationBpaService.findByApplicationNumber(applicationNumber);
         if (validateOnDocumentScrutiny(model, application)) return COMMON_ERROR;
         if(application.getIsRescheduledByEmployee()) {
-            model.addAttribute(MESSAGE, "Re-Schedule appointment by employee already completed, employee can re-schedule appointment only once.");
+            model.addAttribute(MESSAGE, "Reschedule appointment by employee already completed, employee can reschedule appointment only once.");
             return COMMON_ERROR;
         }
 		List<SlotDetail> slotDetails = rescheduleAppnmtsForDocScrutinyService
 				.searchAvailableSlotsForReschedule(application.getId());
 		Set<Date> appointmentDates = new LinkedHashSet<>();
+        Optional<SlotApplication> activeSlotApplication = application.getSlotApplications().stream().reduce((slotApp1, slotApp2) -> slotApp2);
 		for (SlotDetail slotDetail : slotDetails) {
+		        if(activeSlotApplication.isPresent()
+                   && slotDetail.getSlot().getAppointmentDate().after(activeSlotApplication.get().getSlotDetail().getSlot().getAppointmentDate()))
 				appointmentDates.add(slotDetail.getSlot().getAppointmentDate());
 		}
 		if (slotDetails.isEmpty() || appointmentDates.isEmpty()) {
