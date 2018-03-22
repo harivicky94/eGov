@@ -214,6 +214,16 @@ public class SearchBpaApplicationService {
 	}
 
 	private void buildSearchCriteriaForBoundaries(SearchBpaApplicationForm searchBpaApplicationForm, Criteria criteria) {
+		if (searchBpaApplicationForm.getServiceTypeEnum() != null
+			&& !searchBpaApplicationForm.getServiceTypeEnum().isEmpty()) {
+			if (searchBpaApplicationForm.getServiceTypeEnum()
+										.equalsIgnoreCase(ApplicationType.ALL_OTHER_SERVICES.name())) {
+				criteria.add(Restrictions.eq("bpaApplication.isOneDayPermitApplication", false));
+				searchBpaApplicationForm.setToDate(new Date());
+			} else if (searchBpaApplicationForm.getServiceTypeEnum()
+											   .equalsIgnoreCase(ApplicationType.ONE_DAY_PERMIT.name()))
+				criteria.add(Restrictions.eq("bpaApplication.isOneDayPermitApplication", true));
+		}
 		if (searchBpaApplicationForm.getElectionWardId() != null || searchBpaApplicationForm.getWardId() != null
 				|| searchBpaApplicationForm.getZoneId() != null || searchBpaApplicationForm.getZone() != null) {
 			criteria.createAlias("bpaApplication.siteDetail", "siteDetail");
@@ -251,17 +261,7 @@ public class SearchBpaApplicationService {
 		criteria.createAlias("slotApplication.application", "bpaApplication");
 		criteria.createAlias("slotApplication.slotDetail", "slotDetail");
 		criteria.createAlias("slotDetail.slot", "slot");
-		
-		if (searchBpaApplicationForm.getServiceTypeEnum() != null
-				&& !searchBpaApplicationForm.getServiceTypeEnum().isEmpty()) {
-			if (searchBpaApplicationForm.getServiceTypeEnum()
-					.equalsIgnoreCase(ApplicationType.ALL_OTHER_SERVICES.toString())) {
-				criteria.add(Restrictions.eq("bpaApplication.isOneDayPermitApplication", false));
-				searchBpaApplicationForm.setToDate(new Date());
-			} else if (searchBpaApplicationForm.getServiceTypeEnum()
-					.equalsIgnoreCase(ApplicationType.ONE_DAY_PERMIT.toString()))
-				criteria.add(Restrictions.eq("bpaApplication.isOneDayPermitApplication", true)); 
-		}
+
 		if (searchBpaApplicationForm.getToDate() != null)
 			criteria.add(Restrictions.eq("slot.appointmentDate",
 					resetToDateTimeStamp(searchBpaApplicationForm.getToDate())));

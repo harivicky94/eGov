@@ -270,7 +270,7 @@ public abstract class BpaGenericApplicationController extends GenericWorkFlowCon
         Optional<SlotApplication> activeSlotApplication = application.getSlotApplications().stream().reduce((slotApp1, slotApp2) -> slotApp2);
         if (activeSlotApplication.isPresent() && activeSlotApplication.get().getSlotDetail().getSlot().getAppointmentDate().after(new Date())) {
             model.addAttribute(MESSAGE, messageSource.getMessage("msg.validate.doc.scrutiny", new String[] {
-                            application.getApplicationNumber(), activeSlotApplication.get().getSlotDetail().getSlot().getAppointmentDate().toString() },
+                            application.getApplicationNumber(), DateUtils.getDefaultFormattedDate(activeSlotApplication.get().getSlotDetail().getSlot().getAppointmentDate()) },
                     LocaleContextHolder.getLocale()));
             return true;
         } else if (APPLICATION_STATUS_DOC_VERIFIED.equals(application.getStatus().getCode())) {

@@ -79,6 +79,17 @@ $(document)
 											aaSorting : [],
 											columns : [
 													{
+														"data" : null,
+														"sClass" : "text-left",
+														"render" : function(data, type, row, meta) {
+															if(row.onePermitApplication) {
+																return "One day permit";
+															} else {
+																return "Regular";
+															}
+														}
+													},
+													{
 														"data" : "applicantName",
 														"sClass" : "text-left"
 													},
@@ -86,13 +97,14 @@ $(document)
 														"data" : "applicationNumber",
 														"sClass" : "text-left"
 													},
+
 													{
 														"data" : "applicationDate",
 														"sClass" : "text-left",
                                                         render: function (data) {
                                                             return data.split("-").reverse().join("/");
 														}
-														},
+													},
 													{
 														"data" : "serviceType",
 														"sClass" : "text-left"

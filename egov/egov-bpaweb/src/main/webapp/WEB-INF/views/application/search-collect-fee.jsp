@@ -66,6 +66,7 @@
 			id="search_bpa_application_table">
 			<thead>
 				<tr>
+					<th><spring:message code="lbl.applctn.type" /></th>
 					<th><spring:message code="lbl.applicant.name" /></th>
 					<th><spring:message code="lbl.application.no" /></th>
 					<th><spring:message code="lbl.appln.date" /></th>
