@@ -44,7 +44,7 @@ public class MinDistance {
         }
         if (plotBoundary == null || buildFoorPrint == null || yard == null) {
             pl.getErrors().put("Set back calculation Error",
-                    "Either" + DxfFileConstants.BUILDING_FOOT_PRINT + "," + DxfFileConstants.PLOT_BOUNDARY
+                    "Either " + DxfFileConstants.BUILDING_FOOT_PRINT + "," + DxfFileConstants.PLOT_BOUNDARY
                             + " or " + name + " is not found");
             return BigDecimal.ZERO.setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS);
         }

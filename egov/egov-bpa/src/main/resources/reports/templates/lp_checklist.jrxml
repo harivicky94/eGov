@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-10-04T12:21:16 -->
+<!-- Created with Jaspersoft Studio version 6.5.1.final using JasperReports Library version 6.5.1  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="lp_checklist" language="groovy" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" whenResourceMissingType="Empty" uuid="09de4100-d968-4594-9dd7-d694ab788a91">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -26,7 +25,7 @@
 	<columnHeader>
 		<band height="20">
 			<staticText>
-				<reportElement mode="Transparent" x="0" y="0" width="277" height="20" backcolor="#CCCCCC" uuid="595da1b5-d893-494e-be0f-3f04a410e97a"/>
+				<reportElement mode="Transparent" x="0" y="0" width="200" height="20" backcolor="#CCCCCC" uuid="595da1b5-d893-494e-be0f-3f04a410e97a"/>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -40,7 +39,7 @@
 				<text><![CDATA[Description]]></text>
 			</staticText>
 			<staticText>
-				<reportElement mode="Transparent" x="277" y="0" width="263" height="20" backcolor="#CCCCCC" uuid="db4dc61e-44e3-4c5d-a267-80ae13f8e521"/>
+				<reportElement mode="Transparent" x="200" y="0" width="340" height="20" backcolor="#CCCCCC" uuid="db4dc61e-44e3-4c5d-a267-80ae13f8e521"/>
 				<box>
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
@@ -59,36 +58,36 @@
 		<band height="25">
 			<printWhenExpression><![CDATA[$F{isrequested}== true]]></printWhenExpression>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" isPrintRepeatedValues="false" x="0" y="0" width="277" height="25" isPrintWhenDetailOverflows="true" uuid="2d7b7d58-4b7a-4cec-b0c7-4018e7b40653">
+				<reportElement stretchType="RelativeToBandHeight" isPrintRepeatedValues="false" x="0" y="0" width="200" height="25" isPrintWhenDetailOverflows="true" uuid="2d7b7d58-4b7a-4cec-b0c7-4018e7b40653">
 					<printWhenExpression><![CDATA[$F{isrequested}== true]]></printWhenExpression>
 				</reportElement>
-				<box>
+				<box leftPadding="2">
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
 					<bottomPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
 				</box>
-				<textElement textAlignment="Justified" verticalAlignment="Middle">
+				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="SansSerif"/>
-					<paragraph leftIndent="3"/>
+					<paragraph leftIndent="0"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{checklistDetail}.getDescription()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="277" y="0" width="263" height="25" isPrintWhenDetailOverflows="true" uuid="13dc2290-7c7c-4dde-bfda-fe0a699c8446">
+				<reportElement stretchType="RelativeToBandHeight" x="200" y="0" width="340" height="25" isPrintWhenDetailOverflows="true" uuid="13dc2290-7c7c-4dde-bfda-fe0a699c8446">
 					<printWhenExpression><![CDATA[$F{isrequested}== true]]></printWhenExpression>
 				</reportElement>
-				<box>
+				<box topPadding="1" leftPadding="1" bottomPadding="3" rightPadding="2">
 					<pen lineWidth="0.25"/>
 					<topPen lineWidth="0.25"/>
 					<leftPen lineWidth="0.25"/>
 					<bottomPen lineWidth="0.25"/>
 					<rightPen lineWidth="0.25"/>
 				</box>
-				<textElement textAlignment="Justified" verticalAlignment="Middle">
+				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font fontName="SansSerif"/>
-					<paragraph leftIndent="3"/>
+					<paragraph leftIndent="0"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{remarks}]]></textFieldExpression>
 			</textField>
