@@ -49,6 +49,7 @@ package org.egov.bpa.transaction.entity;
 import org.egov.bpa.master.entity.*;
 import org.egov.bpa.transaction.entity.dto.*;
 import org.egov.bpa.transaction.entity.enums.*;
+import org.egov.common.entity.Occupancy;
 import org.egov.commons.entity.*;
 import org.egov.dcb.bean.*;
 import org.egov.demand.model.*;

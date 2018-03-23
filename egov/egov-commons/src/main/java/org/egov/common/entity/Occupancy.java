@@ -27,7 +27,7 @@
            or trademarks of eGovernments Foundation.
   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.bpa.master.entity;
+package org.egov.common.entity;
 
 import java.math.BigDecimal;
 
@@ -44,12 +44,12 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.validator.constraints.Length;
 
 @Entity
-@Table(name = "EGBPA_MSTR_OCCUPANCY")
+@Table(name = "EG_OCCUPANCY")
 @SequenceGenerator(name = Occupancy.SEQ_OCCUPANCY, sequenceName = Occupancy.SEQ_OCCUPANCY, allocationSize = 1)
 public class Occupancy extends AbstractAuditable {
 
     private static final long serialVersionUID = 3078684328383202788L;
-    public static final String SEQ_OCCUPANCY = "SEQ_EGBPA_MSTR_OCCUPANCY";
+    public static final String SEQ_OCCUPANCY = "SEQ_EG_OCCUPANCY";
     @Id
     @GeneratedValue(generator = SEQ_OCCUPANCY, strategy = GenerationType.SEQUENCE)
     private Long id;

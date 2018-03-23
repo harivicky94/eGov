@@ -10,7 +10,7 @@
 	<field name="floorDescription" class="java.lang.String"/>
 	<field name="plinthArea" class="java.math.BigDecimal"/>
 	<field name="floorNumber" class="java.lang.Integer"/>
-	<field name="occupancy" class="org.egov.bpa.master.entity.Occupancy"/>
+	<field name="occupancy" class="org.egov.common.entity.Occupancy"/>
 	<field name="floorArea" class="java.math.BigDecimal"/>
 	<field name="carpetArea" class="java.math.BigDecimal"/>
 	<background>

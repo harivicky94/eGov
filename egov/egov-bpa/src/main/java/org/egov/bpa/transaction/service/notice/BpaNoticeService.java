@@ -400,10 +400,7 @@ public class BpaNoticeService {
             StateHistory<Position> stateHistory = bpaUtils.getRejectionComments(bpaApplication);
             rejectReasons.append(String.valueOf(additionalOrder) + ") " + (stateHistory != null && StringUtils.isNotBlank(stateHistory.getComments()) ? stateHistory.getComments() : EMPTY) + "\n\n");
         } else {
-            if(bpaApplication.getState().getComments().equalsIgnoreCase("Application cancelled by citizen")) {
-                rejectReasons.append(getMessageFromPropertyFile(APPLICATION_REJECTION_REASON));
-            } else
-            rejectReasons.append(getMessageFromPropertyFile(APPLICATION_AUTO_REJECTION_REASON));
+            rejectReasons.append(bpaApplication.getState().getComments().equalsIgnoreCase("Application cancelled by citizen") ? getMessageFromPropertyFile(APPLICATION_REJECTION_REASON) : getMessageFromPropertyFile(APPLICATION_AUTO_REJECTION_REASON));
         }
         return rejectReasons.toString();
     }

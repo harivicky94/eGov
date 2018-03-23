@@ -56,6 +56,7 @@ import org.egov.bpa.transaction.service.collection.*;
 import org.egov.bpa.transaction.service.messaging.*;
 import org.egov.bpa.transaction.workflow.*;
 import org.egov.bpa.utils.*;
+import org.egov.commons.service.OccupancyService;
 import org.egov.dcb.bean.*;
 import org.egov.demand.model.*;
 import org.egov.eis.web.contract.*;

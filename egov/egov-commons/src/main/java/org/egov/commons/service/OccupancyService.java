@@ -37,13 +37,30 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.bpa.master.repository;
+package org.egov.commons.service;
 
-import org.egov.bpa.master.entity.Occupancy;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import java.util.List;
 
-@Repository
-public interface OccupancyRepository extends JpaRepository<Occupancy, Long> {
-	
+import org.egov.common.entity.Occupancy;
+import org.egov.commons.repository.OccupancyRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+@Transactional(readOnly = true)
+public class OccupancyService {
+
+    @Autowired
+    private OccupancyRepository occupancyRepository;
+
+    public List<Occupancy> findAll() {
+        return occupancyRepository.findAll();
+    }
+    
+    public List<Occupancy> findAllOrderByOrderNumber() {
+        return occupancyRepository.findAll(new Sort(Sort.Direction.ASC, "orderNumber"));
+    }
+    
 }

@@ -56,7 +56,7 @@ import java.util.stream.Collectors;
 
 import org.egov.bpa.master.entity.BpaFee;
 import org.egov.bpa.master.entity.BpaFeeDetail;
-import org.egov.bpa.master.entity.Occupancy;
+import org.egov.common.entity.Occupancy;
 import org.egov.bpa.master.entity.ServiceType;
 import org.egov.bpa.master.service.BpaFeeService;
 import org.egov.bpa.transaction.entity.ApplicationFee;

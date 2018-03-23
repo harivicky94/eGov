@@ -60,7 +60,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.egov.bpa.master.entity.Occupancy;
 import org.egov.bpa.transaction.entity.ApplicationFloorDetail;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.utils.BpaConstants;

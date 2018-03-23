@@ -2,6 +2,7 @@ package org.egov.edcr.web.controller;
 
 import org.egov.bpa.master.entity.*;
 import org.egov.bpa.master.service.*;
+import org.egov.commons.service.OccupancyService;
 import org.egov.edcr.entity.*;
 import org.egov.edcr.service.*;
 import org.egov.edcr.web.adaptor.*;
