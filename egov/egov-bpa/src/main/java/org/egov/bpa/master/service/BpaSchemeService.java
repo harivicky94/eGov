@@ -55,7 +55,7 @@ public class BpaSchemeService {
     private BpaSchemeRepository bpaSchemeRepository;
 
     public List<BpaScheme> findAll() {
-        return bpaSchemeRepository.findAll();
+        return bpaSchemeRepository.findAllActiveSchemes();
     }
     public BpaScheme findById(final Long id){
         return bpaSchemeRepository.findOne(id);  

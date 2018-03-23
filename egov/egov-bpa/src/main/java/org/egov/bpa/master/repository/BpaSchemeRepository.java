@@ -39,9 +39,12 @@
  */
 package org.egov.bpa.master.repository;
 
-import org.egov.bpa.master.entity.BpaScheme;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.egov.bpa.master.entity.*;
+import org.springframework.data.jpa.repository.*;
+
+import java.util.*;
 
 public interface BpaSchemeRepository  extends JpaRepository<BpaScheme, Long> {
-
+	@Query("select scheme from BpaScheme scheme where scheme.isActive=true order by scheme.id asc ")
+	List<BpaScheme> findAllActiveSchemes();
 }
