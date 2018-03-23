@@ -60,8 +60,8 @@ $(document)
             $('#myfile').change(function(){
                 var fileformat = [ 'dxf'];
                 var ext = $(this).val().split('.').pop();
-                if(this.files[0] > 12582912) {
-                    bootbox.alert('File size should not exceed 12 MB!');
+                if(this.files[0] > 20971520) {
+                    bootbox.alert('File size should not exceed 20 MB!');
                     return false;
                 } else if ($.inArray(ext.toLowerCase(), fileformat) == -1) {
                     bootbox.alert("Please upload " + fileformat

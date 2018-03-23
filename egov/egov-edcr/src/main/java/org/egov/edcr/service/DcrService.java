@@ -232,8 +232,10 @@ public class DcrService {
 
             if (planDetail.getEdcrPassed()) {
                 edcrApplicationDetail.setStatus("Accepted");
+                edcrApplication.setStatus("Accepted");
             } else {
                 edcrApplicationDetail.setStatus("Not Accepted");
+                edcrApplication.setStatus("Not Accepted");
             }
             edcrApplicationDetail.setCreatedDate(new Date());
             edcrApplicationDetail.setReportOutputId(reportOutput);

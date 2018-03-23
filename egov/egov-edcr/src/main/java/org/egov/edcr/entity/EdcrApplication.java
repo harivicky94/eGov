@@ -31,19 +31,7 @@ public class EdcrApplication extends AbstractAuditable {
     @Temporal(value = TemporalType.DATE)
     private Date applicationDate;
 
-    @Transient
-    private MultipartFile dxfFile; // File to be process.
-
-    @Transient
-    private File savedDxfFile;
-
-    public File getSavedDxfFile() {
-        return savedDxfFile;
-    }
-
-    public void setSavedDxfFile(File savedDxfFile) {
-        this.savedDxfFile = savedDxfFile;
-    }
+    private String status;
 
     @OneToMany(mappedBy = "application", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @OrderBy("id DESC ")
@@ -53,16 +41,11 @@ public class EdcrApplication extends AbstractAuditable {
     @JoinColumn(name = "planinfoid")
     private PlanInformation planInformation;
 
-    @Transient
-    private EdcrApplicationDetail savedEdcrApplicationDetail;
+    private transient MultipartFile dxfFile; // File to be process.
 
-    public EdcrApplicationDetail getSavedEdcrApplicationDetail() {
-        return savedEdcrApplicationDetail;
-    }
+    private transient File savedDxfFile;
 
-    public void setSavedEdcrApplicationDetail(EdcrApplicationDetail savedEdcrApplicationDetail) {
-        this.savedEdcrApplicationDetail = savedEdcrApplicationDetail;
-    }
+    private transient EdcrApplicationDetail savedEdcrApplicationDetail;
 
     @Override
     public Long getId() {
@@ -114,4 +97,27 @@ public class EdcrApplication extends AbstractAuditable {
         this.planInformation = planInformation;
     }
 
+    public File getSavedDxfFile() {
+        return savedDxfFile;
+    }
+
+    public void setSavedDxfFile(File savedDxfFile) {
+        this.savedDxfFile = savedDxfFile;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public EdcrApplicationDetail getSavedEdcrApplicationDetail() {
+        return savedEdcrApplicationDetail;
+    }
+
+    public void setSavedEdcrApplicationDetail(EdcrApplicationDetail savedEdcrApplicationDetail) {
+        this.savedEdcrApplicationDetail = savedEdcrApplicationDetail;
+    }
 }

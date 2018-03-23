@@ -101,13 +101,18 @@ $(document)
                     dataType: "json",
                     success: function (response) {
                         if(response) {
-                            $('#edcrApplnId').val(response.id);
-                            $('#edcrApplication').val(response.id);
-                            $('#applicationNumber').val(response.applicationNumber);
-                            $('#occupancy').val(response.planInformation.occupancy);
-                            $('#applicantName').val(response.planInformation.applicantName);
-                            $('#serviceType').val(response.planInformation.serviceType);
-                            $('#amenities').val(response.planInformation.amenities);
+                            if(response.status == 'Accepted') {
+                                bootbox.alert("One of E-DCR plan is approved for the application with application number "+$('#applicationNumber').val()+", so using this application number you can't resubmit plan. Please use new application to submit new plan.");
+                                $('#applicationNumber').val('');
+                            } else {
+                                $('#edcrApplnId').val(response.id);
+                                $('#edcrApplication').val(response.id);
+                                $('#applicationNumber').val(response.applicationNumber);
+                                $('#occupancy').val(response.planInformation.occupancy);
+                                $('#applicantName').val(response.planInformation.applicantName);
+                                $('#serviceType').val(response.planInformation.serviceType);
+                                $('#amenities').val(response.planInformation.amenities);
+                            }
                         } else {
                             $('.resetValues').val('');
                             bootbox.alert("Please check application number is correct, with entered value no data available.");
