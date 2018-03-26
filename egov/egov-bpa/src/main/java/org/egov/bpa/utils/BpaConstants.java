@@ -266,6 +266,11 @@ public class BpaConstants {
     // other
     public static final int SCALING_FACTOR = 2;
     public static final String MESSAGE = "message";
+    // elastic search constants
+    public static final String APPL_INDEX_MODULE_NAME = "Building Plan Approval";
+    // Application Type Constants
+    public static final String APPLICATION_TYPE_REGULAR = "Regular";
+    public static final String APPLICATION_TYPE_ONEDAYPERMIT = "One Day Permit";
 
     private static final List<String> BUILDPERMIT = new ArrayList<>();
     static {
@@ -360,6 +365,7 @@ public class BpaConstants {
     }
 
     private static final List<String> BPAFEECATEGORY2 = new ArrayList<>();
+
     static {
         BPAFEECATEGORY2.add(ST_CODE_05); // Sub-Division of Plot/Development of land
     }

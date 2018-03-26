@@ -45,6 +45,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.egov.bpa.service.es.BpaIndexService;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.BpaStatus;
 import org.egov.bpa.transaction.entity.SlotApplication;
@@ -65,23 +66,26 @@ import org.springframework.transaction.support.TransactionTemplate;
 public class BpaApplicationCancellationService {
     
     private static final Logger logger = Logger.getLogger(BpaApplicationCancellationService.class);
-	@Autowired
-	private ApplicationBpaService applicationBpaService;
+    @Autowired
+    private ApplicationBpaService applicationBpaService;
 
-	@Autowired
-	private BpaStatusRepository bpaStatusRepository;
+    @Autowired
+    private BpaStatusRepository bpaStatusRepository;
 
-	@Autowired
-	private SlotApplicationRepository slotApplicationRepository;
+    @Autowired
+    private SlotApplicationRepository slotApplicationRepository;
 
-	@Autowired
-	private BPASmsAndEmailService bpaSmsAndEmailService;
+    @Autowired
+    private BPASmsAndEmailService bpaSmsAndEmailService;
+
+    @Autowired
+    private BpaUtils bpaUtils;
+
+    @Autowired
+    private TransactionTemplate transactionTemplate;
 	
-	@Autowired
-	private BpaUtils bpaUtils;
-	
-	@Autowired
-	private TransactionTemplate transactionTemplate;
+    @Autowired
+    private BpaIndexService bpaIndexService;
 
     @Transactional
     public void cancelNonverifiedApplications() {
@@ -117,6 +121,7 @@ public class BpaApplicationCancellationService {
                             applicationBpaService.saveBpaApplication(bpaApplication);
                             bpaSmsAndEmailService.sendSMSAndEmailForDocumentScrutiny(slotApplicationList.get(0),
                                     bpaApplication);
+                            bpaIndexService.updateIndexes(bpaApplication);
                         }
                     }
                     return true;

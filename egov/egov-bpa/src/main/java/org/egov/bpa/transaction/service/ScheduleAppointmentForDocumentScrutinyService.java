@@ -50,6 +50,7 @@ import java.util.Map.Entry;
 import org.apache.log4j.Logger;
 import org.egov.bpa.master.entity.enums.ApplicationType;
 import org.egov.bpa.master.service.SlotMappingService;
+import org.egov.bpa.service.es.BpaIndexService;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.BpaStatus;
 import org.egov.bpa.transaction.entity.Slot;
@@ -106,6 +107,8 @@ public class ScheduleAppointmentForDocumentScrutinyService {
     private TransactionTemplate transactionTemplate;
     @Autowired
     private AppConfigValueService appConfigValuesService;
+    @Autowired
+    private BpaIndexService bpaIndexService;
 
     public void scheduleAppointmentsForDocumentScrutiny() {
         Calendar calendar = Calendar.getInstance();
@@ -365,6 +368,7 @@ public class ScheduleAppointmentForDocumentScrutinyService {
                 .equals(ScheduleAppointmentType.RESCHEDULE.toString())) {
             bpaUtils.redirectToBpaWorkFlowForScheduler(bpaApp.getCurrentState().getOwnerPosition().getId(), bpaApp, null,
                     "document scrutiny re-scheduled", BpaConstants.WF_RESCHDLE_APPMNT_BUTTON, null);
+            bpaIndexService.updateIndexes(bpaApp);
         } else if (slotApplication.getScheduleAppointmentType().toString()
                 .equals(ScheduleAppointmentType.SCHEDULE.toString())) {
             if (LOGGER.isInfoEnabled())
@@ -372,6 +376,7 @@ public class ScheduleAppointmentForDocumentScrutinyService {
             bpaUtils.redirectToBpaWorkFlowForScheduler(
                     slotApplication.getApplication().getCurrentState().getOwnerPosition().getId(),
                     slotApplication.getApplication(), null, BpaConstants.APPLICATION_STATUS_SCHEDULED, "Forward", null);
+            bpaIndexService.updateIndexes(bpaApp);
             if (LOGGER.isInfoEnabled())
                 LOGGER.info("******************End workflow - Schedule Appointment******************************");
         }

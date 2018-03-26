@@ -39,9 +39,12 @@
  */
 package org.egov.bpa.transaction.service;
 
+import java.util.Date;
+import java.util.List;
+
+import org.egov.bpa.service.es.BpaIndexService;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.BpaStatus;
-import org.egov.bpa.transaction.entity.Slot;
 import org.egov.bpa.transaction.entity.SlotApplication;
 import org.egov.bpa.transaction.entity.SlotDetail;
 import org.egov.bpa.transaction.entity.enums.ScheduleAppointmentType;
@@ -49,7 +52,6 @@ import org.egov.bpa.transaction.repository.ApplicationBpaRepository;
 import org.egov.bpa.transaction.repository.BpaStatusRepository;
 import org.egov.bpa.transaction.repository.SlotApplicationRepository;
 import org.egov.bpa.transaction.repository.SlotDetailRepository;
-import org.egov.bpa.transaction.repository.SlotRepository;
 import org.egov.bpa.transaction.service.messaging.BPASmsAndEmailService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -58,99 +60,99 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
-import java.util.List;
-
 @Service
 @Transactional(readOnly = true)
 public class RescheduleAppointmentsForDocumentScrutinyService {
 
-	@Autowired
-	private ApplicationBpaRepository applicationBpaRepository;
+    @Autowired
+    private ApplicationBpaRepository applicationBpaRepository;
 
-	@Autowired
-	private SlotApplicationRepository slotApplicationRepository;
+    @Autowired
+    private SlotApplicationRepository slotApplicationRepository;
 
-	@Autowired
-	private SlotDetailRepository slotDetailRepository;
-	
-	@Autowired
-	private SlotRepository slotRepository;
+    @Autowired
+    private SlotDetailRepository slotDetailRepository;
 
-	@Autowired
-	private BpaStatusRepository bpaStatusRepository;
-	
-	@Autowired
-	private BPASmsAndEmailService bpaSmsAndEmailService;
-	@Autowired
-	private BoundaryService boundaryService;
+    @Autowired
+    private BpaStatusRepository bpaStatusRepository;
+
+    @Autowired
+    private BPASmsAndEmailService bpaSmsAndEmailService;
+    
+    @Autowired
+    private BoundaryService boundaryService;
+    
+    @Autowired
+    private BpaIndexService bpaIndexService;
 
 	@Transactional
 	public SlotApplication rescheduleAppointmentsForDocumentScrutinyByCitizen(Long applicationId,
 			Date rescheduleAppointmentDate, String appointmentTime) {
-		BpaApplication application = applicationBpaRepository.findById(applicationId);
-		application.setIsRescheduledByCitizen(true);
-		List<SlotApplication> slotApplication = slotApplicationRepository.findByApplicationOrderByIdDesc(application);
-		// free up previous slot
-		SlotDetail slotDetail = slotApplication.get(0).getSlotDetail();
-		if (slotApplication.get(0).getScheduleAppointmentType().toString()
-				.equals(ScheduleAppointmentType.SCHEDULE.toString()))
-			slotDetail.setUtilizedScheduledSlots(slotDetail.getUtilizedScheduledSlots() - 1);
-		else
-			slotDetail.setUtilizedRescheduledSlots(slotDetail.getUtilizedRescheduledSlots() - 1);
-		updateParentInActive(slotApplication.get(0));
-		slotDetailRepository.save(slotDetail);
-		// build new slot application and reschedule appointment
-		SlotApplication slotApp = new SlotApplication();
-		slotApp.setApplication(application);
-		slotApp.setActive(true);
-		slotApp.setScheduleAppointmentType(ScheduleAppointmentType.RESCHEDULE);
-		SlotDetail slotDet = slotDetailRepository.findByAppointmentDateTimeAndZone(rescheduleAppointmentDate,
-				appointmentTime, application.getSiteDetail().get(0).getAdminBoundary().getParent());
-		if (slotDet.getMaxRescheduledSlots() - slotDet.getUtilizedRescheduledSlots() > 0)
-			slotDet.setUtilizedRescheduledSlots(slotDet.getUtilizedRescheduledSlots() + 1);
-		else
-			slotDet.setUtilizedScheduledSlots(slotDet.getUtilizedScheduledSlots() + 1);
-		slotApp.setSlotDetail(slotDet);
-		applicationBpaRepository.save(application);
-		bpaSmsAndEmailService.sendSMSAndEmailForDocumentScrutiny(slotApp, application);
-		slotApplicationRepository.save(slotApp);
-		return slotApp;
+        BpaApplication application = applicationBpaRepository.findById(applicationId);
+        application.setIsRescheduledByCitizen(true);
+        List<SlotApplication> slotApplication = slotApplicationRepository.findByApplicationOrderByIdDesc(application);
+        // free up previous slot
+        SlotDetail slotDetail = slotApplication.get(0).getSlotDetail();
+        if (slotApplication.get(0).getScheduleAppointmentType().toString()
+                .equals(ScheduleAppointmentType.SCHEDULE.toString()))
+            slotDetail.setUtilizedScheduledSlots(slotDetail.getUtilizedScheduledSlots() - 1);
+        else
+            slotDetail.setUtilizedRescheduledSlots(slotDetail.getUtilizedRescheduledSlots() - 1);
+        updateParentInActive(slotApplication.get(0));
+        slotDetailRepository.save(slotDetail);
+        // build new slot application and reschedule appointment
+        SlotApplication slotApp = new SlotApplication();
+        slotApp.setApplication(application);
+        slotApp.setActive(true);
+        slotApp.setScheduleAppointmentType(ScheduleAppointmentType.RESCHEDULE);
+        SlotDetail slotDet = slotDetailRepository.findByAppointmentDateTimeAndZone(rescheduleAppointmentDate,
+                appointmentTime, application.getSiteDetail().get(0).getAdminBoundary().getParent());
+        if (slotDet.getMaxRescheduledSlots() - slotDet.getUtilizedRescheduledSlots() > 0)
+            slotDet.setUtilizedRescheduledSlots(slotDet.getUtilizedRescheduledSlots() + 1);
+        else
+            slotDet.setUtilizedScheduledSlots(slotDet.getUtilizedScheduledSlots() + 1);
+        slotApp.setSlotDetail(slotDet);
+        applicationBpaRepository.save(application);
+        bpaSmsAndEmailService.sendSMSAndEmailForDocumentScrutiny(slotApp, application);
+        slotApplicationRepository.save(slotApp);
+        bpaIndexService.updateIndexes(application);
+        return slotApp;
 	}
 
 
 	@Transactional
 	public SlotApplication rescheduleAppointmentsForDocumentScrutinyByEmployee(Long applicationId,
 			Date rescheduleAppointmentDate, String appointmentTime) {
-		BpaApplication bpaApplication = applicationBpaRepository.findById(applicationId);
-		bpaApplication.setIsRescheduledByEmployee(true);
-		List<SlotApplication> slotApplication = slotApplicationRepository
-				.findByApplicationOrderByIdDesc(bpaApplication);
-		// free up previous slot
-		SlotDetail slotDetail = slotApplication.get(0).getSlotDetail();
-		if (slotApplication.get(0).getScheduleAppointmentType().toString()
-				.equals(ScheduleAppointmentType.SCHEDULE.toString()))
-			slotDetail.setUtilizedScheduledSlots(slotDetail.getUtilizedScheduledSlots() - 1);
-		else
-			slotDetail.setUtilizedRescheduledSlots(slotDetail.getUtilizedRescheduledSlots() - 1);
-		slotDetailRepository.save(slotDetail);
-		updateParentInActive(slotApplication.get(0));
-		// build new slot application and reschedule appointment
-		SlotApplication slotApp = new SlotApplication();
-		slotApp.setApplication(bpaApplication);
-		slotApp.setActive(true);
-		slotApp.setScheduleAppointmentType(ScheduleAppointmentType.RESCHEDULE);
-		SlotDetail slotDet = slotDetailRepository.findByAppointmentDateTimeAndZone(rescheduleAppointmentDate,
-				appointmentTime, bpaApplication.getSiteDetail().get(0).getAdminBoundary().getParent());
-		if (slotDet.getMaxRescheduledSlots() - slotDet.getUtilizedRescheduledSlots() > 0)
-			slotDet.setUtilizedRescheduledSlots(slotDet.getUtilizedRescheduledSlots() + 1);
-		else
-			slotDet.setUtilizedScheduledSlots(slotDet.getUtilizedScheduledSlots() + 1);
-		slotApp.setSlotDetail(slotDet);
-		applicationBpaRepository.save(bpaApplication);
-		bpaSmsAndEmailService.sendSMSAndEmailForDocumentScrutiny(slotApp, bpaApplication);
-		slotApplicationRepository.save(slotApp);
-		return slotApp;
+        BpaApplication bpaApplication = applicationBpaRepository.findById(applicationId);
+        bpaApplication.setIsRescheduledByEmployee(true);
+        List<SlotApplication> slotApplication = slotApplicationRepository
+                .findByApplicationOrderByIdDesc(bpaApplication);
+        // free up previous slot
+        SlotDetail slotDetail = slotApplication.get(0).getSlotDetail();
+        if (slotApplication.get(0).getScheduleAppointmentType().toString()
+                .equals(ScheduleAppointmentType.SCHEDULE.toString()))
+            slotDetail.setUtilizedScheduledSlots(slotDetail.getUtilizedScheduledSlots() - 1);
+        else
+            slotDetail.setUtilizedRescheduledSlots(slotDetail.getUtilizedRescheduledSlots() - 1);
+        slotDetailRepository.save(slotDetail);
+        updateParentInActive(slotApplication.get(0));
+        // build new slot application and reschedule appointment
+        SlotApplication slotApp = new SlotApplication();
+        slotApp.setApplication(bpaApplication);
+        slotApp.setActive(true);
+        slotApp.setScheduleAppointmentType(ScheduleAppointmentType.RESCHEDULE);
+        SlotDetail slotDet = slotDetailRepository.findByAppointmentDateTimeAndZone(rescheduleAppointmentDate,
+                appointmentTime, bpaApplication.getSiteDetail().get(0).getAdminBoundary().getParent());
+        if (slotDet.getMaxRescheduledSlots() - slotDet.getUtilizedRescheduledSlots() > 0)
+            slotDet.setUtilizedRescheduledSlots(slotDet.getUtilizedRescheduledSlots() + 1);
+        else
+            slotDet.setUtilizedScheduledSlots(slotDet.getUtilizedScheduledSlots() + 1);
+        slotApp.setSlotDetail(slotDet);
+        applicationBpaRepository.save(bpaApplication);
+        bpaSmsAndEmailService.sendSMSAndEmailForDocumentScrutiny(slotApp, bpaApplication);
+        slotApplicationRepository.save(slotApp);
+        bpaIndexService.updateIndexes(bpaApplication);
+        return slotApp;
 	}
 
 	private void updateParentInActive(final SlotApplication slotApplication) {
@@ -170,25 +172,26 @@ public class RescheduleAppointmentsForDocumentScrutinyService {
 
 	@Transactional
 	public void rescheduleAppointmentWhenSlotsNotAvailable(Long id, String scheduleBy) {
-		BpaApplication bpaApplication = applicationBpaRepository.findById(id);
-		if("EMPLOYEE".equals(scheduleBy)) {
-			bpaApplication.setIsRescheduledByEmployee(true);
-		} else if("CITIZENPORTAL".equals(scheduleBy)) {
-			bpaApplication.setIsRescheduledByCitizen(true);
-		}
-		List<SlotApplication> slotApplication = slotApplicationRepository
-				.findByApplicationOrderByIdDesc(bpaApplication);
-		SlotDetail slotDetail = slotApplication.get(0).getSlotDetail();
-		if (slotApplication.get(0).getScheduleAppointmentType().toString()
-				.equals(ScheduleAppointmentType.SCHEDULE.toString()))
-			slotDetail.setUtilizedScheduledSlots(slotDetail.getUtilizedScheduledSlots() - 1);
-		else
-			slotDetail.setUtilizedRescheduledSlots(slotDetail.getUtilizedRescheduledSlots() - 1);
-		slotDetailRepository.save(slotDetail);
-		BpaStatus bpaStatus = bpaStatusRepository.findByCode(BpaConstants.APPLICATION_STATUS_PENDING_FOR_RESCHEDULING);
-		bpaApplication.setStatus(bpaStatus);
-		applicationBpaRepository.save(bpaApplication);
-		bpaSmsAndEmailService.sendSMSAndEmailForDocumentScrutiny(slotApplication.get(0), bpaApplication);
+        BpaApplication bpaApplication = applicationBpaRepository.findById(id);
+        if ("EMPLOYEE".equals(scheduleBy)) {
+            bpaApplication.setIsRescheduledByEmployee(true);
+        } else if ("CITIZENPORTAL".equals(scheduleBy)) {
+            bpaApplication.setIsRescheduledByCitizen(true);
+        }
+        List<SlotApplication> slotApplication = slotApplicationRepository
+                .findByApplicationOrderByIdDesc(bpaApplication);
+        SlotDetail slotDetail = slotApplication.get(0).getSlotDetail();
+        if (slotApplication.get(0).getScheduleAppointmentType().toString()
+                .equals(ScheduleAppointmentType.SCHEDULE.toString()))
+            slotDetail.setUtilizedScheduledSlots(slotDetail.getUtilizedScheduledSlots() - 1);
+        else
+            slotDetail.setUtilizedRescheduledSlots(slotDetail.getUtilizedRescheduledSlots() - 1);
+        slotDetailRepository.save(slotDetail);
+        BpaStatus bpaStatus = bpaStatusRepository.findByCode(BpaConstants.APPLICATION_STATUS_PENDING_FOR_RESCHEDULING);
+        bpaApplication.setStatus(bpaStatus);
+        applicationBpaRepository.save(bpaApplication);
+        bpaSmsAndEmailService.sendSMSAndEmailForDocumentScrutiny(slotApplication.get(0), bpaApplication);
+        bpaIndexService.updateIndexes(bpaApplication);
 	}
 
 	public List<SlotDetail> getOneSlotDetailsByAppointmentDateAndZoneId(final Date appointmentDate, final Long zoneId) {

@@ -57,7 +57,6 @@ import static org.egov.bpa.utils.BpaConstants.WF_INITIATE_REJECTION_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_LBE_SUBMIT_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_NEW_STATE;
 import static org.egov.bpa.utils.BpaConstants.WF_REJECT_BUTTON;
-import static org.egov.bpa.utils.BpaConstants.WF_REVERT_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_SAVE_BUTTON;
 
 import java.io.IOException;
@@ -82,6 +81,7 @@ import org.egov.bpa.master.service.BpaSchemeLandUsageService;
 import org.egov.bpa.master.service.CheckListDetailService;
 import org.egov.bpa.master.service.PostalAddressService;
 import org.egov.bpa.master.service.RegistrarOfficeVillageService;
+import org.egov.bpa.service.es.BpaIndexService;
 import org.egov.bpa.transaction.entity.ApplicationDocument;
 import org.egov.bpa.transaction.entity.ApplicationNocDocument;
 import org.egov.bpa.transaction.entity.BpaApplication;
@@ -97,6 +97,7 @@ import org.egov.commons.entity.Source;
 import org.egov.demand.model.EgDemand;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
+
 import org.egov.infra.admin.master.service.RoleService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.EnvironmentSettings;
@@ -125,10 +126,11 @@ import org.springframework.web.multipart.MultipartFile;
 @Transactional(readOnly = true)
 public class ApplicationBpaService extends GenericBillGeneratorService {
 
-    private static final String FORWARDED_DIGI_SIGN = "Forwarded to Digital Signature";
 
+    private static final String FORWARDED_DIGI_SIGN = "Forwarded to Digital Signature";
     private static final String NOC_UPDATION_IN_PROGRESS = "NOC updation in progress";
 
+    
     @Autowired
     private ApplicationBpaRepository applicationBpaRepository;
     @Autowired
@@ -184,7 +186,9 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
     private SlotOpeningForAppointmentService slotOpeningForAppointmentService;
     @Autowired
     private ScheduleAppointmentForDocumentScrutinyService scheduleAppointmentForDocumentScrutinyService;
-
+    @Autowired
+    private BpaIndexService bpaIndexService;
+    
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
@@ -237,18 +241,28 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
                         application.getSiteDetail().get(0) != null
                                 && application.getSiteDetail().get(0).getElectionBoundary() != null
                                         ? application.getSiteDetail().get(0).getElectionBoundary().getId() : null);
-          bpaUtils.redirectToBpaWorkFlow(approvalPosition, application, WF_NEW_STATE,
+            bpaUtils.redirectToBpaWorkFlow(approvalPosition, application, WF_NEW_STATE,
                     application.getApprovalComent(), null, null);
         }
+
         scheduleAppointmentForOneDayPermit(application);
-        return applicationBpaRepository.save(application);
+        BpaApplication bpaApplicationResponse = applicationBpaRepository.save(application);
+        if (workFlowAction != null && workFlowAction.equals(WF_LBE_SUBMIT_BUTTON)
+                && (bpaUtils.logedInuseCitizenOrBusinessUser())) {
+            bpaIndexService.updateIndexes(bpaApplicationResponse);
+        }
+        return bpaApplicationResponse;
     }
 
     public void scheduleAppointmentForOneDayPermit(BpaApplication application) {
-        if(application.getIsOneDayPermitApplication() && application.getStatus().getCode().equalsIgnoreCase(BpaConstants.APPLICATION_STATUS_SCHEDULED)) {
-        	SlotDetail slotDetail = slotOpeningForAppointmentService.openSlotsForDocumentScrutiny(application.getSiteDetail().get(0).getAdminBoundary().getParent(),
-        			application.getSiteDetail().get(0).getAdminBoundary(), application.getSiteDetail().get(0).getElectionBoundary());
-        	scheduleAppointmentForDocumentScrutinyService.scheduleOneDayPermitApplicationsForDocumentScrutiny(application, slotDetail);
+        if (application.getIsOneDayPermitApplication()
+                && application.getStatus().getCode().equalsIgnoreCase(BpaConstants.APPLICATION_STATUS_SCHEDULED)) {
+            SlotDetail slotDetail = slotOpeningForAppointmentService.openSlotsForDocumentScrutiny(
+                    application.getSiteDetail().get(0).getAdminBoundary().getParent(),
+                    application.getSiteDetail().get(0).getAdminBoundary(),
+                    application.getSiteDetail().get(0).getElectionBoundary());
+            scheduleAppointmentForDocumentScrutinyService.scheduleOneDayPermitApplicationsForDocumentScrutiny(application,
+                    slotDetail);
         }
     }
 
@@ -339,7 +353,7 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
 
     @Transactional
     public BpaApplication updateApplication(final BpaApplication application, Long approvalPosition,
-            String workFlowAction, BigDecimal amountRule) { 
+            String workFlowAction, BigDecimal amountRule) {
         application.setSource(Source.SYSTEM);
         application.setSentToPreviousOwner(false);
         persistBpaNocDocuments(application);
@@ -352,7 +366,8 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
             bpaDemandService.generateDemandUsingSanctionFeeList(applicationFeeService
                     .saveApplicationFee(applicationBpaFeeCalculationService.calculateBpaSanctionFees(application)));
         }
-        if (!WF_SAVE_BUTTON.equalsIgnoreCase(workFlowAction) && APPLICATION_STATUS_FIELD_INS.equalsIgnoreCase(application.getStatus().getCode())
+        if (!WF_SAVE_BUTTON.equalsIgnoreCase(workFlowAction)
+                && APPLICATION_STATUS_FIELD_INS.equalsIgnoreCase(application.getStatus().getCode())
                 && NOC_UPDATION_IN_PROGRESS.equalsIgnoreCase(application.getState().getValue())) {
             bpaDemandService.generateDemandUsingSanctionFeeList(applicationFeeService
                     .saveApplicationFee(applicationBpaFeeCalculationService.calculateBpaSanctionFees(application)));
@@ -378,9 +393,9 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         }
 
         if (WF_REJECT_BUTTON.equalsIgnoreCase(workFlowAction)
-            || WF_INITIATE_REJECTION_BUTTON.equalsIgnoreCase(workFlowAction)
-            || APPLICATION_STATUS_REJECTED.equalsIgnoreCase(application.getStatus().getCode())
-            || APPLICATION_STATUS_NOCUPDATED.equals(application.getStatus().getCode())) {
+                || WF_INITIATE_REJECTION_BUTTON.equalsIgnoreCase(workFlowAction)
+                || APPLICATION_STATUS_REJECTED.equalsIgnoreCase(application.getStatus().getCode())
+                || APPLICATION_STATUS_NOCUPDATED.equals(application.getStatus().getCode())) {
             buildRejectionReasons(application);
         }
 
@@ -464,7 +479,8 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
 
     private void processAndStoreNocDocuments(final BpaApplication bpaApplication) {
         final User user = securityUtils.getCurrentUser();
-        if (!bpaApplication.getApplicationNOCDocument().isEmpty() && null == bpaApplication.getApplicationNOCDocument().get(0).getId())
+        if (!bpaApplication.getApplicationNOCDocument().isEmpty()
+                && null == bpaApplication.getApplicationNOCDocument().get(0).getId())
             for (final ApplicationNocDocument nocDocument : bpaApplication.getApplicationNOCDocument()) {
                 nocDocument.setChecklist(
                         checkListDetailService.load(nocDocument.getChecklist().getId()));
@@ -571,20 +587,19 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
     }
 
     @Transactional
-	public void saveBpaApplication(BpaApplication bpaApp) {
-       applicationBpaRepository.save(bpaApp);		
-	}
-
+    public void saveBpaApplication(BpaApplication bpaApp) {
+        applicationBpaRepository.save(bpaApp);
+    }
     public void saveApplicationForScheduler(BpaApplication bpaApp) {
         applicationBpaRepository.save(bpaApp);
     }
-
+    
 	public List<BpaApplication> findByStatusListOrderByCreatedDate(List<BpaStatus> listOfBpaStatus) {
 		return applicationBpaRepository.findByStatusListOrderByCreatedDateAsc(listOfBpaStatus);
 	}
 
-	public List<BpaApplication> getBpaApplicationsByCriteria(List<BpaStatus> bpaStatusList, List<Boundary> boundaryList,
-			Integer totalAvailableSlots) {
+    public List<BpaApplication> getBpaApplicationsByCriteria(List<BpaStatus> bpaStatusList, List<Boundary> boundaryList,
+            Integer totalAvailableSlots) {
         final Criteria criteria = entityManager.unwrap(Session.class)
                 .createCriteria(BpaApplication.class, "application")
                 .createAlias("application.siteDetail", "siteDetail")
@@ -599,7 +614,8 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         criteria.setMaxResults(totalAvailableSlots);
         return criteria.list();
 
-	}
+    }
+
 
     public List<BpaApplication> getBpaApplicationsForScheduleAndReSchedule(List<BpaStatus> bpaStatusList, List<Boundary> boundaryList,
                                                                            Integer totalAvailableSlots) {
