@@ -39,8 +39,7 @@
  */
 package org.egov.bpa.web.controller.transaction.citizen;
 
-import org.egov.bpa.transaction.entity.BpaApplication;
-import org.egov.bpa.transaction.entity.SlotDetail;
+import org.egov.bpa.transaction.entity.*;
 import org.egov.bpa.transaction.service.InspectionService;
 import org.egov.bpa.transaction.service.LettertoPartyService;
 import org.egov.bpa.transaction.service.ScheduleAppointmentForDocumentScrutinyService;
@@ -54,7 +53,6 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.PermanentAddress;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.pims.commons.Position;
-import org.python.icu.text.SimpleDateFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
@@ -68,7 +66,7 @@ import javax.validation.Valid;
 
 import static org.egov.bpa.utils.BpaConstants.*;
 
-import java.math.BigDecimal;
+import java.util.*;
 
 @Controller
 @RequestMapping(value = "/application")
@@ -138,11 +136,14 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
                 .findActiveCheckListByServiceType(application.getServiceType().getId(), BpaConstants.CHECKLIST_TYPE));
         model.addAttribute("applicationDocumentList", application.getApplicationDocument());
         model.addAttribute("isFeeCollected", bpaDemandService.checkAnyTaxIsPendingToCollect(application));
-        model.addAttribute("lettertopartylist", lettertoPartyService.findByBpaApplicationOrderByIdDesc(application));
+        List<LettertoParty> lettertoPartyList = lettertoPartyService.findByBpaApplicationOrderByIdDesc(application);
+        model.addAttribute("lettertopartylist", lettertoPartyList);
         model.addAttribute("inspectionList", inspectionService.findByBpaApplicationOrderByIdAsc(application));
         application.getOwner().setPermanentAddress((PermanentAddress) application.getOwner().getUser().getAddress().get(0));
         model.addAttribute("admissionFee", applicationBpaService.setAdmissionFeeAmountForRegistrationWithAmenities(
                 application.getServiceType().getId(), application.getApplicationAmenity()));
+        if(!lettertoPartyList.isEmpty() && lettertoPartyList.get(0).getSentDate() != null)
+            model.addAttribute("mode","showLPDetails");
         Boolean isCitizen = (Boolean) model.asMap().get(IS_CITIZEN);
         Boolean validateCitizenAcceptance = (Boolean) model.asMap().get("validateCitizenAcceptance");
         if (APPLICATION_STATUS_REGISTERED.equals(application.getStatus().getCode())

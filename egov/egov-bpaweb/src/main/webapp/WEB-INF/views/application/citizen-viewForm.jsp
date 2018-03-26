@@ -92,7 +92,7 @@
 					<li><a data-toggle="tab" href="#view-fee" data-tabidx=5><spring:message
 								code='lbl.fee.details' /></a></li>
 				</c:if>
-				<c:if test="${not empty lettertopartylist}">
+				<c:if test="${not empty lettertopartylist && mode eq 'showLPDetails'}">
 					<li><a data-toggle="tab" href="#view-lp" data-tabidx=6><spring:message
 								code='lbl.lp.details' /></a></li>
 				</c:if>
@@ -162,7 +162,7 @@
 							</div>
 						</div>
 				</c:if>
-				<c:if test="${not empty lettertopartylist}">
+				<c:if test="${not empty lettertopartylist && mode eq 'showLPDetails'}">
 						<div id="view-lp" class="tab-pane fade">
 							<div class="panel panel-primary" data-collapsed="0">
 								<jsp:include page="../lettertoparty/lettertoparty-details-citizen.jsp"></jsp:include> 
@@ -194,7 +194,7 @@
 							</td>
 						</c:if>
 
-						<c:if test="${bpaApplication.status.code eq  'Letter To Party Created' }">
+						<c:if test="${bpaApplication.status.code eq  'Letter To Party Created' && mode eq 'showLPDetails' }">
 							<td> <a	href="/bpa/lettertoparty/lettertopartyreply/${lettertopartylist.get(0).id}" class="btn btn-primary">
 										 Reply Letter To Party
 								    </a>
