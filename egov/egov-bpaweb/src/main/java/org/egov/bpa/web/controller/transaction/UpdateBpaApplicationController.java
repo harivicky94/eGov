@@ -233,9 +233,8 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
                 && APPLICATION_STATUS_FIELD_INS.equalsIgnoreCase(application.getStatus().getCode())) {
             model.addAttribute("showUpdateNoc", true);
         } else if (FWD_TO_AE_FOR_APPROVAL.equalsIgnoreCase(application.getState().getNextAction())
-                && BpaConstants.getBpaFeeCateory1().contains(application.getServiceType().getCode()) &&
-				   !application.getInspections().isEmpty()) {
-            mode = "initialtedApprove";
+                && !application.getInspections().isEmpty()) {
+            mode = "initiatedForApproval";
         }
 
         if (mode == null) {

@@ -148,9 +148,9 @@
 									<div class="col-sm-2 add-margin text-right">
 										<c:choose>
 											<c:when
-												test="${docs.bpaFee.description eq 'Additional Fees'}">
+												test="${docs.bpaFee.description eq 'Other Fees'}">
 												<input type="hidden" id="currentPermitFee" value="${docs.amount}">
-												<form:input class="form-control patternvalidation text-right AdditionalFees"
+												<form:input class="form-control patternvalidation text-right otherFees"
 													data-pattern="number" maxlength="10"
 													id="applicationFeeDetail${status.index}amount"
 													value="${docs.amount}"

@@ -189,6 +189,7 @@ public class BpaApplication extends StateAware<Position> {
 	private List<Inspection> inspections = new ArrayList<>();
 	@OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<LettertoParty> lettertoParty = new ArrayList<>();
+	@OrderBy("id ASC")
 	@OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<ApplicationFee> applicationFee = new ArrayList<>();
 	@OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
