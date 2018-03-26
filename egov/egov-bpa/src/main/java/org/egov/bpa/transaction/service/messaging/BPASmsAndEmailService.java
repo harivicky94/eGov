@@ -59,13 +59,14 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Locale;
 
+import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.bpa.utils.BpaConstants.*;
+import static org.egov.infra.utils.ApplicationConstant.CITY_LOGIN_URL;
 
 @Service
 public class BPASmsAndEmailService {
@@ -120,6 +121,10 @@ public class BPASmsAndEmailService {
 
     public String getMunicipalityName() {
         return ApplicationThreadLocals.getMunicipalityName();
+    }
+
+    public String getDomainUrl() {
+        return ApplicationThreadLocals.getDomainURL();
     }
 
     public void sendSMSForStakeHolder(final StakeHolder stakeHolder) {
@@ -441,14 +446,15 @@ public class BPASmsAndEmailService {
 
 	private String emailSubjectforEmailForScheduleAppointmentForScrutiny(String msgKey) {
 		String mesg = EMPTY;
-		mesg = bpaMessageSource.getMessage(msgKey, new String[] {}, null);
+		mesg = bpaMessageSource.getMessage(msgKey, new String[] {getMunicipalityName()}, null);
 		return mesg;
 	}
 
 	private String buildMessageDtlsFrSchAppForDocScrForCancellationAndPendingForRescheduling(
 			SlotApplication slotApplication, BpaApplication bpaApplication, String name, String msgKey) {
 		String mesg = EMPTY;
-		mesg = bpaMessageSource.getMessage(msgKey, new String[] { name, bpaApplication.getApplicationNumber() }, null);
+		mesg = bpaMessageSource.getMessage(msgKey, new String[] { name, bpaApplication.getApplicationNumber(),
+                format(getDomainUrl()+CITY_LOGIN_URL.replace("%s",""))}, null);
 		return mesg;
 	}
 
@@ -463,7 +469,8 @@ public class BPASmsAndEmailService {
 							slotApplication.getSlotDetail().getAppointmentTime(),
 							slotApplication.getSlotDetail().getSlot().getZone().getName(),
                             getAppconfigValueByKeyNameForHelpLineNumber(),
-                            slotApplication.getApplication().getApplicationNumber()
+                            slotApplication.getApplication().getApplicationNumber(),
+                            format(getDomainUrl()+CITY_LOGIN_URL.replace("%s",""))
                     },
 					null);
 		} else {
@@ -473,7 +480,9 @@ public class BPASmsAndEmailService {
 									slotApplication.getSlotDetail().getSlot().getAppointmentDate()),
 							slotApplication.getSlotDetail().getAppointmentTime(),
 							slotApplication.getSlotDetail().getSlot().getZone().getName(),
-                            getAppconfigValueByKeyNameForHelpLineNumber() },
+                            getAppconfigValueByKeyNameForHelpLineNumber(),
+                            format(getDomainUrl()+CITY_LOGIN_URL.replace("%s",""))
+                    },
 					null);
 		}
 		return mesg;
