@@ -40,10 +40,8 @@
 package org.egov.bpa.web.controller.transaction.citizen;
 
 import org.egov.bpa.transaction.entity.*;
-import org.egov.bpa.transaction.service.InspectionService;
-import org.egov.bpa.transaction.service.LettertoPartyService;
-import org.egov.bpa.transaction.service.ScheduleAppointmentForDocumentScrutinyService;
-import org.egov.bpa.transaction.service.SlotOpeningForAppointmentService;
+import org.egov.bpa.transaction.entity.enums.*;
+import org.egov.bpa.transaction.service.*;
 import org.egov.bpa.transaction.service.collection.ApplicationBpaBillService;
 import org.egov.bpa.transaction.service.collection.GenericBillGeneratorService;
 import org.egov.bpa.utils.BpaConstants;
@@ -92,9 +90,7 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
     @Autowired
     private ApplicationBpaBillService applicationBpaBillService;
     @Autowired
-    private SlotOpeningForAppointmentService slotOpeningForAppointmentService;
-    @Autowired
-    private ScheduleAppointmentForDocumentScrutinyService scheduleAppointmentForDocumentScrutinyService;
+    private BpaAppointmentScheduleService bpaAppointmentScheduleService;
 
     @ModelAttribute
     public BpaApplication getBpaApplication(@PathVariable final String applicationNumber) {
@@ -179,11 +175,12 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
 				model.addAttribute("appointmentTitle", "Scheduled Appointment Details For Document Scrutiny");
 			}
 		} else if(APPLICATION_STATUS_DOC_VERIFIED.equals(application.getStatus().getCode()) && application.getInspections().isEmpty()) {
-			Optional<BpaAppointmentSchedule> activeAppointment = application.getAppointmentSchedule().stream().reduce((appmnt1, appmnt2) -> appmnt2);
-			if(activeAppointment.isPresent()) {
-				model.addAttribute("appointmentDateRes", DateUtils.toDefaultDateFormat(activeAppointment.get().getAppointmentDate()));
-				model.addAttribute("appointmentTimeRes", activeAppointment.get().getAppointmentTime());
-				model.addAttribute("appmntInspnRemarks", activeAppointment.get().isPostponed() ? activeAppointment.get().getPostponementReason() : activeAppointment.get().getRemarks());
+            List<BpaAppointmentSchedule> appointmentScheduledList = bpaAppointmentScheduleService.findByApplication(application,
+                    AppointmentSchedulePurpose.INSPECTION);
+			if(!appointmentScheduledList.isEmpty()) {
+				model.addAttribute("appointmentDateRes", DateUtils.toDefaultDateFormat(appointmentScheduledList.get(0).getAppointmentDate()));
+				model.addAttribute("appointmentTimeRes", appointmentScheduledList.get(0).getAppointmentTime());
+				model.addAttribute("appmntInspnRemarks", appointmentScheduledList.get(0).isPostponed() ? appointmentScheduledList.get(0).getPostponementReason() : appointmentScheduledList.get(0).getRemarks());
 				model.addAttribute("appointmentTitle", "Scheduled Appointment Details For Field Inspection");
 			}
 		}

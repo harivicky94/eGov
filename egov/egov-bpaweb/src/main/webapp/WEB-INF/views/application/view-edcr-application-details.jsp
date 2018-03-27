@@ -60,13 +60,13 @@
             <spring:message code="lbl.edcr.appln.no"/>
         </div>
         <div class="col-sm-3 add-margin view-content">
-            <div class="text-center" id="edcrApplicationNumber"></div>
+            <div id="edcrApplicationNumber"></div>
         </div>
         <div class="col-sm-3 add-margin">
             <spring:message code="lbl.edcr.appln.date"/>
         </div>
         <div class="col-sm-3 add-margin view-content">
-            <div class="text-center" id="edcrUploadedDate"></div>
+            <div id="edcrUploadedDate"></div>
         </div>
     </div>
     <div class="row add-border">
@@ -74,13 +74,13 @@
             <spring:message code="lbl.edcr.upload.file"/>
         </div>
         <div class="col-sm-3 add-margin view-content">
-            <div class="text-center" id="edcrDxfFile"></div>
+            <div id="edcrDxfFile"></div>
         </div>
         <div class="col-sm-3 add-margin">
             <spring:message code="lbl.edcr.report.output"/>
         </div>
         <div class="col-sm-3 add-margin view-content">
-            <div class="text-center" id="edcrPlanReportOutput"></div>
+            <div id="edcrPlanReportOutput"></div>
         </div>
     </div>
 </div>
