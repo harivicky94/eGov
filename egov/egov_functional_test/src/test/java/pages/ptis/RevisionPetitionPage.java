@@ -41,6 +41,8 @@ public class RevisionPetitionPage extends BasePage {
     private WebElement PrintCloseButton;
     @FindBy(id = "Print Special Notice")
     private WebElement printSpecialNotice;
+    @FindBy(id = "actualHearingDtId")
+    private WebElement actualHearingDate;
 
     public RevisionPetitionPage(WebDriver webDriver) {
         this.webDriver = webDriver;
@@ -76,6 +78,7 @@ public class RevisionPetitionPage extends BasePage {
 
     public void enterInspectionDetails() {
         enterText(inspectionTextBox, "Inspection Details of property", webDriver);
+        enterDate(actualHearingDate,"27/06/2018", webDriver);
     }
 
     public void rpApprove() {

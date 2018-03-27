@@ -8,44 +8,49 @@ Feature: As a regsitered user of the system
   @Sanity @PropertyTax
   Scenario Outline: Register user choose to do revision petition of property
 
-    Given juniorAssistant logs in
-    And user will select the required screen as "Create new property" with condition as "ptis"
+    Given CSCUser logs in
+    And user will select the required screen as "Create New Property"
     And he enters property header details as <propertyHeaderDetails>
     And he enters owner details for the first owner as <ownerDetails>
     And he enters property address details as <propertyAddressDetails>
     And he enters assessment details as <assessmentDetails>
-
     And he enters amenities as <amenitiesDetails>
     And he enters construction type details as <constructionTypeDetails>
     And he enters floor details as <floorDetails>
     And he click on floors Details entered
     And he enters document type details as <documentDetails>
-    And he forwards for approval to billCollector
+    And he click on Forward Button
     And he will copy the acknowledgement message with assessment number createProperty-create
-    And user will be notified by "Successfully"
     And current user logs out
 
-    When billCollector logs in
+    And PTISJuniorAssistant logs in
     And he chooses to act upon above assessment number
-    And he forwards for approval to revenueInspector
+    And he forwards for approval to PTISBillCollector
     And current user closes acknowledgement
     And current user logs out
 
-    When revenueInspector logs in
+    When PTISBillCollector logs in
     And he chooses to act upon above assessment number
-    And he forwards for approval to revenueOfficer
+    And he forwards for approval to PTISRevenueInspector
     And current user closes acknowledgement
     And current user logs out
 
-    When revenueOfficer logs in
+    When PTISRevenueInspector logs in
     And he chooses to act upon above assessment number
-    And he forwards for approval to commissioner
+    And he forwards for approval to PTISRevenueOfficer
     And current user closes acknowledgement
     And current user logs out
 
-    When commissioner logs in
+    When PTISRevenueOfficer logs in
+    And he chooses to act upon above assessment number
+    And he forwards for approval to PTISCommissioner
+    And current user closes acknowledgement
+    And current user logs out
+
+    When PTISCommissioner logs in
     And he chooses to act upon above assessment number
     And he approved the property with remarks "property approved"
+    Then create property details get saved successfully by generating assesssment number
     And he will copy the acknowledgement message with assessment number createProperty-forward
     Then user will be notified by "Successfully"
 
@@ -54,52 +59,56 @@ Feature: As a regsitered user of the system
     When commissioner closes acknowledgement
     And current user logs out
 
-    And juniorAssistant logs in
-    And he chooses to act upon above assessment number
-    And he generates a notice
-
+    When CSCUser logs in
     And user will select the required screen as "Create Revision Petition"
     And he search for assessment from commissioner screen
     And he choose revision petition header
     And he enters revision petition details<revisionPetitionDetails>
-    And he forwards for approval to commissioner
+    And he click on Forward Button
     And current user closes acknowledgement
     And current user logs out
 
-    When commissioner logs in
+    And PTISJuniorAssistant logs in
+    And he chooses to act upon above assessment number
+    And he choose revision petition header
+    And he enters approver remark
+    And he forwards for approval to PTISCommissioner
+    And current user closes acknowledgement
+    And current user logs out
+
+    When PTISCommissioner logs in
     And he chooses to act upon above assessment number
     And he choose revision petition header
     And he enters hearing details<hearingDetails>
     And current user closes acknowledgement
     And current user logs out
 
-    And juniorAssistant logs in
+    And PTISJuniorAssistant logs in
     And he chooses to act upon above assessment number
     And he choose revision petition header
     And he enters approver remark
-    And he forwards for approval to revenueInspector
+    And he forwards for approval to PTISRevenueInspector
     And current user closes acknowledgement
     And current user logs out
 
-    When revenueInspector logs in
+    When PTISRevenueInspector logs in
     And he chooses to act upon above assessment number
     And he enters reason for modification
     And he choose revision petition header
     And he enters inspection details
-
-    And he forwards for approval to revenueOfficer
+    And he forwards for approval to PTISRevenueOfficer
     And current user closes acknowledgement
     And current user logs out
 
-    When revenueOfficer logs in
+    When PTISRevenueOfficer logs in
     And he chooses to act upon above assessment number
     And he choose revision petition header
     And he enters approver remark
-    And he forwards for approval to commissioner
+    And he forwards for approval to PTISCommissioner
     And current user closes acknowledgement
     And current user logs out
 
-    When commissioner logs in
+    When PTISCommissioner logs in
     And he chooses to act upon above assessment number
     And he choose to approve for revision petition
     And current user closes acknowledgement
@@ -111,11 +120,6 @@ Feature: As a regsitered user of the system
     And he does a digital signature
 
     When commissioner closes acknowledgement
-    And current user logs out
-
-    And juniorAssistant logs in
-    And he chooses to act upon above assessment number
-    And he generates a print special notice
     And current user logs out
 
     Examples:

@@ -13,7 +13,7 @@ Feature: Create New Property
     And user will select the required screen as "Create New Property"
     And he enters property header details as <propertyHeaderDetails>
     And he enters owner details for the first owner as <ownerDetails>
-    And he enters property address details as <propertyAddressDetails>
+    And he enters property address details as <propertyAddressDetails>  
     And he enters assessment details as <assessmentDetails>
     And he enters amenities as <amenitiesDetails>
     And he enters construction type details as <constructionTypeDetails>
@@ -54,11 +54,11 @@ Feature: Create New Property
     Then create property details get saved successfully by generating assesssment number
     And he will copy the acknowledgement message with assessment number createProperty-forward
     Then user will be notified by "Successfully"
-#
-#    And he chooses to act upon above assessment number
-#    And he does a digital signature
-#    When commissioner closes acknowledgement
-#    And current user logs out
+
+    And he chooses to act upon above assessment number
+    And he does a digital signature
+    When commissioner closes acknowledgement
+    And current user logs out
 
     Examples:
       | propertyHeaderDetails | ownerDetails | propertyAddressDetails | assessmentDetails     | amenitiesDetails | constructionTypeDetails | floorDetails | documentDetails |
