@@ -303,7 +303,6 @@ public class BpaNoticeService {
 
     private List<PermitFeeHelper> getPermitFeeDetails(final BpaApplication application) {
         List<PermitFeeHelper> permitFeeDetails = new ArrayList<>();
-        if(!application.getApplicationFee().get(0).getApplicationFeeDetail().isEmpty()) {
             for(EgDemandDetails demandDetails : application.getDemand().getEgDemandDetails()) {
                 if(demandDetails.getAmount().compareTo(BigDecimal.ZERO) > 0) {
                     PermitFeeHelper feeHelper = new PermitFeeHelper();
@@ -311,7 +310,6 @@ public class BpaNoticeService {
                     feeHelper.setAmount(demandDetails.getAmount());
                     permitFeeDetails.add(feeHelper);
                 }
-            }
         }
         return permitFeeDetails;
     }
@@ -320,7 +318,7 @@ public class BpaNoticeService {
     	StringBuilder qrCodeValue = new StringBuilder();
     	qrCodeValue = !StringUtils.isEmpty(bpaApplication.getPlanPermissionNumber()) ? qrCodeValue.append("Permit number : ").append(bpaApplication.getPlanPermissionNumber()).append("\n") : qrCodeValue.append("Permit number : ").append("N/A").append("\n");
     	qrCodeValue = bpaWorkFlowService.getAmountRuleByServiceType(bpaApplication) != null ? qrCodeValue.append("Approved by : ").append(getApproverDesignation(bpaWorkFlowService.getAmountRuleByServiceType(bpaApplication).intValue())).append("\n") : qrCodeValue.append("Approved by : ").append("N/A").append("\n");
-    	qrCodeValue = bpaApplication.getPlanPermissionDate() != null ? qrCodeValue.append("Date of issue of permit : ").append(bpaApplication.getPlanPermissionDate()).append("\n") : qrCodeValue.append("Date of issue of permit : ").append("N/A").append("\n");
+    	qrCodeValue = bpaApplication.getPlanPermissionDate() != null ? qrCodeValue.append("Date of issue of permit : ").append(DateUtils.getDefaultFormattedDate(bpaApplication.getPlanPermissionDate())).append("\n") : qrCodeValue.append("Date of issue of permit : ").append("N/A").append("\n");
     	qrCodeValue = !StringUtils.isEmpty(getApproverName(bpaApplication)) ? qrCodeValue.append("Name of approver : ").append(getApproverName(bpaApplication)).append("\n") : qrCodeValue.append("Name of approver : ").append("N/A").append("\n");
     	return qrCodeValue.toString();
     	}
@@ -365,7 +363,7 @@ public class BpaNoticeService {
                             bpaApplication.getOwner().getUser().getName()))
                     .append(getMessageFromPropertyFile("tower.pole.permit.condition9"))
                     .append(getMessageFromPropertyFileWithParameters("tower.pole.permit.condition10",
-                            bpaApplication.getPlanPermissionDate().toString()))
+                            DateUtils.getDefaultFormattedDate(bpaApplication.getPlanPermissionDate()).toString()))
                     .append(getMessageFromPropertyFile("tower.pole.permit.condition11"));
             int order = 12;
             buildAdditionalPermitConditionsOrRejectionReason(permitConditions, additionalPermitConditions, order);
@@ -382,9 +380,11 @@ public class BpaNoticeService {
         if (!additionalPermitConditions.isEmpty()
                 && StringUtils.isNotBlank(additionalPermitConditions.get(0).getAdditionalPermitCondition())) {
             for (ApplicationPermitConditions addnlPermitConditions : additionalPermitConditions) {
-                permitConditions.append(
-                        String.valueOf(additionalOrder) + ") " + addnlPermitConditions.getAdditionalPermitCondition() + "\n\n");
-                additionalOrder++;
+                if(StringUtils.isNotBlank(addnlPermitConditions.getAdditionalPermitCondition())) {
+                    permitConditions.append(
+                            String.valueOf(additionalOrder) + ") " + addnlPermitConditions.getAdditionalPermitCondition() + "\n\n");
+                    additionalOrder++;
+                }
             }
         }
         return additionalOrder;

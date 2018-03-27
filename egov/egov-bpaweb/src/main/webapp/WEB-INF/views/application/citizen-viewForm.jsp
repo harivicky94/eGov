@@ -59,13 +59,10 @@
 			enctype="multipart/form-data">
 				<form:hidden path="" id="workFlowAction" name="workFlowAction"/>
 				<form:hidden path="" id="wfstateDesc" value="${bpaApplication.state.value}" />
-				<c:forEach items="${bpaApplication.slotApplications}" var="slotAppln"
-						   varStatus="counter">
-					<c:if test="${counter.last}">
-						<input type="hidden" id="appointmentDateRes" value="${slotAppln.slotDetail.slot.appointmentDate}" />
-						<input type="hidden" id="appointmentTimeRes" value="${slotAppln.slotDetail.appointmentTime}" />
-					</c:if>
-				</c:forEach>
+				<input type="hidden" id="appointmentDateRes" value="${appointmentDateRes}" />
+				<input type="hidden" id="appointmentTimeRes" value="${appointmentTimeRes}" />
+				<input type="hidden" id="appointmentTitle" value="${appointmentTitle}" />
+                <input type="hidden" id="appmntInspnRemarks" value="${appmntInspnRemarks}" />
 				<input type="hidden" id="collectFeeValidate" value="${collectFeeValidate}" />
 				<input type="hidden" name="citizenOrBusinessUser" value="${citizenOrBusinessUser}">
 				<input type="hidden" id="applicationStatus" value="${bpaApplication.status.code}">
@@ -188,9 +185,12 @@
 						<c:if test="${ bpaApplication.status.code eq 'Scheduled For Document Scrutiny'
 								|| bpaApplication.status.code eq 'Pending For Rescheduling For Document Scrutiny'
 								|| bpaApplication.status.code eq 'Rescheduled For Document Scrutiny'}">
-							<td> <a
-									href="/bpa/application/scrutiny/view/${bpaApplication.applicationNumber}"
-									class="btn btn-primary"> View Scheduled Appointment Details </a>
+							<td>
+								<a href="/bpa/application/scrutiny/view/${bpaApplication.applicationNumber}"
+								   target="popup" class="btn btn-primary"
+								   onclick="window.open('/bpa/application/scrutiny/view/${bpaApplication.applicationNumber}','popup','width=1100,height=700'); return false;">
+									View Scheduled Appointment Details
+								</a>
 							</td>
 						</c:if>
 
@@ -208,22 +208,31 @@
 							</td>
 						</c:if>
 						<c:if test="${bpaApplication.status.code eq 'Approved' && isFeeCollected }">
-							<td> <a	href="/bpa/application/demandnotice/${bpaApplication.applicationNumber}" class="btn btn-primary">
-										 Download Demand Notice
-								    </a>
+							<td>
+								<a href="/bpa/application/demandnotice/${bpaApplication.applicationNumber}"
+								   target="popup" class="btn btn-primary"
+								   onclick="window.open('/bpa/application/demandnotice/${bpaApplication.applicationNumber}','popup','width=1100,height=700'); return false;">
+									Print Demand Notice
+								</a>
 							</td> 
 						</c:if>
 						<c:if test="${bpaApplication.status.code eq 'Order Issued to Applicant' }">
-							<td> <a	href="/bpa/application/generatepermitorder/${bpaApplication.applicationNumber}" class="btn btn-primary">
-								Download Permit Order
-								    </a>
+							<td>
+								<a href="/bpa/application/generatepermitorder/${bpaApplication.applicationNumber}"
+								   target="popup" class="btn btn-primary"
+								   onclick="window.open('/bpa/application/generatepermitorder/${bpaApplication.applicationNumber}','popup','width=1100,height=700'); return false;">
+									Print Permit Order
+								</a>
 							</td> 
 						</c:if>
 						
 						<c:if test="${bpaApplication.status.code eq 'Cancelled' && bpaApplication.state ne null}">
-							<td> <a	href="/bpa/application/rejectionnotice/${bpaApplication.applicationNumber}" class="btn btn-primary">
-								Download Rejection Notice
-								    </a>
+							<td>
+								<a href="/bpa/application/rejectionnotice/${bpaApplication.applicationNumber}"
+								   target="popup" class="btn btn-primary"
+								   onclick="window.open('/bpa/application/rejectionnotice/${bpaApplication.applicationNumber}','popup','width=1100,height=700'); return false;">
+									Print Rejection Notice
+								</a>
 							</td>
 						</c:if>
 						
@@ -243,23 +252,32 @@
 		<div class="modal-content">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal">×</button>
-				<h4 class="modal-title"><spring:message code="lbl.existing.schedule.scrutiny"></spring:message> </h4>
+				<h4 class="modal-title"><div id="appointmentTitleModal"/> </h4>
 			</div>
 			<div class="modal-body">
 				<div class="row add-border">
 					<div class="col-sm-5 add-margin">
 						<spring:message code="lbl.appmnt.date"></spring:message>
 					</div>
-					<div class="col-sm-4 add-margin view-content" id="appointmentDateModal">
+					<div class="col-sm-7 add-margin view-content" id="appointmentDateModal">
 					</div>
 				</div>
 				<div class="row add-border">
 					<div class="col-sm-5 add-margin">
 						<spring:message code="lbl.appmnt.time"></spring:message>
 					</div>
-					<div class="col-sm-4 add-margin view-content" id="appointmentTimeModal">
+					<div class="col-sm-7 add-margin view-content" id="appointmentTimeModal">
 					</div>
 				</div>
+                <c:if test="${appmntInspnRemarks ne null && appmntInspnRemarks ne ''}">
+                    <div class="row add-border">
+                        <div class="col-sm-5 add-margin">
+                            <spring:message code="lbl.remarks"></spring:message>
+                        </div>
+                        <div class="col-sm-7 add-margin view-content" id="appmntInspnRemarksModal">
+                        </div>
+                    </div>
+                </c:if>
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>

@@ -51,6 +51,7 @@ import org.egov.bpa.web.controller.transaction.BpaGenericApplicationController;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.PermanentAddress;
+import org.egov.infra.utils.*;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -144,7 +145,8 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
                 application.getServiceType().getId(), application.getApplicationAmenity()));
         if(!lettertoPartyList.isEmpty() && lettertoPartyList.get(0).getSentDate() != null)
             model.addAttribute("mode","showLPDetails");
-        Boolean isCitizen = (Boolean) model.asMap().get(IS_CITIZEN);
+		buildAppointmentDetailsOfScutinyAndInspection(model, application);
+		Boolean isCitizen = (Boolean) model.asMap().get(IS_CITIZEN);
         Boolean validateCitizenAcceptance = (Boolean) model.asMap().get("validateCitizenAcceptance");
         if (APPLICATION_STATUS_REGISTERED.equals(application.getStatus().getCode())
             || APPLICATION_STATUS_SCHEDULED.equals(application.getStatus().getCode())
@@ -167,7 +169,27 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
             return CITIZEN_VIEW;
     }
 
-    @RequestMapping(value = "/citizen/update-submit/{applicationNumber}", method = RequestMethod.POST)
+	private void buildAppointmentDetailsOfScutinyAndInspection(Model model, BpaApplication application) {
+		if (APPLICATION_STATUS_SCHEDULED.equals(application.getStatus().getCode())
+			|| APPLICATION_STATUS_RESCHEDULED.equals(application.getStatus().getCode())) {
+			Optional<SlotApplication> activeSlotApplication = application.getSlotApplications().stream().reduce((slotAppln1, slotAppln2) -> slotAppln2);
+			if(activeSlotApplication.isPresent()) {
+				model.addAttribute("appointmentDateRes", DateUtils.toDefaultDateFormat(activeSlotApplication.get().getSlotDetail().getSlot().getAppointmentDate()));
+				model.addAttribute("appointmentTimeRes", activeSlotApplication.get().getSlotDetail().getAppointmentTime());
+				model.addAttribute("appointmentTitle", "Scheduled Appointment Details For Document Scrutiny");
+			}
+		} else if(APPLICATION_STATUS_DOC_VERIFIED.equals(application.getStatus().getCode()) && application.getInspections().isEmpty()) {
+			Optional<BpaAppointmentSchedule> activeAppointment = application.getAppointmentSchedule().stream().reduce((appmnt1, appmnt2) -> appmnt2);
+			if(activeAppointment.isPresent()) {
+				model.addAttribute("appointmentDateRes", DateUtils.toDefaultDateFormat(activeAppointment.get().getAppointmentDate()));
+				model.addAttribute("appointmentTimeRes", activeAppointment.get().getAppointmentTime());
+				model.addAttribute("appmntInspnRemarks", activeAppointment.get().isPostponed() ? activeAppointment.get().getPostponementReason() : activeAppointment.get().getRemarks());
+				model.addAttribute("appointmentTitle", "Scheduled Appointment Details For Field Inspection");
+			}
+		}
+	}
+
+	@RequestMapping(value = "/citizen/update-submit/{applicationNumber}", method = RequestMethod.POST)
     public String updateApplication(@Valid @ModelAttribute("") BpaApplication bpaApplication,
             @PathVariable final String applicationNumber, final BindingResult resultBinder,
             final HttpServletRequest request, final Model model,
