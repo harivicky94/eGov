@@ -14,16 +14,16 @@ Feature: Trade license closure
 
     When TL_PHS_JA logs in
     And he chooses to act upon above application number
-    And he forwards for approver TL_SI
+    And he forwards for TL approver TL_SI1
     And he confirms to proceed
     And he closes the acknowledgement page
     And current user logs out
 
     When TL_PHS_SI logs in
     And he chooses to act upon above application number
-    And he forwards for approver TL_Commissioner
+    And he forwards for TL approver TL_Commissioner1
     And he confirms to proceed
-    And he closes acknowledgement page
+    And he closes the acknowledgement page
     And current user logs out
 
     When TL_ADM_Commissioner logs in
@@ -31,13 +31,13 @@ Feature: Trade license closure
     And he approves the closure
     And he confirms to proceed
 #    And he saves the application
-    And he closes acknowledgement page
+    And he closes the acknowledgement page
     And user will select the required screen as "Search Trade License"
     And he choose to search with license number
     And he verifies the application status
     And user will be notified by "Cancelled"
     And he verifies the License active
-    And user will be notified by "NO"
+    And user will be notified by "No"
     And he closes search screen
     And current user logs out
 
@@ -45,7 +45,7 @@ Feature: Trade license closure
       | closureDetails    |
       | licenceForClosure |
 
-#  @Sanity @TradeLicense @LicenseClosure
+  @Sanity @TradeLicense @LicenseClosure @Closure
   Scenario Outline: Registered user choose for trade license closure and commissioner rejects it
 
     Given CSCUser logs in
@@ -57,7 +57,14 @@ Feature: Trade license closure
 
     When TL_PHS_JA logs in
     And he chooses to act upon above application number
-    And he forwards for approver TL_SI
+    And he forwards for TL approver TL_SI1
+    And he confirms to proceed
+    And he closes the acknowledgement page
+    And current user logs out
+
+    When TL_PHS_SI logs in
+    And he chooses to act upon above application number
+    And he forwards for TL approver TL_Commissioner1
     And he confirms to proceed
     And he closes the acknowledgement page
     And current user logs out
@@ -66,21 +73,21 @@ Feature: Trade license closure
     And he chooses to act upon above application number
     And he rejects the application
     And he confirms to proceed
-    And he closes acknowledgement page
+    And he closes the acknowledgement page
     And current user logs out
 
     When TL_PHS_SI logs in
     And he chooses to act upon above application number
     And he rejects the application
     And he confirms to proceed
-    And he closes acknowledgement page
+    And he closes the acknowledgement page
     And current user logs out
 
     When TL_PHS_JA logs in
     And he chooses to act upon above application number
     And he cancel the application
     And he confirms to proceed
-    And he closes acknowledgement page
+    And he closes the acknowledgement page
     And user will select the required screen as "Search Trade License"
     And he choose to search with license number
     And he verifies the application status
@@ -101,7 +108,7 @@ Feature: Trade license closure
     Given TL_PHS_JA logs in
     And user will select the required screen as "Search Trade License"
     And he choose a trade license for closure as <closureDetails>
-    And he forwards for approver TL_SI
+    And he forwards for TL approver TL_SI
     And he confirms to proceed
     And he closes the acknowledgement page
     And current user logs out
@@ -123,10 +130,11 @@ Feature: Trade license closure
     And he verifies the application status
     And user will be notified by "Active"
     And he verifies the License active
-    And user will be notified by "YES"
+    And user will be notified by "Yes"
     And he closes search screen
     And current user logs out
 
     Examples:
       | closureDetails    |
       | licenceForClosure |
+

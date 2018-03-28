@@ -23,7 +23,7 @@ Feature: Create New License Rejections
     And he choose to payTax of applicationNumber
     And he chooses to act upon above application number
 
-    And he forwards for approver TL_SI
+    And he forwards for TL approver TL_SI
     And he confirms to proceed
     And he closes acknowledgement page
     And current user logs out
@@ -31,7 +31,7 @@ Feature: Create New License Rejections
     When TL_PHS_SI logs in
     And he chooses to act upon above application number
     And he changes trade area as "1200"
-    And he forwards for approver TL_Commissioner
+    And he forwards for TL approver TL_Commissioner
     And he confirms to proceed
     And he closes acknowledgement page
     And current user logs out
@@ -94,14 +94,14 @@ Feature: Create New License Rejections
     And he choose to payTax of applicationNumber
     And he chooses to act upon above application number
 
-    And he forwards for approver TL_SI
+    And he forwards for TL approver TL_SI
     And he confirms to proceed
     And he closes acknowledgement page
     And current user logs out
 
     When TL_PHS_SI logs in
     And he chooses to act upon above application number
-    And he forwards for approver TL_Commissioner
+    And he forwards for TL approver TL_Commissioner
     And he confirms to proceed
     And he closes acknowledgement page
     And current user logs out
@@ -160,7 +160,7 @@ Feature: Create New License Rejections
     And he choose to payTax of applicationNumber
     And he chooses to act upon above application number
 
-    And he forwards for approver TL_SI
+    And he forwards for TL approver TL_SI
     And he confirms to proceed
     And he closes acknowledgement page
     And current user logs out
@@ -257,3 +257,5 @@ Feature: Create New License Rejections
     Examples:
       | tradeDetailsData         | tradeLocationData           | tradeDetailsData1        |
       | ownerDetailsTradeLicense | locationDetailsTradeLicense | tradeDetailsTradeLicense |
+
+

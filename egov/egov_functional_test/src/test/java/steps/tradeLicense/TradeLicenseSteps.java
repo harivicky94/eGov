@@ -2,7 +2,9 @@ package steps.tradeLicense;
 
 import cucumber.api.PendingException;
 import cucumber.api.java8.En;
+import entities.ApprovalDetails;
 import entities.tradeLicense.*;
+import excelDataFiles.ExcelReader;
 import excelDataFiles.TradeLicenseDataReader;
 import pages.tradeLicense.TradeLicensePage;
 import steps.BaseSteps;
@@ -130,6 +132,15 @@ public class TradeLicenseSteps extends BaseSteps implements En {
         And("^he choose to close trade license$", () -> {
             pageStore.get(TradeLicensePage.class).chooseToCloseLicense();
         });
+        And("^he forwards for TL approver (.*)$", (String approvalDetailsDataId) -> {
+            ApprovalDetails approvalDetails = new ExcelReader(approvalDetailsTestDataFileName).getApprovalDetails(approvalDetailsDataId);
+            if (approvalDetailsDataId.equals("TL_SI") || approvalDetailsDataId.equals("TL_Commissioner") || approvalDetailsDataId.equals("TL_AMOH") || approvalDetailsDataId.equals("TL_MHO") || approvalDetailsDataId.equals("TL_CMOH") || approvalDetailsDataId.equals("TL_SS")){
+            pageStore.get(TradeLicensePage.class).enterApproverDetails(approvalDetails);
+            } else if (approvalDetailsDataId.equals("TL_SI1") || approvalDetailsDataId.equals("TL_Commissioner1") || approvalDetailsDataId.equals("TL_AMOH1") || approvalDetailsDataId.equals("TL_MHO1") || approvalDetailsDataId.equals("TL_CMOH1") || approvalDetailsDataId.equals("TL_SS1")){
+                pageStore.get(TradeLicensePage.class).enterApprovalDetails(approvalDetails);
+            }
+            pageStore.get(TradeLicensePage.class).forward();
 
+        });
     }
 }

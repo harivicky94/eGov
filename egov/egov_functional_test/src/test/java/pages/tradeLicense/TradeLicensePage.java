@@ -1,5 +1,6 @@
 package pages.tradeLicense;
 
+import entities.ApprovalDetails;
 import entities.tradeLicense.*;
 import org.junit.Assert;
 import org.openqa.selenium.*;
@@ -49,7 +50,6 @@ public class TradeLicensePage extends BasePage {
     @FindBy(id = "nameOfEstablishment")
     private WebElement tradeTitleTextBox;
 
-    //    @FindBy(id = "buildingType")
     @FindBy(css = "select[name=natureOfBusiness]")
     private WebElement TradeTypeDropBox;
 
@@ -152,6 +152,33 @@ public class TradeLicensePage extends BasePage {
     @FindBy(id = "address")
     private WebElement tradeAddress;
 
+    @FindBy(id = "approverDepartment")
+    private WebElement approverDepartmentSelection;
+
+    @FindBy(id = "approverDesignation")
+    private WebElement approverDesignationSelection;
+
+    @FindBy(id = "approverPositionId")
+    private WebElement approverSelection;
+
+    @FindBy(id = "Forward")
+    private WebElement forwardButton;
+
+    @FindBy(css = "textarea[name='approverComments']")
+    private WebElement approverCommentsTextBox;
+
+    @FindBy(id = "approvalDepartment")
+    private WebElement approvalDepartmentSelection;
+
+    @FindBy(id = "approvaldesignation")
+    private WebElement approvalDesignationSelection;
+
+    @FindBy(id = "approverPositionId")
+    private WebElement approvalPositionSelect;
+
+    @FindBy(id = "approvalComment")
+    private WebElement approvalComment;
+
     public TradeLicensePage(WebDriver webDriver) {
         this.webDriver = webDriver;
     }
@@ -249,14 +276,14 @@ public class TradeLicensePage extends BasePage {
     }
 
     public void chooseToPayTaxOfApplicationNumber() {
-        int tot = 0;
-        for (int i = 1; i <= webDriver.findElements(By.xpath(".//*[@id='LicenseBillCollect']/table/tbody/tr")).size(); i++) {
-            String totalAmt = webDriver.findElement(By.xpath(".//*[@id='LicenseBillCollect']/table/tbody/tr[" + i + "]/td[3]")).getText();
-            tot = tot + Integer.parseInt(totalAmt);
-        }
+//        int tot = 0;
+//        for (int i = 1; i <= webDriver.findElements(By.xpath(".//*[@id='LicenseBillCollect']/table/tbody/tr")).size(); i++) {
+//            String totalAmt = webDriver.findElement(By.xpath(".//*[@id='LicenseBillCollect']/table/tbody/tr[" + i + "]/td[3]")).getText();
+//            tot = tot + Integer.parseInt(totalAmt);
+//        }
         clickOnButton(continuePayButton, webDriver);
         switchToNewlyOpenedWindow(webDriver);
-        Assert.assertEquals(tot, Integer.parseInt(totalAmountReceived.getAttribute("value").split("\\.")[0]));
+//        Assert.assertEquals(tot, Integer.parseInt(totalAmountReceived.getAttribute("value").split("\\.")[0]));
         enterText(amountTextBox, totalAmountReceived.getAttribute("value").split("\\.")[0], webDriver);
         WebElement element = webDriver.findElement(By.id("button2"));
         JavascriptExecutor executor = (JavascriptExecutor) webDriver;
@@ -290,10 +317,11 @@ public class TradeLicensePage extends BasePage {
 
     public void enterDetailsForClosure(LicenseClosureDetails closureDetails) {
         selectFromDropDown(statusSelect, closureDetails.getStatusDetails(), webDriver);
+        webDriver.findElement(By.linkText("More..")).click();
         selectFromDropDown(TradeCategoryDropBox, closureDetails.getTradeCategory(), webDriver);
         jsClick(searchButton, webDriver);
         selectFromDropDown(collectFeeDropBox, "Closure", webDriver);
-        switchToPreviouslyOpenedWindow(webDriver);
+        switchToNewlyOpenedWindow(webDriver);
     }
 
     public String getLicenseNumber() {
@@ -302,8 +330,6 @@ public class TradeLicensePage extends BasePage {
     }
 
     public void closeAcknowledgement() {
-        webDriver.close();
-        switchToNewlyOpenedWindow(webDriver);
         webDriver.close();
         switchToPreviouslyOpenedWindow(webDriver);
     }
@@ -395,7 +421,7 @@ public class TradeLicensePage extends BasePage {
     }
 
     public void closureApproval() {
-        enterText(approverRemarkTextBox, "Approved", webDriver);
+        enterText(approvalComment, "Approved", webDriver);
         jsClick(approveButton, webDriver);
     }
 
@@ -423,31 +449,37 @@ public class TradeLicensePage extends BasePage {
     }
 
     public void cancelApplication() {
-            enterText(webDriver.findElement(By.name("approverComments")), "Comments", webDriver);
+        if (webDriver.findElements(By.name("approverComments")).size() == 1) {
+            enterText(webDriver.findElement(By.name("approverComments")), "Cancelled", webDriver);
+        } else if (webDriver.findElements(By.id("approvalComment")).size() == 1){
+            enterText(webDriver.findElement(By.id("approvalComment")), "Cancelled", webDriver);
+        }
             clickOnButton(cancelButton, webDriver);
     }
 
     public void applicationRejection() {
         if (webDriver.findElements(By.name("approverComments")).size() == 1) {
-            enterText(webDriver.findElement(By.name("approverComments")), "Comments", webDriver);
+            enterText(webDriver.findElement(By.name("approverComments")), "Rejected", webDriver);
             clickOnButton(rejectButton, webDriver);
-        } else
+        } else if (webDriver.findElements(By.id("approvalComment")).size() == 1) {
+            enterText(webDriver.findElement(By.id("approvalComment")), "Rejected", webDriver);
             clickOnButton(rejectButton, webDriver);
+        }
     }
 
 
     public String applicationStatus() {
-        String status = webDriver.findElement(By.xpath(".//*[@id='tblSearchTrade']/tbody/tr[1]/td[11]")).getText();
+        String status = webDriver.findElement(By.xpath(".//*[@id='tblSearchTrade']/tbody/tr[1]/td[5]")).getText();
         return status;
     }
 
     public String licenseStatus() {
-        String status = webDriver.findElement(By.xpath(".//*[@id='tblSearchTrade']/tbody/tr[1]/td[12]")).getText();
+        String status = webDriver.findElement(By.xpath(".//*[@id='tblSearchTrade']/tbody/tr[1]/td[6]")).getText();
         return status;
     }
 
     public void closeSearchScreen() {
-        clickOnButton(closeSearch, webDriver);
+        jsClick(closeSearch, webDriver);
         switchToPreviouslyOpenedWindow(webDriver);
     }
 
@@ -460,14 +492,52 @@ public class TradeLicensePage extends BasePage {
     }
 
     public void chooseToCloseLicense() {
-        waitForElementToBeVisible(webDriver.findElement(By.name("approvalComment")), webDriver);
-        enterText(webDriver.findElement(By.name("approvalComment")), "Comments", webDriver);
+        waitForElementToBeVisible(webDriver.findElement(By.id("approvalComment")), webDriver);
+        enterText(webDriver.findElement(By.id("approvalComment")), "Comments", webDriver);
         clickOnButton(createButton, webDriver);
         webDriver.switchTo().activeElement();
         jsClick(webDriver.findElement(By.cssSelector(".btn.btn-danger")), webDriver);
         webDriver.findElement(By.id("btnclose")).click();
         switchToNewlyOpenedWindow(webDriver);
         jsClick(searchButton, webDriver);
+    }
+
+    public void enterApproverDetails(ApprovalDetails approvalDetails) {
+        maximizeBrowserWindow(webDriver);
+
+        selectFromDropDown(approverDepartmentSelection, approvalDetails.getApproverDepartment(), webDriver);
+
+        await().atMost(50, SECONDS).until(() -> new Select(approverDesignationSelection).getOptions().size() > 1);
+        selectFromDropDown(approverDesignationSelection, approvalDetails.getApproverDesignation(), webDriver);
+
+        await().atMost(50, SECONDS).until(() -> new Select(approverSelection).getOptions().size() > 1);
+        selectFromDropDown(approverSelection, approvalDetails.getApprover(), webDriver);
+
+        if (webDriver.findElements(By.cssSelector("textarea[name='approverComments']")).size() > 0) {
+            enterText(approverCommentsTextBox, approvalDetails.getApproverRemarks(), webDriver);
+        }
+    }
+
+    public void forward() {
+        clickOnButton(forwardButton, webDriver);
+    }
+
+    public void enterApprovalDetails(ApprovalDetails approvalDetails) {
+        maximizeBrowserWindow(webDriver);
+
+        selectFromDropDown(approvalDepartmentSelection, approvalDetails.getApproverDepartment(), webDriver);
+//        await().atMost(10, SECONDS).until(() -> new Select(approvalDesignationSelection).getOptions().size() > 0);
+
+        selectFromDropDown(approvalDesignationSelection, approvalDetails.getApproverDesignation(), webDriver);
+        await().atMost(10, SECONDS).until(() -> new Select(approvalPositionSelect).getOptions().size() > 0);
+
+//        jsClick(approvalPositionSelect,webDriver);
+//        selectFromDropDown(approvalPositionSelect, approvalDetails.getApprover(), webDriver);
+        Select s1 = new Select(webDriver.findElement(By.xpath(".//*[@id = 'approverPositionId'][@name = 'workflowContainer.approverPositionId']")));
+        s1.selectByVisibleText(approvalDetails.getApprover());
+
+        enterText(approvalComment, approvalDetails.getApproverRemarks(), webDriver);
+
     }
 }
 
