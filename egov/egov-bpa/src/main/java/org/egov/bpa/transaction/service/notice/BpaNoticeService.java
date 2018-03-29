@@ -430,8 +430,12 @@ public class BpaNoticeService {
                                 + applnPermit.getPermitConditionNumber() + " Dtd "
                                 + DateUtils.toDefaultDateFormat(applnPermit.getPermitConditiondDate()) + "." + "\n\n");
                 order++;
-            } else if (applnPermit.isRequired()
-                    && PermitConditionType.STATIC_PERMITCONDITION.equals(applnPermit.getPermitConditionType())) {
+            }
+        }
+
+        for (ApplicationPermitConditions applnPermit : bpaApplication.getDynamicPermitConditions()) {
+            if (applnPermit.isRequired()
+                       && PermitConditionType.STATIC_PERMITCONDITION.equals(applnPermit.getPermitConditionType())) {
                 permitConditions
                         .append(String.valueOf(order) + ") " + applnPermit.getPermitCondition().getDescription() + "\n\n");
                 order++;
