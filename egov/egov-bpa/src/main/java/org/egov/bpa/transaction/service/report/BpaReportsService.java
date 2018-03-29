@@ -39,30 +39,21 @@
  */
 package org.egov.bpa.transaction.service.report;
 
-import static org.egov.bpa.utils.BpaConstants.ADDING_OF_EXTENSION;
-import static org.egov.bpa.utils.BpaConstants.ALTERATION;
-import static org.egov.bpa.utils.BpaConstants.AMENITIES;
-import static org.egov.bpa.utils.BpaConstants.CHANGE_IN_OCCUPANCY;
-import static org.egov.bpa.utils.BpaConstants.DEMOLITION;
-import static org.egov.bpa.utils.BpaConstants.DIVISION_OF_PLOT;
-import static org.egov.bpa.utils.BpaConstants.NEW_CONSTRUCTION;
-import static org.egov.bpa.utils.BpaConstants.PERM_FOR_HUT_OR_SHED;
-import static org.egov.bpa.utils.BpaConstants.POLE_STRUCTURES;
-import static org.egov.bpa.utils.BpaConstants.RECONSTRUCTION;
-import static org.egov.bpa.utils.BpaConstants.TOWER_CONSTRUCTION;
+import org.egov.bpa.transaction.entity.*;
+import org.egov.bpa.transaction.entity.dto.*;
+import org.egov.bpa.transaction.service.*;
+import org.hibernate.*;
+import org.hibernate.criterion.*;
+import org.springframework.beans.factory.annotation.*;
+import org.springframework.stereotype.*;
+import org.springframework.transaction.annotation.*;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.stream.Collectors;
+import javax.persistence.*;
+import java.util.*;
+import java.util.Map.*;
+import java.util.stream.*;
 
-import org.egov.bpa.transaction.entity.dto.SearchBpaApplicationForm;
-import org.egov.bpa.transaction.entity.dto.SearchBpaApplicationReport;
-import org.egov.bpa.transaction.service.SearchBpaApplicationService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import static org.egov.bpa.utils.BpaConstants.*;
 
 @Service
 @Transactional(readOnly = true)
@@ -70,6 +61,13 @@ public class BpaReportsService {
 
     @Autowired
     private SearchBpaApplicationService searchBpaApplicationService;
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    public Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
+    }
 
     public List<SearchBpaApplicationReport> getResultsByServicetypeAndStatus(
             final SearchBpaApplicationForm searchBpaApplicationForm) {
@@ -167,5 +165,55 @@ public class BpaReportsService {
         }
         return searchBpaApplicationReportList;
     }
+
+    public List<SlotDetailsHelper> searchSlotDetailsForRegularApplication(final SlotDetailsHelper slotDetailsHelper, final String type) {
+        final Criteria criteria = getCurrentSession().createCriteria(SlotDetail.class, "slotDetail");
+        criteria.createAlias("slotDetail.slot", "slot");
+        if(slotDetailsHelper.getZoneId() != null) {
+            criteria.createAlias("slot.zone", "zone");
+            criteria.add(Restrictions.eq("zone.id", slotDetailsHelper.getZoneId()));
+        }
+        //TODO:Need to work on get by days
+        /*if(slotDetailsHelper.getByNoOfDays() != null)
+            criteria.add(Restrictions.ge("slot.appointmentDate", new DateTime(new Date()).minusDays(slotDetailsHelper.getByNoOfDays()).toDate()));*/
+        if(slotDetailsHelper.getAppointmentDate() != null)
+            criteria.add(Restrictions.eq("slot.appointmentDate", slotDetailsHelper.getAppointmentDate()));
+		if (slotDetailsHelper.getElectionWardId() != null) {
+			criteria.createAlias("slot.electionWard", "electionWard")
+					.add(Restrictions.eq("electionWard.id", slotDetailsHelper.getElectionWardId()));
+		}
+		if(type.equals("onedaypermit")) {
+			criteria.add(Restrictions.isNotNull("slot.electionWard"));
+		} else
+        	criteria.add(Restrictions.isNull("slot.electionWard"));
+
+        criteria.addOrder(Order.desc("slot.appointmentDate"));
+        criteria.addOrder(Order.asc("slot.zone"));
+        return buildSlotDetailsResponse(criteria);
+    }
+
+    private List<SlotDetailsHelper> buildSlotDetailsResponse(final Criteria criteria) {
+        List<SlotDetailsHelper> slotDetailsHelperList = new ArrayList<>();
+        for(SlotDetail slotDetail : (List<SlotDetail>)criteria.list()) {
+            SlotDetailsHelper slotDetailsHelper = new SlotDetailsHelper();
+            slotDetailsHelper.setSlotId(slotDetail.getSlot().getId());
+            slotDetailsHelper.setAppointmentDate(slotDetail.getSlot().getAppointmentDate());
+            slotDetailsHelper.setZone(slotDetail.getSlot().getZone().getName());
+            slotDetailsHelper.setZoneId(slotDetail.getSlot().getZone().getId());
+            if(slotDetail.getSlot().getElectionWard() != null) {
+                slotDetailsHelper.setElectionWard(slotDetail.getSlot().getElectionWard().getName());
+                slotDetailsHelper.setElectionWardId(slotDetail.getSlot().getElectionWard().getId());
+            }
+            slotDetailsHelper.setSlotDetailsId(slotDetail.getId());
+            slotDetailsHelper.setAppointmentTime(slotDetail.getAppointmentTime());
+            slotDetailsHelper.setMaxScheduledSlots(slotDetail.getMaxScheduledSlots());
+            slotDetailsHelper.setMaxRescheduledSlots(slotDetail.getMaxRescheduledSlots());
+            slotDetailsHelper.setUtilizedScheduledSlots(slotDetail.getUtilizedScheduledSlots());
+            slotDetailsHelper.setUtilizedRescheduledSlots(slotDetail.getUtilizedRescheduledSlots());
+            slotDetailsHelperList.add(slotDetailsHelper);
+        }
+        return slotDetailsHelperList;
+    }
+
 
 }

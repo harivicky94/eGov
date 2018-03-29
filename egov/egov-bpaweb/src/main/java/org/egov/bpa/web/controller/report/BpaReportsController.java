@@ -39,28 +39,22 @@
  */
 package org.egov.bpa.web.controller.report;
 
-import static org.egov.infra.utils.JsonUtils.toJSON;
+import org.egov.bpa.transaction.entity.dto.*;
+import org.egov.bpa.transaction.service.*;
+import org.egov.bpa.transaction.service.report.*;
+import org.egov.bpa.utils.*;
+import org.egov.bpa.web.controller.adaptor.*;
+import org.egov.bpa.web.controller.transaction.*;
+import org.springframework.beans.factory.annotation.*;
+import org.springframework.http.*;
+import org.springframework.stereotype.*;
+import org.springframework.ui.*;
+import org.springframework.web.bind.annotation.*;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
+import java.text.*;
+import java.util.*;
 
-import org.egov.bpa.transaction.entity.dto.SearchBpaApplicationForm;
-import org.egov.bpa.transaction.entity.dto.SearchBpaApplicationReport;
-import org.egov.bpa.transaction.service.SearchBpaApplicationService;
-import org.egov.bpa.transaction.service.report.BpaReportsService;
-import org.egov.bpa.web.controller.adaptor.SearchBpaApplicationFormAdaptor;
-import org.egov.bpa.web.controller.adaptor.SearchBpaApplicationReportAdaptor;
-import org.egov.bpa.web.controller.transaction.BpaGenericApplicationController;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import static org.egov.infra.utils.JsonUtils.*;
 
 @Controller
 @RequestMapping(value = "/reports")
@@ -148,6 +142,29 @@ public class BpaReportsController extends BpaGenericApplicationController {
                 .getResultsForEachServicetypeByZone(searchBpaApplicationForm);
         return new StringBuilder(DATA)
                 .append(toJSON(searchResultList, SearchBpaApplicationReport.class, SearchBpaApplicationReportAdaptor.class))
+                .append("}")
+                .toString();
+    }
+
+    @RequestMapping(value = "/slotdetails/{type}", method = RequestMethod.GET)
+    public String searchSlotDetailsForm(@PathVariable String type, final Model model) {
+        prepareFormData(model);
+        model.addAttribute("slotDetailsHelper", new SlotDetailsHelper());
+        model.addAttribute("type",type);
+        model.addAttribute("searchByNoOfDays", BpaConstants.getSearchByNoOfDays());
+        if(type.equals("onedaypermit"))
+			return "search-onedaypermit-slotdetails-report";
+        else
+        	return "search-regular-slotdetails-report";
+    }
+
+    @RequestMapping(value = "/slotdetails/{type}", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    @ResponseBody
+    public String getSlotDetailsResult(@PathVariable String type, final Model model,
+                                            @ModelAttribute final SlotDetailsHelper slotDetailsHelper) {
+        final List<SlotDetailsHelper> searchResultList = bpaReportsService.searchSlotDetailsForRegularApplication(slotDetailsHelper,type);
+        return new StringBuilder(DATA)
+                .append(toJSON(searchResultList, SlotDetailsHelper.class, SlotDetailsAdaptor.class))
                 .append("}")
                 .toString();
     }

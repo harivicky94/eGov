@@ -59,7 +59,7 @@
 			<div class="panel-body" data-collapsed="0">
 				<div class="row add-border">
 					<div class="col-sm-3 add-margin">
-						<spring:message code="lbl.slotmapping.zone" />
+						<spring:message code="lbl.zonal.office" />
 					</div>
 					<div class="col-sm-3 add-margin view-content">
 						<c:out value="${slotMapping.zone.name}" default="N/A"></c:out>

@@ -76,7 +76,7 @@
 			id="search_slotmapping_table">
 			<thead>
 				<tr>
-					<th><spring:message code="lbl.slotmapping.zone" /></th>
+					<th><spring:message code="lbl.zonal.office" /></th>
 					<th><spring:message code="lbl.slotmapping.ward" /></th>
 					<th><spring:message code="lbl.slotmapping.electionward" /></th>
 					<th><spring:message code="lbl.slotmapping.applicationtype" /></th>

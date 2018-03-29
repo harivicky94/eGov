@@ -66,7 +66,7 @@
 				<div class="panel-body">
 					<div class="form-group">
 						<label class="col-sm-3 control-label"><spring:message
-								code="lbl.slotmapping.zone" /> <span class="mandatory"></span></label>
+								code="lbl.zonal.office" /> <span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
 							<input type="hidden" id="message" value="${message}"> <select
 								name="zone" id="zone" class="form-control" required>

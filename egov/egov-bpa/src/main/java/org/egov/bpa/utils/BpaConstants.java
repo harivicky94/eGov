@@ -370,6 +370,14 @@ public class BpaConstants {
         BPAFEECATEGORY2.add(ST_CODE_05); // Sub-Division of Plot/Development of land
     }
 
+    private static final Map<Integer, String> NOOFDAYS = new LinkedHashMap<>();
+    static {
+        NOOFDAYS.put(3, "Last 3 Days");
+        NOOFDAYS.put(7, "Last 7 Days");
+        NOOFDAYS.put(14, "Last 14 Days");
+        NOOFDAYS.put(21, "Last 21 Days");
+        NOOFDAYS.put(28, "Last 28 Days");
+    }
     private BpaConstants() {
         // only invariants
     }
@@ -392,6 +400,10 @@ public class BpaConstants {
 
     public static Map<String, Map<String, BigDecimal>> getStakeholderType5Restrictions() {
         return Collections.unmodifiableMap(STAKEHOLDERTYPE5RESTRICTIONS);
+    }
+
+    public static Map<Integer, String> getSearchByNoOfDays() {
+        return Collections.unmodifiableMap(NOOFDAYS);
     }
 
     public static List<String> getBuildingFloorsList() {

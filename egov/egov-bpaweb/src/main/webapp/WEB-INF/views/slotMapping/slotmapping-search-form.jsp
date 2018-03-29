@@ -71,7 +71,7 @@
 						<form:errors path="applType" cssClass="error-msg" />
 					</div>
 					<label class="col-sm-3 control-label"><spring:message
-							code="lbl.slotmapping.zone" /></label>
+							code="lbl.zonal.office" /></label>
 					<div class="col-sm-3 add-margin">
 						<select name="zone" id="zone" class="form-control">
 							<option value=""><spring:message code="lbl.select" /></option>

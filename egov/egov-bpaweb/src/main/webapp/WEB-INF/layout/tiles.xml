@@ -415,4 +415,17 @@
 		<put-attribute name="body"
 			value="/WEB-INF/views/application/search-document-scrutiny.jsp" /> 
 	</definition>
+	<definition name="search-regular-slotdetails-report" extends="base_layout">
+		<put-attribute name="page-title" value="title.slot.regular.report"
+					   cascade="true" />
+		<put-attribute name="body"
+					   value="/WEB-INF/views/reports/search-regular-slotdetails-report.jsp" />
+	</definition>
+	<definition name="search-onedaypermit-slotdetails-report" extends="base_layout">
+		<put-attribute name="page-title" value="title.slot.onedaypermit.report"
+					   cascade="true" />
+		<put-attribute name="body"
+					   value="/WEB-INF/views/reports/search-onedaypermit-slotdetails-report.jsp" />
+	</definition>
+
 </tiles-definitions>
