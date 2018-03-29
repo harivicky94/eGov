@@ -4,6 +4,7 @@
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<field name="issubmitted" class="java.lang.Boolean"/>
 	<field name="remarks" class="java.lang.String"/>
 	<field name="checklistDetail" class="org.egov.bpa.master.entity.CheckListDetail"/>

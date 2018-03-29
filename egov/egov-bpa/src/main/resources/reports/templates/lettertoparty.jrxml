@@ -135,6 +135,7 @@
 			</textField>
 		</band>
 		<band height="40">
+			<printWhenExpression><![CDATA[$F{lettertoPartyDocument}.size() > 0]]></printWhenExpression>
 			<subreport>
 				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="555" height="40" isRemoveLineWhenBlank="true" uuid="e35ce559-f063-49b8-9b8f-0d0ce3d42788">
 					<printWhenExpression><![CDATA[new Boolean($F{lettertoPartyDocument}.size()!= 0)]]></printWhenExpression>
@@ -164,6 +165,7 @@
 				<reportElement x="0" y="7" width="544" height="46" uuid="169be3a7-3d60-4d60-9ed1-815067b41d80">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<printWhenExpression><![CDATA[$F{lastReplyDate} != null]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Justified">
 					<font fontName="SansSerif" isBold="true"/>

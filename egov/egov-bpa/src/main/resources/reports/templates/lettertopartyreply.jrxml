@@ -41,7 +41,7 @@
 				<textElement textAlignment="Center">
 					<font fontName="SansSerif" size="11" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Letter to the Party Reply Acknowledgement]]></text>
+				<text><![CDATA[Letter to Party Reply Acknowledgement]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="129" y="27" width="342" height="18" uuid="67ea5c35-8b79-4289-9647-3815a7b81375"/>
@@ -250,6 +250,7 @@
 			</staticText>
 		</band>
 		<band height="51">
+			<printWhenExpression><![CDATA[$F{lettertoPartyDocument}.size() > 0]]></printWhenExpression>
 			<subreport>
 				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="555" height="51" isRemoveLineWhenBlank="true" uuid="488747bf-e344-4532-8f25-d6e603f717ea">
 					<printWhenExpression><![CDATA[new Boolean($F{lettertoPartyDocument}.size()!= 0)]]></printWhenExpression>
@@ -265,7 +266,7 @@
 				<textElement verticalAlignment="Middle">
 					<font fontName="SansSerif" size="11" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Note: This is computer generated acknowledgment. Seal & signature not necessary.]]></text>
+				<text><![CDATA[Note: This is computer generated acknowledgement. Seal & signature not necessary.]]></text>
 			</staticText>
 		</band>
 	</detail>
