@@ -64,7 +64,7 @@ Feature: Create New License Rejections
     And he verifies the application status
     And user will be notified by "Cancelled"
     And he verifies the License active
-    And user will be notified by "NO"
+    And user will be notified by "No"
     And he closes search screen
     And current user logs out
 
@@ -130,7 +130,7 @@ Feature: Create New License Rejections
     And he verifies the application status
     And user will be notified by "Cancelled"
     And he verifies the License active
-    And user will be notified by "NO"
+    And user will be notified by "No"
     And he closes search screen
     And current user logs out
 
@@ -182,7 +182,7 @@ Feature: Create New License Rejections
     And he verifies the application status
     And user will be notified by "Cancelled"
     And he verifies the License active
-    And user will be notified by "NO"
+    And user will be notified by "No"
     And he closes search screen
     And current user logs out
 
@@ -218,7 +218,7 @@ Feature: Create New License Rejections
     And he verifies the application status
     And user will be notified by "Cancelled"
     And he verifies the License active
-    And user will be notified by "NO"
+    And user will be notified by "No"
     And he closes search screen
     And current user logs out
 
@@ -250,7 +250,7 @@ Feature: Create New License Rejections
     And he verifies the application status
     And user will be notified by "Cancelled"
     And he verifies the License active
-    And user will be notified by "NO"
+    And user will be notified by "No"
     And he closes search screen
     And current user logs out
 

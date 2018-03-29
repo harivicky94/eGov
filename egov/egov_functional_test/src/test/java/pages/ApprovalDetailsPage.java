@@ -19,7 +19,7 @@ public class ApprovalDetailsPage extends BasePage {
     @FindBy(id = "approvalDesignation")
     private WebElement approvalDesignationSelect;
 
-    @FindBy(id = "approverPositionId")
+    @FindBy(id = "approvalPosition")
     private WebElement approvalPositionSelect;
 
     @FindBy(xpath = ".//*[@id='complaintUpdate']/div[6]/div/button[1]")
@@ -37,22 +37,22 @@ public class ApprovalDetailsPage extends BasePage {
     @FindBy(css = "textarea[name='approverComments']")
     private WebElement approverCommentsTextBox;
 
-    @FindBy(id = "approvalDepartment")
+    @FindBy(id = "approverDepartment")
     private WebElement approverDepartmentSelection;
 
-    @FindBy(id = "approvalDesignation")
+    @FindBy(id = "approverDesignation")
     private WebElement approverDesignationSelection;
 
-    @FindBy(id = "approvalPosition")
+    @FindBy(id = "approverPositionId")
     private WebElement approverSelection;
 
     @FindBy(id = "Forward")
     private WebElement forwardButton;
 
-    @FindBy(id = "approverDepartment")
+    @FindBy(id = "approvalDepartment")
     private WebElement approvalDepartmentSelection;
 
-    @FindBy(id = "approverDesignation")
+    @FindBy(id = "approvalDesignation")
     private WebElement approvalDesignationSelection;
 
     public ApprovalDetailsPage(WebDriver webDriver) {
@@ -84,12 +84,12 @@ public class ApprovalDetailsPage extends BasePage {
         await().atMost(10, SECONDS).until(() -> new Select(approvalPositionSelect).getOptions().size() > 1);
 
         selectFromDropDown(approvalPositionSelect, approvalDetails.getApprover(), webDriver);
-        if (webDriver.findElements(By.cssSelector("textarea[name='approverComments']")).size() > 0) {
-            enterText(approverCommentsTextBox, approvalDetails.getApproverRemarks(), webDriver);
-        }
-//        if (approvalCommentsTextBox.isDisplayed()) {
-//            enterText(approvalCommentsTextBox, approvalDetails.getApproverRemarks(), webDriver);
+//        if (webDriver.findElements(By.cssSelector("textarea[name='approverComments']")).size() > 0) {
+//            enterText(approverCommentsTextBox, approvalDetails.getApproverRemarks(), webDriver);
 //        }
+        if (approvalCommentsTextBox.isDisplayed()) {
+            enterText(approvalCommentsTextBox, approvalDetails.getApproverRemarks(), webDriver);
+        }
     }
 
     public void forward() {

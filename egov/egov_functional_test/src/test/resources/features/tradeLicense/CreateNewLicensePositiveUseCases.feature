@@ -91,19 +91,6 @@ Feature: Create Trade License
     Examples:
       | tradeDetailsData         | tradeLocationData           | tradeDetailsData1        |
       | ownerDetailsTradeLicense | locationDetailsTradeLicense | tradeDetailsTradeLicense |
-      | ownerDetailsTradeLicense | locationDetailsTradeLicense | tradeDetailsTradeLicense |
-      | ownerDetailsTradeLicense | locationDetailsTradeLicense | tradeDetailsTradeLicense |
-      | ownerDetailsTradeLicense | locationDetailsTradeLicense | tradeDetailsTradeLicense |
-      | ownerDetailsTradeLicense | locationDetailsTradeLicense | tradeDetailsTradeLicense |
-      | ownerDetailsTradeLicense | locationDetailsTradeLicense | tradeDetailsTradeLicense |
-      | ownerDetailsTradeLicense | locationDetailsTradeLicense | tradeDetailsTradeLicense |
-      | ownerDetailsTradeLicense | locationDetailsTradeLicense | tradeDetailsTradeLicense |
-      | ownerDetailsTradeLicense | locationDetailsTradeLicense | tradeDetailsTradeLicense |
-      | ownerDetailsTradeLicense | locationDetailsTradeLicense | tradeDetailsTradeLicense |
-      | ownerDetailsTradeLicense | locationDetailsTradeLicense | tradeDetailsTradeLicense |
-      | ownerDetailsTradeLicense | locationDetailsTradeLicense | tradeDetailsTradeLicense |
-      | ownerDetailsTradeLicense | locationDetailsTradeLicense | tradeDetailsTradeLicense |
-
 
 # Create Trade License with work flow #
   @Sanity @TradeLicense @NewLicense

@@ -143,8 +143,8 @@ public class GrievancesPage extends BasePage {
             selectFromDropDown(complaintTypeSelect, createComplaintDetails.getGrievanceType(), webDriver);
         }
         enterText(grievanceDetailsText, createComplaintDetails.getGrievanceDetails(), webDriver);
-        enterText(grievanceLocationText, createComplaintDetails.getGrievanceLocation(), webDriver);
-        await().atMost(10, TimeUnit.SECONDS).until(() -> webDriver.findElements(By.cssSelector("[class='tt-dropdown-menu'] div span div p strong")).size() == 1);
+        enterText(grievanceLocationText, "a", webDriver);
+        await().atMost(10, TimeUnit.SECONDS).until(() -> webDriver.findElements(By.cssSelector("[class='tt-dropdown-menu'] div span div p strong")).size() > 0);
         WebElement dropdown = webDriver.findElement(By.cssSelector("[class='tt-dropdown-menu'] div span div p strong"));
         dropdown.click();
         enterText(locationLandmarkText, createComplaintDetails.getLocationLandmark(), webDriver);

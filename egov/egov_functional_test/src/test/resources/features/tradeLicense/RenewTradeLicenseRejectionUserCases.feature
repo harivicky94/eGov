@@ -730,7 +730,7 @@ Feature: Renewal of trade license rejection
     And he verifies the application status
     And user will be notified by "Active"
     And he verifies the License active
-    And user will be notified by "YES"
+    And user will be notified by "Yes"
     And he closes search screen
     And current user logs out
 

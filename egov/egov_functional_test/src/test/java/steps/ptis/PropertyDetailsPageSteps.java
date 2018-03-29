@@ -44,18 +44,12 @@ public class PropertyDetailsPageSteps extends BaseSteps implements En {
             FloorDetails floorDetails = new PTISDataReader(ptisTestDataFileName).getFloorDetails(floorDetailsDataId);
             pageStore.get(PropertyDetailsPage.class).enterFloorDetails(floorDetails);
         });
-        And("^he enters transaction approver details as (\\w+)$", (String approvalDetailsDataId) -> {
-            ApprovalDetails approverDetails = new ExcelReader(approvalDetailsTestDataFileName).getApprovalDetails(approvalDetailsDataId);
-            pageStore.get(ApprovalDetailsPage.class).enterApproverDetails(approverDetails);
-            pageStore.get(TransferDetailsPage.class).selectDeclarationCheckBox();
-            pageStore.get(ApprovalDetailsPage.class).forward();
-        });
         And("^he click on Forward Button$", () -> {
             pageStore.get(PropertyDetailsPage.class).clickForward();
         });
-        And("^he forwards for approval to (.*)$", (String approvalDetailsDataId) -> {
+        And("^he forwards for PTIS approver to (.*)$", (String approvalDetailsDataId) -> {
             ApprovalDetails approverDetails = new ExcelReader(approvalDetailsTestDataFileName).getApprovalDetails(approvalDetailsDataId);
-            pageStore.get(ApprovalDetailsPage.class).enterApprovalDetails(approverDetails);
+            pageStore.get(ApprovalDetailsPage.class).enterApproverDetails(approverDetails);
             pageStore.get(TransferDetailsPage.class).selectDeclarationCheckBox();
             pageStore.get(PropertyDetailsPage.class).forward();
         });
@@ -136,6 +130,12 @@ public class PropertyDetailsPageSteps extends BaseSteps implements En {
         And("^he check the errorMessage of door number$", () -> {
            pageStore.get(PropertyDetailsPage.class).checkDoorNumber();
            pageStore.get(PropertyDetailsPage.class).clickOnFloorDetailsCheckBox();
+        });
+        And("^he enters transaction approval details as (\\w+)$", (String approvalDetailsDataId) -> {
+            ApprovalDetails approverDetails = new ExcelReader(approvalDetailsTestDataFileName).getApprovalDetails(approvalDetailsDataId);
+            pageStore.get(ApprovalDetailsPage.class).enterApprovalDetails(approverDetails);
+            pageStore.get(TransferDetailsPage.class).selectDeclarationCheckBox();
+            pageStore.get(ApprovalDetailsPage.class).forward();
         });
 
     }

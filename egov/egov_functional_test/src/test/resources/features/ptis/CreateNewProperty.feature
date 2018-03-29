@@ -26,25 +26,25 @@ Feature: Create New Property
 
     And PTISJuniorAssistant logs in
     And he chooses to act upon above assessment number
-    And he forwards for approval to PTISBillCollector
+    And he forwards for PTIS approver to PTISBillCollector
     And current user closes acknowledgement
     And current user logs out
 
     When PTISBillCollector logs in
     And he chooses to act upon above assessment number
-    And he forwards for approval to PTISRevenueInspector
+    And he forwards for PTIS approver to PTISRevenueInspector
     And current user closes acknowledgement
     And current user logs out
 
     When PTISRevenueInspector logs in
     And he chooses to act upon above assessment number
-    And he forwards for approval to PTISRevenueOfficer
+    And he forwards for PTIS approver to PTISRevenueOfficer
     And current user closes acknowledgement
     And current user logs out
 
     When PTISRevenueOfficer logs in
     And he chooses to act upon above assessment number
-    And he forwards for approval to PTISCommissioner
+    And he forwards for PTIS approver to PTISCommissioner
     And current user closes acknowledgement
     And current user logs out
 
@@ -87,15 +87,15 @@ Feature: Create New Property
     And he enters property header details as <propertyHeaderDetails>
     And he enters floor details as <floorDetails>
     And he enters the floor details checkbox
-    And he forwards for approval to billCollector
+    And he forwards for PTIS approver to billCollector
 
     And he checks the validations for all textBoxes
     And he enters construction type details as <constructionTypeDetails>
-    And he forwards for approval to billCollector
+    And he forwards for PTIS approver to billCollector
 
     And he check the errorMessage of door number
     And he enters document type details as <documentDetails>
-    And he forwards for approval to billCollector
+    And he forwards for PTIS approver to billCollector
 
     And he will copy the acknowledgement message with assessment number createProperty-create
     Then user will be notified by "Successfully"
@@ -110,14 +110,14 @@ Feature: Create New Property
 
     When juniorAssistant logs in
     And he chooses to act upon above assessment number
-    And he forwards for approval to billCollector
+    And he forwards for PTIS approver to billCollector
     And he will copy the acknowledgement message with assessment number createProperty-forward
     Then user will be notified by "Succesfully"
     And current user logs out
 
     When billCollector logs in
     And he chooses to act upon above assessment number
-    And he forwards for approval to revenueInspector
+    And he forwards for PTIS approver to revenueInspector
     And he will copy the acknowledgement message with assessment number createProperty-forward
     Then user will be notified by "Succesfully"
     And current user logs out
@@ -131,21 +131,21 @@ Feature: Create New Property
 
     When juniorAssistant logs in
     And he chooses to act upon above assessment number
-    And he forwards for approval to billCollector
+    And he forwards for PTIS approver to billCollector
     And he will copy the acknowledgement message with assessment number createProperty-forward
     Then user will be notified by "Succesfully"
     And current user logs out
 
     When billCollector logs in
     And he chooses to act upon above assessment number
-    And he forwards for approval to revenueInspector
+    And he forwards for PTIS approver to revenueInspector
     And he will copy the acknowledgement message with assessment number createProperty-forward
     Then user will be notified by "Succesfully"
     And current user logs out
 
     When revenueInspector logs in
     And he chooses to act upon above assessment number
-    And he forwards for approval to revenueOfficer
+    And he forwards for PTIS approver to revenueOfficer
     And he will copy the acknowledgement message with assessment number createProperty-forward
     Then user will be notified by "Succesfully"
     And current user logs out
@@ -159,14 +159,14 @@ Feature: Create New Property
 
     When revenueInspector logs in
     And he chooses to act upon above assessment number
-    And he forwards for approval to revenueOfficer
+    And he forwards for PTIS approver to revenueOfficer
     And he will copy the acknowledgement message with assessment number createProperty-forward
     Then user will be notified by "Succesfully"
     And current user logs out
 
     When revenueOfficer logs in
     And he chooses to act upon above assessment number
-    And he forwards for approval to commissioner
+    And he forwards for PTIS approver to commissioner
     And current user closes acknowledgement
     And current user logs out
 
@@ -179,14 +179,14 @@ Feature: Create New Property
 
     When revenueInspector logs in
     And he chooses to act upon above assessment number
-    And he forwards for approval to revenueOfficer
+    And he forwards for PTIS approver to revenueOfficer
     And he will copy the acknowledgement message with assessment number createProperty-forward
     Then user will be notified by "Succesfully"
     And current user logs out
 
     When revenueOfficer logs in
     And he chooses to act upon above assessment number
-    And he forwards for approval to commissioner
+    And he forwards for PTIS approver to commissioner
     And current user closes acknowledgement
     And current user logs out
 

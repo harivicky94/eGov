@@ -34,26 +34,26 @@ Feature: Tax Exemption of property
 
   And PTISJuniorAssistant logs in
   And he chooses to act upon above application number
-  And he enters transaction approver details as PTISBillCollector1
+  And he enters transaction approval details as PTISBillCollector1
   And current user closes tax exemption acknowledgement
   And current user logs out
 
   When PTISBillCollector logs in
   And he chooses to act upon above application number
-  And he enters transaction approver details as PTISRevenueInspector1
+  And he enters transaction approval details as PTISRevenueInspector1
   And current user closes tax exemption acknowledgement
   And current user logs out
 
   When PTISRevenueInspector logs in
   And he chooses to act upon above application number
   And he clicks on permises button
-  And he enters transaction approver details as PTISRevenueOfficer1
+  And he enters transaction approval details as PTISRevenueOfficer1
   And current user closes tax exemption acknowledgement
   And current user logs out
 
   When PTISRevenueOfficer logs in
   And he chooses to act upon above application number
-  And he enters transaction approver details as PTISCommissioner1
+  And he enters transaction approval details as PTISCommissioner1
   And current user closes tax exemption acknowledgement
   And current user logs out
 
