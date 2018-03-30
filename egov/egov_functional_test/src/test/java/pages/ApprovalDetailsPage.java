@@ -91,7 +91,6 @@ public class ApprovalDetailsPage extends BasePage {
             enterText(approvalCommentsTextBox, approvalDetails.getApproverRemarks(), webDriver);
         }
     }
-
     public void forward() {
         clickOnButton(forwardButton, webDriver);
     }

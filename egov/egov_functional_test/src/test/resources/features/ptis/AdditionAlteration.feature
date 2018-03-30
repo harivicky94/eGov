@@ -29,25 +29,25 @@ Feature: Addition Alteration of a property
 
     And PTISJuniorAssistant logs in
     And he chooses to act upon above assessment number
-    And he forwards for approval to PTISBillCollector
+    And he forwards for PTIS approver to PTISBillCollector
     And current user closes acknowledgement
     And current user logs out
 
     When PTISBillCollector logs in
     And he chooses to act upon above assessment number
-    And he forwards for approval to PTISRevenueInspector
+    And he forwards for PTIS approver to PTISRevenueInspector
     And current user closes acknowledgement
     And current user logs out
 
     When PTISRevenueInspector logs in
     And he chooses to act upon above assessment number
-    And he forwards for approval to PTISRevenueOfficer
+    And he forwards for PTIS approver to PTISRevenueOfficer
     And current user closes acknowledgement
     And current user logs out
 
     When PTISRevenueOfficer logs in
     And he chooses to act upon above assessment number
-    And he forwards for approval to PTISCommissioner
+    And he forwards for PTIS approver to PTISCommissioner
     And current user closes acknowledgement
     And current user logs out
 
