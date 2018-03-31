@@ -79,7 +79,7 @@
 					</div>
 					<div class="form-group">
 						<label class="col-sm-3 control-label text-right"><spring:message
-								code="lbl.rvn.ward" /> </label>
+								code="lbl.rev.ward" /> </label>
 						<div class="col-sm-3 add-margin">
 							<form:select path="revenueWardId" data-first-option="false" id="ward"
 										 cssClass="form-control">

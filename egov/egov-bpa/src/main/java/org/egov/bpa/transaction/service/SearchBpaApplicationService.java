@@ -160,7 +160,7 @@ public class SearchBpaApplicationService {
 		   || BpaConstants.APPLICATION_STATUS_SCHEDULED.equals(bpaApplication.getStatus().getCode())) {
 			Optional<SlotApplication> slotApplication = bpaApplication.getSlotApplications().stream().reduce((slotApp1, slotApp2) -> slotApp2);
 			if(slotApplication.isPresent()) {
-				searchBpaApplicationForm.setAppointmentDate(DateUtils.toDefaultDateFormat(slotApplication.get().getSlotDetail().getSlot().getAppointmentDate()));
+				searchBpaApplicationForm.setAppointmentDate(slotApplication.get().getSlotDetail().getSlot().getAppointmentDate());
 				searchBpaApplicationForm.setAppointmentTime(slotApplication.get().getSlotDetail().getAppointmentTime());
 			}
 		}
@@ -276,6 +276,30 @@ public class SearchBpaApplicationService {
 	}
 
 	private List<SearchBpaApplicationForm> buildDocumentScrutinyApplicationDetailsResponse(final Criteria criteria) {
+		List<SearchBpaApplicationForm> searchBpaApplicationFormList = new ArrayList<>();
+		for (SlotApplication slotApplication : (List<SlotApplication>) criteria.list()) {
+			buildSearchResultResponse(searchBpaApplicationFormList, slotApplication.getApplication());
+		}
+		return searchBpaApplicationFormList;
+	}
+
+	public List<SearchBpaApplicationForm> buildSlotApplicationDetails(final SearchBpaApplicationForm searchBpaApplicationForm) {
+		final Criteria criteria = getCurrentSession().createCriteria(SlotApplication.class, "slotApplication");
+		criteria.createAlias("slotApplication.slotDetail", "slotDetail");
+		if(searchBpaApplicationForm.getAppointmentTime() != null)
+			criteria.add(Restrictions.eq("slotDetail.appointmentTime",
+					searchBpaApplicationForm.getAppointmentTime()));
+		if(searchBpaApplicationForm.getZoneId() != null || searchBpaApplicationForm.getAppointmentDate() != null)
+			criteria.createAlias("slotDetail.slot", "slot");
+		if(searchBpaApplicationForm.getZoneId() != null) {
+			criteria.createAlias("slot.zone", "zone");
+			criteria.add(Restrictions.eq("zone.id", searchBpaApplicationForm.getZoneId()));
+		}
+		if (searchBpaApplicationForm.getAppointmentDate() != null) {
+			criteria.add(Restrictions.eq("slot.appointmentDate",
+					resetToDateTimeStamp(searchBpaApplicationForm.getAppointmentDate())));
+		}
+
 		List<SearchBpaApplicationForm> searchBpaApplicationFormList = new ArrayList<>();
 		for (SlotApplication slotApplication : (List<SlotApplication>) criteria.list()) {
 			buildSearchResultResponse(searchBpaApplicationFormList, slotApplication.getApplication());

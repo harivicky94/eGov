@@ -48,6 +48,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import org.egov.bpa.utils.*;
+import org.egov.infra.utils.*;
 
 public class SearchBpaApplicationFormAdaptor implements JsonSerializer<SearchBpaApplicationForm> {
     @Override
@@ -60,7 +61,7 @@ public class SearchBpaApplicationFormAdaptor implements JsonSerializer<SearchBpa
             jsonObject.addProperty("applicationNumber",
                     org.apache.commons.lang.StringUtils.defaultString(searchFormObj.getApplicationNumber()));
             jsonObject.addProperty("applicationDate",
-                    org.apache.commons.lang.StringUtils.defaultString(searchFormObj.getApplicationDate().toString()));
+                    DateUtils.toDefaultDateFormat(searchFormObj.getApplicationDate()));
             jsonObject.addProperty("buildingplanapprovalnumber",
                     org.apache.commons.lang.StringUtils.defaultString(searchFormObj.getBuildingplanapprovalnumber()));
             jsonObject.addProperty("locality",
@@ -84,7 +85,7 @@ public class SearchBpaApplicationFormAdaptor implements JsonSerializer<SearchBpa
             jsonObject.addProperty("onePermitApplication", searchFormObj.getOnePermitApplication());
             if(BpaConstants.APPLICATION_STATUS_RESCHEDULED.equals(searchFormObj.getStatus())
                || BpaConstants.APPLICATION_STATUS_SCHEDULED.equals(searchFormObj.getStatus())) {
-                jsonObject.addProperty("appointmentDate", searchFormObj.getAppointmentDate());
+                jsonObject.addProperty("appointmentDate", DateUtils.toDefaultDateFormat(searchFormObj.getAppointmentDate()));
                 jsonObject.addProperty("appointmentTime", searchFormObj.getAppointmentTime());
             }
             jsonObject.addProperty("id", searchFormObj.getId());

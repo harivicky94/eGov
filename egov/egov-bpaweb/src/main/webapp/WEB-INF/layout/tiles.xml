@@ -428,4 +428,11 @@
 					   value="/WEB-INF/views/reports/search-onedaypermit-slotdetails-report.jsp" />
 	</definition>
 
+	<definition name="view-slot-application-details" extends="base_layout">
+		<put-attribute name="page-title" value="title.view.appln.details"
+					   cascade="true" />
+		<put-attribute name="body"
+					   value="/WEB-INF/views/reports/view-slot-application-details.jsp" />
+	</definition>
+
 </tiles-definitions>

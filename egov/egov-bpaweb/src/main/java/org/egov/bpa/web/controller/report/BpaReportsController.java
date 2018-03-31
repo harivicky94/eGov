@@ -45,13 +45,13 @@ import org.egov.bpa.transaction.service.report.*;
 import org.egov.bpa.utils.*;
 import org.egov.bpa.web.controller.adaptor.*;
 import org.egov.bpa.web.controller.transaction.*;
+import org.egov.infra.utils.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.http.*;
 import org.springframework.stereotype.*;
 import org.springframework.ui.*;
 import org.springframework.web.bind.annotation.*;
 
-import java.text.*;
 import java.util.*;
 
 import static org.egov.infra.utils.JsonUtils.*;
@@ -93,19 +93,18 @@ public class BpaReportsController extends BpaGenericApplicationController {
             @RequestParam final Date toDate, @RequestParam final Long revenueWard, @RequestParam final Long electionWard,
             @RequestParam final Long zoneId, @RequestParam final String status, @RequestParam final String serviceType,
             @RequestParam final String zone, final Model model) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
         model.addAttribute("applicantName", applicantName);
         model.addAttribute("applicationNumber", applicationNumber);
         model.addAttribute("ward", ward);
-        if (fromDate != null) {
-            model.addAttribute("fromDate", dateFormat.format(fromDate));
-        } else {
+        if (fromDate == null) {
             model.addAttribute("fromDate", fromDate);
-        }
-        if (toDate != null) {
-            model.addAttribute("toDate", dateFormat.format(toDate));
         } else {
+            model.addAttribute("fromDate", DateUtils.toDefaultDateFormat(fromDate));
+        }
+        if (toDate == null) {
             model.addAttribute("toDate", toDate);
+        } else {
+            model.addAttribute("toDate", DateUtils.toDefaultDateFormat(toDate));
         }
         model.addAttribute("revenueWard", revenueWard);
         model.addAttribute("electionWard", electionWard);
@@ -152,8 +151,8 @@ public class BpaReportsController extends BpaGenericApplicationController {
         model.addAttribute("slotDetailsHelper", new SlotDetailsHelper());
         model.addAttribute("type",type);
         model.addAttribute("searchByNoOfDays", BpaConstants.getSearchByNoOfDays());
-        if(type.equals("onedaypermit"))
-			return "search-onedaypermit-slotdetails-report";
+        if("onedaypermit".equals(type))
+            return "search-onedaypermit-slotdetails-report";
         else
         	return "search-regular-slotdetails-report";
     }
@@ -162,9 +161,36 @@ public class BpaReportsController extends BpaGenericApplicationController {
     @ResponseBody
     public String getSlotDetailsResult(@PathVariable String type, final Model model,
                                             @ModelAttribute final SlotDetailsHelper slotDetailsHelper) {
-        final List<SlotDetailsHelper> searchResultList = bpaReportsService.searchSlotDetailsForRegularApplication(slotDetailsHelper,type);
+        final List<SlotDetailsHelper> searchResultList = bpaReportsService.searchSlotDetails(slotDetailsHelper,type);
         return new StringBuilder(DATA)
                 .append(toJSON(searchResultList, SlotDetailsHelper.class, SlotDetailsAdaptor.class))
+                .append("}")
+                .toString();
+    }
+
+    @RequestMapping(value = "/slotdetails/viewapplications", method = RequestMethod.GET)
+    public String viewUtilizedSlotDetailsByApplicationHelper(@RequestParam final Date appointmentDate,
+                                                      @RequestParam final String appointmentTime,
+                                                      @RequestParam final Long zoneId,
+                                                      @RequestParam final Long electionWardId, final Model model) {
+        if (appointmentDate == null) {
+            model.addAttribute("appointmentDate", appointmentDate);
+        } else {
+            model.addAttribute("appointmentDate", DateUtils.toDefaultDateFormat(appointmentDate));
+        }
+        model.addAttribute("appointmentTime", appointmentTime);
+        model.addAttribute("zoneId", zoneId);
+        model.addAttribute("electionWardId", electionWardId);
+        return "view-slot-application-details";
+    }
+
+    @RequestMapping(value = "/slotdetails/viewapplications", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    @ResponseBody
+    public String viewUtilizedSlotDetailsByApplication(@ModelAttribute final SearchBpaApplicationForm searchBpaApplicationForm,
+                                                      final Model model) {
+        final List<SearchBpaApplicationForm> searchResultList = searchBpaApplicationService.buildSlotApplicationDetails(searchBpaApplicationForm);
+        return new StringBuilder(DATA)
+                .append(toJSON(searchResultList, SearchBpaApplicationForm.class, SearchBpaApplicationFormAdaptor.class))
                 .append("}")
                 .toString();
     }

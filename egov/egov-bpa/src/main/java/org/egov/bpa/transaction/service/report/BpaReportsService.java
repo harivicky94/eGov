@@ -166,7 +166,7 @@ public class BpaReportsService {
         return searchBpaApplicationReportList;
     }
 
-    public List<SlotDetailsHelper> searchSlotDetailsForRegularApplication(final SlotDetailsHelper slotDetailsHelper, final String type) {
+    public List<SlotDetailsHelper> searchSlotDetails(final SlotDetailsHelper slotDetailsHelper, final String type) {
         final Criteria criteria = getCurrentSession().createCriteria(SlotDetail.class, "slotDetail");
         criteria.createAlias("slotDetail.slot", "slot");
         if(slotDetailsHelper.getZoneId() != null) {

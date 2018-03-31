@@ -77,8 +77,8 @@
 			<thead>
 				<tr>
 					<th><spring:message code="lbl.zonal.office" /></th>
-					<th><spring:message code="lbl.slotmapping.ward" /></th>
-					<th><spring:message code="lbl.slotmapping.electionward" /></th>
+					<th><spring:message code="lbl.rev.ward" /></th>
+					<th><spring:message code="lbl.election.ward" /></th>
 					<th><spring:message code="lbl.slotmapping.applicationtype" /></th>
 					<th><spring:message code="lbl.slotmapping.days" /></th>
 					<th><spring:message

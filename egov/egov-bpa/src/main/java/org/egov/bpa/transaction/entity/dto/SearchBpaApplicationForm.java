@@ -73,7 +73,7 @@ public class SearchBpaApplicationForm {
     private String locality;
     private String reSurveyNumber;
     private String serviceTypeEnum;
-    private String appointmentDate;
+    private Date appointmentDate;
     private String appointmentTime;
     private Boolean isRescheduledByEmployee;
     private Boolean isOnePermitApplication;
@@ -318,11 +318,11 @@ public class SearchBpaApplicationForm {
         this.reSurveyNumber = reSurveyNumber;
     }
 
-    public String getAppointmentDate() {
+    public Date getAppointmentDate() {
         return appointmentDate;
     }
 
-    public void setAppointmentDate(String appointmentDate) {
+    public void setAppointmentDate(Date appointmentDate) {
         this.appointmentDate = appointmentDate;
     }
 
@@ -349,4 +349,5 @@ public class SearchBpaApplicationForm {
     public void setOnePermitApplication(Boolean onePermitApplication) {
         isOnePermitApplication = onePermitApplication;
     }
+
 }

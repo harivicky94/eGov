@@ -43,11 +43,11 @@ $(document)
 				function() {
 					
 					$('.report-section').removeClass('display-hide');
-					$("#bpaServiceWiseApplnsDetails")
+					$("#viewSlotApplicationDetails")
 							.dataTable(
 									{
 										ajax : {
-											url : "/bpa/reports/servicewise-statusreport/view",
+											url : "/bpa/reports/slotdetails/viewapplications",
 											type : "POST",
 											beforeSend : function() {
 												$('.loader-class')
@@ -94,49 +94,38 @@ $(document)
 								        	        return meta.row + meta.settings._iDisplayStart + 1;
 								        	   },   
 								           },
-											{
-                                                "data" : "applicantName",
-                                                "sClass" : "text-left"
-                                            },
+										   {
+												"data" : "applicantName"
+										   },
 								           {
-												"data" : "applicationNumber",
-												"sClass" : "text-left"
+												"data" : "applicationNumber"
 										   },
 										   {
-												"data" : "applicationDate",
-												"sClass" : "text-left"
+												"data" : "applicationDate"
 										   },
 											{
-												"data" : "address",
-												"sClass" : "text-left"
+												"data" : "address"
 											},
 											{
-												"data" : "serviceType",
-												"sClass" : "text-left"
+												"data" : "serviceType"
+											},
+                                            {
+                                                "data" : "occupancy"
+                                            },
+											{
+												"data" : "zone"
 											},
 											{
-												"data" : "zone",
-												"sClass" : "text-left"
+												"data" : "ward"
+											},
+                                            {
+                                                "data" : "electionWard"
+                                            },
+											{
+												"data" : "locality"
 											},
 											{
-												"data" : "ward",
-												"sClass" : "text-left"
-											},
-											{
-												"data" : "locality",
-												"sClass" : "text-left"
-											},
-											{
-												"data" : "reSurveyNumber",
-												"sClass" : "text-left"
-											},
-											{
-												"data" : "currentOwner",
-												"sClass" : "text-left"
-											},
-											{
-												"data" : "pendingAction",
-												"sClass" : "text-left"
+												"data" : "reSurveyNumber"
 											}]
 									});
 				});

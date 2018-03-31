@@ -84,7 +84,7 @@
 				</div>
 				<div class="form-group allservices">
 					<label class="col-sm-2 control-label"><spring:message
-							code="lbl.slotmapping.ward" /> </label>
+							code="lbl.rev.ward" /> </label>
 					<div class="col-sm-3 add-margin">
 						<select name="revenueWard" id="revenueWard" class="form-control ">
 							<option value=""><spring:message code="lbl.select" /></option>
@@ -95,7 +95,7 @@
 						<form:errors path="revenueWard" cssClass="add-margin error-msg" />
 					</div>
 					<label class="col-sm-3 control-label"><spring:message
-							code="lbl.slotmapping.electionward" /> </label>
+							code="lbl.election.ward" /> </label>
 					<div class="col-sm-3 add-margin">
 						<select name="electionWard" id="electionWard" class="form-control">
 							<option value=""><spring:message code="lbl.select" /></option>

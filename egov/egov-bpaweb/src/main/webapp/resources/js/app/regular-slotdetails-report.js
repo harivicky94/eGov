@@ -47,10 +47,6 @@ $(document)
 					});
 
 					function callAjaxSearch() {
-						var appointmentDate = $('#appointmentDate').val();
-						var wardId = $('#ward').val();
-						var electionWardId = $('#electionBoundary').val();
-						var zoneId = $('#zone').val();
 						
 						$('.report-section').removeClass('display-hide');
 						$("#regularApplnsSlotDetailsCount")
@@ -130,10 +126,34 @@ $(document)
                                                 },
                                                 {
                                                     "data" : "utilizedScheduledSlots",
+                                                    render : function(data, type, row, meta) {
+                                                        return parseInt(row.utilizedScheduledSlots) !== 0 ? '<a onclick="openPopup(\'/bpa/reports/slotdetails/viewapplications?'
+                                                            + 'appointmentDate='+row.appointmentDate
+                                                            + '&'
+                                                            + 'appointmentTime='+row.appointmentTime
+                                                            + '&'
+                                                            + 'zoneId='+row.zoneId
+                                                            + '&'
+                                                            + 'electionWardId='
+                                                            + '\')" href="javascript:void(0);">'
+                                                            + row.utilizedScheduledSlots + '</a>':row.utilizedScheduledSlots;
+                                                    },
                                                     "sClass" : "text-center"
                                                 },
                                                 {
                                                     "data" : "utilizedRescheduledSlots",
+                                                    render : function(data, type, row, meta) {
+                                                        return parseInt(row.utilizedRescheduledSlots) !== 0 ? '<a onclick="openPopup(\'/bpa/reports/slotdetails/viewapplications'
+                                                            + 'appointmentDate='+row.appointmentDate
+                                                            + '&'
+                                                            + 'appointmentTime='+row.appointmentTime
+                                                            + '&'
+                                                            + 'zoneId='+row.zoneId
+                                                            + '&'
+                                                            + 'electionWardId='
+                                                            + '\')" href="javascript:void(0);">'
+                                                            + row.utilizedRescheduledSlots + '</a>':row.utilizedRescheduledSlots;
+                                                    },
                                                     "sClass" : "text-center"
                                                 }],
 													
@@ -159,26 +179,12 @@ $(document)
 													} ]	
 										});
 					}
-					
-					
-					$(document).on('click','.dropchange',function(){
-					    var url = $(this).val();
-					    if(url){
-					    	openPopup(url);
-					    }
-					    
-					});
-
-					function openPopup(url)
-					{
-						window.open(url,'window','scrollbars=yes,resizable=yes,height=700,width=800,status=yes');
-					}
 
 				});
 
 function openPopup(url) {
 	window.open(url, 'window',
-			'scrollbars=1,resizable=yes,height=600,width=800,status=yes');
+			'scrollbars=1,resizable=yes,height=800,width=1100,status=yes');
 
 }
 

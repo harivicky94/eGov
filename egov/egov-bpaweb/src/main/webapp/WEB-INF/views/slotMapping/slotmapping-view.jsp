@@ -92,13 +92,13 @@
 				<c:if test="${slotMapping.applType eq 'ONE_DAY_PERMIT'}">
 					<div class="row add-border">
 						<div class="col-sm-3 add-margin">
-							<spring:message code="lbl.slotmapping.ward" />
+							<spring:message code="lbl.rev.ward" />
 						</div>
 						<div class="col-sm-3 add-margin view-content">
 							<c:out value="${slotMapping.revenueWard.name}" default="N/A"></c:out>
 						</div>
 						<div class="col-sm-3 add-margin">
-							<spring:message code="lbl.slotmapping.electionward" />
+							<spring:message code="lbl.election.ward" />
 						</div>
 						<div class="col-sm-3 add-margin view-content">
 							<c:out value="${slotMapping.electionWard.name}" default="N/A"></c:out>

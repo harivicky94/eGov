@@ -39,67 +39,48 @@
   --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
+
 <form:form role="form" action=""
 	modelAttribute="searchBpaApplicationForm" id="searchBpaApplicationForm"
 	cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
-	<jsp:include page="../application/search-bpa-application-form.jsp"></jsp:include>
-	<div class="text-center">
-		<button type='button' class='btn btn-primary' id="btnSearch">
-			<spring:message code='lbl.search' />
-		</button>
-		<button type="reset" class="btn btn-danger">
-			<spring:message code="lbl.reset" />
-		</button>
-		<a href='javascript:void(0)' class='btn btn-default'
-			onclick='self.close()'><spring:message code='lbl.close' /></a>
-	</div>
+<input type="hidden" name="appointmentDate" id="appointmentDate"
+	value="${appointmentDate}" />
+<input type="hidden" name="appointmentTime" id="appointmentTime"
+	value="${appointmentTime}" />
+<input type="hidden" name="wardId" id="wardId"
+	value="${revenueWardId}" />
+<input type="hidden" name="electionWardId" id="electionWardId"
+	value="${electionWardId}" />
+<input type="hidden" name="zoneId" id="zoneId" value="${zoneId}" />
+<input type="hidden" name="zone" id="zone" value="${zone}" />
+
 </form:form>
 <div class="row display-hide report-section" id="table_container">
-	<div class="col-md-12 table-header text-left">The Service type wise applications by status count search result
-		is</div>
+	<div class="col-md-12 table-header text-left"></div>
 	<div class="col-md-12 form-group report-table-container">
 		<table class="table table-bordered table-hover multiheadertbl"
-			id="searchStatusByServiceTypeReportTable">
+			id="viewSlotApplicationDetails">
 			<thead>
 				<tr>
-					<th>Sl.No.</th>
-					<th>Status</th>
-					<th>New Construction</th>
-					<th>Demolition</th>
-					<th>Reconstruction</th>
-					<th>Alteration</th>
-					<th>Sub-Division of Plot/Development of land</th>
-					<th>Adding of Extension</th>
-					<th>Change in Occupancy</th>
-					<th>Amenities</th>
-					<th>Huts and Sheds</th>
-					<th>Tower Construction</th>
-					<th>Pole Structures</th>
-					<th>Total</th>
+					<th><spring:message code="lbl.slno" /></th>
+					<th><spring:message code="lbl.applicant.name" /></th>
+					<th><spring:message code="lbl.application.no" /></th>
+					<th><spring:message code="lbl.appln.date" /></th>
+					<th><spring:message code="lbl.owner.address" /></th>
+					<th><spring:message code="lbl.service.type" /></th>
+					<th><spring:message code="lbl.occupancy" /></th>
+					<th><spring:message code="lbl.zone" /></th>
+					<th><spring:message code="lbl.rev.ward" /></th>
+					<th><spring:message code="lbl.election.ward" /></th>
+					<th><spring:message code="lbl.locality" /></th>
+					<th><spring:message code="lbl.re.survey.no" /></th>
 				</tr>
 			</thead>
-			<tfoot id="report-footer">
-				<tr>
-						<td></td>
-						<td>Total</td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-					</tr>
-				</tfoot>
 		</table>
 	</div>
 </div>
@@ -120,6 +101,5 @@
 <script src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/datetime-moment.js' context='/egi'/>"></script>
 <script src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"
 		type="text/javascript"></script>
-				
-<script src="<cdn:url value='/resources/js/app/servicewise-status-report-helper.js?rnd=${app_release_no}'/> "></script>
-<script src="<cdn:url value='/resources/js/app/bpa-ajax-helper.js?rnd=${app_release_no}'/> "></script>
+
+<script src="<cdn:url value='/resources/js/app/view-slot-applications-report.js?rnd=${app_release_no}'/> "></script>
