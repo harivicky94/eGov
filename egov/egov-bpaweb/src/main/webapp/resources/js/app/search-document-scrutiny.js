@@ -74,15 +74,19 @@ $(document)
 							$("#toDate").prop('disabled', false);
 						}
 					}); 
-					$('#resetbutton').on('click', function() { 
+					$('#resetbutton').on('click', function() {
 							$("#toDate").prop('disabled', false);
-					}); 
-					
-					
+					});
+
+                    $('#serviceTypeEnum').trigger('change');
 					var documentScrutinyUrl = '/bpa/application/documentscrutiny/';
 					var rescheduleUrl = '/bpa/application/scrutiny/reschedule/';
-					$('#btnSearch').click(function() { 
+					$('#btnSearch').click(function() {
+                        $('#searchScrutinyApplicationForm').find(':input',':select').each(function(){
+                            $(this).removeAttr("disabled")
+                        });
 						callAjaxSearch();
+                        $('#serviceTypeEnum').trigger('change');
 					});
 
 					function callAjaxSearch() {

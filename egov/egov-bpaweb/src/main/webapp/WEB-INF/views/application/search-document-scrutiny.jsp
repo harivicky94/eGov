@@ -43,7 +43,7 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <form:form role="form" action=""
-	modelAttribute="searchBpaApplicationForm" id="searchBpaApplicationForm"
+	modelAttribute="searchBpaApplicationForm" id="searchScrutinyApplicationForm"
 	cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
 	<div class="row">
@@ -69,7 +69,7 @@
 					<div class="col-sm-3 add-margin">
 						<form:input path="toDate" class="form-control datepicker"
 							data-date-end-date="0d" id="toDate"
-							data-inputmask="'mask': 'd/m/y'" />
+							data-inputmask="'mask': 'd/m/y'" disabled="true" />
 						<form:errors path="toDate" cssClass="add-margin error-msg" />
 					</div>
 				</div>

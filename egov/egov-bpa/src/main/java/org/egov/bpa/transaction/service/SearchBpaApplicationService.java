@@ -289,7 +289,8 @@ public class SearchBpaApplicationService {
 		if(searchBpaApplicationForm.getAppointmentTime() != null)
 			criteria.add(Restrictions.eq("slotDetail.appointmentTime",
 					searchBpaApplicationForm.getAppointmentTime()));
-		if(searchBpaApplicationForm.getZoneId() != null || searchBpaApplicationForm.getAppointmentDate() != null)
+		if(searchBpaApplicationForm.getZoneId() != null || searchBpaApplicationForm.getAppointmentDate() != null
+		   || searchBpaApplicationForm.getServiceType() != null)
 			criteria.createAlias("slotDetail.slot", "slot");
 		if(searchBpaApplicationForm.getZoneId() != null) {
 			criteria.createAlias("slot.zone", "zone");
@@ -299,6 +300,11 @@ public class SearchBpaApplicationService {
 			criteria.add(Restrictions.eq("slot.appointmentDate",
 					resetToDateTimeStamp(searchBpaApplicationForm.getAppointmentDate())));
 		}
+
+		if("onedaypermit".equals(searchBpaApplicationForm.getServiceType())) {
+			criteria.add(Restrictions.isNotNull("slot.electionWard"));
+		} else
+			criteria.add(Restrictions.isNull("slot.electionWard"));
 
 		List<SearchBpaApplicationForm> searchBpaApplicationFormList = new ArrayList<>();
 		for (SlotApplication slotApplication : (List<SlotApplication>) criteria.list()) {

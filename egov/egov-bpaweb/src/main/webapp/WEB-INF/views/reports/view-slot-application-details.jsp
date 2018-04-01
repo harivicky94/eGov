@@ -58,6 +58,7 @@
 	value="${electionWardId}" />
 <input type="hidden" name="zoneId" id="zoneId" value="${zoneId}" />
 <input type="hidden" name="zone" id="zone" value="${zone}" />
+<input type="hidden" name="serviceType" id="type" value="${type}" />
 
 </form:form>
 <div class="row display-hide report-section" id="table_container">

@@ -182,7 +182,7 @@ public class BpaReportsService {
 			criteria.createAlias("slot.electionWard", "electionWard")
 					.add(Restrictions.eq("electionWard.id", slotDetailsHelper.getElectionWardId()));
 		}
-		if(type.equals("onedaypermit")) {
+		if("onedaypermit".equals(type)) {
 			criteria.add(Restrictions.isNotNull("slot.electionWard"));
 		} else
         	criteria.add(Restrictions.isNull("slot.electionWard"));

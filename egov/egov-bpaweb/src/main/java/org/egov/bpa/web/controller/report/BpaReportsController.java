@@ -169,7 +169,7 @@ public class BpaReportsController extends BpaGenericApplicationController {
     }
 
     @RequestMapping(value = "/slotdetails/viewapplications", method = RequestMethod.GET)
-    public String viewUtilizedSlotDetailsByApplicationHelper(@RequestParam final Date appointmentDate,
+    public String viewUtilizedSlotDetailsByApplicationHelper(@RequestParam final String type, @RequestParam final Date appointmentDate,
                                                       @RequestParam final String appointmentTime,
                                                       @RequestParam final Long zoneId,
                                                       @RequestParam final Long electionWardId, final Model model) {
@@ -181,6 +181,7 @@ public class BpaReportsController extends BpaGenericApplicationController {
         model.addAttribute("appointmentTime", appointmentTime);
         model.addAttribute("zoneId", zoneId);
         model.addAttribute("electionWardId", electionWardId);
+		model.addAttribute("type", type);
         return "view-slot-application-details";
     }
 

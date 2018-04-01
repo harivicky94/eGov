@@ -47,13 +47,13 @@ $(document)
 					});
 
 					function callAjaxSearch() {
-						
+						var applnType = $('#type').val();
 						$('.report-section').removeClass('display-hide');
 						$("#oneDayPermitApplnsSlotDetailsCount")
 								.dataTable(
 										{
 											ajax : {
-												url : "/bpa/reports/slotdetails/"+$('#type').val(),
+												url : "/bpa/reports/slotdetails/"+applnType,
 												type : "POST",
 												beforeSend : function() {
 													$('.loader-class')
@@ -131,6 +131,8 @@ $(document)
                                                     "data" : "utilizedScheduledSlots",
                                                     render : function(data, type, row, meta) {
                                                         return parseInt(row.utilizedScheduledSlots) !== 0 ? '<a onclick="openPopup(\'/bpa/reports/slotdetails/viewapplications?'
+                                                            + 'type='+applnType
+                                                            + '&'
                                                             + 'appointmentDate='+row.appointmentDate
                                                             + '&'
                                                             + 'appointmentTime='+row.appointmentTime
@@ -146,7 +148,9 @@ $(document)
                                                 {
                                                     "data" : "utilizedRescheduledSlots",
                                                     render : function(data, type, row, meta) {
-                                                        return parseInt(row.utilizedRescheduledSlots) !== 0 ? '<a onclick="openPopup(\'/bpa/reports/slotdetails/viewapplications'
+                                                        return parseInt(row.utilizedRescheduledSlots) !== 0 ? '<a onclick="openPopup(\'/bpa/reports/slotdetails/viewapplications?'
+                                                            + 'type='+applnType
+                                                            + '&'
                                                             + 'appointmentDate='+row.appointmentDate
                                                             + '&'
                                                             + 'appointmentTime='+row.appointmentTime
