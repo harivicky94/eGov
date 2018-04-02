@@ -113,9 +113,9 @@ public class RescheduleAppointmentsForDocumentScrutinyService {
             slotDet.setUtilizedScheduledSlots(slotDet.getUtilizedScheduledSlots() + 1);
         slotApp.setSlotDetail(slotDet);
         applicationBpaRepository.save(application);
+        bpaIndexService.updateIndexes(application);
         bpaSmsAndEmailService.sendSMSAndEmailForDocumentScrutiny(slotApp, application);
         slotApplicationRepository.save(slotApp);
-        bpaIndexService.updateIndexes(application);
         return slotApp;
 	}
 
@@ -149,9 +149,9 @@ public class RescheduleAppointmentsForDocumentScrutinyService {
             slotDet.setUtilizedScheduledSlots(slotDet.getUtilizedScheduledSlots() + 1);
         slotApp.setSlotDetail(slotDet);
         applicationBpaRepository.save(bpaApplication);
+        bpaIndexService.updateIndexes(bpaApplication);
         bpaSmsAndEmailService.sendSMSAndEmailForDocumentScrutiny(slotApp, bpaApplication);
         slotApplicationRepository.save(slotApp);
-        bpaIndexService.updateIndexes(bpaApplication);
         return slotApp;
 	}
 
@@ -166,8 +166,8 @@ public class RescheduleAppointmentsForDocumentScrutinyService {
 		List<SlotApplication> slotApplication = slotApplicationRepository
 				.findByApplicationOrderByIdDesc(bpaApplication);
 		Date appointmentDate = slotApplication.get(0).getSlotDetail().getSlot().getAppointmentDate();
-		List<SlotDetail> slotDetailList = slotDetailRepository.findSlotsByAppointmentDateAndZone(appointmentDate,zone);
-		return slotDetailList;
+		return slotDetailRepository.findSlotsByAppointmentDateAndZone(appointmentDate,zone);
+		
 	}
 
 	@Transactional
@@ -190,8 +190,8 @@ public class RescheduleAppointmentsForDocumentScrutinyService {
         BpaStatus bpaStatus = bpaStatusRepository.findByCode(BpaConstants.APPLICATION_STATUS_PENDING_FOR_RESCHEDULING);
         bpaApplication.setStatus(bpaStatus);
         applicationBpaRepository.save(bpaApplication);
-        bpaSmsAndEmailService.sendSMSAndEmailForDocumentScrutiny(slotApplication.get(0), bpaApplication);
         bpaIndexService.updateIndexes(bpaApplication);
+        bpaSmsAndEmailService.sendSMSAndEmailForDocumentScrutiny(slotApplication.get(0), bpaApplication);
 	}
 
 	public List<SlotDetail> getOneSlotDetailsByAppointmentDateAndZoneId(final Date appointmentDate, final Long zoneId) {

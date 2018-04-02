@@ -272,6 +272,9 @@ public class BpaConstants {
     public static final String APPLICATION_TYPE_REGULAR = "Regular";
     public static final String APPLICATION_TYPE_ONEDAYPERMIT = "One Day Permit";
 
+    public static final String SLOT_TYPE_NORMAL = "Normal";
+    public static final String SLOT_TYPE_ONE_DAY_PERMIT = "One Day Permit";
+
     private static final List<String> BUILDPERMIT = new ArrayList<>();
     static {
         BUILDPERMIT.add(ST_CODE_02); // Demolition

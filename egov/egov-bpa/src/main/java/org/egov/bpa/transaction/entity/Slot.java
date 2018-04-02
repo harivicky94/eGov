@@ -64,73 +64,83 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 @Table(name = "egbpa_slot")
 @SequenceGenerator(name = Slot.SEQ, sequenceName = Slot.SEQ, allocationSize = 1)
 public class Slot extends AbstractAuditable {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
 
-	public static final String SEQ = "seq_egbpa_slot";
+    public static final String SEQ = "seq_egbpa_slot";
 
-	@Id
-	@GeneratedValue(generator = SEQ, strategy = GenerationType.SEQUENCE)
-	private Long id;
+    @Id
+    @GeneratedValue(generator = SEQ, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-	@NotNull
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	@JoinColumn(name = "zone")
-	private Boundary zone;
-	
-	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	@JoinColumn(name = "electionward")
-	private Boundary electionWard;
+    private String type;
 
-	@Temporal(value = TemporalType.DATE)
-	@NotNull
-	private Date appointmentDate;
+    @NotNull
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "zone")
+    private Boundary zone;
 
-	@OneToMany(mappedBy = "slot", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-	private List<SlotDetail> slotDetail;
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "electionward")
+    private Boundary electionWard;
 
-	public List<SlotDetail> getSlotDetail() {
-		return slotDetail;
-	}
+    @Temporal(value = TemporalType.DATE)
+    @NotNull
+    private Date appointmentDate;
 
-	public void setSlotDetail(List<SlotDetail> slotDetail) {
-		this.slotDetail = slotDetail;
-	}
+    @OneToMany(mappedBy = "slot", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<SlotDetail> slotDetail;
 
-	@Override
-	public Long getId() {
-		return id;
-	}
+    public List<SlotDetail> getSlotDetail() {
+        return slotDetail;
+    }
 
-	@Override
-	public void setId(Long id) {
-		this.id = id;
-	}
+    public void setSlotDetail(List<SlotDetail> slotDetail) {
+        this.slotDetail = slotDetail;
+    }
 
-	public Boundary getZone() {
-		return zone;
-	}
+    @Override
+    public Long getId() {
+        return id;
+    }
 
-	public void setZone(Boundary zone) {
-		this.zone = zone;
-	}
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public Date getAppointmentDate() {
-		return appointmentDate;
-	}
+    public Boundary getZone() {
+        return zone;
+    }
 
-	public void setAppointmentDate(Date appointmentDate) {
-		this.appointmentDate = appointmentDate;
-	}
-	
-	public Boundary getElectionWard() {
-		return electionWard;
-	}
+    public void setZone(Boundary zone) {
+        this.zone = zone;
+    }
 
-	public void setElectionWard(Boundary electionWard) {
-		this.electionWard = electionWard;
-	}
+    public Date getAppointmentDate() {
+        return appointmentDate;
+    }
+
+    public void setAppointmentDate(Date appointmentDate) {
+        this.appointmentDate = appointmentDate;
+    }
+
+    public Boundary getElectionWard() {
+        return electionWard;
+    }
+
+    public void setElectionWard(Boundary electionWard) {
+        this.electionWard = electionWard;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
 
 }

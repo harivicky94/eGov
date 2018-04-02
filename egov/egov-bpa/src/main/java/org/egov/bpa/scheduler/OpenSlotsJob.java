@@ -55,10 +55,11 @@ public class OpenSlotsJob extends AbstractQuartzJob {
 
 	@Override
 	public void executeJob() {
-		LOGGER.debug("Entered into OpenSlotsJob.execute");
+        LOGGER.debug("Entered into OpenSlotsJob.execute");
 
-		slotOpeningForAppointmentService.openSlots();
+        slotOpeningForAppointmentService.openNewSlots();
+        slotOpeningForAppointmentService.openNewSlotsForOneDayPermit();
 
-		LOGGER.debug("Exting from OpenSlotsJob.execute");
+        LOGGER.debug("Exting from OpenSlotsJob.execute");
 	}
 }

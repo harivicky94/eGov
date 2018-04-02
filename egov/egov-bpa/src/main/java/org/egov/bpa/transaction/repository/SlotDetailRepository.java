@@ -52,39 +52,42 @@ import java.util.List;
 
 @Repository
 public interface SlotDetailRepository extends JpaRepository<SlotDetail, Long> {
-	
-	@Query("select detail from SlotDetail detail where detail.maxScheduledSlots - detail.utilizedScheduledSlots > 0 order by detail.slot.appointmentDate , detail.id asc")
-	List<SlotDetail> findSlotDetailOrderByAppointmentDate();
 
-	@Query("select detail from SlotDetail detail where detail.appointmentTime  = :appointmentTime and detail.slot.appointmentDate = :rescheduleAppointmentDate and detail.slot.zone = :zone and detail.slot.electionWard is null")
-	SlotDetail findByAppointmentDateTimeAndZone(@Param("rescheduleAppointmentDate")Date rescheduleAppointmentDate, @Param("appointmentTime")String appointmentTime,
-			@Param("zone")Boundary zone);
-	
-	@Query("select slotdetail from SlotDetail slotdetail"
-			+ " where slotdetail.slot.appointmentDate >= :appointmentDate and (slotdetail.maxScheduledSlots"
-			+ " - slotdetail.utilizedScheduledSlots >0 or slotdetail.maxRescheduledSlots -"
-			+ " slotdetail.utilizedRescheduledSlots >0 or (slotdetail.maxScheduledSlots -"
-			+ " slotdetail.utilizedScheduledSlots >0 and slotdetail.maxRescheduledSlots -"
-			+ " slotdetail.utilizedRescheduledSlots >0)) and slotdetail.slot.zone = :zone and slotdetail.slot.electionWard is null order by slotdetail.slot.appointmentDate ,"
-			+ " slotdetail.id")
-	List<SlotDetail> findSlotsByAppointmentDateAndZone(@Param("appointmentDate") Date appointmentDate,
-			@Param("zone") Boundary zone);
+    @Query("select detail from SlotDetail detail where detail.maxScheduledSlots - detail.utilizedScheduledSlots > 0 order by detail.slot.appointmentDate , detail.id asc")
+    List<SlotDetail> findSlotDetailOrderByAppointmentDate();
 
-	@Query("select detail from SlotDetail detail where detail.slot.appointmentDate = :rescheduleAppointmentDate and detail.slot.zone = :zone"
-			+ " and (detail.maxScheduledSlots" + " - detail.utilizedScheduledSlots >0 or detail.maxRescheduledSlots -"
-			+ " detail.utilizedRescheduledSlots >0 or (detail.maxScheduledSlots -"
-			+ " detail.utilizedScheduledSlots >0 and detail.maxRescheduledSlots -"
-			+ " detail.utilizedRescheduledSlots >0)) and detail.slot.electionWard is null order by detail.id asc")
-	List<SlotDetail> findOneByAppointmentDateAndZoneId(
-			@Param("rescheduleAppointmentDate") Date rescheduleAppointmentDate, @Param("zone") Boundary zone);
+    @Query("select detail from SlotDetail detail where detail.appointmentTime  = :appointmentTime and detail.slot.appointmentDate = :rescheduleAppointmentDate and detail.slot.zone = :zone and detail.slot.type = 'Normal'")
+    SlotDetail findByAppointmentDateTimeAndZone(@Param("rescheduleAppointmentDate") Date rescheduleAppointmentDate,
+            @Param("appointmentTime") String appointmentTime,
+            @Param("zone") Boundary zone);
 
-	@Query("select slotdetail from SlotDetail slotdetail where slotdetail.slot =:slot and (slotdetail.maxScheduledSlots"
-			+ " - slotdetail.utilizedScheduledSlots >0 or slotdetail.maxRescheduledSlots -"
-			+ " slotdetail.utilizedRescheduledSlots >0 or (slotdetail.maxScheduledSlots -"
-			+ " slotdetail.utilizedScheduledSlots >0 and slotdetail.maxRescheduledSlots -"
-			+ " slotdetail.utilizedRescheduledSlots >0)) order by slotdetail.id asc")
-	List<SlotDetail> findBySlot(@Param("slot") Slot slot);
+    @Query("select slotdetail from SlotDetail slotdetail"
+            + " where slotdetail.slot.appointmentDate >= :appointmentDate and (slotdetail.maxScheduledSlots"
+            + " - slotdetail.utilizedScheduledSlots >0 or slotdetail.maxRescheduledSlots -"
+            + " slotdetail.utilizedRescheduledSlots >0 or (slotdetail.maxScheduledSlots -"
+            + " slotdetail.utilizedScheduledSlots >0 and slotdetail.maxRescheduledSlots -"
+            + " slotdetail.utilizedRescheduledSlots >0)) and slotdetail.slot.zone = :zone and slotdetail.slot.type = 'Normal' order by slotdetail.slot.appointmentDate ,"
+            + " slotdetail.id")
+    List<SlotDetail> findSlotsByAppointmentDateAndZone(@Param("appointmentDate") Date appointmentDate,
+            @Param("zone") Boundary zone);
 
-	
-	
+    @Query("select detail from SlotDetail detail where detail.slot.appointmentDate = :rescheduleAppointmentDate and detail.slot.zone = :zone"
+            + " and (detail.maxScheduledSlots" + " - detail.utilizedScheduledSlots >0 or detail.maxRescheduledSlots -"
+            + " detail.utilizedRescheduledSlots >0 or (detail.maxScheduledSlots -"
+            + " detail.utilizedScheduledSlots >0 and detail.maxRescheduledSlots -"
+            + " detail.utilizedRescheduledSlots >0)) and detail.slot.type = 'Normal' order by detail.id asc")
+    List<SlotDetail> findOneByAppointmentDateAndZoneId(
+            @Param("rescheduleAppointmentDate") Date rescheduleAppointmentDate, @Param("zone") Boundary zone);
+
+    @Query("select slotdetail from SlotDetail slotdetail where slotdetail.slot =:slot and (slotdetail.maxScheduledSlots"
+            + " - slotdetail.utilizedScheduledSlots >0 or slotdetail.maxRescheduledSlots -"
+            + " slotdetail.utilizedRescheduledSlots >0 or (slotdetail.maxScheduledSlots -"
+            + " slotdetail.utilizedScheduledSlots >0 and slotdetail.maxRescheduledSlots -"
+            + " slotdetail.utilizedRescheduledSlots >0)) order by slotdetail.id asc")
+    List<SlotDetail> findBySlot(@Param("slot") Slot slot);
+
+    @Query("select slotdetail from SlotDetail slotdetail where slotdetail.slot =:slot and                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        slotdetail.maxScheduledSlots"
+            + " - slotdetail.utilizedScheduledSlots >0 order by slotdetail.id asc")
+    List<SlotDetail> findBySlotForOneDayPermit(@Param("slot") Slot slot);
+
 }

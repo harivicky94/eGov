@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2017>  eGovernments Foundation
+ *     Copyright (C) <2015>  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -37,34 +37,37 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.bpa.transaction.repository;
+package org.egov.bpa.transaction.service;
 
 import java.util.Date;
-import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.egov.bpa.transaction.entity.Slot;
+import org.egov.bpa.transaction.repository.SlotRepository;
 import org.egov.infra.admin.master.entity.Boundary;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public interface SlotRepository extends JpaRepository<Slot, Long> {
+import org.hibernate.Session;
 
-    @Query("select slot from Slot slot where slot.zone = :zone and slot.appointmentDate >= :slotDate and slot.type = 'Normal' order by slot.appointmentDate asc")
-    List<Slot> findByZoneAndApplicationDate(@Param("zone") Boundary zone, @Param("slotDate") Date slotDate);
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-    @Query("select slot from Slot slot where slot.zone = :zone and slot.appointmentDate = :appointmentDate and slot.type='Normal'")
-    List<Slot> findByZoneAndAppointmentDate(@Param("zone") Boundary zone,
-            @Param("appointmentDate") Date appointmentDate);
+@Service
+public class SlotService {
 
-    @Query("select slot from Slot slot where slot.zone = :zone and slot.appointmentDate = :appointmentDate and slot.type =:type")
-    Slot getOpenSlot(@Param("zone") Boundary zone,
-            @Param("appointmentDate") Date appointmentDate, @Param("type") String type);
+    @Autowired
+    private SlotRepository slotRepository;
 
-    Slot findByZoneAndElectionWardAndAppointmentDate(Boundary zone, Boundary electionWard, Date appointmentDate);
+    @PersistenceContext
+    private EntityManager entityManager;
 
-    @Query("select slot from Slot slot where slot.zone = :zone and slot.appointmentDate >= :slotDate and slot.type = 'One Day Permit' order by slot.appointmentDate asc")
-    List<Slot> findByZoneAndApplicationDateForOneDayPermit(@Param("zone") Boundary zone, @Param("slotDate") Date slotDate);
+    public Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
+    }
+
+    public Boolean isSlotOpen(Boundary zone, Date date, String slotType) {
+        Slot openSlot = slotRepository.getOpenSlot(zone, date, slotType);
+        return openSlot == null ? false : true;
+    }
 }

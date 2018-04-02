@@ -39,8 +39,6 @@
  */
 package org.egov.bpa.master.service;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -53,10 +51,12 @@ import org.egov.bpa.master.entity.Holiday;
 import org.egov.bpa.master.repository.HolidayListRepository;
 import org.egov.bpa.transaction.entity.dto.SearchHolidayList;
 import org.egov.bpa.transaction.entity.enums.HolidayType;
+import org.egov.infra.utils.DateUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Restrictions;
+import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -66,273 +66,302 @@ import org.springframework.validation.BindingResult;
 @Transactional(readOnly = true)
 public class HolidayListService {
 
-	@PersistenceContext
-	private EntityManager entityManager;
+    private static final String HOLIDAY = "holiday";
 
-	@Autowired
-	private HolidayListRepository holidayListRepository;
+    private static final String HOLIDAY_DATE = "holidayDate";
 
-	public Session getCurrentSession() {
-		return entityManager.unwrap(Session.class);
-	}
+    @PersistenceContext
+    private EntityManager entityManager;
 
-	public List<Holiday> findAll() {
-		return holidayListRepository.findAll();
-	}
+    @Autowired
+    private HolidayListRepository holidayListRepository;
 
-	@Transactional
-	public List<Holiday> save(final List<Holiday> holidayList) {
-		return holidayListRepository.save(holidayList);
-	}
+    public Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
+    }
 
-	@Transactional
-	public Holiday update(final Holiday holidayList) {
-		return holidayListRepository.save(holidayList);
-	}
+    public List<Holiday> findAll() {
+        return holidayListRepository.findAll();
+    }
 
-	@Transactional
-	public void delete(Long id) {
-		holidayListRepository.delete(id);
-	}
+    @Transactional
+    public List<Holiday> save(final List<Holiday> holidayList) {
+        return holidayListRepository.save(holidayList);
+    }
 
-	public Holiday findById(final Long id) {
-		return holidayListRepository.findOne(id);
-	}
+    @Transactional
+    public Holiday update(final Holiday holidayList) {
+        return holidayListRepository.save(holidayList);
+    }
 
-	@SuppressWarnings("unchecked")
-	public List<SearchHolidayList> search(final SearchHolidayList holidayList) {
-		final Criteria criteria = buildSearchCriteria(holidayList);
-		return buildHolidayListResponse(criteria);
+    @Transactional
+    public void delete(Long id) {
+        holidayListRepository.delete(id);
+    }
 
-	}
+    public Holiday findById(final Long id) {
+        return holidayListRepository.findOne(id);
+    }
 
-	// search holiday by holiday type and date
-	@SuppressWarnings("unchecked")
-	public List<Holiday> getHolidayTypeListByType(final HolidayType holidayType, final Date holidayDate) {
-		final Criteria criteria = getCurrentSession().createCriteria(Holiday.class, "holiday");
-		if (holidayType !=null)
-		criteria.add(Restrictions.eq("holiday.holidayType", holidayType));
-		if (holidayDate !=null)
-		criteria.add(Restrictions.eq("holiday.holidayDate", holidayDate));
-		return criteria.list();
-	}
+    public List<SearchHolidayList> search(final SearchHolidayList holidayList) {
+        final Criteria criteria = buildSearchCriteria(holidayList);
+        return buildHolidayListResponse(criteria);
 
-	// search all pre-loaded saturday and sunday
-	@SuppressWarnings("unchecked")
-	public boolean getPreLoadedGeneralHolidays(final String year) {
-		final Criteria criteria = getCurrentSession().createCriteria(Holiday.class, "holiday");
-		criteria.add(Restrictions.eq("holiday.year", year));
-		return criteria.list().size() > 0 ? true : false;
-	}
+    }
 
-	public Criteria buildSearchCriteria(final SearchHolidayList holidayList) {
-		final Criteria criteria = getCurrentSession().createCriteria(Holiday.class, "holiday");
+    // search holiday by holiday type and date
+    @SuppressWarnings("unchecked")
+    public List<Holiday> getHolidayTypeListByType(final HolidayType holidayType, final Date holidayDate) {
+        final Criteria criteria = getCurrentSession().createCriteria(Holiday.class, HOLIDAY);
+        if (holidayType != null) {
+            criteria.add(Restrictions.eq("holiday.holidayType", holidayType));
+        }
+        if (holidayDate != null) {
+            criteria.add(Restrictions.eq("holiday.holidayDate", holidayDate));
+        }
+        return criteria.list();
+    }
 
-		if (holidayList.getId() != null) {
-			criteria.add(Restrictions.eq("holiday.id", holidayList.getId().toString()));
-		}
-		if (holidayList.getHolidayType() != null) {
-			criteria.add(Restrictions.eq("holiday.holidayType", holidayList.getHolidayType()));
-		}
-		if (holidayList.getHolidayDate() != null) {
-			criteria.add(Restrictions.eq("holiday.holidayDate", holidayList.getHolidayDate()));
-		}
+    // search all pre-loaded saturday and sunday
+    public boolean getPreLoadedGeneralHolidays(final String year) {
+        final Criteria criteria = getCurrentSession().createCriteria(Holiday.class, HOLIDAY);
+        criteria.add(Restrictions.eq("holiday.year", year));
+        return !criteria.list().isEmpty() ? true : false;
+    }
 
-		criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
-		return criteria;
-	}
+    public Criteria buildSearchCriteria(final SearchHolidayList holidayList) {
+        final Criteria criteria = getCurrentSession().createCriteria(Holiday.class, HOLIDAY);
 
-	// validating holiday present or not in the system and overriding sunday and
-	// saturday
-	public void validateCreateHolidayList(final Holiday holiday, final BindingResult errors) {
+        if (holidayList.getId() != null) {
+            criteria.add(Restrictions.eq("holiday.id", holidayList.getId().toString()));
+        }
+        if (holidayList.getHolidayType() != null) {
+            criteria.add(Restrictions.eq("holiday.holidayType", holidayList.getHolidayType()));
+        }
+        if (holidayList.getHolidayDate() != null) {
+            criteria.add(Restrictions.eq("holiday.holidayDate", holidayList.getHolidayDate()));
+        }
 
-		for (Holiday hlyday : holiday.getHolidaysTemp()) {
-			if (checkIsHolidayAlreadyEnter(hlyday.getHolidayDate())) {
-				errors.rejectValue("holidayDate", "msg.hol.exists");
-			}
+        criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+        return criteria;
+    }
 
-			if (!isDateAfterFourdays(hlyday.getHolidayDate())) {
-				errors.rejectValue("holidayDate", "msg.fourdays.gteq");
-			}
-		}
-	}
+    // validating holiday present or not in the system and overriding sunday and
+    // saturday
+    public void validateCreateHolidayList(final Holiday holiday, final BindingResult errors) {
 
-	public void validateUpdateHolidayList(final Holiday holiday, final BindingResult errors) {
-		Holiday holidayDate = holidayListRepository.findByHolidayDate(holiday.getHolidayDate());
+        for (Holiday hlyday : holiday.getHolidaysTemp()) {
+            if (checkIsHolidayAlreadyEnter(hlyday.getHolidayDate())) {
+                errors.rejectValue(HOLIDAY_DATE, "msg.hol.exists");
+            }
 
-		if (holidayDate !=null && holidayDate.getId() != holiday.getId()
-				&& checkIsHolidayAlreadyEnter(holiday.getHolidayDate())){
-			errors.rejectValue("holidayDate", "msg.hol.exists");
-		}
-		/*if (checkIsHolidayAlreadyEnter(holiday.getHolidayDate())) {
-			errors.rejectValue("holidayDate", "msg.hol.exists");
-		}*/
+            if (!isDateAfterFourdays(hlyday.getHolidayDate())) {
+                errors.rejectValue(HOLIDAY_DATE, "msg.fourdays.gteq");
+            }
+        }
+    }
 
-		if (!isDateAfterFourdays(holiday.getHolidayDate())) {
-			errors.rejectValue("holidayDate", "msg.fourdays.gteq");
+    public void validateUpdateHolidayList(final Holiday holiday, final BindingResult errors) {
+        Holiday holidayDate = holidayListRepository.findByHolidayDate(holiday.getHolidayDate());
 
-		}
-	}
+        if (holidayDate != null && holidayDate.getId() != holiday.getId()
+                && checkIsHolidayAlreadyEnter(holiday.getHolidayDate())) {
+            errors.rejectValue(HOLIDAY_DATE, "msg.hol.exists");
+        }
+        if (!isDateAfterFourdays(holiday.getHolidayDate())) {
+            errors.rejectValue(HOLIDAY_DATE, "msg.fourdays.gteq");
 
-	public boolean checkIsHolidayAlreadyEnter(final Date date) {
-		if (holidayListRepository.findByHolidayDate(date) != null) {
-			return true;
-		}
-		return false;
-	}
+        }
+    }
 
-	public boolean isSecondSaturdayOfMonth(final Date date) {
-		final Calendar cal = Calendar.getInstance();
-		cal.set(Calendar.MONTH, date.getMonth());
-		cal.setFirstDayOfWeek(Calendar.SATURDAY);
-		cal.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
-		cal.set(Calendar.WEEK_OF_MONTH, 2);
-		return cal.getTime().equals(date.getTime());
-	}
+    public boolean checkIsHolidayAlreadyEnter(final Date date) {
+        return holidayListRepository.findByHolidayDate(date) != null;
 
-	public boolean isSunday(final Date date) {
-		Calendar startDate = Calendar.getInstance();
-		startDate.setTime(date);
-		if (startDate.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
-			return true;
-		} else {
-			return false;
-		}
-	}
+    }
 
-	public String getCurrentYear() {
-		Calendar now = Calendar.getInstance();
-		return Integer.toString(now.get(Calendar.YEAR));
-	}
+    public boolean isSunday(final Date date) {
+        Calendar startDate = Calendar.getInstance();
+        startDate.setTime(date);
+        return startDate.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY;
+    }
 
-	// collecting list of all second saturday r
-	public List<Holiday> listOfSecondSaturday(final Date date) {
-		Holiday h = new Holiday();
+    public String getCurrentYear() {
+        Calendar now = Calendar.getInstance();
+        return Integer.toString(now.get(Calendar.YEAR));
+    }
 
-		Calendar c1 = Calendar.getInstance();
-		c1.setTime(date);
-		c1.set(Calendar.MONTH, 0);
-		c1.set(Calendar.DAY_OF_MONTH, 1);
+    // collecting list of all second saturday r
+    public List<Holiday> listOfSecondSaturday(final Date date) {
+        Calendar c1 = Calendar.getInstance();
+        c1.setTime(date);
+        c1.set(Calendar.MONTH, 0);
+        c1.set(Calendar.DAY_OF_MONTH, 1);
 
-		Date fromDate = c1.getTime();
+        Date fromDate = c1.getTime();
 
-		Calendar c2 = Calendar.getInstance();
-		c2.setTime(date);
-		c2.set(Calendar.MONTH, 11);
-		c2.set(Calendar.DAY_OF_MONTH, 31);
+        Calendar c2 = Calendar.getInstance();
+        c2.setTime(date);
+        c2.set(Calendar.MONTH, 11);
+        c2.set(Calendar.DAY_OF_MONTH, 31);
 
-		Date toDate = c2.getTime();
-		return secondSaturday(fromDate, toDate);
-	}
+        Date toDate = c2.getTime();
+        return secondSaturday(fromDate, toDate);
+    }
 
-	public List<Holiday> secondSaturday(Date fromDate, Date toDate) {
-		List<Holiday> secondSaturdayList = new ArrayList<>();
-		Calendar c1 = Calendar.getInstance();
-		Holiday h = new Holiday();
-		;
-		c1.setTime(fromDate);
-		Calendar c2 = Calendar.getInstance();
-		c2.setTime(toDate);
+    public List<Holiday> secondSaturday(Date fromDate, Date toDate) {
+        List<Holiday> secondSaturdayList = new ArrayList<>();
+        Calendar c1 = Calendar.getInstance();
+        Holiday h = new Holiday();
+        c1.setTime(fromDate);
+        Calendar c2 = Calendar.getInstance();
+        c2.setTime(toDate);
 
-		while (c2.after(c1)) {
-			h = new Holiday();
-			if ((c1.get(Calendar.WEEK_OF_MONTH) == 2) && (c1.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY)) {
-				h.setHolidayDate(c1.getTime());
-				h.setDescription("second saturday");
-				h.setHolidayType(HolidayType.GENERAL);
-				h.setYear(String.valueOf(c1.YEAR));
-				secondSaturdayList.add(h);
-			}
-			c1.add(Calendar.DATE, 1);
+        while (c2.after(c1)) {
+            h = new Holiday();
+            if ((c1.get(Calendar.WEEK_OF_MONTH) == 2) && (c1.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY)) {
+                h.setHolidayDate(c1.getTime());
+                h.setDescription("second saturday");
+                h.setHolidayType(HolidayType.GENERAL);
+                h.setYear(String.valueOf(c1.YEAR));
+                secondSaturdayList.add(h);
+            }
+            c1.add(Calendar.DATE, 1);
 
-		}
-		if (c1.equals(c2) && (c1.get(Calendar.WEEK_OF_MONTH) == 2)
-				&& (c1.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY)) {
-			h.setHolidayDate(c1.getTime());
-			h.setHolidayType(HolidayType.GENERAL);
-			h.setDescription("second saturday");
-			h.setYear(String.valueOf(c1.YEAR));
-			secondSaturdayList.add(h);
-		}
+        }
+        if (c1.equals(c2) && (c1.get(Calendar.WEEK_OF_MONTH) == 2)
+                && (c1.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY)) {
+            h.setHolidayDate(c1.getTime());
+            h.setHolidayType(HolidayType.GENERAL);
+            h.setDescription("second saturday");
+            h.setYear(String.valueOf(c1.YEAR));
+            secondSaturdayList.add(h);
+        }
 
-		return secondSaturdayList;
-	}
+        return secondSaturdayList;
+    }
 
-	// collecting list of all sunday
-	public List<Holiday> listOfSunday(final Date date) {
-		Holiday h = new Holiday();
+    // collecting list of all sunday
+    public List<Holiday> listOfSunday(final Date date) {
+        Calendar c1 = Calendar.getInstance();
+        c1.setTime(date);
+        c1.set(Calendar.MONTH, 0);
+        c1.set(Calendar.DAY_OF_MONTH, 1);
 
-		Calendar c1 = Calendar.getInstance();
-		c1.setTime(date);
-		c1.set(Calendar.MONTH, 0);
-		c1.set(Calendar.DAY_OF_MONTH, 1);
+        Date fromDate = c1.getTime();
 
-		Date fromDate = c1.getTime();
+        Calendar c2 = Calendar.getInstance();
+        c2.setTime(date);
+        c2.set(Calendar.MONTH, 11);
+        c2.set(Calendar.DAY_OF_MONTH, 31);
 
-		Calendar c2 = Calendar.getInstance();
-		c2.setTime(date);
-		c2.set(Calendar.MONTH, 11);
-		c2.set(Calendar.DAY_OF_MONTH, 31);
+        Date toDate = c2.getTime();
+        return sundays(fromDate, toDate);
+    }
 
-		Date toDate = c2.getTime();
-		return sundays(fromDate, toDate);
-	}
+    public List<Holiday> sundays(Date fromDate, Date toDate) {
+        List<Holiday> sundays = new ArrayList<>();
+        Holiday h = new Holiday();
+        Calendar c1 = Calendar.getInstance();
+        c1.setTime(fromDate);
+        Calendar c2 = Calendar.getInstance();
+        c2.setTime(toDate);
 
-	public List<Holiday> sundays(Date fromDate, Date toDate) {
-		List<Holiday> sundays = new ArrayList<>();
-		Holiday h = new Holiday();
-		;
-		Calendar c1 = Calendar.getInstance();
-		c1.setTime(fromDate);
-		Calendar c2 = Calendar.getInstance();
-		c2.setTime(toDate);
+        while (c2.after(c1)) {
+            h = new Holiday();
+            if (c1.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
+                h.setHolidayDate(c1.getTime());
+                h.setDescription("sunday");
+                h.setHolidayType(HolidayType.GENERAL);
+                h.setYear(String.valueOf(c1.YEAR));
+                sundays.add(h);
 
-		while (c2.after(c1)) {
-			h = new Holiday();
-			if (c1.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
-				h.setHolidayDate(c1.getTime());
-				h.setDescription("sunday");
-				h.setHolidayType(HolidayType.GENERAL);
-				h.setYear(String.valueOf(c1.YEAR));
-				sundays.add(h);
+            }
+            c1.add(Calendar.DATE, 1);
+        }
 
-			}
-			c1.add(Calendar.DATE, 1);
-		}
+        if (c1.equals(c2) && c1.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
+            h.setHolidayDate(c1.getTime());
+            h.setDescription("sunday");
+            h.setHolidayType(HolidayType.GENERAL);
+            h.setYear(String.valueOf(c1.YEAR));
+            sundays.add(h);
+        }
 
-		if (c1.equals(c2) && c1.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
-			h.setHolidayDate(c1.getTime());
-			h.setDescription("sunday");
-			h.setHolidayType(HolidayType.GENERAL);
-			h.setYear(String.valueOf(c1.YEAR));
-			sundays.add(h);
-		}
+        return sundays;
+    }
 
-		return sundays;
-	}
+    @SuppressWarnings("unchecked")
+    private List<SearchHolidayList> buildHolidayListResponse(final Criteria criteria) {
+        List<SearchHolidayList> searchHolidayList = new ArrayList<>();
+        for (Holiday holiday : (List<Holiday>) criteria.list()) {
+            SearchHolidayList searchHolidayListForm = new SearchHolidayList();
+            searchHolidayListForm.setId(holiday.getId());
+            searchHolidayListForm.setHolidayDate(holiday.getHolidayDate());
+            searchHolidayListForm.setHolidayType(holiday.getHolidayType());
+            searchHolidayListForm.setDescription(holiday.getDescription());
+            searchHolidayList.add(searchHolidayListForm);
+        }
+        return searchHolidayList;
+    }
 
-	private List<SearchHolidayList> buildHolidayListResponse(final Criteria criteria) {
-		List<SearchHolidayList> searchHolidayList = new ArrayList<>();
-		for (Holiday holiday : (List<Holiday>) criteria.list()) {
-			SearchHolidayList searchHolidayListForm = new SearchHolidayList();
-			searchHolidayListForm.setId(holiday.getId());
-			searchHolidayListForm.setHolidayDate(holiday.getHolidayDate());
-			searchHolidayListForm.setHolidayType(holiday.getHolidayType());
-			searchHolidayListForm.setDescription(holiday.getDescription());
-			searchHolidayList.add(searchHolidayListForm);
-		}
-		return searchHolidayList;
-	}
+    public boolean isDateAfterFourdays(final Date date) {
+        Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DATE, +4);
+        Date nextFourDay = cal.getTime();
+        return date.equals(nextFourDay) || date.after(nextFourDay);
+    }
 
-	public boolean isDateAfterFourdays(final Date date) {
-		DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy ");
-		Calendar cal = Calendar.getInstance();
-		cal.add(Calendar.DATE, +4);
-		Date nextFourDay = cal.getTime();
-		if (date.equals(nextFourDay) || date.after(nextFourDay)) {
-			return true;
-		}
-		return false;
-	}
+    public Boolean isHoliday(Date date) {
+        Holiday holiday = holidayListRepository.findByHolidayDate(date);
+        return holiday == null ? false : true;
+    }
+
+    public Calendar getNextWorkingDay(Calendar calender) {
+        int flag = 0;
+        while (flag != 1) {
+
+            if (isHoliday(calender.getTime()) || !getListOfDaysWhichAreSecordSaturdaysOrSundays(calender.getTime()).isEmpty()) {
+                calender.add(Calendar.DAY_OF_YEAR, 1);
+            } else {
+                flag = 1;
+            }
+        }
+        return calender;
+    }
+
+    public List<Holiday> getListOfDaysWhichAreSecordSaturdaysOrSundays(Date date) {
+        List<Holiday> holidayList = new ArrayList<>();
+        List<Holiday> listOfAllSatAndSunHolidays = new ArrayList<>();
+        listOfAllSatAndSunHolidays.addAll(listOfSecondSaturday(date));
+        listOfAllSatAndSunHolidays.addAll(listOfSunday(date));
+        for (Holiday holiday : listOfAllSatAndSunHolidays) {
+            if (DateUtils.toDefaultDateFormat(convertToLocalDate(holiday.getHolidayDate()))
+                    .equals(DateUtils.toDefaultDateFormat(convertToLocalDate(date)))) {
+                holidayList.add(holiday);
+                break;
+            }
+
+        }
+        return holidayList;
+    }
+
+    LocalDate convertToLocalDate(Date date) {
+        if (date == null)
+            return null;
+        return new LocalDate(date);
+    }
+
+    public Calendar getNextWeekWorkingDay(Calendar calender) {
+        int flag = 0;
+        while (flag != 1) {
+
+            if (isHoliday(calender.getTime())) {
+                calender.add(Calendar.WEEK_OF_YEAR, 1);
+            } else {
+                flag = 1;
+            }
+        }
+        return calender;
+    }
 
 }

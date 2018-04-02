@@ -64,7 +64,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 @Service
 @Transactional(readOnly = true)
 public class BpaApplicationCancellationService {
-    
+
     private static final Logger logger = Logger.getLogger(BpaApplicationCancellationService.class);
     @Autowired
     private ApplicationBpaService applicationBpaService;
@@ -83,7 +83,7 @@ public class BpaApplicationCancellationService {
 
     @Autowired
     private TransactionTemplate transactionTemplate;
-	
+
     @Autowired
     private BpaIndexService bpaIndexService;
 
@@ -102,7 +102,7 @@ public class BpaApplicationCancellationService {
                 template.execute(result -> {
                     List<SlotApplication> slotApplicationList = slotApplicationRepository
                             .findByApplicationOrderByIdDesc(bpaApplication);
-                    if (slotApplicationList.size() > 0) {
+                    if (!slotApplicationList.isEmpty()) {
                         Date appointmentDate = slotApplicationList.get(0).getSlotDetail().getSlot().getAppointmentDate();
                         logger.info("**********appointmentDate For last scheduled or rescheduled application is*************"
                                 + appointmentDate);
@@ -119,9 +119,9 @@ public class BpaApplicationCancellationService {
                                     "Application is cancelled because citizen not attended for document scrutiny",
                                     BpaConstants.WF_CANCELAPPLICATION_BUTTON, null);
                             applicationBpaService.saveBpaApplication(bpaApplication);
+                            bpaIndexService.updateIndexes(bpaApplication);
                             bpaSmsAndEmailService.sendSMSAndEmailForDocumentScrutiny(slotApplicationList.get(0),
                                     bpaApplication);
-                            bpaIndexService.updateIndexes(bpaApplication);
                         }
                     }
                     return true;
@@ -132,13 +132,13 @@ public class BpaApplicationCancellationService {
         }
     }
 
-	private String getErrorMessage(final Exception exception) {
-		String error;
-		if (exception instanceof ValidationException)
-			error = ((ValidationException) exception).getErrors().get(0).getMessage();
-		else
-			error = "Error : " + exception;
-		return error;
-	}
-	
-	}
+    private String getErrorMessage(final Exception exception) {
+        String error;
+        if (exception instanceof ValidationException)
+            error = ((ValidationException) exception).getErrors().get(0).getMessage();
+        else
+            error = "Error : " + exception;
+        return error;
+    }
+
+}

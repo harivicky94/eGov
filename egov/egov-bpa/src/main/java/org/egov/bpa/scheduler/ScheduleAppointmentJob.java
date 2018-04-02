@@ -55,11 +55,13 @@ public class ScheduleAppointmentJob extends AbstractQuartzJob {
 
 	@Override
 	public void executeJob() {
-		if (LOGGER.isInfoEnabled())
-			LOGGER.info("Start scheduleAppointmentJob.execute");
+        if (LOGGER.isInfoEnabled())
+            LOGGER.info("Start scheduleAppointmentJob.execute");
 
-		scheduleAppointmentForDocumentScrutinyService.scheduleAppointmentsForDocumentScrutiny();
-		if (LOGGER.isInfoEnabled())
-			LOGGER.info("End ScheduleAppointmentJob.execute");
+        scheduleAppointmentForDocumentScrutinyService.scheduleScrutiny();
+
+        scheduleAppointmentForDocumentScrutinyService.scheduleOneDayPermit();
+        if (LOGGER.isInfoEnabled())
+            LOGGER.info("End ScheduleAppointmentJob.execute");
 	}
 }
