@@ -43,6 +43,7 @@ import org.egov.bpa.master.entity.enums.ApplicationType;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.SlotApplication;
 import org.egov.bpa.transaction.entity.dto.SearchBpaApplicationForm;
+import org.egov.bpa.transaction.entity.enums.*;
 import org.egov.bpa.transaction.service.collection.BpaDemandService;
 import org.egov.bpa.utils.*;
 import org.egov.infra.utils.*;
@@ -300,8 +301,13 @@ public class SearchBpaApplicationService {
 			criteria.add(Restrictions.eq("slot.appointmentDate",
 					resetToDateTimeStamp(searchBpaApplicationForm.getAppointmentDate())));
 		}
+		if("SCHEDULE".equals(searchBpaApplicationForm.getScheduleType())) {
+			criteria.add(Restrictions.eq("slotApplication.scheduleAppointmentType", ScheduleAppointmentType.SCHEDULE));
+		} else if("RESCHEDULE".equals(searchBpaApplicationForm.getScheduleType())) {
+			criteria.add(Restrictions.eq("slotApplication.scheduleAppointmentType", ScheduleAppointmentType.RESCHEDULE));
+		}
 
-		if("onedaypermit".equals(searchBpaApplicationForm.getServiceType())) {
+		if("onedaypermit".equals(searchBpaApplicationForm.getApplicationType())) {
 			criteria.add(Restrictions.isNotNull("slot.electionWard"));
 		} else
 			criteria.add(Restrictions.isNull("slot.electionWard"));

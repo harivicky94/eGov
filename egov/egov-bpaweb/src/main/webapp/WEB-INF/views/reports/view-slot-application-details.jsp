@@ -58,7 +58,8 @@
 	value="${electionWardId}" />
 <input type="hidden" name="zoneId" id="zoneId" value="${zoneId}" />
 <input type="hidden" name="zone" id="zone" value="${zone}" />
-<input type="hidden" name="serviceType" id="type" value="${type}" />
+<input type="hidden" name="applicationType" id="applicationType" value="${applicationType}" />
+<input type="hidden" name="scheduleType" id="scheduleType" value="${scheduleType}" />
 
 </form:form>
 <div class="row display-hide report-section" id="table_container">

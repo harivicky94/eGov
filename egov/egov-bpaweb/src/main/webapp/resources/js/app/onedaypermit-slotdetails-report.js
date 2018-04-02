@@ -47,13 +47,13 @@ $(document)
 					});
 
 					function callAjaxSearch() {
-						var applnType = $('#type').val();
+						var applicationType = $('#applicationType').val();
 						$('.report-section').removeClass('display-hide');
 						$("#oneDayPermitApplnsSlotDetailsCount")
 								.dataTable(
 										{
 											ajax : {
-												url : "/bpa/reports/slotdetails/"+applnType,
+												url : "/bpa/reports/slotdetails/"+applicationType,
 												type : "POST",
 												beforeSend : function() {
 													$('.loader-class')
@@ -124,14 +124,12 @@ $(document)
                                                     "sClass" : "text-center"
                                                 },
                                                 {
-                                                    "data" : "maxRescheduledSlots",
-                                                    "sClass" : "text-center"
-                                                },
-                                                {
                                                     "data" : "utilizedScheduledSlots",
                                                     render : function(data, type, row, meta) {
                                                         return parseInt(row.utilizedScheduledSlots) !== 0 ? '<a onclick="openPopup(\'/bpa/reports/slotdetails/viewapplications?'
-                                                            + 'type='+applnType
+                                                            + 'applicationType='+applicationType
+                                                            + '&'
+                                                            + 'scheduleType=SCHEDULE'
                                                             + '&'
                                                             + 'appointmentDate='+row.appointmentDate
                                                             + '&'
@@ -142,24 +140,6 @@ $(document)
                                                             + 'electionWardId='+row.electionWardId
                                                             + '\')" href="javascript:void(0);">'
                                                             + row.utilizedScheduledSlots + '</a>':row.utilizedScheduledSlots;
-                                                    },
-                                                    "sClass" : "text-center"
-                                                },
-                                                {
-                                                    "data" : "utilizedRescheduledSlots",
-                                                    render : function(data, type, row, meta) {
-                                                        return parseInt(row.utilizedRescheduledSlots) !== 0 ? '<a onclick="openPopup(\'/bpa/reports/slotdetails/viewapplications?'
-                                                            + 'type='+applnType
-                                                            + '&'
-                                                            + 'appointmentDate='+row.appointmentDate
-                                                            + '&'
-                                                            + 'appointmentTime='+row.appointmentTime
-                                                            + '&'
-                                                            + 'zoneId='+row.zoneId
-                                                            + '&'
-                                                            + 'electionWardId='+row.electionWardId
-                                                            + '\')" href="javascript:void(0);">'
-                                                            + row.utilizedRescheduledSlots + '</a>':row.utilizedRescheduledSlots;
                                                     },
                                                     "sClass" : "text-center"
                                                 }],
@@ -174,12 +154,10 @@ $(document)
 														if (data.length > 0) {
 															updateTotalFooter(5, api);
 															updateTotalFooter(6, api);
-                                                            updateTotalFooter(7, api);
-                                                            updateTotalFooter(8, api);
 															}
 													},
 													"aoColumnDefs" : [ {
-														"aTargets" : [5,6,7,8],
+														"aTargets" : [5,6],
 														"mRender" : function(data, type, full) {
 															return formatNumberInr(data);    
 														}

@@ -47,13 +47,13 @@ $(document)
 					});
 
 					function callAjaxSearch() {
-						var applnType = $('#type').val();
+						var applicationType = $('#applicationType').val();
 						$('.report-section').removeClass('display-hide');
 						$("#regularApplnsSlotDetailsCount")
 								.dataTable(
 										{
 											ajax : {
-												url : "/bpa/reports/slotdetails/"+applnType,
+												url : "/bpa/reports/slotdetails/"+applicationType,
 												type : "POST",
 												beforeSend : function() {
 													$('.loader-class')
@@ -128,7 +128,9 @@ $(document)
                                                     "data" : "utilizedScheduledSlots",
                                                     render : function(data, type, row, meta) {
                                                         return parseInt(row.utilizedScheduledSlots) !== 0 ? '<a onclick="openPopup(\'/bpa/reports/slotdetails/viewapplications?'
-                                                            + 'type='+applnType
+                                                            + 'applicationType='+applicationType
+                                                            + '&'
+                                                            + 'scheduleType=SCHEDULE'
                                                             + '&'
 															+ 'appointmentDate='+row.appointmentDate
                                                             + '&'
@@ -146,7 +148,9 @@ $(document)
                                                     "data" : "utilizedRescheduledSlots",
                                                     render : function(data, type, row, meta) {
                                                         return parseInt(row.utilizedRescheduledSlots) !== 0 ? '<a onclick="openPopup(\'/bpa/reports/slotdetails/viewapplications?'
-                                                            + 'type='+applnType
+                                                            + 'applicationType='+applicationType
+                                                            + '&'
+                                                            + 'scheduleType=RESCHEDULE'
                                                             + '&'
 															+ 'appointmentDate='+row.appointmentDate
                                                             + '&'

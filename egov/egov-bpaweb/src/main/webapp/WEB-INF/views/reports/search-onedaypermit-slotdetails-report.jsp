@@ -47,7 +47,7 @@
 		   modelAttribute="slotDetailsHelper" id="oneDayPermitApplnsSlotDetailsReport"
 		   cssClass="form-horizontal form-groups-bordered"
 		   enctype="multipart/form-data">
-	<input type="hidden" id="type" value="${type}">
+	<input type="hidden" id="applicationType" value="${applicationType}">
 	<div class="row">
 		<div class="col-md-12">
 			<div class="panel panel-primary" data-collapsed="0">
@@ -144,10 +144,8 @@
 					<th><spring:message code="lbl.election.ward"/></th>
 					<th><spring:message code="lbl.appmnt.date"/></th>
 					<th><spring:message code="lbl.appmnt.time"/></th>
-					<th>Max Allowed Schedule</th>
-					<th>Max Allowed Reschedule</th>
-					<th>Utilized Scheduled</th>
-					<th>Utilized Rescheduled</th>
+					<th><spring:message code="lbl.max.allowed.schdle"/></th>
+					<th><spring:message code="lbl.utilized.schdle"/></th>
 				</tr>
 			</thead>
 			<tfoot id="report-footer">
@@ -157,8 +155,6 @@
 					<td></td>
 					<td></td>
 					<td>Total</td>
-					<td></td>
-					<td></td>
 					<td></td>
 					<td></td>
 				</tr>

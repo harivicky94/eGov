@@ -145,34 +145,35 @@ public class BpaReportsController extends BpaGenericApplicationController {
                 .toString();
     }
 
-    @RequestMapping(value = "/slotdetails/{type}", method = RequestMethod.GET)
-    public String searchSlotDetailsForm(@PathVariable String type, final Model model) {
+    @RequestMapping(value = "/slotdetails/{applicationType}", method = RequestMethod.GET)
+    public String searchSlotDetailsForm(@PathVariable String applicationType, final Model model) {
         prepareFormData(model);
         model.addAttribute("slotDetailsHelper", new SlotDetailsHelper());
-        model.addAttribute("type",type);
+        model.addAttribute("applicationType",applicationType);
         model.addAttribute("searchByNoOfDays", BpaConstants.getSearchByNoOfDays());
-        if("onedaypermit".equals(type))
+        if("onedaypermit".equals(applicationType))
             return "search-onedaypermit-slotdetails-report";
         else
         	return "search-regular-slotdetails-report";
     }
 
-    @RequestMapping(value = "/slotdetails/{type}", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    @RequestMapping(value = "/slotdetails/{applicationType}", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
-    public String getSlotDetailsResult(@PathVariable String type, final Model model,
+    public String getSlotDetailsResult(@PathVariable String applicationType, final Model model,
                                             @ModelAttribute final SlotDetailsHelper slotDetailsHelper) {
-        final List<SlotDetailsHelper> searchResultList = bpaReportsService.searchSlotDetails(slotDetailsHelper,type);
+        final List<SlotDetailsHelper> searchResultList = bpaReportsService.searchSlotDetails(slotDetailsHelper,applicationType);
         return new StringBuilder(DATA)
                 .append(toJSON(searchResultList, SlotDetailsHelper.class, SlotDetailsAdaptor.class))
                 .append("}")
                 .toString();
     }
 
-    @RequestMapping(value = "/slotdetails/viewapplications", method = RequestMethod.GET)
-    public String viewUtilizedSlotDetailsByApplicationHelper(@RequestParam final String type, @RequestParam final Date appointmentDate,
-                                                      @RequestParam final String appointmentTime,
-                                                      @RequestParam final Long zoneId,
-                                                      @RequestParam final Long electionWardId, final Model model) {
+	@RequestMapping(value = "/slotdetails/viewapplications", method = RequestMethod.GET)
+	public String viewUtilizedSlotDetailsByApplicationHelper(@RequestParam final String applicationType, @RequestParam final String scheduleType,
+															 @RequestParam final Date appointmentDate,
+															 @RequestParam final String appointmentTime,
+															 @RequestParam final Long zoneId,
+															 @RequestParam final Long electionWardId, final Model model) {
         if (appointmentDate == null) {
             model.addAttribute("appointmentDate", appointmentDate);
         } else {
@@ -181,14 +182,14 @@ public class BpaReportsController extends BpaGenericApplicationController {
         model.addAttribute("appointmentTime", appointmentTime);
         model.addAttribute("zoneId", zoneId);
         model.addAttribute("electionWardId", electionWardId);
-		model.addAttribute("type", type);
+		model.addAttribute("applicationType", applicationType);
+		model.addAttribute("scheduleType", scheduleType);
         return "view-slot-application-details";
     }
 
     @RequestMapping(value = "/slotdetails/viewapplications", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
-    public String viewUtilizedSlotDetailsByApplication(@ModelAttribute final SearchBpaApplicationForm searchBpaApplicationForm,
-                                                      final Model model) {
+    public String viewUtilizedSlotDetailsByApplication(@ModelAttribute final SearchBpaApplicationForm searchBpaApplicationForm) {
         final List<SearchBpaApplicationForm> searchResultList = searchBpaApplicationService.buildSlotApplicationDetails(searchBpaApplicationForm);
         return new StringBuilder(DATA)
                 .append(toJSON(searchResultList, SearchBpaApplicationForm.class, SearchBpaApplicationFormAdaptor.class))

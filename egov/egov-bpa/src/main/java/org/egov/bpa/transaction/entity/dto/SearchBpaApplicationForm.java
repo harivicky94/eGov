@@ -77,6 +77,8 @@ public class SearchBpaApplicationForm {
     private String appointmentTime;
     private Boolean isRescheduledByEmployee;
     private Boolean isOnePermitApplication;
+    private String applicationType;
+    private String scheduleType;
 
     public String getServiceTypeEnum() {
 		return serviceTypeEnum;
@@ -350,4 +352,19 @@ public class SearchBpaApplicationForm {
         isOnePermitApplication = onePermitApplication;
     }
 
+    public String getApplicationType() {
+        return applicationType;
+    }
+
+    public void setApplicationType(String applicationType) {
+        this.applicationType = applicationType;
+    }
+
+    public String getScheduleType() {
+        return scheduleType;
+    }
+
+    public void setScheduleType(String scheduleType) {
+        this.scheduleType = scheduleType;
+    }
 }
