@@ -229,7 +229,6 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
         if (bpaApplication.getOwner().getUser() != null && bpaApplication.getOwner().getUser().getId() == null)
             buildOwnerDetails(bpaApplication);
         // To allot slot for one day permit applications
-        applicationBpaService.scheduleAppointmentForOneDayPermit(bpaApplication);
         applicationBpaService.saveAndFlushApplication(bpaApplication);
         bpaUtils.updatePortalUserinbox(bpaApplication, null);
         if (workFlowAction != null
