@@ -78,6 +78,9 @@
 						<div class="panel-body custom-form ">
 							<jsp:include page="viewapplication-details.jsp"></jsp:include>
 						</div>
+						<div class="panel panel-primary edcrApplnDetails" data-collapsed="0">
+							<jsp:include page="view-edcr-application-details.jsp"></jsp:include>
+						</div>
 						<div class="panel-heading custom_form_panel_heading">
 							<div class="panel-title">
 								<spring:message code="lbl.document.scrutiny" />
@@ -284,4 +287,6 @@
 	src="<cdn:url value='/resources/js/app/application-view.js?rnd=${app_release_no}'/>"></script>
 <script
 	src="<cdn:url value='/resources/js/app/document-scrutiny.js?rnd=${app_release_no}'/>"></script>
+<script
+		src="<cdn:url value='/resources/js/app/edcr-helper.js?rnd=${app_release_no}'/>"></script>
 	
