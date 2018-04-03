@@ -248,10 +248,10 @@ public class TradeLicensePage extends BasePage {
 
 
         enterText(remarksTextBox, tradedetails.getremarks(), webDriver);
-        Date date = Calendar.getInstance().getTime();
-        DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-        String today = formatter.format(date);
-        enterText(tradeCommencementDateTextBox, today, webDriver);
+//        Date date = Calendar.getInstance().getTime();
+//        DateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+//        String today = formatter.format(date);
+        enterText(tradeCommencementDateTextBox, "01/04/2019", webDriver);
 
     }
 

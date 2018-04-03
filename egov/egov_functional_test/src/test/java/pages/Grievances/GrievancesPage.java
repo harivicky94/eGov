@@ -9,6 +9,7 @@ import org.openqa.selenium.support.FindBy;
 import pages.BasePage;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -65,7 +66,7 @@ public class GrievancesPage extends BasePage {
     @FindBy(linkText = "View Grievance")
     private WebElement viewGrievance;
 
-    @FindBy(id = "ctn_no")
+    @FindBy(xpath = ".//*[@class='panel-title text-center no-float']")
     private WebElement CRNNumber;
 
     @FindBy(id = "status")
@@ -159,7 +160,9 @@ public class GrievancesPage extends BasePage {
     }
 
     public String getCRN() {
-        String CrnNum = CRNNumber.getText();
+        String  msg = CRNNumber.getText();
+        String CrnNum = msg.substring(msg.lastIndexOf(": ") + 2);
+        System.out.println("CRN = "+CrnNum);
         clickOnButton(closeButton, webDriver);
         switchToPreviouslyOpenedWindow(webDriver);
         return CrnNum;
@@ -289,6 +292,7 @@ public class GrievancesPage extends BasePage {
 
     public void getSearchComplaintPage() {
         clickOnButton(newRequestLink, webDriver);
+        webDriver.manage().window().maximize();
         clickOnButton(viewGrievance, webDriver);
         switchToNewlyOpenedWindow(webDriver);
     }
