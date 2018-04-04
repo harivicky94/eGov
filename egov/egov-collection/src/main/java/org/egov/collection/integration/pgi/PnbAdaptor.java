@@ -119,6 +119,11 @@ public class PnbAdaptor implements PaymentGatewayAdaptor {
 			pnbResponse.setAdditionalInfo6(objResMsgDTO.getAddField2().replace("-", "").replace("/", ""));
 			pnbResponse.setReceiptId(objResMsgDTO.getOrderId());
 
+                        LOGGER.info("Response message from PNB Payment gateway: Auth Status: " + pnbResponse.getAuthStatus());
+                        LOGGER.info("Response message from PNB Payment gateway: Error Description: " + pnbResponse.getErrorDescription());
+                        LOGGER.info("Response message from PNB Payment gateway: AdditionalInfo6: " + pnbResponse.getAdditionalInfo6());
+                        LOGGER.info("Response message from PNB Payment gateway: ReceiptId: " + pnbResponse.getReceiptId());
+
 			// Success
 			if (pnbResponse.getAuthStatus().equals(CollectionConstants.PGI_AUTHORISATION_CODE_SUCCESS)) {
 				pnbResponse.setTxnAmount(new BigDecimal(objResMsgDTO.getTrnAmt()).divide(PAISE_RUPEE_CONVERTER));
