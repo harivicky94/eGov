@@ -6,9 +6,6 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import pages.BasePage;
 
-/**
- * Created by bimal on 3/3/17.
- */
 public class DemolitionPage extends BasePage {
 
     public WebDriver webDriver;

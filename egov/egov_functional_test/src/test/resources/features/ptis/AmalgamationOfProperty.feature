@@ -8,7 +8,7 @@ Feature: Amalgamation Of Property
   @Sanity @PropertyTax
   Scenario: Registered user choose to do amalgamation of property
 
-  Given commissioner logs in
+  Given PTISCommissioner logs in
   And user will select the required screen as "Data entry screen" with condition as "ptis"
   And he creates a new assessment for a private residential property
   Then dataEntry Details saved successfully
@@ -16,37 +16,46 @@ Feature: Amalgamation Of Property
   And he choose to close the dataentry acknowledgement screen
   And current user logs out
 
-  Given juniorAssistant logs in
+  Given PTISJuniorAssistant logs in
   And user will select the required screen as "collect tax"
   And he searches for assessment with number
   And he chooses to pay tax
   And he pay tax using Cash
+  And current user logs out
+
+  Given CSCUser logs in
   And user will select the required screen as "Amalgamation of Property"
   And he searches for assessment with number
   And he search for the Amalgamated Properties
-  And he forwards for approval to billCollector
+  And he click on Forward Button
   And current user closes tax exemption acknowledgement
   And current user logs out
 
-  When billCollector logs in
+  When PTISJuniorAssistant logs in
   And he chooses to act upon above assessment number
-  And he forwards for approval to revenueInspector
+  And he forwards for PTIS approver to PTISBillCollector
   And current user closes tax exemption acknowledgement
   And current user logs out
 
-  When revenueInspector logs in
+  When PTISBillCollector logs in
   And he chooses to act upon above assessment number
-  And he forwards for approval to revenueOfficer
+  And he forwards for PTIS approver to PTISRevenueInspector
   And current user closes tax exemption acknowledgement
   And current user logs out
 
-  When revenueOfficer logs in
+  When PTISRevenueInspector logs in
   And he chooses to act upon above assessment number
-  And he forwards for approval to commissioner
+  And he forwards for PTIS approver to PTISRevenueOfficer
   And current user closes tax exemption acknowledgement
   And current user logs out
 
-  When commissioner logs in
+  When PTISRevenueOfficer logs in
+  And he chooses to act upon above assessment number
+  And he forwards for PTIS approver to PTISCommissioner
+  And current user closes tax exemption acknowledgement
+  And current user logs out
+
+  When PTISCommissioner logs in
   And he chooses to act upon above assessment number
   And he approved the property with remarks "amalgamation-approve"
   And current user closes tax exemption acknowledgement
@@ -55,8 +64,4 @@ Feature: Amalgamation Of Property
   When commissioner closes acknowledgement
   And current user logs out
 
-  And juniorAssistant logs in
-  And he chooses to act upon above assessment number
-  Then he generates a notice
-  And current user logs out
 

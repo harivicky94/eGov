@@ -558,7 +558,7 @@ public class PropertyDetailsPage extends BasePage {
     }
 
     public void searchAmalgamatedProperties() {
-        enterText(AmalgamatedPropertiesTextBox, "1016071673", webDriver);
+        enterText(AmalgamatedPropertiesTextBox, "1031068438", webDriver);
         AmalgamatedPropertiesTextBox.sendKeys(Keys.TAB);
         if(webDriver.findElements(By.xpath("//*[text()='OK']")).size() == 1) {
             switchToNewlyOpenedWindow(webDriver);

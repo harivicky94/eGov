@@ -6,7 +6,7 @@ Feature: Bifurcation of Property
 
   Background:It will run the data entry screen of property tax
 
-    Given commissioner logs in
+    Given PTISCommissioner logs in
     And user will select the required screen as "Data entry screen" with condition as "ptis"
     And he creates a new assessment for a private residential property
     Then dataEntry Details saved successfully
@@ -14,8 +14,14 @@ Feature: Bifurcation of Property
     And he choose to close the dataentry acknowledgement screen
     And current user logs out
 
+    Given PTISJuniorAssistant logs in
+    And user will select the required screen as "collect tax"
+    And he searches for assessment with number
+    And he chooses to pay tax
+    And he pay tax using Cash
+    And current user logs out
 
-  @Sanity @PropertyTax
+  @Sanity
   Scenario Outline: Register user choose to do bifurcation of property
 
     Given creator logs in
@@ -36,32 +42,32 @@ Feature: Bifurcation of Property
     And he enters floor details as <floorDetails>
     And he click on floors Details entered
     And he enters document type details as <documentDetails>
-    And he forwards for approval to billCollector
+    And he forwards for PTIS approver to billCollector
     And he will copy the acknowledgement message with assessment number createProperty-create
     And user will be notified by "Successfully"
 
     And user will select the required screen as "Bifurcation of Assessment"
     And he enters parent bifurcated assessment number
-    And he forwards for approval to billCollector
+    And he forwards for PTIS approver to billCollector
     And he will copy the acknowledgement message with assessment number modifyProperty-forward
     Then user will be notified by "forwarded"
     And current user logs out
 
     When billCollector logs in
     And he chooses to act upon above assessment number
-    And he forwards for approval to revenueInspector
+    And he forwards for PTIS approver to revenueInspector
     And current user closes acknowledgement
     And current user logs out
 
     When revenueInspector logs in
     And he chooses to act upon above assessment number
-    And he forwards for approval to revenueOfficer
+    And he forwards for PTIS approver to revenueOfficer
     And current user closes acknowledgement
     And current user logs out
 
     When revenueOfficer logs in
     And he chooses to act upon above assessment number
-    And he forwards for approval to commissioner
+    And he forwards for PTIS approver to commissioner
     And current user closes acknowledgement
     And current user logs out
 
