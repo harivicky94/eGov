@@ -62,6 +62,10 @@ public interface SlotRepository extends JpaRepository<Slot, Long> {
     @Query("select slot from Slot slot where slot.zone = :zone and slot.appointmentDate = :appointmentDate and slot.type =:type")
     Slot getOpenSlot(@Param("zone") Boundary zone,
             @Param("appointmentDate") Date appointmentDate, @Param("type") String type);
+    
+    @Query("select slot from Slot slot where slot.zone = :zone and slot.appointmentDate = :appointmentDate and slot.type =:type and slot.electionWard = :electionWard")
+    Slot getOpenSlotForOneDayPermit(@Param("zone") Boundary zone, @Param("electionWard") Boundary electionWard,
+            @Param("appointmentDate") Date appointmentDate, @Param("type") String type);
 
     Slot findByZoneAndElectionWardAndAppointmentDate(Boundary zone, Boundary electionWard, Date appointmentDate);
 

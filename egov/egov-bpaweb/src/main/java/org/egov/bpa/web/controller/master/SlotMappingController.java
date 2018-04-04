@@ -113,8 +113,8 @@ public class SlotMappingController extends BpaGenericApplicationController {
 			} else
 				return false;
 		} else {
-			if (!noOfApplicationsService.findByZoneRevenueWardElectionWardAndAppType(slotMapping.getZone(),
-					slotMapping.getRevenueWard(), slotMapping.getElectionWard(), slotMapping.getApplType()).isEmpty()) {
+			if (!noOfApplicationsService.findByZoneElectionWardAndAppType(slotMapping.getZone(),
+					 slotMapping.getElectionWard(), slotMapping.getApplType()).isEmpty()) {
 				model.addAttribute("message",
 						messageSource.getMessage("msg.slotmapping.zone.ward.already.exists", null, null));
 				return true;
@@ -184,6 +184,7 @@ public class SlotMappingController extends BpaGenericApplicationController {
 	}
 
 	private void preapreUpdateModel(SlotMapping slotmapping, Model model) {
+                loadForm(model, slotmapping);
 		model.addAttribute(SLOT_MAPPING, slotmapping);
 	}
 

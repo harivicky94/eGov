@@ -296,6 +296,20 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
     }
 
     @Transactional
+    public void saveAndFlushApplication(final BpaApplication application,String workFlowAction) {
+        persistBpaNocDocuments(application);
+        buildPermitConditions(application);
+        persistPostalAddress(application);
+        buildRegistrarOfficeForVillage(application);
+        buildSchemeLandUsage(application);
+        applicationBpaRepository.saveAndFlush(application);
+        if (workFlowAction != null && workFlowAction.equals(WF_LBE_SUBMIT_BUTTON)
+                && (bpaUtils.logedInuseCitizenOrBusinessUser())) {
+            bpaIndexService.updateIndexes(application);
+        }
+    }
+    
+    @Transactional
     public void saveAndFlushApplication(final BpaApplication application) {
         persistBpaNocDocuments(application);
         buildPermitConditions(application);
@@ -390,6 +404,7 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
                 && !updatedApplication.getCurrentState().getValue().equals(WF_NEW_STATE)) {
             bpaUtils.redirectToBpaWorkFlow(approvalPosition, application, application.getCurrentState().getValue(),
                     application.getApprovalComent(), workFlowAction, amountRule);
+            bpaIndexService.updateIndexes(application);
         }
         return updatedApplication;
     }

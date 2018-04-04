@@ -70,4 +70,10 @@ public class SlotService {
         Slot openSlot = slotRepository.getOpenSlot(zone, date, slotType);
         return openSlot == null ? false : true;
     }
+    
+    public Boolean isSlotOpenForOneDayPermit(Boundary zone, Boundary electionWard, Date date, String slotType) {
+        Slot openSlot = slotRepository.getOpenSlotForOneDayPermit(zone, electionWard, date, slotType);
+        return openSlot == null ? false : true;
+    }
+    
 }

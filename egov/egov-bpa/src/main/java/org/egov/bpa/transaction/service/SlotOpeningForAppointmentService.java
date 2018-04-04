@@ -48,7 +48,6 @@ import org.egov.bpa.master.entity.SlotMapping;
 import org.egov.bpa.master.entity.enums.ApplicationType;
 import org.egov.bpa.master.repository.SlotMappingRepository;
 import org.egov.bpa.master.service.HolidayListService;
-import org.egov.bpa.transaction.service.SlotService;
 import org.egov.bpa.transaction.entity.Slot;
 import org.egov.bpa.transaction.entity.SlotDetail;
 import org.egov.bpa.transaction.repository.SlotRepository;
@@ -191,7 +190,8 @@ public class SlotOpeningForAppointmentService {
                 if (i > 1)
                     calender.add(Calendar.WEEK_OF_YEAR, 1);
                 calender = holidayListService.getNextWeekWorkingDay(calender);
-                if (slotService.isSlotOpen(slotZone.getZone(), calender.getTime(), SLOT_TYPE_ONE_DAY_PERMIT))
+                if (slotService.isSlotOpenForOneDayPermit(slotZone.getZone(), slotZone.getElectionWard(), calender.getTime(),
+                        SLOT_TYPE_ONE_DAY_PERMIT))
                     continue;
                 else {
                     Slot slot = new Slot();

@@ -71,7 +71,7 @@
 							<input type="hidden" name="slotMapping" value="${slotMapping.id}">
 							<input type="hidden" id="message" value="${message}">
 							<form:select path="zone" id="zone" cssClass="form-control"
-								disabled="true" value="${slotMapping.zone}">
+								disabled="true" value="${slotMapping.zone.name}">
 								<form:option value="">
 									<spring:message code="lbl.select" />
 								</form:option>
@@ -90,7 +90,7 @@
 									<spring:message code="lbl.select" />
 								</form:option>
 								<c:forEach items="${applicationTypes}" var="applicationType">
-									<option value="${applicationType}" >${applicationType.applicationTypeVal}</option>
+									<option value="${applicationType}" <c:if test="${applicationType eq slotMapping.applType}"> Selected </c:if> >${applicationType.applicationTypeVal}</option>
 								</c:forEach>
 							</form:select>
 							<form:errors path="applType" cssClass="add-margin error-msg" />
