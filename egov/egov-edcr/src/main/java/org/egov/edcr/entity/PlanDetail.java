@@ -19,6 +19,7 @@ public class PlanDetail {
     private Utility utility = new Utility();
     private PlanInformation planInformation;
     private Plot plot;
+    private List<Block>  blocks=new ArrayList<>();
     private Building building;
     public ReportOutput reportOutput = new ReportOutput();
     private Boolean edcrPassed = false;

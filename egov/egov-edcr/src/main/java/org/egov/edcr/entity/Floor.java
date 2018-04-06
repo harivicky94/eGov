@@ -3,10 +3,13 @@ package org.egov.edcr.entity;
 import java.util.ArrayList;
 import java.util.List;
 
+
 import org.egov.edcr.entity.measurement.Measurement;
 
 public class Floor extends Measurement {
 
+    private List<Occupancy> occupancies=new ArrayList<>();
+    private List<FloorUnit> units=new ArrayList<>();
     private List<Room> habitableRooms = new ArrayList<>();
     private Measurement exterior;
     private List<Measurement> openSpaces = new ArrayList<>();
