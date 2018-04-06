@@ -341,7 +341,7 @@ public class ScheduleAppointmentForDocumentScrutinyService {
                 slotDetail.getUtilizedScheduledSlots() + 1);
         slotApplicationService.save(slotApplication);
         applicationBpaService.saveBpaApplication(bpaApplication);
-        bpaSmsAndEmailService.sendSMSAndEmailForDocumentScrutiny(slotApplication, bpaApplication);
+        bpaSmsAndEmailService.sendSMSAndEmailForDocumentScrutiny(slotApplication);
     }
 
     public void scheduleOneDayPermit() {
@@ -466,8 +466,7 @@ public class ScheduleAppointmentForDocumentScrutinyService {
                         SlotApplication slotApplication = slotApplicationService
                                 .findById(application.getValue().getId());
                         if (slotApplication != null && bpaApplication != null)
-                            bpaSmsAndEmailService.sendSMSAndEmailForDocumentScrutiny(slotApplication,
-                                    bpaApplication);
+                            bpaSmsAndEmailService.sendSMSAndEmailForDocumentScrutiny(slotApplication);
                     }
                     return Boolean.TRUE;
                 });

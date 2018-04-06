@@ -114,7 +114,7 @@ public class RescheduleAppointmentsForDocumentScrutinyService {
         slotApp.setSlotDetail(slotDet);
         applicationBpaRepository.save(application);
         bpaIndexService.updateIndexes(application);
-        bpaSmsAndEmailService.sendSMSAndEmailForDocumentScrutiny(slotApp, application);
+        bpaSmsAndEmailService.sendSMSAndEmailForDocumentScrutiny(slotApp);
         slotApplicationRepository.save(slotApp);
         return slotApp;
 	}
@@ -150,7 +150,7 @@ public class RescheduleAppointmentsForDocumentScrutinyService {
         slotApp.setSlotDetail(slotDet);
         applicationBpaRepository.save(bpaApplication);
         bpaIndexService.updateIndexes(bpaApplication);
-        bpaSmsAndEmailService.sendSMSAndEmailForDocumentScrutiny(slotApp, bpaApplication);
+        bpaSmsAndEmailService.sendSMSAndEmailForDocumentScrutiny(slotApp);
         slotApplicationRepository.save(slotApp);
         return slotApp;
 	}
@@ -191,7 +191,7 @@ public class RescheduleAppointmentsForDocumentScrutinyService {
         bpaApplication.setStatus(bpaStatus);
         applicationBpaRepository.save(bpaApplication);
         bpaIndexService.updateIndexes(bpaApplication);
-        bpaSmsAndEmailService.sendSMSAndEmailForDocumentScrutiny(slotApplication.get(0), bpaApplication);
+        bpaSmsAndEmailService.sendSMSAndEmailForDocumentScrutiny(slotApplication.get(0));
 	}
 
 	public List<SlotDetail> getOneSlotDetailsByAppointmentDateAndZoneId(final Date appointmentDate, final Long zoneId) {

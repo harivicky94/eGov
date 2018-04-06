@@ -39,13 +39,29 @@
  */
 package org.egov.bpa.transaction.service.messaging;
 
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_MODULE_TYPE;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CANCELLED;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_REGISTERED;
+import static org.egov.bpa.utils.BpaConstants.CREATEDLETTERTOPARTY;
+import static org.egov.bpa.utils.BpaConstants.EGMODULE_NAME;
+import static org.egov.bpa.utils.BpaConstants.NO;
+import static org.egov.bpa.utils.BpaConstants.SENDEMAILFORBPA;
+import static org.egov.bpa.utils.BpaConstants.SENDSMSFORBPA;
+import static org.egov.bpa.utils.BpaConstants.SMSEMAILTYPELETTERTOPARTY;
+import static org.egov.bpa.utils.BpaConstants.SMSEMAILTYPENEWBPAREGISTERED;
+import static org.egov.bpa.utils.BpaConstants.YES;
+
+import java.util.List;
+import java.util.Locale;
+
 import org.egov.bpa.master.entity.StakeHolder;
 import org.egov.bpa.transaction.entity.ApplicationStakeHolder;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.BpaAppointmentSchedule;
 import org.egov.bpa.transaction.entity.SlotApplication;
 import org.egov.bpa.transaction.entity.enums.AppointmentSchedulePurpose;
-import org.egov.bpa.transaction.service.BpaThirdPartyService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.utils.BpaUtils;
 import org.egov.infra.admin.master.entity.AppConfigValues;
@@ -59,14 +75,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
-import java.util.List;
-import java.util.Locale;
-
-import static java.lang.String.format;
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.egov.bpa.utils.BpaConstants.*;
-import static org.egov.infra.utils.ApplicationConstant.CITY_LOGIN_URL;
 
 @Service
 public class BPASmsAndEmailService {
@@ -74,25 +82,20 @@ public class BPASmsAndEmailService {
     private static final String SUBJECT_KEY_EMAIL_STAKEHOLDER_NEW = "msg.newstakeholder.email.subject";
     private static final String BODY_KEY_EMAIL_STAKEHOLDER_NEW = "msg.newstakeholder.email.body";
     private static final String MSG_KEY_SMS_BPA_APPLN_NEW = "msg.bpa.newappln.sms";
-    private static final String MSG_KEY_SMS_BPA_APPLN_REG_NEW = "msg.bpa.newappln.reg.sms";
     private static final String MSG_KEY_SMS_BPA_APPLN_NEW_PWD = "msg.bpa.newappln.sms.pwd";
-    private static final String MSG_KEY_SMS_BPA_APPLN_NEW_REG_PWD = "msg.bpa.newappln.sms.reg.pwd";
     private static final String SUBJECT_KEY_EMAIL_BPA_APPLN_NEW = "msg.bpa.newappln.email.subject";
-    private static final String SUBJECT_KEY_EMAIL_BPA_APPLN_REG_NEW = "msg.bpa.newappln.reg.email.subject";
     private static final String BODY_KEY_EMAIL_BPA_APPLN_NEW = "msg.bpa.newappln.email.body";
-    private static final String BODY_KEY_EMAIL_BPA_APPLN_REG_NEW = "msg.bpa.newappln.reg.email.body";
     private static final String BODY_KEY_EMAIL_BPA_APPLN_NEW_PWD = "msg.bpa.newappln.email.body.pwd";
-    private static final String BODY_KEY_EMAIL_BPA_APPLN_NEW_REG_PWD = "msg.bpa.newappln.reg.email.body.pwd";
 
     private static final String MSG_KEY_SMS_BPA_DOC_SCRUTINY = "msg.bpa.doc.scruty.schedule.sms";
     private static final String BODY_KEY_EMAIL_BPA_DOC_SCRUTINY = "msg.bpa.doc.scruty.schedule.email.body";
     private static final String MSG_KEY_SMS_BPA_DOC_SCRUTINY_RESCHE = "msg.bpa.doc.scruty.reschedule.sms";
     private static final String BODY_KEY_EMAIL_BPA_DOC_SCRUTINY_RESCHE = "msg.bpa.doc.scruty.reschedule.email.body";
-	private static final String MSG_KEY_SMS_BPA_DOC_SCRUTINY_PENDING_FOR_RESCHEDULING = "msg.bpa.doc.scruty.reschedule.pending.sms";
-	private static final String BODY_KEY_EMAIL_BPA_DOC_SCRUTINY_PENDING_FOR_RESCHEDULING = "msg.bpa.doc.scruty.reschedule.pending.email.body";
-	private static final String MSG_KEY_SMS_BPA_DOC_SCRUTINY_CANCELLED = "msg.bpa.doc.scruty.cancel.sms";
-	private static final String BODY_KEY_EMAIL_BPA_DOC_SCRUTINY_CANCELLED = "msg.bpa.doc.scruty.cancel.email.body";
-	private static final String SUB_KEY_EMAIL_BPA_DOCUMENT_SCRUTINY = "msg.bpa.doc.scruty.email.sub";
+    private static final String MSG_KEY_SMS_BPA_DOC_SCRUTINY_PENDING_FOR_RESCHEDULING = "msg.bpa.doc.scruty.reschedule.pending.sms";
+    private static final String BODY_KEY_EMAIL_BPA_DOC_SCRUTINY_PENDING_FOR_RESCHEDULING = "msg.bpa.doc.scruty.reschedule.pending.email.body";
+    private static final String MSG_KEY_SMS_BPA_DOC_SCRUTINY_CANCELLED = "msg.bpa.doc.scruty.cancel.sms";
+    private static final String BODY_KEY_EMAIL_BPA_DOC_SCRUTINY_CANCELLED = "msg.bpa.doc.scruty.cancel.email.body";
+    private static final String SUB_KEY_EMAIL_BPA_DOCUMENT_SCRUTINY = "msg.bpa.doc.scruty.email.sub";
     private static final String MSG_KEY_SMS_BPA_FIELD_INS = "msg.bpa.field.ins.schedule.sms";
     private static final String SUBJECT_KEY_EMAIL_BPA_FIELD_INS = "msg.bpa.field.ins.schedule.email.subject";
     private static final String BODY_KEY_EMAIL_BPA_FIELD_INS = "msg.bpa.field.ins.schedule.email.body";
@@ -115,16 +118,10 @@ public class BPASmsAndEmailService {
     @Autowired
     private AppConfigValueService appConfigValuesService;
     @Autowired
-    private BpaThirdPartyService bpaThirdPartyService;
-	@Autowired
     private BpaUtils bpaUtils;
 
     public String getMunicipalityName() {
         return ApplicationThreadLocals.getMunicipalityName();
-    }
-
-    public String getDomainUrl() {
-        return ApplicationThreadLocals.getDomainURL();
     }
 
     public void sendSMSForStakeHolder(final StakeHolder stakeHolder) {
@@ -158,10 +155,7 @@ public class BPASmsAndEmailService {
                     email = applnStakeHolder.getApplication().getOwner().getUser().getEmailId();
                     mobileNo = applnStakeHolder.getApplication().getOwner().getUser().getMobileNumber();
                     loginUserName = applnStakeHolder.getApplication().getOwner().getUser().getUsername();
-                    if (bpaApplication.isMailPwdRequired())
                         password = mobileNo;
-                    else
-                        password = EMPTY;
                     buildSmsAndEmailForBPANewAppln(bpaApplication, applicantName, mobileNo, email, loginUserName, password);
                 }
                 if (applnStakeHolder.getStakeHolder() != null && applnStakeHolder.getStakeHolder().getIsActive()) {
@@ -199,20 +193,7 @@ public class BPASmsAndEmailService {
         String subject = EMPTY;
         String smsCode;
         String mailCode;
-        if ((APPLICATION_STATUS_CREATED).equalsIgnoreCase(bpaApplication.getStatus().getCode())) {
-            if (isNotBlank(password)) {
-                smsCode = MSG_KEY_SMS_BPA_APPLN_NEW_REG_PWD;
-                mailCode = BODY_KEY_EMAIL_BPA_APPLN_NEW_REG_PWD;
-            } else {
-                smsCode = MSG_KEY_SMS_BPA_APPLN_REG_NEW;
-                mailCode = BODY_KEY_EMAIL_BPA_APPLN_REG_NEW;
-            }
-            smsMsg = smsBodyByCodeAndArgsWithType(smsCode, applicantName, bpaApplication,
-                    SMSEMAILTYPENEWBPAREGISTERED, loginUserName, password);
-            body = emailBodyByCodeAndArgsWithType(mailCode, applicantName,
-                    bpaApplication, SMSEMAILTYPENEWBPAREGISTERED, loginUserName, password);
-            subject = emailSubjectforEmailByCodeAndArgs(SUBJECT_KEY_EMAIL_BPA_APPLN_REG_NEW, bpaApplication.getApplicationNumber());
-        }else if ((APPLICATION_STATUS_REGISTERED).equalsIgnoreCase(bpaApplication.getStatus().getCode())) {
+       if ((APPLICATION_STATUS_REGISTERED).equalsIgnoreCase(bpaApplication.getStatus().getCode())) {
             if (isNotBlank(password)) {
                 smsCode = MSG_KEY_SMS_BPA_APPLN_NEW_PWD;
                 mailCode = BODY_KEY_EMAIL_BPA_APPLN_NEW_PWD;
@@ -297,16 +278,6 @@ public class BPASmsAndEmailService {
         return mesg;
     }
 
-    private String emailSubjectforEmailForScheduleAppointmentForScrutiny(final BpaAppointmentSchedule scheduleDetails,
-            final BpaApplication bpaApplication, String msgKey) {
-        final Locale locale = LocaleContextHolder.getLocale();
-        return bpaMessageSource.getMessage(msgKey,
-                new String[] { DateUtils.toDefaultDateFormat(scheduleDetails.getAppointmentDate()),
-                        scheduleDetails.getAppointmentTime(), scheduleDetails.getAppointmentLocation().getDescription(),
-                        bpaApplication.getApplicationNumber() },
-                locale);
-    }
-
     private String emailSubjectforEmailForScheduleAppointmentForInspection(final BpaAppointmentSchedule scheduleDetails,
             final BpaApplication bpaApplication, String msgKey) {
         final Locale locale = LocaleContextHolder.getLocale();
@@ -353,7 +324,7 @@ public class BPASmsAndEmailService {
 				null);
 	}
 
-	private String smsBodyByCodeAndArgsWithType(String code, String applicantName, BpaApplication bpaApplication,
+    private String smsBodyByCodeAndArgsWithType(String code, String applicantName, BpaApplication bpaApplication,
             String type, String loginUserName, String password) {
         String smsMsg = EMPTY;
         if (SMSEMAILTYPENEWBPAREGISTERED.equalsIgnoreCase(type)) {
@@ -372,7 +343,7 @@ public class BPASmsAndEmailService {
                     new String[] { applicantName, bpaApplication.getApplicationNumber(), getMunicipalityName() }, null);
         else if (APPLICATION_STATUS_CANCELLED.equalsIgnoreCase(type)) {
 
-			smsMsg = getCancelApplnMessage(code, applicantName, bpaApplication);
+            smsMsg = getCancelApplnMessage(code, applicantName, bpaApplication);
         }
         return smsMsg;
     }
@@ -397,96 +368,100 @@ public class BPASmsAndEmailService {
         return getAppConfigValueByPassingModuleAndType(EGMODULE_NAME, SENDEMAILFORBPA);
     }
 
-	public void sendSMSAndEmailForDocumentScrutiny(SlotApplication slotApplication, BpaApplication bpaApplication) {
+	public void sendSMSAndEmailForDocumentScrutiny(SlotApplication slotApplication) {
 		if (isSmsEnabled() || isEmailEnabled()) {
-			buildSmsAndEmailForDocumentScrutiny(slotApplication, bpaApplication,
-					bpaApplication.getOwner().getUser().getName(),
-					bpaApplication.getOwner().getUser().getMobileNumber(),
-					bpaApplication.getOwner().getUser().getEmailId());
+			buildSmsAndEmailForDocumentScrutiny(slotApplication,
+			        slotApplication.getApplication().getOwner().getUser().getName(),
+			        slotApplication.getApplication().getOwner().getUser().getMobileNumber(),
+			        slotApplication.getApplication().getOwner().getUser().getEmailId());
 		}
 	}
 
-	private void buildSmsAndEmailForDocumentScrutiny(SlotApplication slotApplication, BpaApplication bpaApplication,
-			String name, String mobileNumber, String emailId) {
-		String smsMsg = EMPTY;
-		String body = EMPTY;
-		String subject = EMPTY;
-		if (bpaApplication.getStatus().getCode().equals(BpaConstants.APPLICATION_STATUS_SCHEDULED)) {
-			smsMsg = buildMessageDetailsForSchAppForDocumentScrutiny(slotApplication, bpaApplication, name,
-					MSG_KEY_SMS_BPA_DOC_SCRUTINY);
-			body = buildMessageDetailsForSchAppForDocumentScrutiny(slotApplication, bpaApplication, name,
-					BODY_KEY_EMAIL_BPA_DOC_SCRUTINY);
-			subject = emailSubjectforEmailForScheduleAppointmentForScrutiny(SUB_KEY_EMAIL_BPA_DOCUMENT_SCRUTINY);
-		} else if (bpaApplication.getStatus().getCode().equals(BpaConstants.APPLICATION_STATUS_RESCHEDULED)) {
-			smsMsg = buildMessageDetailsForSchAppForDocumentScrutiny(slotApplication, bpaApplication, name,
-					MSG_KEY_SMS_BPA_DOC_SCRUTINY_RESCHE);
-			body = buildMessageDetailsForSchAppForDocumentScrutiny(slotApplication, bpaApplication, name,
-					BODY_KEY_EMAIL_BPA_DOC_SCRUTINY_RESCHE);
-			subject = emailSubjectforEmailForScheduleAppointmentForScrutiny(SUB_KEY_EMAIL_BPA_DOCUMENT_SCRUTINY);
-		} else if (bpaApplication.getStatus().getCode()
-				.equals(BpaConstants.APPLICATION_STATUS_PENDING_FOR_RESCHEDULING)) {
-			smsMsg = buildMessageDtlsFrSchAppForDocScrForCancellationAndPendingForRescheduling(slotApplication,
-					bpaApplication, name, MSG_KEY_SMS_BPA_DOC_SCRUTINY_PENDING_FOR_RESCHEDULING);
-			body = buildMessageDtlsFrSchAppForDocScrForCancellationAndPendingForRescheduling(slotApplication,
-					bpaApplication, name, BODY_KEY_EMAIL_BPA_DOC_SCRUTINY_PENDING_FOR_RESCHEDULING);
-			subject = emailSubjectforEmailForScheduleAppointmentForScrutiny(SUB_KEY_EMAIL_BPA_DOCUMENT_SCRUTINY);
-		} else if (bpaApplication.getStatus().getCode().equals(BpaConstants.APPLICATION_STATUS_CANCELLED)) {
-			smsMsg = buildMessageDtlsFrSchAppForDocScrForCancellationAndPendingForRescheduling(slotApplication,
-					bpaApplication, name, MSG_KEY_SMS_BPA_DOC_SCRUTINY_CANCELLED);
-			body = buildMessageDtlsFrSchAppForDocScrForCancellationAndPendingForRescheduling(slotApplication,
-					bpaApplication, name, BODY_KEY_EMAIL_BPA_DOC_SCRUTINY_CANCELLED);
-			subject = emailSubjectforEmailForScheduleAppointmentForScrutiny(SUB_KEY_EMAIL_BPA_DOCUMENT_SCRUTINY);
-		}
-		if (isNotBlank(mobileNumber) && isNotBlank(smsMsg))
-			notificationService.sendSMS(mobileNumber, smsMsg);
-		if (isNotBlank(emailId) && isNotBlank(body))
-			notificationService.sendEmail(emailId, subject, body);
+    private void buildSmsAndEmailForDocumentScrutiny(SlotApplication slotApplication,
+            String name, String mobileNumber, String emailId) {
+        String smsMsg = EMPTY;
+        String body = EMPTY;
+        String subject = EMPTY;
+        if (slotApplication.getApplication().getStatus().getCode().equals(BpaConstants.APPLICATION_STATUS_SCHEDULED)) {
+            smsMsg = buildMessageDetailsForSchAppForDocumentScrutiny(slotApplication, name,
+                    MSG_KEY_SMS_BPA_DOC_SCRUTINY);
+            body = buildMessageDetailsForSchAppForDocumentScrutiny(slotApplication, name,
+                    BODY_KEY_EMAIL_BPA_DOC_SCRUTINY);
+            subject = emailSubjectforEmailForScheduleAppointmentForScrutiny(SUB_KEY_EMAIL_BPA_DOCUMENT_SCRUTINY);
+        } else if (slotApplication.getApplication().getStatus().getCode().equals(BpaConstants.APPLICATION_STATUS_RESCHEDULED)) {
+            smsMsg = buildMessageDetailsForSchAppForDocumentScrutiny(slotApplication, name,
+                    MSG_KEY_SMS_BPA_DOC_SCRUTINY_RESCHE);
+            body = buildMessageDetailsForSchAppForDocumentScrutiny(slotApplication, name,
+                    BODY_KEY_EMAIL_BPA_DOC_SCRUTINY_RESCHE);
+            subject = emailSubjectforEmailForScheduleAppointmentForScrutiny(SUB_KEY_EMAIL_BPA_DOCUMENT_SCRUTINY);
+        } else if (slotApplication.getApplication().getStatus().getCode()
+                .equals(BpaConstants.APPLICATION_STATUS_PENDING_FOR_RESCHEDULING)) {
+            smsMsg = buildMessageDtlsFrPendingForRescheduling(slotApplication,
+               name, MSG_KEY_SMS_BPA_DOC_SCRUTINY_PENDING_FOR_RESCHEDULING);
+            body = buildMessageDtlsFrPendingForRescheduling(slotApplication,
+                     name, BODY_KEY_EMAIL_BPA_DOC_SCRUTINY_PENDING_FOR_RESCHEDULING);
+            subject = emailSubjectforEmailForScheduleAppointmentForScrutiny(SUB_KEY_EMAIL_BPA_DOCUMENT_SCRUTINY);
+        } else if (slotApplication.getApplication().getStatus().getCode().equals(BpaConstants.APPLICATION_STATUS_CANCELLED)) {
+            smsMsg = buildMessageDtlsFrCancellation(slotApplication,
+                     name, MSG_KEY_SMS_BPA_DOC_SCRUTINY_CANCELLED);
+            body = buildMessageDtlsFrCancellation(slotApplication,
+                     name, BODY_KEY_EMAIL_BPA_DOC_SCRUTINY_CANCELLED);
+            subject = emailSubjectforEmailForScheduleAppointmentForScrutiny(SUB_KEY_EMAIL_BPA_DOCUMENT_SCRUTINY);
+        }
+        if (isNotBlank(mobileNumber) && isNotBlank(smsMsg))
+            notificationService.sendSMS(mobileNumber, smsMsg);
+        if (isNotBlank(emailId) && isNotBlank(body))
+            notificationService.sendEmail(emailId, subject, body);
+    }
 
-	}
+    private String buildMessageDtlsFrPendingForRescheduling(SlotApplication slotApplication,
+            String name, String msgKey) {
+        return bpaMessageSource.getMessage(msgKey, new String[] { name, slotApplication.getApplication().getApplicationNumber(),
+              getMunicipalityName() }, null);
+    }
 
-	private String emailSubjectforEmailForScheduleAppointmentForScrutiny(String msgKey) {
-		String mesg = EMPTY;
-		mesg = bpaMessageSource.getMessage(msgKey, new String[] {getMunicipalityName()}, null);
-		return mesg;
-	}
+    private String emailSubjectforEmailForScheduleAppointmentForScrutiny(String msgKey) {
+        return bpaMessageSource.getMessage(msgKey, new String[] { getMunicipalityName() }, null);
+    }
 
-	private String buildMessageDtlsFrSchAppForDocScrForCancellationAndPendingForRescheduling(
-			SlotApplication slotApplication, BpaApplication bpaApplication, String name, String msgKey) {
-		String mesg = EMPTY;
-		mesg = bpaMessageSource.getMessage(msgKey, new String[] { name, bpaApplication.getApplicationNumber(),
-                format(getDomainUrl()+CITY_LOGIN_URL.replace("%s",""))}, null);
-		return mesg;
-	}
+    private String buildMessageDtlsFrCancellation(
+            SlotApplication slotApplication,String name, String msgKey) {
 
-	private String buildMessageDetailsForSchAppForDocumentScrutiny(SlotApplication slotApplication,
-			BpaApplication bpaApplication, String name, String msgKey) {
-		String mesg = EMPTY;
-		if (bpaApplication.getStatus().getCode().equals(BpaConstants.APPLICATION_STATUS_SCHEDULED)) {
-			mesg = bpaMessageSource.getMessage(msgKey,
-					new String[] { name,
-							DateUtils.toDefaultDateFormat(
-									slotApplication.getSlotDetail().getSlot().getAppointmentDate()),
-							slotApplication.getSlotDetail().getAppointmentTime(),
-							slotApplication.getSlotDetail().getSlot().getZone().getName(),
+        return bpaMessageSource.getMessage(msgKey, new String[] { name, slotApplication.getApplication().getApplicationNumber(),
+                ApplicationThreadLocals.getDomainURL(),getMunicipalityName() }, null);
+    }
+
+    private String buildMessageDetailsForSchAppForDocumentScrutiny(SlotApplication slotApplication,
+             String name, String msgKey) {
+        String mesg;
+        if (slotApplication.getApplication().getStatus().getCode().equals(BpaConstants.APPLICATION_STATUS_SCHEDULED)) {
+            mesg = bpaMessageSource.getMessage(msgKey,
+                    new String[] { name,
+                            DateUtils.toDefaultDateFormat(
+                                    slotApplication.getSlotDetail().getSlot().getAppointmentDate()),
+                            slotApplication.getSlotDetail().getAppointmentTime(),
+                            slotApplication.getSlotDetail().getSlot().getZone().getName(),
                             getAppconfigValueByKeyNameForHelpLineNumber(),
                             slotApplication.getApplication().getApplicationNumber(),
-                            format(getDomainUrl()+CITY_LOGIN_URL.replace("%s",""))
+                            ApplicationThreadLocals.getDomainURL(),
+                            getMunicipalityName()
                     },
-					null);
-		} else {
-			mesg = bpaMessageSource.getMessage(msgKey,
-					new String[] { name, bpaApplication.getApplicationNumber(),
-							DateUtils.toDefaultDateFormat(
-									slotApplication.getSlotDetail().getSlot().getAppointmentDate()),
-							slotApplication.getSlotDetail().getAppointmentTime(),
-							slotApplication.getSlotDetail().getSlot().getZone().getName(),
+                    null);
+        } else {
+            mesg = bpaMessageSource.getMessage(msgKey,
+                    new String[] { name, slotApplication.getApplication().getApplicationNumber(),
+                            DateUtils.toDefaultDateFormat(
+                                    slotApplication.getSlotDetail().getSlot().getAppointmentDate()),
+                            slotApplication.getSlotDetail().getAppointmentTime(),
+                            slotApplication.getSlotDetail().getSlot().getZone().getName(),
                             getAppconfigValueByKeyNameForHelpLineNumber(),
-                            format(getDomainUrl()+CITY_LOGIN_URL.replace("%s",""))
+                            ApplicationThreadLocals.getDomainURL(),
+                            getMunicipalityName()
                     },
-					null);
-		}
-		return mesg;
-	}
+                    null);
+        }
+        return mesg;
+    }
 
     public String getAppconfigValueByKeyNameForHelpLineNumber() {
         List<AppConfigValues> appConfigValueList = appConfigValuesService

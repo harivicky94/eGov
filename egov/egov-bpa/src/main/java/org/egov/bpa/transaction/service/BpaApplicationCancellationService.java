@@ -120,8 +120,7 @@ public class BpaApplicationCancellationService {
                                     BpaConstants.WF_CANCELAPPLICATION_BUTTON, null);
                             applicationBpaService.saveBpaApplication(bpaApplication);
                             bpaIndexService.updateIndexes(bpaApplication);
-                            bpaSmsAndEmailService.sendSMSAndEmailForDocumentScrutiny(slotApplicationList.get(0),
-                                    bpaApplication);
+                            bpaSmsAndEmailService.sendSMSAndEmailForDocumentScrutiny(slotApplicationList.get(0));
                         }
                     }
                     return true;
