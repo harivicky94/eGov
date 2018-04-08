@@ -239,14 +239,20 @@ public abstract class BpaGenericApplicationController extends GenericWorkFlowCon
                 bpaApplication.getOwner().getUser().getName(),
                 bpaApplication.getOwner().getUser().getMobileNumber(), bpaApplication.getOwner().getUser().getGender(),
                 UserType.CITIZEN);
-        if (!users.isEmpty()) {
-            bpaApplication.getOwner().setUser(users.get(0));
-            if (!bpaApplication.getOwner().getUser().isActive())
-                bpaApplication.getOwner().getUser().setActive(true);
+        if(StringUtils.isNotBlank(bpaApplication.getOwner().getUser().getAadhaarNumber()) && userService.getUserByAadhaarNumber(bpaApplication.getOwner().getUser().getAadhaarNumber()) != null) {
+            setUserWhenExists(bpaApplication, userService.getUserByAadhaarNumber(bpaApplication.getOwner().getUser().getAadhaarNumber()));
+        } else if (!users.isEmpty()) {
+            setUserWhenExists(bpaApplication, users.get(0));
         } else {
             bpaApplication.getOwner().setUser(applicationBpaService.createApplicantAsUser(bpaApplication));
             bpaApplication.setMailPwdRequired(true);
         }
+    }
+
+    private void setUserWhenExists(BpaApplication bpaApplication, User user) {
+        bpaApplication.getOwner().setUser(user);
+        if (!bpaApplication.getOwner().getUser().isActive())
+			bpaApplication.getOwner().getUser().setActive(true);
     }
 
     protected String getDesinationNameByPosition(Position pos) {

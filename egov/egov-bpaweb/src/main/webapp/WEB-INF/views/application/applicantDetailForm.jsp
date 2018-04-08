@@ -119,5 +119,15 @@
 				</form:select>
 				<form:errors path="owner.user.gender" cssClass="error-msg" />
 			</div>
+
+			<label class="col-sm-2 control-label text-right"><spring:message
+					code="lbl.aadhar" /> </label>
+			<div class="col-sm-3 add-margin">
+				<form:input class="form-control patternvalidation"
+							data-pattern="number" maxlength="12" id="aadhaarNumber"
+							path="owner.user.aadhaarNumber" />
+				<form:errors path="owner.user.aadhaarNumber"
+							 cssClass="add-margin error-msg" />
+			</div>
 		</div>
 </div>
