@@ -102,7 +102,7 @@ $(document)
                     success: function (response) {
                         if(response) {
                             if(response.status == 'Accepted') {
-                                bootbox.alert("One of E-DCR plan is approved for the application with application number "+$('#applicationNumber').val()+", so using this application number you can't resubmit plan. Please use new application to submit new plan.");
+                                bootbox.alert("One of E-DCR plan is approved for the application with application number "+$('#applicationNumber').val()+", so using this application number you are not allowed resubmit plan. Please use new application to submit new plan.");
                                 $('#applicationNumber').val('');
                             } else {
                                 $('#edcrApplnId').val(response.id);
@@ -115,12 +115,12 @@ $(document)
                             }
                         } else {
                             $('.resetValues').val('');
-                            bootbox.alert("Please check application number is correct, with entered value no data available.");
+                            bootbox.alert("Please check application number is correct, with entered application number data not found.");
                         }
                     },
                     error: function (response) {
                         $('.resetValues').val('');
-                        bootbox.alert("Please check application number is correct, with entered value no data available.");
+                        bootbox.alert("Please check application number is correct, with entered application number data not found.");
                     }
                 });
             });

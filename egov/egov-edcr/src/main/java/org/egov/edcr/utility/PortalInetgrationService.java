@@ -30,7 +30,7 @@ public class PortalInetgrationService {
         String url = "/edcr/edcrapplication/view/" + application.getApplicationNumber();
         if (application != null)
             portalInboxService.updateInboxMessage(application.getApplicationNumber(), module.getId(),
-                    application.getStatus(), application.getStatus().equals("Accepted") ? true : false, new Date(), null,
+                    application.getStatus(), true, new Date(), null,
                     additionalPortalInboxUser, application.getEdcrApplicationDetails().get(0).getDcrNumber(), url);
     }
 
@@ -41,7 +41,7 @@ public class PortalInetgrationService {
         String url = "/edcr/edcrapplication/view/" + application.getApplicationNumber();
         final PortalInboxBuilder portalInboxBuilder = new PortalInboxBuilder(module,
                 application.getPlanInformation().getServiceType(), application.getApplicationNumber(),
-                application.getEdcrApplicationDetails().get(0).getDcrNumber(), application.getId(), "Sucess", "Sucess", url, application.getStatus().equals("Accepted") ? true : false,
+                application.getEdcrApplicationDetails().get(0).getDcrNumber(), application.getId(), "Sucess", "Sucess", url, true,
                 application.getStatus(), new Date(), null, portalInboxUser);
 
         final PortalInbox portalInbox = portalInboxBuilder.build();
