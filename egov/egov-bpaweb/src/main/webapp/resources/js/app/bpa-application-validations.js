@@ -291,22 +291,6 @@ $(document).ready(function() {
 		return templateStr.replace(/{className}/g, isFirstPosition?'col-sm-3':'col-sm-2');
 	}
 	
-	// making atleast one amenity should be mandatory if service type is selected as amenities 
-	$('#buttonSubmit, #bpaCreate, #bpaSave, #buttonSave').click(function(){
-		if($('#isOneDayPermitApplication').is(':checked')){
-			if($('#totalPlintArea').val()>300){
-				bootbox.alert("For one day permit application maximum permissible area allowed is less than or equal to 300 Sq.Mtrs. Beyond of maximum permissible area not allowed to submit application.");
-				return false;
-			}
-		}
-		var seviceTypeName = $( "#serviceType option:selected" ).text();
-
-		if('Amenities' == seviceTypeName && !$( "#applicationAmenity option:selected" ).val()){
-				bootbox.alert("Please select atleast one amenity.");
-				return false; 
-		}
-	});
-	
 	$('#existingAppPlan').hide();
 	$('#constDiv').hide();
 	$('#isexistingApprovedPlan').on('change', function(){ 
