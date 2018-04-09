@@ -87,6 +87,22 @@ jQuery(document).ready(function($) {
 					}
 				}
 			}
+            var seviceTypeName = $( "#serviceType option:selected" ).text();
+            if('Amenities' == seviceTypeName && !$( "#applicationAmenity option:selected" ).val()){
+                bootbox.alert("Please select atleast one amenity.");
+                return false;
+            }
+            if($('#isOneDayPermitApplication').is(':checked')){
+                var inputArea;
+                if('Amenities' == seviceTypeName){
+                    inputArea = $('#roofConversion').val();
+                } else
+                    inputArea = $('#totalPlintArea').val();
+                if(inputArea > 300){
+                    bootbox.alert("For one day permit application maximum permissible area allowed is less than or equal to 300 Sq.Mtrs. Beyond of maximum permissible area not allowed to submit application.");
+                    return false;
+                }
+            }
             $('.loader-class').modal('show', {
                 backdrop : 'static'
             });
