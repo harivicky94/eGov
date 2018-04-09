@@ -82,56 +82,100 @@ $(document).ready(function($) {
 	    });
 	  }
 	});
-	
-	
- $('#buttonSave').click(function() {
-	 var button=$('#buttonSave').val();
-	 return validateEditForm(button, validator);
-				});
- $('#buttonSubmit').click(function() {
-	var button = $('#buttonSubmit').val();
-	return validateEditForm(button, validator);
- });
- 
- $('#buttonCancel').click(function(e) {
-	 
-	 if ($('#editCitizenApplicationform').valid()) {
-			bootbox
-			.confirm({
-				message : 'Do you really want to Cancel the application ?',
-				buttons : {
-					'cancel' : {
-						label : 'No',
-						className : 'btn-danger'
-					},
-					'confirm' : {
-						label : 'Yes',
-						className : 'btn-primary'
-					}
-				},
-				callback : function(result) {
-					if (result) {
-						var button=$('#buttonCancel').val();
-						document.getElementById("workFlowAction").value=button;
-						$('.loader-class').modal('show', {
-							backdrop : 'static'
-						});
-						document.forms[0].submit();
-					} else {
-						e.stopPropagation();
-						e.preventDefault();
-					}
-				}
-			});
-			} else {
-			e.stopPropagation();
-			e.preventDefault();
-			}
-	 
-	 
-	});
- 
+
+
+    $('#buttonSave').click(function(e) {
+        bootbox
+            .confirm({
+                message : 'Do you want to save the application ?',
+                buttons : {
+                    'cancel' : {
+                        label : 'No',
+                        className : 'btn-danger'
+                    },
+                    'confirm' : {
+                        label : 'Yes',
+                        className : 'btn-primary'
+                    }
+                },
+                callback : function(result) {
+                    if (result) {
+                        var button = $('#buttonSave').val();
+                        validateEditForm(button, validator);
+                    } else {
+                        e.stopPropagation();
+                        e.preventDefault();
+                    }
+                }
+            });
+        return false;
+    });
+
+    $('#buttonSubmit').click(function(e) {
+            bootbox
+                .confirm({
+                    message : 'Do you really want to submit the application, once application is submitted you are not allowed to modify application details and please make sure entered details are valid before submit.',
+                    buttons : {
+                        'cancel' : {
+                            label : 'No',
+                            className : 'btn-danger'
+                        },
+                        'confirm' : {
+                            label : 'Yes',
+                            className : 'btn-primary'
+                        }
+                    },
+                    callback : function(result) {
+                        if (result) {
+                            var button = $('#buttonSubmit').val();
+                            validateEditForm(button, validator);
+                        } else {
+                            e.stopPropagation();
+                            e.preventDefault();
+                        }
+                    }
+                });
+        return false;
+    });
+
+    $('#buttonCancel').click(function(e) {
+
+        if ($('#editCitizenApplicationform').valid()) {
+            bootbox
+                .confirm({
+                    message : 'Do you really want to Cancel the application ?',
+                    buttons : {
+                        'cancel' : {
+                            label : 'No',
+                            className : 'btn-danger'
+                        },
+                        'confirm' : {
+                            label : 'Yes',
+                            className : 'btn-primary'
+                        }
+                    },
+                    callback : function(result) {
+                        if (result) {
+                            var button=$('#buttonCancel').val();
+                            document.getElementById("workFlowAction").value=button;
+                            $('.loader-class').modal('show', {
+                                backdrop : 'static'
+                            });
+                            document.forms[0].submit();
+                        } else {
+                            e.stopPropagation();
+                            e.preventDefault();
+                        }
+                    }
+                });
+        } else {
+            e.stopPropagation();
+            e.preventDefault();
+        }
+    });
+
 });
+
 
 function validateEditForm(button, validator) {
 
@@ -161,7 +205,11 @@ function validateEditForm(button, validator) {
 		$("#appDet").prop("disabled",false);
 		$("#serviceType").prop("disabled",false);
 		$("#admissionfeeAmount").prop("disabled",false);
-		return true;
+         $('.loader-class').modal('show', {
+             backdrop : 'static'
+         });
+		document.forms[0].submit();
+
 	 } else {
 		 $errorInput=undefined;
 			

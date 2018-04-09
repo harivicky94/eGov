@@ -64,18 +64,21 @@ $(document)
                             }
                         });
                     });
-
                     $("#toDate").datepicker().datepicker("setDate", new Date());
 					$('#serviceTypeEnum').on('change', function() {
 						if($("#serviceTypeEnum option:selected" ).val() == 'ALL_OTHER_SERVICES') {
-							$("#toDate").datepicker().datepicker("setDate", new Date());
 							$("#toDate").prop('disabled', true);
 						} else {
 							$("#toDate").prop('disabled', false);
 						}
-					}); 
-					$('#resetbutton').on('click', function() {
-							$("#toDate").prop('disabled', false);
+                        $("#toDate").datepicker().datepicker("setDate", new Date());
+					});
+
+					$('#resetbutton').on('click', function(event) {
+                        $(".reset-value").each(function(){
+                            $(this)[0].selectedIndex = 0;
+                        });
+                        $('#serviceTypeEnum').trigger('change');
 					});
 
                     $('#serviceTypeEnum').trigger('change');

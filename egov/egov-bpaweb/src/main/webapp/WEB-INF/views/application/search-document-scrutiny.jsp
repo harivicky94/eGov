@@ -58,7 +58,7 @@
 							code="lbl.service.type" /></label>
 					<div class="col-sm-3 add-margin">
 						<form:select path="serviceTypeEnum" 
-							id="serviceTypeEnum" cssClass="form-control">
+							id="serviceTypeEnum" cssClass="form-control reset-value">
 							<c:forEach items="${serviceTypeEnumList}" var="serviceType">
 								<option value="${serviceType}" >${serviceType.applicationTypeVal}</option>
 							</c:forEach>
@@ -80,7 +80,7 @@
 					</label>
 					<div class="col-sm-3 add-margin">
 						<form:select path="zoneId" data-first-option="false" id="zone"
-							cssClass="form-control">
+							cssClass="form-control reset-value">
 							<form:options items="${employeeMappedZone}" itemValue="id" itemLabel="name" />
 						</form:select>
 						<form:errors path="zoneId" cssClass="add-margin error-msg" />
@@ -89,7 +89,7 @@
 							code="lbl.rev.ward" /> </label>
 					<div class="col-sm-3 add-margin">
 						<form:select path="wardId" data-first-option="false" id="wardId"
-							cssClass="form-control">
+							cssClass="form-control reset-value">
 							<form:option value="">
 								<spring:message code="lbl.select" />
 							</form:option>
@@ -104,7 +104,7 @@
 							code="lbl.election.ward" /></label>
 					<div class="col-sm-3 add-margin">
 						<form:select path="electionWardId" data-first-option="false"
-							id="electionBoundary" cssClass="form-control">
+							id="electionBoundary" cssClass="form-control reset-value">
 							<form:option value="">
 								<spring:message code="lbl.select" />
 							</form:option>
@@ -122,9 +122,9 @@
 		<button type='button' class='btn btn-primary' id="btnSearch">
 			<spring:message code='lbl.search' />
 		</button>
-		<%--<button type="reset" id="resetbutton" class="btn btn-danger">
+		<button type="button" id="resetbutton" class="btn btn-danger">
 			<spring:message code="lbl.reset" />
-		</button>--%>
+		</button>
 		<a href='javascript:void(0)' class='btn btn-default'
 			onclick='self.close()'><spring:message code='lbl.close' /></a>
 	</div> 

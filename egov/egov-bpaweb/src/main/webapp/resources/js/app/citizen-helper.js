@@ -67,7 +67,9 @@ jQuery(document).ready(function($) {
 		bootbox.alert($('#invalidStakeholder').val());
 	
 	function validateForm1(button, validator) {
-
+        $('#newCitizenApplicationform').find(':input',':select',':textarea').each(function(){
+            $(this).removeAttr("disabled");
+        });
 		if ($('#newCitizenApplicationform').valid() && validateUploadFilesMandatory()) {
 			$('#serviceType').prop("disabled", false);
 			document.getElementById("workFlowAction").value = button;
@@ -85,7 +87,10 @@ jQuery(document).ready(function($) {
 					}
 				}
 			}
-			return true;
+            $('.loader-class').modal('show', {
+                backdrop : 'static'
+            });
+            document.forms[0].submit();
 		} else {
 			
 			$errorInput=undefined;
@@ -111,15 +116,61 @@ jQuery(document).ready(function($) {
 			return false;
 		}
 	}
-	
-	$('#bpaSave').click(function() {
-		var button = $('#bpaSave').val();
-		return validateForm1(button, validator);
-	});
-	$('#bpaCreate').click(function() {
-		var button = $('#bpaCreate').val();
-		return validateForm1(button, validator);
-	});
+
+    $('#bpaSave').click(function(e) {
+        bootbox
+            .confirm({
+                message : 'Do you really want to save the application, once the application is saved you are not allowed to modify applicant details. Please make sure entered applicant details are valid before save.',
+                buttons : {
+                    'cancel' : {
+                        label : 'No',
+                        className : 'btn-danger'
+                    },
+                    'confirm' : {
+                        label : 'Yes',
+                        className : 'btn-primary'
+                    }
+                },
+                callback : function(result) {
+                    if (result) {
+                        var button = $('#bpaSave').val();
+                        validateForm1(button, validator);
+                    } else {
+                        e.stopPropagation();
+                        e.preventDefault();
+                    }
+                }
+            });
+        return false;
+    });
+
+
+    $('#bpaCreate').click(function(e) {
+            bootbox
+                .confirm({
+                    message : 'Do you really want to submit the application, once application is submitted you are not allowed to modify application details and please make sure entered details are valid before submit.',
+                    buttons : {
+                        'cancel' : {
+                            label : 'No',
+                            className : 'btn-danger'
+                        },
+                        'confirm' : {
+                            label : 'Yes',
+                            className : 'btn-primary'
+                        }
+                    },
+                    callback : function(result) {
+                        if (result) {
+                            var button = $('#bpaCreate').val();
+                            validateForm1(button, validator)
+                        } else {
+                            e.stopPropagation();
+                            e.preventDefault();
+                        }
+                    }
+                });
+        return false;
+    });
 	
 	$('.applicantname').hide();
 	$('#name').change(function() {
