@@ -434,5 +434,11 @@
 		<put-attribute name="body"
 					   value="/WEB-INF/views/reports/view-slot-application-details.jsp" />
 	</definition>
-
+	<definition name="search-scheduler-failure-records-report"
+		extends="base_layout">
+		<put-attribute name="page-title" value="title.scheduler.failure.records"
+			cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/reports/search-scheduler-failure-records-report.jsp" />
+	</definition>
 </tiles-definitions>

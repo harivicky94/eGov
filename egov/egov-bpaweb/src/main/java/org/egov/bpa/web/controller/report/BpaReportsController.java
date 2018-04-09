@@ -45,6 +45,13 @@ import org.egov.bpa.transaction.service.report.*;
 import org.egov.bpa.utils.*;
 import org.egov.bpa.web.controller.adaptor.*;
 import org.egov.bpa.web.controller.transaction.*;
+import org.egov.eis.entity.Employee;
+import org.egov.eis.entity.Jurisdiction;
+import org.egov.eis.service.EmployeeService;
+import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.entity.BoundaryType;
+import org.egov.infra.admin.master.service.BoundaryTypeService;
+import org.egov.infra.admin.master.service.CrossHierarchyService;
 import org.egov.infra.utils.*;
 import org.springframework.beans.factory.annotation.*;
 import org.springframework.http.*;
@@ -54,23 +61,35 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
+import static org.egov.bpa.utils.BpaConstants.BOUNDARY_TYPE_CITY;
+import static org.egov.bpa.utils.BpaConstants.REVENUE_HIERARCHY_TYPE;
+import static org.egov.bpa.utils.BpaConstants.WARD;
 import static org.egov.infra.utils.JsonUtils.*;
 
 @Controller
 @RequestMapping(value = "/reports")
 public class BpaReportsController extends BpaGenericApplicationController {
-
+    private static final String SEARCH_BPA_APPLICATION_FORM = "searchBpaApplicationForm";
+    private static final String FAILURE_IN_SCHEDULER_REPORT = "search-scheduler-failure-records-report";
     private static final String DATA = "{ \"data\":";
 
     @Autowired
     private BpaReportsService bpaReportsService;
     @Autowired
     private SearchBpaApplicationService searchBpaApplicationService;
+    @Autowired
+    private FailureInSchedulerService failureInSchedulerService;
+    @Autowired
+    private BoundaryTypeService boundaryTypeService;
+    @Autowired
+    private CrossHierarchyService crossHierarchyService;
+    @Autowired
+    private EmployeeService employeeService;
 
     @RequestMapping(value = "/servicewise-statusreport", method = RequestMethod.GET)
     public String searchStatusCountByServicetypeForm(final Model model) {
         prepareFormData(model);
-        model.addAttribute("searchBpaApplicationForm", new SearchBpaApplicationForm());
+        model.addAttribute(SEARCH_BPA_APPLICATION_FORM, new SearchBpaApplicationForm());
         return "search-servicewise-status-report";
     }
 
@@ -129,7 +148,7 @@ public class BpaReportsController extends BpaGenericApplicationController {
     @RequestMapping(value = "/zonewisedetails", method = RequestMethod.GET)
     public String searchZoneWiseServicesForm(final Model model) {
         prepareFormData(model);
-        model.addAttribute("searchBpaApplicationForm", new SearchBpaApplicationForm());
+        model.addAttribute(SEARCH_BPA_APPLICATION_FORM, new SearchBpaApplicationForm());
         return "search-zonewise-report";
     }
 
@@ -195,6 +214,43 @@ public class BpaReportsController extends BpaGenericApplicationController {
                 .append(toJSON(searchResultList, SearchBpaApplicationForm.class, SearchBpaApplicationFormAdaptor.class))
                 .append("}")
                 .toString();
+    }
+    
+    @RequestMapping(value = "/failureinscheduler", method = RequestMethod.GET)
+    public String getFailureInSchedulerRecordsForm(final Model model) {
+        List<Boundary> employeeMappedZone = getEmployeeMappedZone();
+        model.addAttribute("employeeMappedZone", employeeMappedZone);
+        model.addAttribute(SEARCH_BPA_APPLICATION_FORM, new SearchBpaApplicationForm());
+        return FAILURE_IN_SCHEDULER_REPORT;
+    }
+
+    @RequestMapping(value = "/failureinscheduler", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    @ResponseBody
+    public String showApplicationFailureInSchedulerRecords(final Model model,
+            final SearchBpaApplicationForm searchBpaApplicationForm) {
+        List<SearchBpaApplicationForm> searchResultList = failureInSchedulerService
+                .getAllFailedApplications(searchBpaApplicationForm);
+        return new StringBuilder(DATA)
+                .append(toJSON(searchResultList, SearchBpaApplicationForm.class, SearchBpaApplicationFormAdaptor.class))
+                .append("}")
+                .toString();
+    }
+
+    private List<Boundary> getEmployeeMappedZone() {
+        List<Boundary> employeeMappedZone = new ArrayList<>();
+        List<Boundary> mappedElectionWard = new ArrayList<>();
+        BoundaryType revenueType = boundaryTypeService.getBoundaryTypeByNameAndHierarchyTypeName(WARD, REVENUE_HIERARCHY_TYPE);
+        final Employee employee = employeeService.getEmployeeById(securityUtils.getCurrentUser().getId());
+        for (Jurisdiction jurisdiction : employee.getJurisdictions()) {
+            if (!BOUNDARY_TYPE_CITY.equals(jurisdiction.getBoundaryType().getName())) {
+                mappedElectionWard.add(jurisdiction.getBoundary());
+                break;
+            }
+        }
+        List<Boundary> revenueWards = crossHierarchyService
+                .getParentBoundaryByChildBoundaryAndParentBoundaryType(mappedElectionWard.get(0).getId(), revenueType.getId());
+        employeeMappedZone.add(revenueWards.get(0).getParent());
+        return employeeMappedZone;
     }
 
 }
