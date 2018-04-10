@@ -33,16 +33,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 import org.egov.bpa.transaction.entity.StakeHolderDocument;
@@ -68,7 +59,6 @@ public class StakeHolder extends User {
     @Length(min = 1, max = 128)
     @Column(name = "code", unique = true)
     private String code;
-
     @NotNull
     @Length(min = 1, max = 64)
     private String licenceNumber;
@@ -95,15 +85,17 @@ public class StakeHolder extends User {
     private Boolean isActive;
     @Length(max = 11)
     private String tinNumber;
+    @Length(max = 50)
+    private String contactPerson;
+    @Length(max = 50)
+    private String designation;
     @OneToMany(mappedBy = "stakeHolder", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private final List<StakeHolderDocument> stakeHolderDocument = new ArrayList<>(0);
     private transient CorrespondenceAddress correspondenceAddress = new CorrespondenceAddress();
     private transient PermanentAddress permanentAddress = new PermanentAddress();
     private transient List<CheckListDetail> checkListDocuments = new ArrayList<>(0);
-    @Length(max = 50)
-    private String contactPerson;
-    @Length(max = 50)
-    private String designation;
+    private transient String activationCode;
+
     public StakeHolder() {
         setType(UserType.BUSINESS);
     }
@@ -275,5 +267,13 @@ public class StakeHolder extends User {
 
     public void setCheckListDocuments(final List<CheckListDetail> checkListDocuments) {
         this.checkListDocuments = checkListDocuments;
+    }
+
+    public String getActivationCode() {
+        return activationCode;
+    }
+
+    public void setActivationCode(String activationCode) {
+        this.activationCode = activationCode;
     }
 }

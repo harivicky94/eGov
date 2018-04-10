@@ -40,13 +40,6 @@
 
 package org.egov.bpa.web.controller.master;
 
-import static org.egov.infra.utils.JsonUtils.toJSON;
-
-import java.util.Arrays;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.egov.bpa.master.entity.StakeHolder;
 import org.egov.bpa.master.service.StakeHolderService;
 import org.egov.bpa.transaction.entity.StakeHolderDocument;
@@ -62,6 +55,8 @@ import org.egov.infra.persistence.entity.PermanentAddress;
 import org.egov.infra.persistence.entity.enums.AddressType;
 import org.egov.infra.persistence.entity.enums.Gender;
 import org.egov.infra.persistence.entity.enums.UserType;
+import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.portal.service.CitizenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -69,12 +64,14 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Arrays;
+import java.util.List;
+
+import static org.egov.infra.utils.JsonUtils.toJSON;
 
 @Controller
 @RequestMapping(value = "/stakeholder")
@@ -91,16 +88,22 @@ public class StakeHolderController {
     private StakeHolderService stakeHolderService;
     @Autowired
     private MessageSource messageSource;
-   
+
     @Autowired
     private BPADocumentService bpaDocumentService;
-    
+
+    @Autowired
+    private CitizenService citizenService;
+
     @Autowired
     private BPASmsAndEmailService bpaSmsAndEmailService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private SecurityUtils securityUtils;
 
     private static final String STAKEHOLDER_NEW = "stakeholder-new";
+    private static final String STAKEHOLDER_NEW_BY_CITIZEN = "stakeholder-new-bycitizen";
 
     @ModelAttribute("stakeHolderDocumentList")
     public List<StakeHolderDocument> getStakeHolderDocuments() {
@@ -115,6 +118,7 @@ public class StakeHolderController {
     }
 
     private void prepareModel(final Model model) {
+        model.addAttribute("isBusinessUser",  securityUtils.getCurrentUser().getType().equals(UserType.SYSTEM) ? Boolean.TRUE : Boolean.FALSE);
         model.addAttribute("genderList", Arrays.asList(Gender.values()));
         model.addAttribute("stakeHolderTypes", Arrays.asList(StakeHolderType.values()));
         model.addAttribute("isOnbehalfOfOrganization", false);
@@ -122,20 +126,11 @@ public class StakeHolderController {
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public String createStakeholder(@ModelAttribute(STAKE_HOLDER) final StakeHolder stakeHolder,
-            final Model model,
-            final HttpServletRequest request,
-            final BindingResult errors, final RedirectAttributes redirectAttributes) {
+                                    final Model model,
+                                    final HttpServletRequest request,
+                                    final BindingResult errors, final RedirectAttributes redirectAttributes) {
         validateStakeholder(stakeHolder, errors);
-        List<User> users = userService.getUserByNameAndMobileNumberAndGenderForUserType(stakeHolder.getName(),
-                stakeHolder.getMobileNumber(), stakeHolder.getGender(), UserType.BUSINESS);
-        if (!users.isEmpty()) {
-            String message = messageSource.getMessage("msg.name.mobile.exists",
-                    new String[] { users.get(0).getName(), users.get(0).getMobileNumber(), users.get(0).getGender().name() },
-                    LocaleContextHolder.getLocale());
-            model.addAttribute("invalidBuildingLicensee", message);
-            prepareModel(model);
-            return STAKEHOLDER_NEW;
-        }
+        if (checkIsUserExists(stakeHolder, model)) return STAKEHOLDER_NEW;
         if (errors.hasErrors()) {
             prepareModel(model);
             return STAKEHOLDER_NEW;
@@ -146,6 +141,52 @@ public class StakeHolderController {
         redirectAttributes.addFlashAttribute("message", messageSource.getMessage("msg.create.stakeholder.success", null, null));
         return "redirect:/stakeholder/result/" + stakeHolderRes.getId();
     }
+
+    @RequestMapping(value = "/createbycitizen", method = RequestMethod.GET)
+    public String showOnlineStakeHolder(final Model model) {
+        model.addAttribute(STAKE_HOLDER, new StakeHolder());
+        prepareModel(model);
+        return STAKEHOLDER_NEW_BY_CITIZEN;
+    }
+
+    @RequestMapping(value = "/createbycitizen", method = RequestMethod.POST)
+    public String createOnlineStakeholder(@ModelAttribute(STAKE_HOLDER) final StakeHolder stakeHolder,
+                                          final Model model,
+                                          final HttpServletRequest request,
+                                          final BindingResult errors, final RedirectAttributes redirectAttributes) {
+        validateStakeholder(stakeHolder, errors);
+        if (checkIsUserExists(stakeHolder, model)) return STAKEHOLDER_NEW;
+
+        if (securityUtils.getCurrentUser().getType().equals(UserType.SYSTEM)) {
+            if (!citizenService.isValidOTP(stakeHolder.getActivationCode(), stakeHolder.getMobileNumber()))
+                errors.rejectValue("activationCode", "error.otp.verification.failed");
+        }
+        if (errors.hasErrors()) {
+            prepareModel(model);
+            return STAKEHOLDER_NEW_BY_CITIZEN;
+        }
+
+        StakeHolder stakeHolderRes = stakeHolderService.save(stakeHolder);
+        bpaSmsAndEmailService.sendSMSForStakeHolder(stakeHolderRes);
+        bpaSmsAndEmailService.sendEmailForStakeHolder(stakeHolderRes);
+        redirectAttributes.addFlashAttribute("message", messageSource.getMessage("msg.create.stakeholder.success", null, null));
+        return "redirect:/stakeholder/result/" + stakeHolderRes.getId();
+    }
+
+    private boolean checkIsUserExists(@ModelAttribute(STAKE_HOLDER) StakeHolder stakeHolder, Model model) {
+        List<User> users = userService.getUserByNameAndMobileNumberAndGenderForUserType(stakeHolder.getName(),
+                stakeHolder.getMobileNumber(), stakeHolder.getGender(), UserType.BUSINESS);
+        if (!users.isEmpty()) {
+            String message = messageSource.getMessage("msg.name.mobile.exists",
+                    new String[] { users.get(0).getName(), users.get(0).getMobileNumber(), users.get(0).getGender().name() },
+                    LocaleContextHolder.getLocale());
+            model.addAttribute("invalidBuildingLicensee", message);
+            prepareModel(model);
+            return true;
+        }
+        return false;
+    }
+
 
     private void validateStakeholder(final StakeHolder stakeHolder, final BindingResult errors) {
         if(stakeHolderService.checkIsStakeholderCodeAlreadyExists(stakeHolder)) {
@@ -175,10 +216,10 @@ public class StakeHolderController {
 
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public String updateStakeholder(@ModelAttribute(STAKE_HOLDER) final StakeHolder stakeHolder,
-            final Model model,
-            final HttpServletRequest request,
-            final BindingResult errors, final RedirectAttributes redirectAttributes) {
-        
+                                    final Model model,
+                                    final HttpServletRequest request,
+                                    final BindingResult errors, final RedirectAttributes redirectAttributes) {
+
         if (errors.hasErrors()) {
             preapreUpdateModel(stakeHolder, model);
             return STAKEHOLDER_UPDATE;

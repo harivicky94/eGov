@@ -116,6 +116,15 @@
 					</noscript>
 					</div>
 					<div class="col-md-6 side-space">
+						<div class="col-md-12 community-card">
+							<a href="/bpa/stakeholder/createbycitizen" target="_blank">
+								<div class="rounded-circle"><i class="fa fa-user a"></i></div>&nbsp;
+								<div class="label-font">
+									<spring:message code="lbl.bldng.create.ac"/><br>
+									<span class="label-subfont"><spring:message code="lbl.create.ac.desc"/></span>
+								</div>
+							</a>
+						</div>
 						<%--<div class="col-md-12 community-card">
 							<a href="/portal/citizen/signup" target="_blank">
 								<div class="rounded-circle"><i class="fa fa-user a"></i></div>&nbsp;
@@ -129,7 +138,7 @@
 							<a href="/pgr/complaint/citizen/anonymous/show-reg-form" target="_blank">
 								<div class="rounded-circle"><i class="fa fa-pencil b"></i></div>&nbsp;
 								<div class="label-font">
-									<spring:message code="lbl.reg.comp"/><br> 
+									<spring:message code="lbl.reg.comp"/><br>
 									<span class="label-subfont"><spring:message code="lbl.reg.comp.desc"/></span>
 								</div>
 							</a>

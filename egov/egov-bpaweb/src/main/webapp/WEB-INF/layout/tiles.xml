@@ -134,6 +134,13 @@
 			value="/WEB-INF/views/stakeholder/stakeholder-new.jsp" />
 	</definition>
 
+	<definition name="stakeholder-new-bycitizen" extends="base_layout">
+		<put-attribute name="page-title" value="title.stakehol.create"
+					   cascade="true" />
+		<put-attribute name="body"
+					   value="/WEB-INF/views/stakeholder/stakeholder-new-bycitizen.jsp" />
+	</definition>
+
 	<definition name="stakeholder-view" extends="base_layout">
 		<put-attribute name="page-title" value="title.stakehol.view"
 			cascade="true" />
