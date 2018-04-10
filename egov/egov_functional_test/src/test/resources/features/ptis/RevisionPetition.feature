@@ -25,25 +25,25 @@ Feature: As a regsitered user of the system
 
     And PTISJuniorAssistant logs in
     And he chooses to act upon above assessment number
-    And he forwards for approval to PTISBillCollector
+    And he forwards for PTIS approver to PTISBillCollector
     And current user closes acknowledgement
     And current user logs out
 
     When PTISBillCollector logs in
     And he chooses to act upon above assessment number
-    And he forwards for approval to PTISRevenueInspector
+    And he forwards for PTIS approver to PTISRevenueInspector
     And current user closes acknowledgement
     And current user logs out
 
     When PTISRevenueInspector logs in
     And he chooses to act upon above assessment number
-    And he forwards for approval to PTISRevenueOfficer
+    And he forwards for PTIS approver to PTISRevenueOfficer
     And current user closes acknowledgement
     And current user logs out
 
     When PTISRevenueOfficer logs in
     And he chooses to act upon above assessment number
-    And he forwards for approval to PTISCommissioner
+    And he forwards for PTIS approver to PTISCommissioner
     And current user closes acknowledgement
     And current user logs out
 
@@ -72,7 +72,7 @@ Feature: As a regsitered user of the system
     And he chooses to act upon above assessment number
     And he choose revision petition header
     And he enters approver remark
-    And he forwards for approval to PTISCommissioner
+    And he forwards for PTIS approver to PTISCommissioner
     And current user closes acknowledgement
     And current user logs out
 
@@ -87,7 +87,7 @@ Feature: As a regsitered user of the system
     And he chooses to act upon above assessment number
     And he choose revision petition header
     And he enters approver remark
-    And he forwards for approval to PTISRevenueInspector
+    And he forwards for PTIS approver to PTISRevenueInspector
     And current user closes acknowledgement
     And current user logs out
 
@@ -96,7 +96,7 @@ Feature: As a regsitered user of the system
     And he enters reason for modification
     And he choose revision petition header
     And he enters inspection details
-    And he forwards for approval to PTISRevenueOfficer
+    And he forwards for PTIS approver to PTISRevenueOfficer
     And current user closes acknowledgement
     And current user logs out
 
@@ -104,7 +104,7 @@ Feature: As a regsitered user of the system
     And he chooses to act upon above assessment number
     And he choose revision petition header
     And he enters approver remark
-    And he forwards for approval to PTISCommissioner
+    And he forwards for PTIS approver to PTISCommissioner
     And current user closes acknowledgement
     And current user logs out
 
@@ -151,7 +151,7 @@ Feature: As a regsitered user of the system
 
     And he choose revision petition header
     And he enters revision petition details<revisionPetitionDetails>
-    And he forwards for approval to commissioner
+    And he forwarding for approval to commissioner
     And current user closes acknowledgement
     And current user logs out
 
@@ -166,7 +166,7 @@ Feature: As a regsitered user of the system
     And he chooses to act upon above assessment number
     And he choose revision petition header
     And he enters approver remark
-    And he forwards for approval to revenueInspector
+    And he forwarding for approval to revenueInspector
     And current user closes acknowledgement
     And current user logs out
 
@@ -176,7 +176,7 @@ Feature: As a regsitered user of the system
     And he choose revision petition header
     And he enters inspection details
 
-    And he forwards for approval to revenueOfficer
+    And he forwarding for approval to revenueOfficer
     And current user closes acknowledgement
     And current user logs out
 
@@ -184,7 +184,7 @@ Feature: As a regsitered user of the system
     And he chooses to act upon above assessment number
     And he choose revision petition header
     And he enters approver remark
-    And he forwards for approval to commissioner
+    And he forwarding for approval to commissioner
     And current user closes acknowledgement
     And current user logs out
 
