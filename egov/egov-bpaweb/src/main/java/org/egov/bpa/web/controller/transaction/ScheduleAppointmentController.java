@@ -213,17 +213,18 @@ public class ScheduleAppointmentController extends BpaGenericApplicationControll
                     "Reschedule appointment by employee already completed, employee can reschedule appointment only once.");
             return COMMON_ERROR;
         }
-        if (validateOnDocumentScrutiny(model, application))
+        if (validateOnDocumentScrutiny(model, application)){
             return COMMON_ERROR;
+        }
         List<SlotDetail> slotDetails = rescheduleAppnmtsForDocScrutinyService
                 .searchAvailableSlotsForReschedule(application.getId());
         Set<Date> appointmentDates = new LinkedHashSet<>();
-        Optional<SlotApplication> activeSlotApplication = application.getSlotApplications().stream()
+        Optional<SlotApplication> actvSltApp = application.getSlotApplications().stream()
                 .reduce((slotApp1, slotApp2) -> slotApp2);
         for (SlotDetail slotDetail : slotDetails) {
-            if (activeSlotApplication.isPresent()
+            if (actvSltApp.isPresent()
                     && slotDetail.getSlot().getAppointmentDate()
-                            .after(activeSlotApplication.get().getSlotDetail().getSlot().getAppointmentDate()))
+                            .after(actvSltApp.get().getSlotDetail().getSlot().getAppointmentDate()))
                 appointmentDates.add(slotDetail.getSlot().getAppointmentDate());
         }
         if (slotDetails.isEmpty() || appointmentDates.isEmpty()) {

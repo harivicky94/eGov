@@ -224,8 +224,8 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
     }
 
     private void buildRejectionReasons(Model model, BpaApplication application) {
-        if ((application.getIsOneDayPermitApplication()
-                && APPLICATION_STATUS_FIELD_INS.equalsIgnoreCase(application.getStatus().getCode()))
+        if (application.getIsOneDayPermitApplication()
+                && APPLICATION_STATUS_FIELD_INS.equalsIgnoreCase(application.getStatus().getCode())
                 || APPLICATION_STATUS_NOCUPDATED.equals(application.getStatus().getCode())
                 || APPLICATION_STATUS_REJECTED.equalsIgnoreCase(application.getStatus().getCode())
                 || APPLICATION_STATUS_SCHEDULED.equalsIgnoreCase(application.getStatus().getCode())
@@ -259,7 +259,7 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
                 purposeInsList.add(schedule.getPurpose().name());
             }
         }
-        Assignment approverAssignment = bpaWorkFlowService
+        Assignment appvrAssignment = bpaWorkFlowService
                 .getApproverAssignment(application.getCurrentState().getOwnerPosition());
         // To show reschedule scrutiny button to employee
         if ((APPLICATION_STATUS_SCHEDULED.equals(application.getStatus().getCode()) ||
@@ -281,7 +281,7 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
             scheduleType = AppointmentSchedulePurpose.INSPECTION;
         } else if ((FWD_TO_OVRSR_FOR_FIELD_INS.equalsIgnoreCase(application.getState().getNextAction())
                 && APPLICATION_STATUS_DOC_VERIFIED.equalsIgnoreCase(application.getStatus().getCode()) ||
-                (DESIGNATION_OVERSEER.equals(approverAssignment.getDesignation().getName()) &&
+                (DESIGNATION_OVERSEER.equals(appvrAssignment.getDesignation().getName()) &&
                         APPLICATION_STATUS_TS_INS.equalsIgnoreCase(application.getStatus().getCode())))
                 && !application.getInspections().isEmpty()) {
             mode = "modifyInspection";
@@ -305,8 +305,9 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
     public String documentScrutinyForm(final Model model, @PathVariable final String applicationNumber,
             final HttpServletRequest request) {
         final BpaApplication application = getBpaApplication(applicationNumber);
-        if (validateOnDocumentScrutiny(model, application) || checkIsRescheduledOnScrutiny(model, application))
+        if (validateOnDocumentScrutiny(model, application) || checkIsRescheduledOnScrutiny(model, application)){
             return COMMON_ERROR;
+        }
         buildRejectionReasons(model, application);
         loadViewdata(model, application);
         model.addAttribute("loginUser", securityUtils.getCurrentUser());
@@ -316,17 +317,18 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
     }
 
     private Boolean checkIsRescheduledOnScrutiny(final Model model, final BpaApplication application) {
-        Optional<SlotApplication> activeSlotApplication = application.getSlotApplications().stream()
+        Optional<SlotApplication> actvSltApp = application.getSlotApplications().stream()
                 .reduce((slotApp1, slotApp2) -> slotApp2);
-        if (activeSlotApplication.isPresent()
-                && activeSlotApplication.get().getSlotDetail().getSlot().getAppointmentDate().after(new Date())) {
+        if (actvSltApp.isPresent()
+                && actvSltApp.get().getSlotDetail().getSlot().getAppointmentDate().after(new Date())) {
             model.addAttribute(MESSAGE, messageSource.getMessage("msg.validate.doc.scrutiny", new String[] {
                     application.getApplicationNumber(), DateUtils.getDefaultFormattedDate(
-                            activeSlotApplication.get().getSlotDetail().getSlot().getAppointmentDate()) },
+                            actvSltApp.get().getSlotDetail().getSlot().getAppointmentDate()) },
                     LocaleContextHolder.getLocale()));
             return true;
-        } else
+        } else {
             return false;
+        }
     }
 
     @RequestMapping(value = "/documentscrutiny/{applicationNumber}", method = RequestMethod.POST)
@@ -378,8 +380,8 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
     }
 
     private String getMessageOnRejectionInitiation(String approvalComent, BpaApplication bpaAppln, User userObj,
-            String msgInitiateRejection, Position ownerPosition) {
-        return messageSource.getMessage(msgInitiateRejection, new String[] {
+            String msgInitiateRjctn, Position ownerPosition) {
+        return messageSource.getMessage(msgInitiateRjctn, new String[] {
                 userObj != null ? userObj.getUsername().concat("~")
                         .concat(getDesinationNameByPosition(ownerPosition))
                         : "",
@@ -413,11 +415,11 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
 
             // Setting AmountRule to decide no. of level approval cycle
             if (APPLICATION_STATUS_NOCUPDATED.equals(application.getStatus().getCode())
-                    || (!APPLICATION_STATUS_DIGI_SIGNED.equals(application.getStatus().getCode())
+                    || !APPLICATION_STATUS_DIGI_SIGNED.equals(application.getStatus().getCode())
                             && !APPLICATION_STATUS_APPROVED.equals(application.getStatus().getCode())
                             && !lettertoParties.isEmpty()
                             && APPLICATION_STATUS_NOCUPDATED
-                                    .equals(lettertoParties.get(0).getCurrentApplnStatus().getCode()))) {
+                                    .equals(lettertoParties.get(0).getCurrentApplnStatus().getCode())) {
                 workflowContainer.setAmountRule(bpaWorkFlowService.getAmountRuleByServiceType(application));
                 workflowContainer.setPendingActions(application.getState().getNextAction());
             } else if (APPLICATION_STATUS_APPROVED.equals(application.getStatus().getCode())
@@ -431,10 +433,12 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
             } else if (APPLICATION_STATUS_TS_INS.equalsIgnoreCase(application.getStatus().getCode())) {
                 Assignment approverAssignment = bpaWorkFlowService
                         .getApproverAssignment(application.getCurrentState().getOwnerPosition());
-                if (DESIGNATION_AE.equals(approverAssignment.getDesignation().getName()))
+                if (DESIGNATION_AE.equals(approverAssignment.getDesignation().getName())){
                     workflowContainer.setPendingActions(FWD_TO_AE_AFTER_TS_INSP);
-                else if (DESIGNATION_OVERSEER.equals(approverAssignment.getDesignation().getName()))
+                }
+                else if (DESIGNATION_OVERSEER.equals(approverAssignment.getDesignation().getName())){
                     workflowContainer.setPendingActions(FWD_TO_OVERSEER_AFTER_TS_INSPN);
+                }
             }
             // workflowContainer.setAdditionalRule(CREATE_ADDITIONAL_RULE_CREATE);
         }
@@ -505,12 +509,13 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
             approvalPosition = Long.valueOf(request.getParameter(APPRIVALPOSITION));
         } // For one day permit, on reject from AE it's forwarded to SUP (workflow user)
         else if (WF_REJECT_BUTTON.equalsIgnoreCase(workFlowAction)) {
-            if (!bpaApplication.getIsOneDayPermitApplication()) {
+            if (bpaApplication.getIsOneDayPermitApplication() && null != request.getParameter(APPRIVALPOSITION)
+                    && !"".equals(request.getParameter(APPRIVALPOSITION))) {
+                approvalPosition = Long.valueOf(request.getParameter(APPRIVALPOSITION));
+            } else if (!bpaApplication.getIsOneDayPermitApplication()) {
                 pos = bpaWorkFlowService.getApproverPositionOfElectionWardByCurrentState(bpaApplication, WF_REJECT_STATE);
                 approvalPosition = pos.getId();
-            } else if (bpaApplication.getIsOneDayPermitApplication() && null != request.getParameter(APPRIVALPOSITION)
-                    && !"".equals(request.getParameter(APPRIVALPOSITION)))
-                approvalPosition = Long.valueOf(request.getParameter(APPRIVALPOSITION));
+            }
         }
         buildReceiptDetails(bpaApplication);
         if (!bpaApplication.getApplicationDocument().isEmpty())
