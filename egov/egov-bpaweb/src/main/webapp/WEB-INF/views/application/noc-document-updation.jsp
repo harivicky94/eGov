@@ -205,7 +205,7 @@
 			</div>
 			<div class="modal-body">
 				<textarea class="form-control textarea-content-of-modal"
-					id="textarea-updatedcontent" rows="10"></textarea>
+					id="textarea-updatedcontent" maxlength="1000" rows="10"></textarea>
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-primary"
