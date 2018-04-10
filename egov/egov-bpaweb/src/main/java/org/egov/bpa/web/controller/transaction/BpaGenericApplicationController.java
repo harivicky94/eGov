@@ -192,7 +192,6 @@ public abstract class BpaGenericApplicationController extends GenericWorkFlowCon
         prepareModel.addAttribute("approverDepartmentList", addAllDepartments());
         prepareModel.addAttribute("validActionList", bpaWorkFlowService.getValidActions(model, container));
         prepareModel.addAttribute("nextAction", bpaWorkFlowService.getNextAction(model, container));
-
     }
 
     protected void prepareCommonModelAttribute(final Model model, final BpaApplication bpaApplication) {
@@ -274,15 +273,6 @@ public abstract class BpaGenericApplicationController extends GenericWorkFlowCon
     }
 
     protected boolean validateOnDocumentScrutiny(Model model, BpaApplication application) {
-        // TODO:Need to check
-        /*Optional<SlotApplication> activeSlotApplication = application.getSlotApplications().stream().reduce((slotApp1, slotApp2) -> slotApp2);
-        if (activeSlotApplication.isPresent() && activeSlotApplication.get().getSlotDetail().getSlot().getAppointmentDate().after(new Date())) {
-            model.addAttribute(MESSAGE, messageSource.getMessage("msg.validate.doc.scrutiny", new String[] {
-                            application.getApplicationNumber(), DateUtils.getDefaultFormattedDate(activeSlotApplication.get().getSlotDetail().getSlot().getAppointmentDate()) },
-                    LocaleContextHolder.getLocale()));
-            return true;
-        } else*/
-
         if (APPLICATION_STATUS_DOC_VERIFIED.equals(application.getStatus().getCode())) {
             model.addAttribute(MESSAGE, "Document verification of application is already completed.");
             return true;
