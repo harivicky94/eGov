@@ -27,7 +27,7 @@ public class MinDistance {
 
         DXFLWPolyline plotBoundary = pl.getPlot().getPolyLine();
         // Util.print(plotBoundary,"Plot Boundary");
-        DXFLWPolyline buildFoorPrint = pl.getBuilding().getPolyLine();
+        DXFLWPolyline buildFoorPrint = pl.getPlot().getBuildingFootPrint().getPolyLine();
         // Util.print(buildFoorPrint,"buildFoorPrint");
 
         DXFLWPolyline yard = null;

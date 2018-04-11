@@ -41,6 +41,22 @@ public class PlanDetail {
 
  
 
+    public List<Block> getBlocks() {
+        return blocks;
+    }
+    public Block getBlockByName(String blockName)
+    {
+        for(Block block: getBlocks())
+        {
+            if(block.getName().equalsIgnoreCase(blockName))
+                return block;
+        }
+       return null;     
+    }
+    public void setBlocks(List<Block> blocks) {
+        this.blocks = blocks;
+    }
+
     public HashMap<String, String> getNoObjectionCertificates() {
         return noObjectionCertificates;
     }

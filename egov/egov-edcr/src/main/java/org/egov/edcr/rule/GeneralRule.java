@@ -8,11 +8,14 @@ import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.egov.edcr.constants.DxfFileConstants;
+import org.egov.edcr.entity.Block;
 import org.egov.edcr.entity.Building;
+import org.egov.edcr.entity.Floor;
 import org.egov.edcr.entity.PlanDetail;
 import org.egov.edcr.entity.PlanInformation;
 import org.egov.edcr.entity.Plot;
 import org.egov.edcr.entity.Result;
+import org.egov.edcr.entity.Room;
 import org.egov.edcr.entity.RuleOutput;
 import org.egov.edcr.entity.SubRuleOutput;
 import org.egov.edcr.entity.measurement.Measurement;
@@ -27,6 +30,7 @@ import org.kabeja.dxf.DXFDimension;
 import org.kabeja.dxf.DXFDocument;
 import org.kabeja.dxf.DXFEntity;
 import org.kabeja.dxf.DXFLWPolyline;
+import org.kabeja.dxf.DXFLayer;
 import org.kabeja.dxf.DXFMText;
 import org.kabeja.dxf.helpers.Point;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -108,14 +112,77 @@ public class GeneralRule implements RuleService {
     @Override
     public PlanDetail extract(PlanDetail pl, DXFDocument doc) {
           pl.setPlanInformation(extractPlanInfo(pl,doc));
+          //TODO: TEMPORARY ADDED FOR TESTING.
+          Building building = new Building();
+          pl.setBuilding(building);
+          
+          
           extractPlotDetails(pl, doc);
           extractBuildingDetails(pl, doc);
-          extractTotalFloorArea(doc, pl);
+          extractFloorDetails(pl,doc);
           return pl;
           
     
     }
     
+    private void extractFloorDetails(PlanDetail pl, DXFDocument doc) {
+
+        DXFLayer floorLayer = new DXFLayer();
+        DXFLayer blockLayer = new DXFLayer();
+
+        int blockNumber = 1;
+        while (blockLayer != null) {
+            int floorNo = -1;
+            // Block already extracted, use the same to get floor details.
+            Block block = pl.getBlockByName(DxfFileConstants.BLOCK_NAME_PREFIX + blockNumber);
+
+            if (block != null) {
+                Building building = block.getBuilding();
+
+                while (floorLayer != null) {
+                    floorNo++;
+                    String floorName = DxfFileConstants.BLOCK_NAME_PREFIX + blockNumber + "_" + DxfFileConstants.FLOOR_NAME_PREFIX
+                            + floorNo;
+                    floorLayer = doc.getDXFLayer(floorName);
+                    blockLayer = floorLayer;
+                    if (!floorLayer.getName().equalsIgnoreCase(floorName)) {
+                        blockNumber++;
+                        break;
+                    }
+                    Floor floor = new Floor();
+                    floor.setName(floorName);
+                    floor.setNumber(String.valueOf(floorNo));
+                    building.getFloors().add(floor);
+                }
+
+                int negetivFloorNo = 0;
+                while (block != null && floorLayer != null) {
+                    negetivFloorNo--;
+                    String floorName = DxfFileConstants.BLOCK_NAME_PREFIX + blockNumber + "_" + DxfFileConstants.FLOOR_NAME_PREFIX
+                            + negetivFloorNo;
+                    floorLayer = doc.getDXFLayer(floorName);
+                    if (!floorLayer.getName().equalsIgnoreCase("FLOOR_" + negetivFloorNo)) {
+                        negetivFloorNo--;
+                        break;
+                    }
+                    Floor floor = new Floor();
+                    floor.setName(floorName);
+                    floor.setNumber(String.valueOf(negetivFloorNo));
+                    building.getFloors().add(floor);
+
+                }
+
+                if (building.getFloors() != null && building.getFloors().size() > 0) {
+                    building.setMaxFloor(BigDecimal.valueOf(building.getFloors().size()));
+                    building.setFloorsAboveGround(BigDecimal.valueOf(building.getFloors().size()));
+                    building.setTotalFloors(BigDecimal.valueOf(building.getFloors().size()));
+                }
+            } else
+                break;
+        }
+
+    }
+
     
     private void extractPlotDetails(PlanDetail pl, DXFDocument doc) {
         List<DXFLWPolyline> polyLinesByLayer;
@@ -134,28 +201,45 @@ public class GeneralRule implements RuleService {
     
     
     private void extractBuildingDetails(PlanDetail pl, DXFDocument doc) {
+        
         List<DXFLWPolyline> polyLinesByLayer;
-        Building building = new Building();
-        polyLinesByLayer = Util.getPolyLinesByLayer(doc, DxfFileConstants.BUILDING_FOOT_PRINT);
+        
+        DXFLayer blockLayer = new DXFLayer();
 
-        if (polyLinesByLayer.size() > 0) {
-            building.setPolyLine(polyLinesByLayer.get(0));
+        int blockNumber = 0;
+        while (blockLayer != null) {
+            blockNumber++;
+            String blockName = DxfFileConstants.BLOCK_NAME_PREFIX + blockNumber +"_" + DxfFileConstants.BUILDING_FOOT_PRINT;
+            blockLayer = doc.getDXFLayer(blockName);
+            if (!blockLayer.getName().equalsIgnoreCase(blockName)) {
+                break;
+            }
+            polyLinesByLayer = Util.getPolyLinesByLayer(doc, blockName);
+
+            Block block = new Block();
+                block.setName(DxfFileConstants.BLOCK_NAME_PREFIX+blockNumber);
+                block.setNumber(String.valueOf(blockNumber));
+
+            Building building = new Building();
+                building.setPolyLine(polyLinesByLayer.get(0));
+                
+                
+            polyLinesByLayer = Util.getPolyLinesByLayer(doc,DxfFileConstants.BLOCK_NAME_PREFIX + blockNumber +"_" + DxfFileConstants.SHADE_OVERHANG);
+            if (polyLinesByLayer.size() > 0) {
+                Measurement shade = new Measurement();
+                shade.setPolyLine(polyLinesByLayer.get(0));
+                building.setShade(shade);
+            }
+            extractOpenStairs(doc, building);
             building.setPresentInDxf(true);
-        } else
-            pl.addError(DxfFileConstants.BUILDING_FOOT_PRINT, edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
-                    new String[] { DxfFileConstants.BUILDING_FOOT_PRINT }, null));
+            block.setBuilding(building);
+            pl.getBlocks().add(block);
+         }
+         
+        if (pl.getBlocks().size()<=0 ) {
+                      pl.addError(DxfFileConstants.BUILDING_FOOT_PRINT, edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
+                    new String[] { DxfFileConstants.BUILDING_FOOT_PRINT }, null)); }
 
-        polyLinesByLayer = Util.getPolyLinesByLayer(doc, DxfFileConstants.SHADE_OVERHANG);
-
-        Measurement shade = new Measurement();
-        if (polyLinesByLayer.size() > 0) {
-            shade.setPolyLine(polyLinesByLayer.get(0));
-        }
-        building.setShade(shade);
-
-        extractOpenStairs(doc, building);
-
-        pl.setBuilding(building);
 
     }
     
@@ -299,71 +383,4 @@ public class GeneralRule implements RuleService {
             return pi;
         }
         
-        /**
-         * @param doc
-         * @param pl
-         * @return 1) Floor area = (sum of areas of all polygon in Building_exterior_wall layer) - (sum of all polygons in FAR_deduct
-         * layer) Color is not available here when color availble change to getPolyLinesByLayerAndColor Api if required
-         */
-        private PlanDetail extractTotalFloorArea(DXFDocument doc, PlanDetail pl) {
-
-            BigDecimal floorArea = BigDecimal.ZERO;
-            List<DXFLWPolyline> bldgext = Util.getPolyLinesByLayer(doc, DxfFileConstants.BLDG_EXTERIOR_WALL);
-            if (!bldgext.isEmpty())
-                for (DXFLWPolyline pline : bldgext)
-                    floorArea = floorArea.add(Util.getPolyLineArea(pline));
-
-            pl.getBuilding().setTotalBuitUpArea(floorArea);
-
-            List<DXFLWPolyline> bldDeduct = Util.getPolyLinesByLayer(doc, DxfFileConstants.FAR_DEDUCT);
-            if (!bldDeduct.isEmpty())
-                for (DXFLWPolyline pline : bldDeduct)
-                    floorArea = floorArea.subtract(Util.getPolyLineArea(pline));
-
-            if(LOG.isDebugEnabled()) LOG.debug("floorArea:" + floorArea);
-            pl.getBuilding().setTotalFloorArea(floorArea);
-
-            if (pl.getPlot().getArea() != null) {
-                BigDecimal far = floorArea.divide(pl.getPlot().getArea(), DcrConstants.DECIMALDIGITS_MEASUREMENTS,
-                        DcrConstants.ROUNDMODE_MEASUREMENTS);
-                pl.getBuilding().setFar(far);
-            }
-
-            if (pl.getBuilding().getPolyLine() != null) {
-
-                BigDecimal cvDeduct = BigDecimal.ZERO;
-                BigDecimal buildingFootPrintArea = Util.getPolyLineArea(pl.getBuilding().getPolyLine());
-                List<DXFLWPolyline> cvDeductPlines = Util.getPolyLinesByLayer(doc, DxfFileConstants.COVERGAE_DEDUCT);
-                if (!cvDeductPlines.isEmpty()) {
-                    for (DXFLWPolyline pline : cvDeductPlines)
-                        cvDeduct.add(Util.getPolyLineArea(pline));
-                }
-                BigDecimal coverage = BigDecimal.valueOf(100);
-
-                if (buildingFootPrintArea != null && pl.getPlanInformation().getPlotArea() != null
-                        && pl.getPlanInformation().getPlotArea().intValue() > 0) {
-                    coverage = buildingFootPrintArea.subtract(cvDeduct).multiply(BigDecimal.valueOf(100)).divide(
-                            pl.getPlanInformation().getPlotArea(),
-                            DcrConstants.DECIMALDIGITS_MEASUREMENTS, DcrConstants.ROUNDMODE_MEASUREMENTS);
-                    pl.getBuilding().setCoverage(coverage);
-                    if(LOG.isDebugEnabled()) LOG.debug("coverage:" + coverage);
-                } else {
-                    pl.addError(DxfFileConstants.COVERGAE_DEDUCT,
-                            "Cannot calculate coverage as " + DxfFileConstants.BUILDING_FOOT_PRINT
-                                    + " or " + DxfFileConstants.PLOT_AREA + " is not defined");
-
-                }
-
-            }
-
-            return pl;
-
-        }
-
-
-
-
-    
-
-    
 }

@@ -10,6 +10,8 @@ public class RuleRepository {
     public static List<Class> rules =new ArrayList<>();
     static {
       rules.add(GeneralRule.class);
+      rules.add(FloorAreaRatioService.class);
+      rules.add(InteriorOpenSpaceService.class);
       rules.add(SetBackService.class);
       rules.add(MeanOfAccess.class);
       rules.add(OverheadLineService.class);

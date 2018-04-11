@@ -1,6 +1,8 @@
 package org.egov.edcr.entity;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -59,7 +61,11 @@ public class PlanInformation extends AbstractAuditable {
 
     @Transient
     private Boolean openingOnRear=false;
+    
+    @Transient
+    private List<Occupancy> occupancies=new ArrayList<>();
 
+    
     @Override
     public Long getId() {
         return id;

@@ -13,11 +13,14 @@ import java.util.Set;
 import org.apache.log4j.Logger;
 import org.egov.edcr.constants.DxfFileConstants;
 import org.egov.edcr.entity.Basement;
+import org.egov.edcr.entity.Block;
 import org.egov.edcr.entity.Building;
 import org.egov.edcr.entity.EdcrApplication;
 import org.egov.edcr.entity.ElectricLine;
 import org.egov.edcr.entity.Floor;
 import org.egov.edcr.entity.FloorUnit;
+import org.egov.edcr.entity.Occupancy;
+import org.egov.edcr.entity.OccupancyType;
 import org.egov.edcr.entity.PlanDetail;
 import org.egov.edcr.entity.PlanInformation;
 import org.egov.edcr.entity.Plot;
@@ -72,11 +75,15 @@ public class DXFExtractService {
             DXFDocument doc = parser.getDocument();
 
             pl.setPlanInformation(extractPlanInfo(doc, pl));
+            
+            //TODO: move the occupancy to down side.
             pl.getPlanInformation().setOccupancy(dcrApplication.getPlanInformation().getOccupancy());
             pl.getPlanInformation().setOwnerName(dcrApplication.getPlanInformation().getOwnerName());
 
             extractPlotDetails(pl, doc);
+         
             extractBuildingDetails(pl, doc);
+            extractFloorDetails(doc, pl);
             extractTotalFloorArea(doc, pl);
             extractBasementDetails(pl, doc);
             pl.getPlot().setFrontYard(getYard(pl, doc, DxfFileConstants.FRONT_YARD));
@@ -111,7 +118,7 @@ public class DXFExtractService {
             pl = extractUtilities(doc, pl);
             pl = extractOverheadElectricLines(doc, pl);
             pl = extractHeights(doc, pl);
-            extractFloorDetails(doc, pl);
+        
             extractParkingDetails(doc, pl);
 
         } catch (ParseException e) {
@@ -126,7 +133,6 @@ public class DXFExtractService {
 
         List<DXFLWPolyline> residentialUnit = new LinkedList<DXFLWPolyline>();
         List<DXFLWPolyline> residentialUnitDeduction = new ArrayList<DXFLWPolyline>();
-        List<DXFLWPolyline> removeDeduction = new ArrayList<DXFLWPolyline>();
         boolean layerPresent = true;
 
         layerPresent = doc.containsDXFLayer(DxfFileConstants.RESI_UNIT);
@@ -148,8 +154,6 @@ public class DXFExtractService {
                 }
         }
 
-       
-
         int i = 0;
         for (DXFLWPolyline resUnit : residentialUnit) {
             FloorUnit floorUnit = new FloorUnit();
@@ -164,7 +168,6 @@ public class DXFExtractService {
                 points.add(p);
             }
 
-            // System.out.println("resunit points----"+pointsOfPlot);
             BigDecimal deduction = BigDecimal.ZERO;
             for (DXFLWPolyline residentialDeduct : residentialUnitDeduction) {
                 boolean contains = false;
@@ -182,7 +185,7 @@ public class DXFExtractService {
 
                 }
                 if (contains) {
-                    System.out.println("current deduct " + deduction + "  :add deduct for rest unit " + i + " area added "
+                    LOG.debug("current deduct " + deduction + "  :add deduct for rest unit " + i + " area added "
                             + Util.getPolyLineArea(residentialDeduct));
                     deduction = deduction.add(Util.getPolyLineArea(residentialDeduct));
                 }
@@ -216,111 +219,155 @@ public class DXFExtractService {
 
     private void extractFloorDetails(DXFDocument doc, PlanDetail pl) {
 
-        DXFLayer layer = new DXFLayer();
-        int floorNo = -1;
-        while (layer != null) {
-            floorNo++;
-            String floorName = DxfFileConstants.FLOOR_NAME_PREFIX + floorNo;
-            layer = doc.getDXFLayer(floorName);
-            if (!layer.getName().equalsIgnoreCase(floorName))
-                break;
+        DXFLayer floorLayer = new DXFLayer();
+        DXFLayer blockLayer = new DXFLayer();
+    
+        int blockNumber = 1;
+        while (blockLayer != null) {
+            int floorNo = -1;
+            //Block already extracted, use the same to get floor details.
+            Block block = pl.getBlockByName(DxfFileConstants.BLOCK_NAME_PREFIX + blockNumber);
+        if(block!=null ){
+            Building building = block.getBuilding();
 
-            Floor floor = new Floor();
-            floor.setName(floorName);
-            List dxfPolyLineEntities = layer.getDXFEntities(DXFConstants.ENTITY_TYPE_LWPOLYLINE);
-            if (dxfPolyLineEntities != null)
-                for (Object dxfEntity : dxfPolyLineEntities) {
-                    DXFLWPolyline dxflwPolyline = (DXFLWPolyline) dxfEntity;
-                    floor.setPolyLine(dxflwPolyline);
-                    if (dxflwPolyline.getColor() == DxfFileConstants.HABITABLE_ROOM_COLOR) {
-                        Room habitable = new Room();
-                        habitable.setPolyLine(dxflwPolyline);
-                        floor.getHabitableRooms().add(habitable);
-                    }
-                    if (dxflwPolyline.getColor() == DxfFileConstants.FLOOR_EXTERIOR_WALL_COLOR) {
-                        Measurement extWall = new Measurement();
-                        extWall.setPolyLine(dxflwPolyline);
-                        floor.setExterior(extWall);
-                    }
-                    if (dxflwPolyline.getColor() == DxfFileConstants.FLOOR_OPENSPACE_COLOR) {
-                        Measurement openSpace = new Measurement();
-                        openSpace.setPolyLine(dxflwPolyline);
-                        floor.getOpenSpaces().add(openSpace);
-                    }
+            while (floorLayer != null) {
+                floorNo++;
+                String floorName = DxfFileConstants.BLOCK_NAME_PREFIX + blockNumber +"_"+ DxfFileConstants.FLOOR_NAME_PREFIX
+                        + floorNo;
+                floorLayer = doc.getDXFLayer(floorName);
+                blockLayer = floorLayer;
+                if (!floorLayer.getName().equalsIgnoreCase(floorName)) {
+                    blockNumber++;
+                    break;
                 }
-            if(!floor.getHabitableRooms().isEmpty() ||  !floor.getOpenSpaces().isEmpty() || floor.getExterior()!=null)
-                pl.getBuilding().getFloors().add(floor);
+                Floor floor = new Floor();
+                floor.setName(floorName);
+                floor.setNumber(String.valueOf(floorNo));
 
-        }
-        pl.getBuilding().setMaxFloor( BigDecimal.valueOf(pl.getBuilding().getFloors().size()));
+                List dxfPolyLineEntities = floorLayer.getDXFEntities(DXFConstants.ENTITY_TYPE_LWPOLYLINE);
+                if (dxfPolyLineEntities != null)
+                    for (Object dxfEntity : dxfPolyLineEntities) {
+                        DXFLWPolyline dxflwPolyline = (DXFLWPolyline) dxfEntity;
+                        floor.setPolyLine(dxflwPolyline);
+                        if (dxflwPolyline.getColor() == DxfFileConstants.HABITABLE_ROOM_COLOR) {
+                            Room habitable = new Room();
+                            habitable.setPolyLine(dxflwPolyline);
+                            floor.getHabitableRooms().add(habitable);
+                        }
+                        if (dxflwPolyline.getColor() == DxfFileConstants.FLOOR_EXTERIOR_WALL_COLOR) {
+                            Measurement extWall = new Measurement();
+                            extWall.setPolyLine(dxflwPolyline);
+                            floor.setExterior(extWall);
+                        }
+                        if (dxflwPolyline.getColor() == DxfFileConstants.FLOOR_OPENSPACE_COLOR) {
+                            Measurement openSpace = new Measurement();
+                            openSpace.setPolyLine(dxflwPolyline);
+                            floor.getOpenSpaces().add(openSpace);
+                        }
+                    }
+                if (!floor.getHabitableRooms().isEmpty() || !floor.getOpenSpaces().isEmpty() || floor.getExterior() != null)
+                    building.getFloors().add(floor);
 
-        pl.getBuilding().setFloorsAboveGround(BigDecimal.valueOf(pl.getBuilding().getFloors().size()));
-
-        int negetivFloorNo = 0;
-        while (layer != null) {
-            negetivFloorNo--;
-            layer = doc.getDXFLayer(DxfFileConstants.FLOOR_NAME_PREFIX + negetivFloorNo);
-            if (!layer.getName().equalsIgnoreCase("FLOOR_" + floorNo)) {
-                negetivFloorNo++;
-                break;
             }
-            Floor floor = new Floor();
-            List dxfPolyLineEntities = layer.getDXFEntities(DXFConstants.ENTITY_TYPE_LWPOLYLINE);
-            if (dxfPolyLineEntities != null)
-                for (Object dxfEntity : dxfPolyLineEntities) {
-                    DXFLWPolyline dxflwPolyline = (DXFLWPolyline) dxfEntity;
-                    floor.setPolyLine(dxflwPolyline);
-                    if (dxflwPolyline.getColor() == DxfFileConstants.HABITABLE_ROOM_COLOR) {
-                        Room habitable = new Room();
-                        habitable.setPolyLine(dxflwPolyline);
-                        floor.getHabitableRooms().add(habitable);
-                    }
-                    if (dxflwPolyline.getColor() == DxfFileConstants.FLOOR_EXTERIOR_WALL_COLOR) {
-                        Measurement extWall = new Measurement();
-                        extWall.setPolyLine(dxflwPolyline);
-                        floor.setExterior(extWall);
-                    }
-                    if (dxflwPolyline.getColor() == DxfFileConstants.FLOOR_OPENSPACE_COLOR) {
-                        Measurement openSpace = new Measurement();
-                        openSpace.setPolyLine(dxflwPolyline);
-                        floor.getOpenSpaces().add(openSpace);
-                    }
+
+            int negetivFloorNo = 0;
+            while (block!=null && floorLayer != null) {
+                negetivFloorNo--;
+                String floorName = DxfFileConstants.BLOCK_NAME_PREFIX + blockNumber +"_" + DxfFileConstants.FLOOR_NAME_PREFIX
+                        + negetivFloorNo;
+                floorLayer = doc.getDXFLayer(floorName);
+                if (!floorLayer.getName().equalsIgnoreCase("FLOOR_" + negetivFloorNo)) {
+                    negetivFloorNo--;
+                    break;
                 }
-            if(!floor.getHabitableRooms().isEmpty() ||  !floor.getOpenSpaces().isEmpty() || floor.getExterior()!=null)
-                        pl.getBuilding().getFloors().add(floor);
+                Floor floor = new Floor();
+                floor.setName(floorName);
+                floor.setNumber(String.valueOf(negetivFloorNo));
+                List dxfPolyLineEntities = floorLayer.getDXFEntities(DXFConstants.ENTITY_TYPE_LWPOLYLINE);
+                if (dxfPolyLineEntities != null)
+                    for (Object dxfEntity : dxfPolyLineEntities) {
+                        DXFLWPolyline dxflwPolyline = (DXFLWPolyline) dxfEntity;
+                        floor.setPolyLine(dxflwPolyline);
+                        if (dxflwPolyline.getColor() == DxfFileConstants.HABITABLE_ROOM_COLOR) {
+                            Room habitable = new Room();
+                            habitable.setPolyLine(dxflwPolyline);
+                            floor.getHabitableRooms().add(habitable);
+                        }
+                        if (dxflwPolyline.getColor() == DxfFileConstants.FLOOR_EXTERIOR_WALL_COLOR) {
+                            Measurement extWall = new Measurement();
+                            extWall.setPolyLine(dxflwPolyline);
+                            floor.setExterior(extWall);
+                        }
+                        if (dxflwPolyline.getColor() == DxfFileConstants.FLOOR_OPENSPACE_COLOR) {
+                            Measurement openSpace = new Measurement();
+                            openSpace.setPolyLine(dxflwPolyline);
+                            floor.getOpenSpaces().add(openSpace);
+                        }
+                    }
+                if (!floor.getHabitableRooms().isEmpty() || !floor.getOpenSpaces().isEmpty() || floor.getExterior() != null)
+                    building.getFloors().add(floor);
 
+            }
+
+        
+            if (building.getFloors() != null && building.getFloors().size() > 0) {
+                building.setMaxFloor(BigDecimal.valueOf(building.getFloors().size()));
+                building.setFloorsAboveGround(BigDecimal.valueOf(building.getFloors().size()));
+                building.setTotalFloors(BigDecimal.valueOf(building.getFloors().size()));
+             //   block.setBuilding(building);
+              //  pl.getBlocks().add(block);
+            }
+         } else
+             break;
         }
-
-        pl.getBuilding().setTotalFloors(BigDecimal.valueOf(pl.getBuilding().getFloors().size()) );
+        
     }
 
     private void extractBuildingDetails(PlanDetail pl, DXFDocument doc) {
+        
         List<DXFLWPolyline> polyLinesByLayer;
-        Building building = new Building();
-        polyLinesByLayer = Util.getPolyLinesByLayer(doc, DxfFileConstants.BUILDING_FOOT_PRINT);
+        
+        DXFLayer blockLayer = new DXFLayer();
 
-        if (polyLinesByLayer.size() > 0) {
-            building.setPolyLine(polyLinesByLayer.get(0));
+        int blockNumber = 0;
+        while (blockLayer != null) {
+            blockNumber++;
+            String blockName = DxfFileConstants.BLOCK_NAME_PREFIX + blockNumber +"_" + DxfFileConstants.BUILDING_FOOT_PRINT;
+            blockLayer = doc.getDXFLayer(blockName);
+            if (!blockLayer.getName().equalsIgnoreCase(blockName)) {
+                break;
+            }
+            polyLinesByLayer = Util.getPolyLinesByLayer(doc, blockName);
+
+            Block block = new Block();
+                block.setName(DxfFileConstants.BLOCK_NAME_PREFIX+blockNumber);
+                block.setNumber(String.valueOf(blockNumber));
+
+            Building building = new Building();
+                building.setPolyLine(polyLinesByLayer.get(0));
+                
+                
+            polyLinesByLayer = Util.getPolyLinesByLayer(doc,DxfFileConstants.BLOCK_NAME_PREFIX + blockNumber +"_" + DxfFileConstants.SHADE_OVERHANG);
+            if (polyLinesByLayer.size() > 0) {
+                Measurement shade = new Measurement();
+                shade.setPolyLine(polyLinesByLayer.get(0));
+                building.setShade(shade);
+            }
+            extractOpenStairs(doc, building);
             building.setPresentInDxf(true);
-        } else
-            pl.addError(DxfFileConstants.BUILDING_FOOT_PRINT, edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
-                    new String[] { DxfFileConstants.BUILDING_FOOT_PRINT }, null));
+            block.setBuilding(building);
+            pl.getBlocks().add(block);
+         }
+         
+        if (pl.getBlocks().size()<=0 ) {
+                      pl.addError(DxfFileConstants.BUILDING_FOOT_PRINT, edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
+                    new String[] { DxfFileConstants.BUILDING_FOOT_PRINT }, null)); }
 
-        polyLinesByLayer = Util.getPolyLinesByLayer(doc, DxfFileConstants.SHADE_OVERHANG);
-
-        Measurement shade = new Measurement();
-        if (polyLinesByLayer.size() > 0) {
-            shade.setPolyLine(polyLinesByLayer.get(0));
-        }
-        building.setShade(shade);
-
-        extractOpenStairs(doc, building);
-
-        pl.setBuilding(building);
 
     }
 
     private void extractOpenStairs(DXFDocument doc, Building building) {
+        //TODO: OPEN STAIR LOGIC CHANGE REQUIRED BASED ON BLOCKWISE.
         List<DXFDimension> lines = Util.getDimensionsByLayer(doc, DxfFileConstants.OPEN_STAIR);
         if (lines != null)
             for (Object dxfEntity : lines) {
@@ -399,32 +446,66 @@ public class DXFExtractService {
      */
     private PlanDetail extractTotalFloorArea(DXFDocument doc, PlanDetail pl) {
 
-        BigDecimal floorArea = BigDecimal.ZERO;
-        List<DXFLWPolyline> bldgext = Util.getPolyLinesByLayer(doc, DxfFileConstants.BLDG_EXTERIOR_WALL);
-        if (!bldgext.isEmpty())
-            for (DXFLWPolyline pline : bldgext)
-                floorArea = floorArea.add(Util.getPolyLineArea(pline));
+        for(Block block: pl.getBlocks())
+        {
+            BigDecimal floorArea = BigDecimal.ZERO;
 
-        pl.getBuilding().setTotalBuitUpArea(floorArea);
+            for (Floor floor : block.getBuilding().getFloors()) {
+                String buildUpAreaByFloor = DxfFileConstants.BLOCK_NAME_PREFIX + block.getNumber() + "_"
+                        + DxfFileConstants.FLOOR_NAME_PREFIX
+                        + floor.getNumber() + "_" + DxfFileConstants.BUILT_UP_AREA;
 
-        List<DXFLWPolyline> bldDeduct = Util.getPolyLinesByLayer(doc, DxfFileConstants.FAR_DEDUCT);
-        if (!bldDeduct.isEmpty())
-            for (DXFLWPolyline pline : bldDeduct)
-                floorArea = floorArea.subtract(Util.getPolyLineArea(pline));
+                List<DXFLWPolyline> bldgext = Util.getPolyLinesByLayer(doc, buildUpAreaByFloor);
+                if (!bldgext.isEmpty()) {
+                    for (DXFLWPolyline pline : bldgext) {
 
-        if(LOG.isDebugEnabled()) LOG.debug("floorArea:" + floorArea);
-        pl.getBuilding().setTotalFloorArea(floorArea);
+                        BigDecimal occupancyArea = Util.getPolyLineArea(pline);
+                        floorArea = floorArea.add(occupancyArea);
 
-        if (pl.getPlot().getArea() != null) {
-            BigDecimal far = floorArea.divide(pl.getPlot().getArea(), DcrConstants.DECIMALDIGITS_MEASUREMENTS,
-                    DcrConstants.ROUNDMODE_MEASUREMENTS);
-            pl.getBuilding().setFar(far);
-        }
+                        Occupancy occupancy = new Occupancy();
+                        occupancy.setPolyLine(pline);
+                        occupancy.setArea(occupancyArea);
+                        setOccupancyType(pline, occupancy);
+                        floor.addOccupancy(occupancy);
 
-        if (pl.getBuilding().getPolyLine() != null) {
+                    }
+                }
+
+                String farDeductByFloor = DxfFileConstants.BLOCK_NAME_PREFIX + block.getNumber() + "_"
+                        + DxfFileConstants.FLOOR_NAME_PREFIX
+                        + floor.getNumber() + "_" + DxfFileConstants.FAR_DEDUCT;
+                List<DXFLWPolyline> bldDeduct = Util.getPolyLinesByLayer(doc, farDeductByFloor);
+                if (!bldDeduct.isEmpty())
+                    for (DXFLWPolyline pline : bldDeduct) {
+                        BigDecimal deductionArea = Util.getPolyLineArea(pline);
+
+                        floorArea = floorArea.subtract(deductionArea);
+                        Occupancy occupancy = new Occupancy();
+                        occupancy.setDeductionPolyLine(pline);
+                        occupancy.setDeduction(deductionArea);
+                        setOccupancyType(pline, occupancy);
+                        floor.subtractOccupancyArea(occupancy);
+
+                    }
+            }
+
+            block.getBuilding().setTotalBuitUpArea(floorArea);
+            if (LOG.isDebugEnabled())
+                LOG.debug("floorArea:" + floorArea);
+            block.getBuilding().setTotalFloorArea(floorArea);
+
+            if (pl.getPlot().getArea() != null) {
+                BigDecimal far = floorArea.divide(pl.getPlot().getArea(), DcrConstants.DECIMALDIGITS_MEASUREMENTS,
+                        DcrConstants.ROUNDMODE_MEASUREMENTS);
+                block.getBuilding().setFar(far);
+            }
+
+      
+
+        if (block.getBuilding().getPolyLine() != null) {
 
             BigDecimal cvDeduct = BigDecimal.ZERO;
-            BigDecimal buildingFootPrintArea = Util.getPolyLineArea(pl.getBuilding().getPolyLine());
+            BigDecimal buildingFootPrintArea = Util.getPolyLineArea(block.getBuilding().getPolyLine());
             List<DXFLWPolyline> cvDeductPlines = Util.getPolyLinesByLayer(doc, DxfFileConstants.COVERGAE_DEDUCT);
             if (!cvDeductPlines.isEmpty()) {
                 for (DXFLWPolyline pline : cvDeductPlines)
@@ -443,13 +524,46 @@ public class DXFExtractService {
                 pl.addError(DxfFileConstants.COVERGAE_DEDUCT,
                         "Cannot calculate coverage as " + DxfFileConstants.BUILDING_FOOT_PRINT
                                 + " or " + DxfFileConstants.PLOT_AREA + " is not defined");
-
             }
 
+          }
         }
-
         return pl;
 
+    }
+
+    private void setOccupancyType(DXFLWPolyline pline, Occupancy occupancy) {
+        if (pline.getColor() == DxfFileConstants.OCCUPANCY_A1_COLOR_CODE) {
+            occupancy.setType(OccupancyType.OCCUPANCY_A1);
+        } else if (pline.getColor() == DxfFileConstants.OCCUPANCY_A2_COLOR_CODE) {
+            occupancy.setType(OccupancyType.OCCUPANCY_A2);
+        } else if (pline.getColor() == DxfFileConstants.OCCUPANCY_B1_COLOR_CODE) {
+            occupancy.setType(OccupancyType.OCCUPANCY_B1);
+        } else if (pline.getColor() == DxfFileConstants.OCCUPANCY_B2_COLOR_CODE) {
+            occupancy.setType(OccupancyType.OCCUPANCY_B2);
+        } else if (pline.getColor() == DxfFileConstants.OCCUPANCY_B3_COLOR_CODE) {
+            occupancy.setType(OccupancyType.OCCUPANCY_B3);
+        } else if (pline.getColor() == DxfFileConstants.OCCUPANCY_C_COLOR_CODE) {
+            occupancy.setType(OccupancyType.OCCUPANCY_C);
+        } else if (pline.getColor() == DxfFileConstants.OCCUPANCY_D_COLOR_CODE) {
+            occupancy.setType(OccupancyType.OCCUPANCY_D);
+        } else if (pline.getColor() == DxfFileConstants.OCCUPANCY_D1_COLOR_CODE) {
+            occupancy.setType(OccupancyType.OCCUPANCY_D1);
+        } else if (pline.getColor() == DxfFileConstants.OCCUPANCY_E_COLOR_CODE) {
+            occupancy.setType(OccupancyType.OCCUPANCY_E);
+        } else if (pline.getColor() == DxfFileConstants.OCCUPANCY_F_COLOR_CODE) {
+            occupancy.setType(OccupancyType.OCCUPANCY_F);
+        } else if (pline.getColor() == DxfFileConstants.OCCUPANCY_G1_COLOR_CODE) {
+            occupancy.setType(OccupancyType.OCCUPANCY_G1);
+        } else if (pline.getColor() == DxfFileConstants.OCCUPANCY_G2_COLOR_CODE) {
+            occupancy.setType(OccupancyType.OCCUPANCY_G2);
+        } else if (pline.getColor() == DxfFileConstants.OCCUPANCY_H_COLOR_CODE) {
+            occupancy.setType(OccupancyType.OCCUPANCY_H);
+        } else if (pline.getColor() == DxfFileConstants.OCCUPANCY_I1_COLOR_CODE) {
+            occupancy.setType(OccupancyType.OCCUPANCY_I1);
+        } else if (pline.getColor() == DxfFileConstants.OCCUPANCY_I2_COLOR_CODE) {
+            occupancy.setType(OccupancyType.OCCUPANCY_I2);
+        }
     }
 
     private Yard getYard(PlanDetail pl, DXFDocument doc, String yardName) {

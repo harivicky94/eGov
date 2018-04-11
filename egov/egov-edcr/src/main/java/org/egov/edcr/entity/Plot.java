@@ -10,11 +10,20 @@ public class Plot extends Measurement {
     private Yard rearYard;
     private Yard sideYard1;
     private Yard sideYard2;
+    private Measurement buildingFootPrint= new Measurement();
 
     private Yard bsmtFrontYard;
     private Yard bsmtRearYard;
     private Yard bsmtSideYard1;
     private Yard bsmtSideYard2;
+
+    public Measurement getBuildingFootPrint() {
+        return buildingFootPrint;
+    }
+
+    public void setBuildingFootPrint(Measurement buildingFootPrint) {
+        this.buildingFootPrint = buildingFootPrint;
+    }
 
     public Yard getFrontYard() {
         return frontYard;

@@ -22,7 +22,7 @@ public class DxfFileConstants {
     public static String LAYER_NAME_WASTE_DISPOSAL = "WASTE_DISPOSAL";
     public static final String ACCESS_WIDTH = "ACCESS_WIDTH_M";
     public static final String HEIGHT_OF_BUILDING = "HT_OF_BLDG";
-    public static final String BLDG_EXTERIOR_WALL = "BLDG_EXT_WALL";
+    public static final String BUILT_UP_AREA = "BUILT_UP_AREA";
     public static final int BLDG_EXTERIOR_WALL_COLOR = 2;
     public static final String FAR_DEDUCT = "FAR_DEDUCT";
     public static final int FAR_DEDUCT_COLOR = 2;
@@ -55,6 +55,27 @@ public class DxfFileConstants {
     public static final int COLOUR_CODE_NONNOTIFIEDROAD=2;
     public static final int COLOUR_CODE_LANE=5;
     public static final int COLOUR_CODE_CULDESAC=6;
+    public static final int OCCUPANCY_A1_COLOR_CODE = 2;
+    public static final int OCCUPANCY_A2_COLOR_CODE = 3;
+    public static final int OCCUPANCY_B1_COLOR_CODE = 4;
+    public static final int OCCUPANCY_B2_COLOR_CODE = 14;
+    public static final int OCCUPANCY_B3_COLOR_CODE = 15;
+    public static final int OCCUPANCY_C_COLOR_CODE = 5;
+    public static final int OCCUPANCY_D_COLOR_CODE = 6;
+    public static final int OCCUPANCY_E_COLOR_CODE = 7;
+    public static final int OCCUPANCY_F_COLOR_CODE = 8;
+    public static final int OCCUPANCY_G1_COLOR_CODE = 9;
+    public static final int OCCUPANCY_G2_COLOR_CODE = 10;
+    public static final int OCCUPANCY_H_COLOR_CODE = 11;
+    public static final int OCCUPANCY_I1_COLOR_CODE = 12;
+    public static final int OCCUPANCY_I2_COLOR_CODE = 13;
+    public static final int OCCUPANCY_D1_COLOR_CODE = 16;
+
+
+
+    
+    
+    
     
 
 }

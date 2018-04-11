@@ -8,17 +8,17 @@ public class Measurement {
 
     protected Boolean presentInDxf = false;
 
-    protected BigDecimal minimumDistance;
+    protected BigDecimal minimumDistance=BigDecimal.ZERO;
 
-    protected BigDecimal length;
+    protected BigDecimal length=BigDecimal.ZERO;
 
-    protected BigDecimal width;
+    protected BigDecimal width=BigDecimal.ZERO;
 
-    protected BigDecimal height;
+    protected BigDecimal height=BigDecimal.ZERO;
 
-    protected BigDecimal mean;
+    protected BigDecimal mean=BigDecimal.ZERO;
 
-    protected BigDecimal area;
+    protected BigDecimal area=BigDecimal.ZERO;
 
     protected DXFLWPolyline polyLine;
 
