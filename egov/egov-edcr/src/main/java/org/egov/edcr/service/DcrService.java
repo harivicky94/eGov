@@ -24,6 +24,9 @@ import org.egov.edcr.entity.RuleOutput;
 import org.egov.edcr.entity.SubRuleOutput;
 import org.egov.edcr.entity.utility.RuleReportOutput;
 import org.egov.edcr.rule.GeneralRule;
+ 
+import org.egov.edcr.rule.RuleRepository;
+import org.egov.edcr.rule.RuleService;
 import org.egov.edcr.utility.DcrConstants;
 import org.egov.edcr.utility.Util;
 import org.egov.infra.admin.master.service.CityService;
@@ -32,6 +35,11 @@ import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.util.ReportUtil;
 import org.joda.time.LocalDate;
+import org.kabeja.dxf.DXFDocument;
+import org.kabeja.parser.DXFParser;
+import org.kabeja.parser.ParseException;
+import org.kabeja.parser.Parser;
+import org.kabeja.parser.ParserBuilder;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -105,61 +113,58 @@ public class DcrService {
 
     public PlanDetail process(File dxf1File, EdcrApplication dcrApplication) {
 
-        if(LOG.isDebugEnabled()) LOG.debug("hello ");
-        // TODO:
-        // BASIC VALIDATION
-
-        // File dxfFile = new File("/home/mani/Desktop/BPA/kozhi/SAMPLE 4.dxf");
-
-        generalRule.validate(planDetail);
-
-        // dxfFile.getf
-        // EXTRACT DATA FROM DXFFILE TO planDetail;
-
-        // planDetail= generalRule.validate(planDetail);
-        // EXTRACT DATA FROM DXFFILE TO planDetail;
-        planDetail = extractService.extract(dxf1File, dcrApplication);
-        if (planDetail.getBuilding().getBuildingHeight().intValue() > 10)
-            planDetail.addError("Cannot Process",
-                    " This report is not complete . Not all rules are not processed. Only Buildings up to 10 Mtr height will be considered for  processing");
-        // return planDetail;
-
-        List<PlanRule> planRules = planRuleService.findRulesByPlanDetail(planDetail);
-
-        for (PlanRule pl : planRules) {
-            String rules = pl.getRules();
-            String[] ruleSet = rules.split(",");
-            for (String s : ruleSet) {
-                String ruleName = "rule" + s;
-                if(LOG.isDebugEnabled()) LOG.debug(s);
-                Object ruleBean = getRuleBean(ruleName);
-                if (ruleBean != null) {
-                    GeneralRule bean = (GeneralRule) ruleBean;
-                    if (bean != null)
-                        planDetail = bean.validate(planDetail);
-                } else
-                    LOG.error("Skipping rule " + ruleName + "Since rule cannot be injected");
-
+        
+        Parser parser = ParserBuilder.createDefaultParser();
+        try {
+            parser.parse(dcrApplication.getSavedDxfFile().getPath(), DXFParser.DEFAULT_ENCODING);
+        } catch (ParseException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        // Extract DXF Data
+        DXFDocument doc = parser.getDocument();
+        planDetail=new PlanDetail();
+        for(Class ruleClass:RuleRepository.rules)
+        {
+            Object ruleBean =null;
+            RuleService rule=null;
+            ruleBean=getRuleBean(ruleClass.getSimpleName()+"Impl");
+            if(ruleBean==null)
+                ruleBean=getRuleBean(ruleClass.getSimpleName());
+            if(ruleBean==null)
+            {
+                LOG.error("No Service Found for "+ruleClass.getSimpleName());    
+            }else
+            {
+             rule=(RuleService)ruleBean;
+             rule.extract(planDetail, doc);
             }
+                
+            
         }
 
-        for (PlanRule pl : planRules) {
-
-            String rules = pl.getRules();
-            String[] ruleSet = rules.split(",");
-
-            for (String s : ruleSet) {
-                String ruleName = "rule" + s;
-                Object ruleBean = getRuleBean(ruleName);
-                if (ruleBean != null) {
-                    GeneralRule bean = (GeneralRule) ruleBean;
-                    if (bean != null)
-                        planDetail = bean.process(planDetail);
-                } else
-                    LOG.error("Skipping rule " + ruleName + "Since rule cannot be injected");
-
+        //Process DXF data
+        for(Class ruleClass:RuleRepository.rules)
+        {
+            Object ruleBean =null;
+            RuleService rule=null;
+            ruleBean=getRuleBean(ruleClass.getSimpleName()+"Impl");
+            if(ruleBean==null)
+                ruleBean=getRuleBean(ruleClass.getSimpleName());
+            if(ruleBean==null)
+            {
+            LOG.error("No Service Found for "+ruleClass.getSimpleName());    
+            }else
+            {
+             rule=(RuleService)ruleBean;
+             rule.process(planDetail);
             }
+                
+            
         }
+
+        
+        
         generateDCRReport(planDetail, dcrApplication);
 
         Util.print(planDetail);
@@ -172,9 +177,10 @@ public class DcrService {
     private Object getRuleBean(String ruleName) {
         Object bean = null;
         try {
-            bean = applicationContext.getBean(ruleName);
+           ruleName= ruleName.substring(0, 1).toLowerCase() + ruleName.substring(1);
+           bean = applicationContext.getBean(ruleName);
         } catch (BeansException e) {
-            LOG.error("No Bean Defined for the Rule" + ruleName);
+            LOG.error("No Bean Defined for the Rule " + ruleName);
         }
         return bean;
     }

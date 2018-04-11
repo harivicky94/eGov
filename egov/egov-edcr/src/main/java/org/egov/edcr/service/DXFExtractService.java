@@ -148,22 +148,7 @@ public class DXFExtractService {
                 }
         }
 
-        /*
-         * int i = 0; for (DXFLWPolyline resUnit : residentialUnit) { // Util.print(resUnit, "resUnit_"+i); FloorUnit floorUnit =
-         * new FloorUnit(); floorUnit.setPolyLine(resUnit); i++; double[][] pointsOfPlot = MinDistance.pointsOfPolygon(resUnit);
-         * BigDecimal deduction = BigDecimal.ZERO; int j=0; for (DXFLWPolyline residentialDeduct : residentialUnitDeduction) { //
-         * Util.print(residentialDeduct, "residentialDeduct_"+j++); boolean contains = false; Iterator buildingIterator =
-         * residentialDeduct.getVertexIterator(); while (buildingIterator.hasNext()) { DXFVertex dxfVertex = (DXFVertex)
-         * buildingIterator.next(); Point point = dxfVertex.getPoint(); if (RayCast.contains(pointsOfPlot, new double[] {
-         * point.getX(), point.getY() }) == true) { // if(LOG.isDebugEnabled()) LOG.debug(" above res contains "+point.getX()+","+point.getY()); contains =
-         * true; // removeDeduction.add(residentialDeduct); Measurement measurement = new Measurement();
-         * measurement.setPolyLine(residentialDeduct); floorUnit.getDeductions().add(measurement); } } if (contains) {
-         * System.out.println("current deduct " + deduction + "    :add deduct for rest unit " + i + " area added" +
-         * Util.getPolyLineArea(residentialDeduct)); deduction = deduction.add(Util.getPolyLineArea(residentialDeduct)); } } //
-         * Each blocks are adjecent to each other. Raycast repeat the same points in each block. if (removeDeduction.size() > 0) {
-         * residentialUnitDeduction.removeAll(removeDeduction); removeDeduction = new ArrayList<DXFLWPolyline>(); }
-         * floorUnit.setTotalUnitDeduction(deduction); pl.getFloorUnits().add(floorUnit); }
-         */
+       
 
         int i = 0;
         for (DXFLWPolyline resUnit : residentialUnit) {

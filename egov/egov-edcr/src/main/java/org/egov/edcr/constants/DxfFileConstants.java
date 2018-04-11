@@ -31,6 +31,7 @@ public class DxfFileConstants {
     public static final String FLOOR_AREA = "FLOOR_AREA";
     public static final String OCCUPANCY = "OCCUPANCY";
     public static final String FLOOR_NAME_PREFIX = "FLOOR_";
+    public static final String BLOCK_NAME_PREFIX = "B_";
     public static final int HABITABLE_ROOM_COLOR = 4;
     public static final int FLOOR_EXTERIOR_WALL_COLOR = 5;
     public static final int FLOOR_OPENSPACE_COLOR = 6;
