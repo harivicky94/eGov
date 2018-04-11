@@ -6,7 +6,7 @@ Feature: Create Trade License
 
   # CREATE NEW LICENSE #
 
-  @Sanity @TradeLicense @NewLicense
+#  @Sanity @TradeLicense @NewLicense
   Scenario Outline: Registered user creating a new license in the system
     Given CSCUser logs in
     And user will select the required screen as "Create New License"

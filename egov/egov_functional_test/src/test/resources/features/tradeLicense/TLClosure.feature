@@ -105,10 +105,16 @@ Feature: Trade license closure
   @Sanity @TradeLicense @LicenseClosure
   Scenario Outline: Registered user choose for trade license closure and SI rejects it
 
-    Given TL_PHS_JA logs in
+    Given CSCUser logs in
     And user will select the required screen as "Search Trade License"
     And he choose a trade license for closure as <closureDetails>
-    And he forwards for TL approver TL_SI
+    And he choose to close trade license
+    And he closes search screen
+    And current user logs out
+
+    When TL_PHS_JA logs in
+    And he chooses to act upon above application number
+    And he forwards for TL approver TL_SI1
     And he confirms to proceed
     And he closes the acknowledgement page
     And current user logs out
