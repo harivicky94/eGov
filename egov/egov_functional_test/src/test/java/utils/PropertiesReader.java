@@ -38,6 +38,7 @@ public class PropertiesReader {
 //    }
 
     public String getUrl() {
+        System.out.println("URL = "+prop.getProperty(env+".url"));
         return prop.getProperty(env+".url");
     }
 
