@@ -79,6 +79,31 @@ public class SearchBpaApplicationForm {
     private Boolean isOnePermitApplication;
     private String applicationType;
     private String scheduleType;
+    private String failureRemarks;
+
+    public Boolean getIsRescheduledByEmployee() {
+        return isRescheduledByEmployee;
+    }
+
+    public void setIsRescheduledByEmployee(Boolean isRescheduledByEmployee) {
+        this.isRescheduledByEmployee = isRescheduledByEmployee;
+    }
+
+    public Boolean getIsOnePermitApplication() {
+        return isOnePermitApplication;
+    }
+
+    public void setIsOnePermitApplication(Boolean isOnePermitApplication) {
+        this.isOnePermitApplication = isOnePermitApplication;
+    }
+
+    public String getFailureRemarks() {
+        return failureRemarks;
+    }
+
+    public void setFailureRemarks(String failureRemarks) {
+        this.failureRemarks = failureRemarks;
+    }
 
     public String getServiceTypeEnum() {
 		return serviceTypeEnum;

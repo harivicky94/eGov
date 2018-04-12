@@ -95,9 +95,9 @@ public class FailureInSchedulerService {
         return buildResponseAsPerForm(buildSearchCriteria(searchBpaApplicationForm));
     }
 
-    private List<SearchBpaApplicationForm> buildResponseAsPerForm(List<BpaApplication> bpaApplicationsList) {
+    private List<SearchBpaApplicationForm> buildResponseAsPerForm(List<BpaApplication> bpaAppsList) {
         List<SearchBpaApplicationForm> searchBpaApplicationFormList = new ArrayList<>();
-        for (BpaApplication bpaApplication : bpaApplicationsList) {
+        for (BpaApplication bpaApplication : bpaAppsList) {
             SearchBpaApplicationForm searchBpaApplicationForm = new SearchBpaApplicationForm();
             searchBpaApplicationForm.setId(bpaApplication.getId());
             searchBpaApplicationForm.setApplicationNumber(bpaApplication.getApplicationNumber());
@@ -111,6 +111,8 @@ public class FailureInSchedulerService {
                     bpaApplication.getOccupancy() == null ? "" : bpaApplication.getOccupancy().getDescription());
             searchBpaApplicationForm.setStatus(bpaApplication.getStatus().getDescription());
             buildStateAndSiteDetails(bpaApplication, searchBpaApplicationForm);
+            searchBpaApplicationForm.setFailureRemarks(
+                    bpaApplication.getSchedulerFailedRemarks() == null ? "" : bpaApplication.getSchedulerFailedRemarks());
             searchBpaApplicationFormList.add(searchBpaApplicationForm);
         }
         return searchBpaApplicationFormList;
@@ -118,12 +120,6 @@ public class FailureInSchedulerService {
     }
 
     private void buildStateAndSiteDetails(BpaApplication bpaApplication, SearchBpaApplicationForm searchBpaApplicationForm) {
-        if (bpaApplication.getState() != null && bpaApplication.getState().getOwnerPosition() != null) {
-            searchBpaApplicationForm.setCurrentOwner(bpaThirdPartyService
-                    .getUserPositionByPassingPosition(bpaApplication.getState().getOwnerPosition().getId())
-                    .getName());
-            searchBpaApplicationForm.setPendingAction(bpaApplication.getState().getNextAction());
-        }
         if (!bpaApplication.getSiteDetail().isEmpty() && bpaApplication.getSiteDetail().get(0) != null) {
             searchBpaApplicationForm
                     .setElectionWard(bpaApplication.getSiteDetail().get(0).getElectionBoundary() == null

@@ -52,16 +52,19 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface SlotMappingRepository extends JpaRepository<SlotMapping, Long> {
 
-	List<SlotMapping> findByApplType(ApplicationType applType);
+    List<SlotMapping> findByApplType(ApplicationType applType);
 
-	List<SlotMapping> findByApplTypeAndZone(ApplicationType applType, Boundary zone);
-	
-	@Query("select distinct sm.zone from SlotMapping sm where sm.applType = :applType")
-	List<Boundary> findZoneByApplType(@Param("applType")ApplicationType applType);
+    List<SlotMapping> findByApplTypeAndZone(ApplicationType applType, Boundary zone);
 
-	@Query("select sm from SlotMapping sm where sm.zone = :zone  and sm.electionWard = :electionWard and sm.applType =:applType")
-	List<SlotMapping> findByZoneElectionWardAndAppType(@Param("zone") Boundary zone,
-			 @Param("electionWard") Boundary electionWard,
-			@Param("applType") ApplicationType applType);
+    @Query("select sm from SlotMapping sm where sm.applType = :applType")
+    List<SlotMapping> findSlotMappingForOneDayPermit(@Param("applType") ApplicationType applType);
+
+    @Query("select distinct (sm.zone) from SlotMapping sm where sm.applType = :applType")
+    List<Boundary> findZoneByApplType(@Param("applType") ApplicationType applType);
+
+    @Query("select sm from SlotMapping sm where sm.zone = :zone  and sm.electionWard = :electionWard and sm.applType =:applType")
+    List<SlotMapping> findByZoneElectionWardAndAppType(@Param("zone") Boundary zone,
+            @Param("electionWard") Boundary electionWard,
+            @Param("applType") ApplicationType applType);
 
 }

@@ -48,6 +48,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
+import org.egov.bpa.master.entity.SlotMapping;
 import org.egov.bpa.master.entity.enums.ApplicationType;
 import org.egov.bpa.master.service.SlotMappingService;
 import org.egov.bpa.service.es.BpaIndexService;
@@ -68,7 +69,6 @@ import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.repository.BoundaryRepository;
 import org.egov.infra.admin.master.service.AppConfigValueService;
-import org.egov.infra.validation.exception.ValidationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionDefinition;
@@ -126,7 +126,7 @@ public class ScheduleAppointmentForDocumentScrutinyService {
                         List<BpaApplication> bpaApplications = getNormalBpaApplicationsBySlotsStatusAndBoundary(slot);
                         if (!bpaApplications.isEmpty()) {
                             Map<Long, SlotApplication> processedApplication = new HashMap<>();
-                            List<Long> failedApplication = new ArrayList<>();
+                            Map<Long,String> errorMsg = new HashMap<>();
                             for (BpaApplication bpaApp : bpaApplications) {
                                 if (LOGGER.isInfoEnabled()) {
                                     LOGGER.info(
@@ -138,7 +138,6 @@ public class ScheduleAppointmentForDocumentScrutinyService {
                                     template.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRES_NEW);
                                     template.execute(result -> {
                                         try {
-
                                             if (LOGGER.isInfoEnabled())
                                                 LOGGER.info(
                                                         "****************** Schedule appointment  Transaction start *****************");
@@ -147,21 +146,20 @@ public class ScheduleAppointmentForDocumentScrutinyService {
                                                 LOGGER.info(
                                                         "****************** Schedule appointment Transaction End *****************");
                                         } catch (Exception e) {
-                                            failedApplication.add(bpaApp.getId());
+                                            errorMsg.put(bpaApp.getId(), getErrorMessage(e));
                                             throw e;
                                         }
                                         return true;
                                     });
                                 } catch (Exception e) {
                                     LOGGER.error(e.getMessage(), e);
-                                    getErrorMessage(e);
                                 }
                             }
                             if (processedApplication.size() > 0) {
-                                sendSmsAndEmailForSuccessfulApplications(processedApplication, failedApplication);
+                                sendSmsAndEmailForSuccessfulApplications(processedApplication, errorMsg);
                             }
-                            if (!failedApplication.isEmpty()) {
-                                setFailureInSchedulerTrueForFailedApplications(failedApplication);
+                            if (errorMsg.size() > 0) {
+                                setFailureInSchedulerTrueForFailedApplications(errorMsg);
                             }
                         }
                     }
@@ -327,12 +325,14 @@ public class ScheduleAppointmentForDocumentScrutinyService {
     }
 
     private String getErrorMessage(final Exception exception) {
-        String error;
-        if (exception instanceof ValidationException)
-            error = ((ValidationException) exception).getErrors().get(0).getMessage();
-        else
-            error = "Error : " + exception;
-        return error;
+        StringBuilder msg = new StringBuilder();
+        msg.append(exception.toString());
+        msg.append(" ");
+        for (StackTraceElement element : exception.getStackTrace()) {
+            msg.append(element.toString());
+            break;
+        }
+        return msg.toString();
     }
 
     public void scheduleOneDayPermitApplicationsForDocumentScrutiny(BpaApplication bpaApplication, SlotDetail slotDetail) {
@@ -348,20 +348,20 @@ public class ScheduleAppointmentForDocumentScrutinyService {
         Calendar calendar = Calendar.getInstance();
         String noOfDays = getGapForSchedulingForOneDayPermitApplications();
         calendar.add(Calendar.DAY_OF_YEAR, Integer.valueOf(noOfDays));
-        List<Boundary> zonesList = slotMappingService.slotfindZoneByApplType(ApplicationType.ONE_DAY_PERMIT);
-        for (Boundary bndry : zonesList) {
-            List<Slot> slotList = slotRepository.findByZoneAndApplicationDateForOneDayPermit(bndry, calendar.getTime());
+        List<SlotMapping> slotMappings = slotMappingService.slotMappingForOneDayPermit(ApplicationType.ONE_DAY_PERMIT);
+        for (SlotMapping sltMapping : slotMappings) {
+            List<Slot> slotList = slotRepository.findByZoneWardAndApplicationDateForOneDayPermit(sltMapping.getZone(),sltMapping.getElectionWard(), calendar.getTime());
             if (!slotList.isEmpty()) {
                 for (Slot slot : slotList) {
                     List<SlotDetail> slotDetailList = slotDetailRepository.findBySlotForOneDayPermit(slot);
                     slot.setSlotDetail(slotDetailList);
                     if (!slot.getSlotDetail().isEmpty()) {
                         Integer totalAvailableSlots = getTotalAvailableSlotsForParticularSlot(slot);
-                        List<BpaApplication> bpaApplications = getBpaApplicationsByStatusSlotsAndBoundary(bndry,
+                        List<BpaApplication> bpaApplications = getBpaApplicationsByStatusSlotsAndBoundary(sltMapping.getZone(),sltMapping.getElectionWard(),
                                 totalAvailableSlots);
                         if (!bpaApplications.isEmpty()) {
                             Map<Long, SlotApplication> processedApplication = new HashMap<>();
-                            List<Long> failedApplication = new ArrayList<>();
+                            Map<Long,String> errorMsg = new HashMap<>();
                             for (BpaApplication bpaApp : bpaApplications) {
                                 try {
                                     TransactionTemplate template = new TransactionTemplate(
@@ -377,7 +377,7 @@ public class ScheduleAppointmentForDocumentScrutinyService {
                                                 LOGGER.info(
                                                         "****************** Schedule appointment Transaction End For One Day Permit Applications*****************");
                                         } catch (Exception e) {
-                                            failedApplication.add(bpaApp.getId());
+                                            errorMsg.put(bpaApp.getId(), getErrorMessage(e));
                                             throw e;
                                         }
                                         return true;
@@ -386,14 +386,13 @@ public class ScheduleAppointmentForDocumentScrutinyService {
                                         LOGGER.info("****************** Outside Transaction Template *****************");
                                 } catch (Exception e) {
                                     LOGGER.error(e.getMessage(), e);
-                                    getErrorMessage(e);
                                 }
                             }
                             if (processedApplication.size() > 0) {
-                                sendSmsAndEmailForSuccessfulApplications(processedApplication, failedApplication);
+                                sendSmsAndEmailForSuccessfulApplications(processedApplication, errorMsg);
                             }
-                            if (!failedApplication.isEmpty()) {
-                                setFailureInSchedulerTrueForFailedApplications(failedApplication);
+                            if (errorMsg.size() > 0) {
+                                setFailureInSchedulerTrueForFailedApplications(errorMsg);
                             }
                         }
                     }
@@ -439,13 +438,13 @@ public class ScheduleAppointmentForDocumentScrutinyService {
         return totalAvailableSlots;
     }
 
-    private List<BpaApplication> getBpaApplicationsByStatusSlotsAndBoundary(Boundary bndry, Integer totalAvailableSlots) {
+    private List<BpaApplication> getBpaApplicationsByStatusSlotsAndBoundary(Boundary bndry,Boundary ward, Integer totalAvailableSlots) {
         BpaStatus bpaStatusRegistered = bpaStatusRepository
                 .findByCode(BpaConstants.APPLICATION_STATUS_REGISTERED);
         List<Boundary> boundaryList = boundaryRepository
                 .findActiveImmediateChildrenWithOutParent(bndry.getId());
         return applicationBpaService
-                .getOneDayPermitAppForAppointment(bpaStatusRegistered, boundaryList, totalAvailableSlots);
+                .getOneDayPermitAppForAppointment(bpaStatusRegistered,ward, boundaryList, totalAvailableSlots);
     }
 
     private String getGapForSchedulingForOneDayPermitApplications() {
@@ -455,9 +454,9 @@ public class ScheduleAppointmentForDocumentScrutinyService {
     }
 
     private void sendSmsAndEmailForSuccessfulApplications(Map<Long, SlotApplication> processedApplication,
-            List<Long> failedApplication) {
+            Map<Long,String> errorMsg) {
         for (Entry<Long, SlotApplication> application : processedApplication.entrySet()) {
-            if (failedApplication.contains(application.getKey()))
+            if (errorMsg.containsKey(application.getKey()))
                 continue;
             else {
                 transactionTemplate.execute(result1 -> {
@@ -474,12 +473,13 @@ public class ScheduleAppointmentForDocumentScrutinyService {
         }
     }
 
-    private void setFailureInSchedulerTrueForFailedApplications(List<Long> failedApplication) {
-        for (Long applicationId : failedApplication) {
+    private void setFailureInSchedulerTrueForFailedApplications(Map<Long,String> errorMsg) {
+        for (Entry<Long, String> errMsg : errorMsg.entrySet()) {
             transactionTemplate.execute(result1 -> {
                 BpaApplication bpaApplication = applicationBpaService
-                        .findById(applicationId);
+                        .findById(errMsg.getKey());
                 bpaApplication.setFailureInScheduler(Boolean.TRUE);
+                bpaApplication.setSchedulerFailedRemarks(errMsg.getValue());
                 applicationBpaService.saveApplicationForScheduler(bpaApplication);
                 if (LOGGER.isDebugEnabled()) {
                     LOGGER.error("Exception in document schedule Generation " + bpaApplication.getId());
