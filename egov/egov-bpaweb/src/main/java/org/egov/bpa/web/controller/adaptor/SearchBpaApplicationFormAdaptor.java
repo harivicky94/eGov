@@ -39,6 +39,8 @@
  */
 package org.egov.bpa.web.controller.adaptor;
 
+import static org.apache.commons.lang3.StringUtils.defaultString;
+
 import java.lang.reflect.Type;
 
 import org.egov.bpa.transaction.entity.dto.SearchBpaApplicationForm;
@@ -88,6 +90,8 @@ public class SearchBpaApplicationFormAdaptor implements JsonSerializer<SearchBpa
                 jsonObject.addProperty("appointmentDate", DateUtils.toDefaultDateFormat(searchFormObj.getAppointmentDate()));
                 jsonObject.addProperty("appointmentTime", searchFormObj.getAppointmentTime());
             }
+            jsonObject.addProperty("failureRemarks",
+                    searchFormObj.getFailureRemarks() == null ? "" : defaultString(searchFormObj.getFailureRemarks(), "N/A"));
             jsonObject.addProperty("id", searchFormObj.getId());
         }
         return jsonObject;

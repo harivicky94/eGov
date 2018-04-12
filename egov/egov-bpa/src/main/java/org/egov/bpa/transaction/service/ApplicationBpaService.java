@@ -607,7 +607,7 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
     }
 
     @SuppressWarnings("unchecked")
-    public List<BpaApplication> getOneDayPermitAppForAppointment(BpaStatus bpaStatus, List<Boundary> boundaryList,
+    public List<BpaApplication> getOneDayPermitAppForAppointment(BpaStatus bpaStatus, Boundary ward, List<Boundary> boundaryList,
             Integer totalAvailableSlots) {
         final Criteria criteria = entityManager.unwrap(Session.class)
                 .createCriteria(BpaApplication.class, "application")
@@ -617,7 +617,7 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         criteria.add(Restrictions.eq(APPLICATION_STATUS, bpaStatus));
         criteria.add(Restrictions.eq("application.isOneDayPermitApplication", true));
         criteria.add(Restrictions.eq("application.failureInScheduler", false));
-
+        criteria.add(Restrictions.eq("siteDetail.electionBoundary", ward));
         criteria.add(Restrictions.leProperty("demand.baseDemand", "demand.amtCollected"));
         criteria.addOrder(Order.desc(APPLICATION_STATUS));
         criteria.addOrder(Order.asc("application.applicationDate"));

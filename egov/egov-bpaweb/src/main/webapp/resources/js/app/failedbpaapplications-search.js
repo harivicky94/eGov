@@ -140,13 +140,10 @@ $(document)
 														"sClass" : "text-left"
 													},
 													{
-														"data" : "currentOwner",
+														"data" : "failureRemarks",
 														"sClass" : "text-left"
-													},
-													{
-														"data" : "pendingAction",
-														"sClass" : "text-left"
-													}]
+													}
+													]
 										});
 					}
 				});

@@ -132,10 +132,15 @@ public class SlotMappingService {
 		return noOfApplicationsRepository.findByApplTypeAndZone(applType,zone);
 	}
 
-	public List<Boundary> slotfindZoneByApplType(ApplicationType applType) {
-		return noOfApplicationsRepository.findZoneByApplType(applType);
+    public List<Boundary> slotfindZoneByApplType(ApplicationType applType) {
+        return noOfApplicationsRepository.findZoneByApplType(applType);
 
-	}
+    }
+
+    public List<SlotMapping> slotMappingForOneDayPermit(ApplicationType applType) {
+        return noOfApplicationsRepository.findSlotMappingForOneDayPermit(applType);
+
+    }
 
     public List<SlotMapping> findByZoneElectionWardAndAppType(Boundary zone,
             Boundary electionWard, ApplicationType applType) {

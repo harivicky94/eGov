@@ -115,8 +115,7 @@
 					<th><spring:message code="lbl.zonal.office" /></th>
 					<th><spring:message code="lbl.election.ward" /></th>
 					<th><spring:message code="lbl.status" /></th>
-					<th><spring:message code="lbl.current.owner" /></th>
-					<th><spring:message code="lbl.pending.actions" /></th>
+					<th><spring:message code="lbl.pending.failureremarks" /></th>
 				</tr>
 			</thead>
 		</table>
