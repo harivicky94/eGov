@@ -46,6 +46,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.log4j.Logger;
 import org.egov.bpa.master.entity.SlotMapping;
@@ -126,7 +127,7 @@ public class ScheduleAppointmentForDocumentScrutinyService {
                         List<BpaApplication> bpaApplications = getNormalBpaApplicationsBySlotsStatusAndBoundary(slot);
                         if (!bpaApplications.isEmpty()) {
                             Map<Long, SlotApplication> processedApplication = new HashMap<>();
-                            Map<Long,String> errorMsg = new HashMap<>();
+                            Map<Long,String> errorMsg = new ConcurrentHashMap<>();
                             for (BpaApplication bpaApp : bpaApplications) {
                                 if (LOGGER.isInfoEnabled()) {
                                     LOGGER.info(
@@ -158,7 +159,7 @@ public class ScheduleAppointmentForDocumentScrutinyService {
                             if (processedApplication.size() > 0) {
                                 sendSmsAndEmailForSuccessfulApplications(processedApplication, errorMsg);
                             }
-                            if (errorMsg.size() > 0) {
+                            if (!errorMsg.isEmpty()) {
                                 setFailureInSchedulerTrueForFailedApplications(errorMsg);
                             }
                         }
@@ -260,7 +261,6 @@ public class ScheduleAppointmentForDocumentScrutinyService {
         List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(MODULE_NAME,
                 GAP_FOR_SCHEDULING_CONFIG_KEY);
         return appConfigValue.get(0).getValue();
-
     }
 
     private SlotApplication buildSlotApplicationObject(BpaApplication bpaApp, SlotDetail slotDetail) {
@@ -326,11 +326,14 @@ public class ScheduleAppointmentForDocumentScrutinyService {
 
     private String getErrorMessage(final Exception exception) {
         StringBuilder msg = new StringBuilder();
-        msg.append(exception.toString());
-        msg.append(" ");
+        msg.append(exception.toString()).append(' ');
+        int i = 0;
         for (StackTraceElement element : exception.getStackTrace()) {
+            i++;
+            if (i > 1) {
+                break;
+            }
             msg.append(element.toString());
-            break;
         }
         return msg.toString();
     }
@@ -361,7 +364,7 @@ public class ScheduleAppointmentForDocumentScrutinyService {
                                 totalAvailableSlots);
                         if (!bpaApplications.isEmpty()) {
                             Map<Long, SlotApplication> processedApplication = new HashMap<>();
-                            Map<Long,String> errorMsg = new HashMap<>();
+                            Map<Long,String> errorMsg = new ConcurrentHashMap<>();
                             for (BpaApplication bpaApp : bpaApplications) {
                                 try {
                                     TransactionTemplate template = new TransactionTemplate(
@@ -391,7 +394,7 @@ public class ScheduleAppointmentForDocumentScrutinyService {
                             if (processedApplication.size() > 0) {
                                 sendSmsAndEmailForSuccessfulApplications(processedApplication, errorMsg);
                             }
-                            if (errorMsg.size() > 0) {
+                            if (!errorMsg.isEmpty()) {
                                 setFailureInSchedulerTrueForFailedApplications(errorMsg);
                             }
                         }
