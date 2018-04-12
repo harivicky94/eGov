@@ -24,6 +24,7 @@ import org.egov.edcr.service.ReportService;
 import org.egov.edcr.utility.DcrConstants;
 import org.egov.edcr.utility.Util;
 import org.egov.edcr.utility.math.Polygon;
+import org.egov.edcr.utility.math.Ray;
 import org.kabeja.dxf.DXFVertex;
 import org.kabeja.dxf.helpers.Point;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +42,8 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 @Service
 public class Rule24 extends GeneralRule {
-    private Logger LOG = Logger.getLogger(Rule24.class);
+    private Logger logger = Logger.getLogger(Rule24.class);
+    final Ray rayCasting = new Ray(new Point(-1.123456789, -1.987654321, 0d));
 
     private static final BigDecimal FRONTYARDMINIMUM_DISTANCE = BigDecimal.valueOf(1.8);
     private static final BigDecimal FRONTYARDMEAN_DISTANCE = BigDecimal.valueOf(3);
@@ -872,7 +874,7 @@ public class Rule24 extends GeneralRule {
         while (buildingIterator.hasNext()) {
             DXFVertex dxfVertex = (DXFVertex) buildingIterator.next();
             Point point = dxfVertex.getPoint();
-            if (!RAY_CASTING.contains(point, plotPolygon))
+            if (!rayCasting.contains(point, plotPolygon))
                 buildingOutSideBoundary = true;
 
         }
@@ -890,7 +892,7 @@ public class Rule24 extends GeneralRule {
         while (shadeIterator.hasNext()) {
             DXFVertex dxfVertex = (DXFVertex) shadeIterator.next();
             Point point = dxfVertex.getPoint();
-            if (!RAY_CASTING.contains(point, plotPolygon))
+            if (!rayCasting.contains(point, plotPolygon))
                 shadeOutSideBoundary = true;
 
         }
@@ -1006,7 +1008,7 @@ public class Rule24 extends GeneralRule {
 
                     if (!habitable) {
 
-                        if(LOG.isDebugEnabled()) LOG.debug("since rooom is not habitable " + habitableRoomNo + " floor no" + floor.getName());
+                        if(logger.isDebugEnabled()) logger.debug("since rooom is not habitable " + habitableRoomNo + " floor no" + floor.getName());
                         faileCount++;
 
                         pl.reportOutput

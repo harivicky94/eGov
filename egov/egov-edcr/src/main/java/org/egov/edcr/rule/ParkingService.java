@@ -13,6 +13,7 @@ import org.egov.edcr.entity.PlanDetail;
 import org.egov.edcr.entity.measurement.Measurement;
 import org.egov.edcr.utility.Util;
 import org.egov.edcr.utility.math.Polygon;
+import org.egov.edcr.utility.math.Ray;
 import org.kabeja.dxf.DXFDocument;
 import org.kabeja.dxf.DXFLWPolyline;
 import org.kabeja.dxf.DXFVertex;
@@ -24,15 +25,17 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class ParkingService implements RuleService {
-    private Logger LOG = Logger.getLogger(SetBackService.class);
+    private Logger logger = Logger.getLogger(SetBackService.class);
+    final Ray rayCasting = new Ray(new Point(-1.123456789, -1.987654321, 0d));
+
     @Autowired
     @Qualifier("parentMessageSource")
     protected MessageSource edcrMessageSource;
     @Override
     public PlanDetail extract(PlanDetail pl, DXFDocument doc) {
-        List<DXFLWPolyline> residentialUnit = new LinkedList<DXFLWPolyline>();
-        List<DXFLWPolyline> residentialUnitDeduction = new ArrayList<DXFLWPolyline>();
-        List<DXFLWPolyline> removeDeduction = new ArrayList<DXFLWPolyline>();
+        List<DXFLWPolyline> residentialUnit = new LinkedList<>();
+        List<DXFLWPolyline> residentialUnitDeduction = new ArrayList<>();
+        List<DXFLWPolyline> removeDeduction = new ArrayList<>();
         boolean layerPresent = true;
 
         layerPresent = doc.containsDXFLayer(DxfFileConstants.RESI_UNIT);
@@ -70,7 +73,6 @@ public class ParkingService implements RuleService {
                 points.add(p);
             }
 
-            // System.out.println("resunit points----"+pointsOfPlot);
             BigDecimal deduction = BigDecimal.ZERO;
             for (DXFLWPolyline residentialDeduct : residentialUnitDeduction) {
                 boolean contains = false;
@@ -78,8 +80,7 @@ public class ParkingService implements RuleService {
                 while (buildingIterator.hasNext()) {
                     DXFVertex dxfVertex = (DXFVertex) buildingIterator.next();
                     Point point = dxfVertex.getPoint();
-                    // Point point1=new org.egov.edcr.utility.math.Point(point.getX(), point.getY());
-                    if (RAY_CASTING.contains(point, polygon)) {
+                    if (rayCasting.contains(point, polygon)) {
                         contains = true;
                         Measurement measurement = new Measurement();
                         measurement.setPolyLine(residentialDeduct);
@@ -88,13 +89,12 @@ public class ParkingService implements RuleService {
 
                 }
                 if (contains) {
-                    System.out.println("current deduct " + deduction + "  :add deduct for rest unit " + i + " area added "
+                    logger.info("current deduct " + deduction + "  :add deduct for rest unit " + i + " area added "
                             + Util.getPolyLineArea(residentialDeduct));
                     deduction = deduction.add(Util.getPolyLineArea(residentialDeduct));
                 }
 
             }
-            // unitWiseDeduction.put("resUnit"+i, deduction);
 
             floorUnit.setTotalUnitDeduction(deduction);
             pl.getFloorUnits().add(floorUnit);
@@ -106,10 +106,10 @@ public class ParkingService implements RuleService {
         if (layerPresent) {
             List<DXFLWPolyline> bldparking = Util.getPolyLinesByLayer(doc, DxfFileConstants.PARKING_SLOT);
             if (!bldparking.isEmpty()) {
-                if(LOG.isDebugEnabled()) LOG.debug("Parking slot ");
+                if(logger.isDebugEnabled()) logger.debug("Parking slot ");
                 for (DXFLWPolyline pline : bldparking) {
-                    if(LOG.isDebugEnabled()) LOG.debug("Width:"+pline.getBounds().getWidth());
-                    if(LOG.isDebugEnabled()) LOG.debug("Height"+pline.getBounds().getHeight());
+                    if(logger.isDebugEnabled()) logger.debug("Width:"+pline.getBounds().getWidth());
+                    if(logger.isDebugEnabled()) logger.debug("Height"+pline.getBounds().getHeight());
                     Measurement measurement = new Measurement();
                     measurement.setWidth(BigDecimal.valueOf(pline.getBounds().getWidth()));
                     measurement.setHeight(BigDecimal.valueOf(pline.getBounds().getHeight()));

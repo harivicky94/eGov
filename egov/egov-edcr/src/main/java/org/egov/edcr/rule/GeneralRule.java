@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
 import org.egov.edcr.constants.DxfFileConstants;
 import org.egov.edcr.entity.Block;
 import org.egov.edcr.entity.Building;
@@ -15,15 +14,12 @@ import org.egov.edcr.entity.PlanDetail;
 import org.egov.edcr.entity.PlanInformation;
 import org.egov.edcr.entity.Plot;
 import org.egov.edcr.entity.Result;
-import org.egov.edcr.entity.Room;
 import org.egov.edcr.entity.RuleOutput;
 import org.egov.edcr.entity.SubRuleOutput;
 import org.egov.edcr.entity.measurement.Measurement;
 import org.egov.edcr.entity.utility.RuleReportOutput;
-import org.egov.edcr.service.DcrService;
 import org.egov.edcr.utility.DcrConstants;
 import org.egov.edcr.utility.Util;
-import org.egov.edcr.utility.math.Ray;
 import org.kabeja.dxf.DXFBlock;
 import org.kabeja.dxf.DXFConstants;
 import org.kabeja.dxf.DXFDimension;
@@ -32,7 +28,6 @@ import org.kabeja.dxf.DXFEntity;
 import org.kabeja.dxf.DXFLWPolyline;
 import org.kabeja.dxf.DXFLayer;
 import org.kabeja.dxf.DXFMText;
-import org.kabeja.dxf.helpers.Point;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
@@ -43,19 +38,13 @@ import ar.com.fdvs.dj.domain.builders.FastReportBuilder;
 @Service
 public class GeneralRule implements RuleService {
 
-    private Logger LOG = Logger.getLogger(DcrService.class);
-    
-    protected final Ray RAY_CASTING = new Ray(new Point(-1.123456789, -1.987654321, 0d));
+    private String regex = "[^\\d.]";
     @Autowired
     @Qualifier("parentMessageSource")
     protected MessageSource edcrMessageSource;
 
-    
-    
     public PlanDetail validate(PlanDetail planDetail) {
-       
-        
-        
+
         return planDetail;
     }
 
@@ -63,7 +52,7 @@ public class GeneralRule implements RuleService {
         return planDetail;
 
     }
-    
+
     public boolean generateRuleReport(PlanDetail planDetail, FastReportBuilder drb, Map map, boolean status) {
         return true;
     }
@@ -75,7 +64,6 @@ public class GeneralRule implements RuleService {
 
         if (mainRule != null) {
             ruleOutput.key = mainRule;
-            // ruleOutput.result = status;
 
             if (subRule != null || fieldVerified != null) {
                 SubRuleOutput subRuleOutput = new SubRuleOutput();
@@ -111,20 +99,20 @@ public class GeneralRule implements RuleService {
 
     @Override
     public PlanDetail extract(PlanDetail pl, DXFDocument doc) {
-          pl.setPlanInformation(extractPlanInfo(pl,doc));
-          //TODO: TEMPORARY ADDED FOR TESTING.
-          Building building = new Building();
-          pl.setBuilding(building);
-          
-          
-          extractPlotDetails(pl, doc);
-          extractBuildingDetails(pl, doc);
-          extractFloorDetails(pl,doc);
-          return pl;
-          
-    
+        pl.setPlanInformation(extractPlanInfo(pl, doc));
+        /*
+         * TEMPORARY ADDED FOR TESTING.
+         */
+        Building building = new Building();
+        pl.setBuilding(building);
+
+        extractPlotDetails(pl, doc);
+        extractBuildingDetails(pl, doc);
+        extractFloorDetails(pl, doc);
+        return pl;
+
     }
-    
+
     private void extractFloorDetails(PlanDetail pl, DXFDocument doc) {
 
         DXFLayer floorLayer = new DXFLayer();
@@ -146,7 +134,6 @@ public class GeneralRule implements RuleService {
                     floorLayer = doc.getDXFLayer(floorName);
                     blockLayer = floorLayer;
                     if (!floorLayer.getName().equalsIgnoreCase(floorName)) {
-                        blockNumber++;
                         break;
                     }
                     Floor floor = new Floor();
@@ -162,7 +149,6 @@ public class GeneralRule implements RuleService {
                             + negetivFloorNo;
                     floorLayer = doc.getDXFLayer(floorName);
                     if (!floorLayer.getName().equalsIgnoreCase("FLOOR_" + negetivFloorNo)) {
-                        negetivFloorNo--;
                         break;
                     }
                     Floor floor = new Floor();
@@ -172,44 +158,38 @@ public class GeneralRule implements RuleService {
 
                 }
 
-                if (building.getFloors() != null && building.getFloors().size() > 0) {
+                if (building.getFloors() != null && !building.getFloors().isEmpty()) {
                     building.setMaxFloor(BigDecimal.valueOf(building.getFloors().size()));
                     building.setFloorsAboveGround(BigDecimal.valueOf(building.getFloors().size()));
                     building.setTotalFloors(BigDecimal.valueOf(building.getFloors().size()));
                 }
+                blockNumber++;
             } else
                 break;
         }
 
     }
 
-    
     private void extractPlotDetails(PlanDetail pl, DXFDocument doc) {
         List<DXFLWPolyline> polyLinesByLayer;
-        // Plot plot = new Plot();
         polyLinesByLayer = Util.getPolyLinesByLayer(doc, DxfFileConstants.PLOT_BOUNDARY);
-        if (polyLinesByLayer.size() > 0) {
+        if (!polyLinesByLayer.isEmpty()) {
             pl.getPlot().setPolyLine(polyLinesByLayer.get(0));
-            // plot.setArea(Util.getPolyLineArea(plot.getPolyLine())); //The actual area of plot boundary not used. Plot area
-            // decide by plan information table.
-            // plot.setPresentInDxf(true);
         } else
             pl.addError(DxfFileConstants.PLOT_BOUNDARY, edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
                     new String[] { DxfFileConstants.PLOT_BOUNDARY }, null));
-        // pl.setPlot(plot);
     }
-    
-    
+
     private void extractBuildingDetails(PlanDetail pl, DXFDocument doc) {
-        
+
         List<DXFLWPolyline> polyLinesByLayer;
-        
+
         DXFLayer blockLayer = new DXFLayer();
 
         int blockNumber = 0;
         while (blockLayer != null) {
             blockNumber++;
-            String blockName = DxfFileConstants.BLOCK_NAME_PREFIX + blockNumber +"_" + DxfFileConstants.BUILDING_FOOT_PRINT;
+            String blockName = DxfFileConstants.BLOCK_NAME_PREFIX + blockNumber + "_" + DxfFileConstants.BUILDING_FOOT_PRINT;
             blockLayer = doc.getDXFLayer(blockName);
             if (!blockLayer.getName().equalsIgnoreCase(blockName)) {
                 break;
@@ -217,15 +197,15 @@ public class GeneralRule implements RuleService {
             polyLinesByLayer = Util.getPolyLinesByLayer(doc, blockName);
 
             Block block = new Block();
-                block.setName(DxfFileConstants.BLOCK_NAME_PREFIX+blockNumber);
-                block.setNumber(String.valueOf(blockNumber));
+            block.setName(DxfFileConstants.BLOCK_NAME_PREFIX + blockNumber);
+            block.setNumber(String.valueOf(blockNumber));
 
             Building building = new Building();
-                building.setPolyLine(polyLinesByLayer.get(0));
-                
-                
-            polyLinesByLayer = Util.getPolyLinesByLayer(doc,DxfFileConstants.BLOCK_NAME_PREFIX + blockNumber +"_" + DxfFileConstants.SHADE_OVERHANG);
-            if (polyLinesByLayer.size() > 0) {
+            building.setPolyLine(polyLinesByLayer.get(0));
+
+            polyLinesByLayer = Util.getPolyLinesByLayer(doc,
+                    DxfFileConstants.BLOCK_NAME_PREFIX + blockNumber + "_" + DxfFileConstants.SHADE_OVERHANG);
+            if (!polyLinesByLayer.isEmpty()) {
                 Measurement shade = new Measurement();
                 shade.setPolyLine(polyLinesByLayer.get(0));
                 building.setShade(shade);
@@ -234,20 +214,20 @@ public class GeneralRule implements RuleService {
             building.setPresentInDxf(true);
             block.setBuilding(building);
             pl.getBlocks().add(block);
-         }
-         
-        if (pl.getBlocks().size()<=0 ) {
-                      pl.addError(DxfFileConstants.BUILDING_FOOT_PRINT, edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
-                    new String[] { DxfFileConstants.BUILDING_FOOT_PRINT }, null)); }
+        }
 
+        if (pl.getBlocks().isEmpty()) {
+            pl.addError(DxfFileConstants.BUILDING_FOOT_PRINT, edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
+                    new String[] { DxfFileConstants.BUILDING_FOOT_PRINT }, null));
+        }
 
     }
-    
+
     private void extractOpenStairs(DXFDocument doc, Building building) {
         List<DXFDimension> lines = Util.getDimensionsByLayer(doc, DxfFileConstants.OPEN_STAIR);
         if (lines != null)
             for (Object dxfEntity : lines) {
-                BigDecimal value = BigDecimal.ZERO;
+                BigDecimal value;
                 DXFDimension line = (DXFDimension) dxfEntity;
                 String dimensionBlock = line.getDimensionBlock();
                 DXFBlock dxfBlock = doc.getDXFBlock(dimensionBlock);
@@ -259,9 +239,10 @@ public class GeneralRule implements RuleService {
                         String text2 = text.getText();
                         if (text2.contains(";")) {
                             text2 = text2.split(";")[1];
-                        } else
+                        } else {
 
-                            text2 = text2.replaceAll("[^\\d.]", "");
+                            text2 = text2.replaceAll(regex, "");
+                        }
                         ;
                         if (!text2.isEmpty()) {
                             value = BigDecimal.valueOf(Double.parseDouble(text2));
@@ -277,110 +258,107 @@ public class GeneralRule implements RuleService {
             }
     }
 
+    private PlanInformation extractPlanInfo(PlanDetail pl, DXFDocument doc) {
+        PlanInformation pi = new PlanInformation();
+        Map<String, String> planInfoProperties = Util.getPlanInfoProperties(doc);
+        if (planInfoProperties.get(DxfFileConstants.ARCHITECT_NAME) != null)
+            pi.setArchitectInformation(planInfoProperties.get(DxfFileConstants.ARCHITECT_NAME));
+        String plotArea = planInfoProperties.get(DxfFileConstants.PLOT_AREA);
 
-    
-        private PlanInformation extractPlanInfo( PlanDetail pl,DXFDocument doc) {
-            PlanInformation pi = new PlanInformation();
-            Map<String, String> planInfoProperties = Util.getPlanInfoProperties(doc);
-            if (planInfoProperties.get(DxfFileConstants.ARCHITECT_NAME) != null)
-                pi.setArchitectInformation(planInfoProperties.get(DxfFileConstants.ARCHITECT_NAME));
-            String plotArea = planInfoProperties.get(DxfFileConstants.PLOT_AREA);
-
-            if (plotArea == null){
+        if (plotArea == null) {
+            Plot plot = new Plot();
+            pl.addError(DxfFileConstants.PLOT_AREA, DxfFileConstants.PLOT_AREA + " is not defined in the Plan Information Layer");
+            plot.setPresentInDxf(false);
+            pl.setPlot(plot);
+        } else
+            try {
                 Plot plot = new Plot();
-                pl.addError(DxfFileConstants.PLOT_AREA, DxfFileConstants.PLOT_AREA + " is not defined in the Plan Information Layer");
-                plot.setPresentInDxf(false);
+                plotArea = plotArea.replaceAll(regex, "");
+                pi.setPlotArea(BigDecimal.valueOf(Double.parseDouble(plotArea)));
+                plot.setArea(BigDecimal.valueOf(Double.parseDouble(plotArea)));
+                plot.setPresentInDxf(true);
                 pl.setPlot(plot);
+            } catch (Exception e) {
+                pl.addError(DxfFileConstants.PLOT_AREA, DxfFileConstants.PLOT_AREA + " contains non invalid values.");
             }
+        if (planInfoProperties.get(DxfFileConstants.CRZ_ZONE) != null) {
+            String value = planInfoProperties.get(DxfFileConstants.CRZ_ZONE);
+            if (value.equalsIgnoreCase(DcrConstants.YES))
+                pi.setCrzZoneArea(true);
             else
-                try {
-                    Plot plot = new Plot();
-                    plotArea = plotArea.replaceAll("[^\\d.]", "");
-                    pi.setPlotArea(BigDecimal.valueOf(Double.parseDouble(plotArea)));
-                    plot.setArea(BigDecimal.valueOf(Double.parseDouble(plotArea)));
-                    plot.setPresentInDxf(true);
-                    pl.setPlot(plot);
-                } catch (Exception e) {
-                    pl.addError(DxfFileConstants.PLOT_AREA, DxfFileConstants.PLOT_AREA + " contains non invalid values.");
-                }
-            if (planInfoProperties.get(DxfFileConstants.CRZ_ZONE) != null) {
-                String value = planInfoProperties.get(DxfFileConstants.CRZ_ZONE);
-                if (value.equalsIgnoreCase(DcrConstants.YES))
-                    pi.setCrzZoneArea(true);
-                else
-                    pi.setCrzZoneArea(false);
-            }
-
-            if (planInfoProperties.get(DxfFileConstants.SECURITY_ZONE) != null) {
-                String securityZone = planInfoProperties.get(DxfFileConstants.SECURITY_ZONE);
-                if (securityZone.equalsIgnoreCase(DcrConstants.YES))
-                    pi.setSecurityZone(true);
-                else
-                    pi.setSecurityZone(false);
-            }
-            if (planInfoProperties.get(DxfFileConstants.OPENING_BELOW_2_1_ON_SIDE_LESS_1M) != null) {
-                String openingBelow2mside = planInfoProperties.get(DxfFileConstants.OPENING_BELOW_2_1_ON_SIDE_LESS_1M);
-                if (openingBelow2mside.equalsIgnoreCase(DcrConstants.YES))
-                    pi.setOpeningOnSide(true);
-                else
-                    pi.setOpeningOnSide(false);
-            }
-            if (planInfoProperties.get(DxfFileConstants.OPENING_BELOW_2_1_ON_REAR_LESS_1M) != null) {
-                String openingBelow2mrear = planInfoProperties.get(DxfFileConstants.OPENING_BELOW_2_1_ON_REAR_LESS_1M);
-                if (openingBelow2mrear.equalsIgnoreCase(DcrConstants.YES))
-                    pi.setOpeningOnRear(true);
-                else
-                    pi.setOpeningOnRear(false);
-            }
-            if (planInfoProperties.get(DxfFileConstants.NOC_TO_ABUT_SIDE) != null) {
-                String nocAbutSide = planInfoProperties.get(DxfFileConstants.NOC_TO_ABUT_SIDE);
-                if (nocAbutSide.equalsIgnoreCase(DcrConstants.YES))
-                    pi.setNocToAbutSide(true);
-                else
-                    pi.setNocToAbutSide(false);
-            }
-            if (planInfoProperties.get(DxfFileConstants.NOC_TO_ABUT_REAR) != null) {
-                String nocAbutRear = planInfoProperties.get(DxfFileConstants.NOC_TO_ABUT_REAR);
-                if (nocAbutRear.equalsIgnoreCase(DcrConstants.YES))
-                    pi.setNocToAbutRear(true);
-                else
-                    pi.setNocToAbutRear(false);
-            }
-
-            if (planInfoProperties.get(DxfFileConstants.ARCHITECT_NAME) != null)
-                pi.setArchitectInformation(planInfoProperties.get(DxfFileConstants.ARCHITECT_NAME));
-
-            String accwidth = "";
-            if (planInfoProperties.size() > 0) {
-                String accessWidth = planInfoProperties.get(DxfFileConstants.ACCESS_WIDTH);
-                accwidth = accessWidth;
-                if (accessWidth == null) {
-
-                    Set<String> keySet = planInfoProperties.keySet();
-                    for (String s : keySet)
-                        if (s.contains(DxfFileConstants.ACCESS_WIDTH)) {
-                            accessWidth = planInfoProperties.get(s);
-                            pl.addError(DxfFileConstants.ACCESS_WIDTH,
-                                    DxfFileConstants.ACCESS_WIDTH + " is invalid .Text in dxf file is " + s);
-                        }
-
-                }
-
-                if (accessWidth == null)
-                    pl.addError(DxfFileConstants.ACCESS_WIDTH, DxfFileConstants.ACCESS_WIDTH + "  Is not defined");
-                else {
-                    accessWidth = accessWidth.replaceAll("[^\\d.]", "");
-                    if (!accessWidth.isEmpty())
-                        pi.setAccessWidth(BigDecimal.valueOf(Double.parseDouble(accessWidth)));
-                    else
-                        pl.addError(DxfFileConstants.ACCESS_WIDTH,
-                                "The value for " + DxfFileConstants.ACCESS_WIDTH + " '" + accwidth + "' Is Invalid");
-
-                }
-            } else
-                pi.setAccessWidth(BigDecimal.ZERO);
-
-            return pi;
+                pi.setCrzZoneArea(false);
         }
-        
+
+        if (planInfoProperties.get(DxfFileConstants.SECURITY_ZONE) != null) {
+            String securityZone = planInfoProperties.get(DxfFileConstants.SECURITY_ZONE);
+            if (securityZone.equalsIgnoreCase(DcrConstants.YES))
+                pi.setSecurityZone(true);
+            else
+                pi.setSecurityZone(false);
+        }
+        if (planInfoProperties.get(DxfFileConstants.OPENING_BELOW_2_1_ON_SIDE_LESS_1M) != null) {
+            String openingBelow2mside = planInfoProperties.get(DxfFileConstants.OPENING_BELOW_2_1_ON_SIDE_LESS_1M);
+            if (openingBelow2mside.equalsIgnoreCase(DcrConstants.YES))
+                pi.setOpeningOnSide(true);
+            else
+                pi.setOpeningOnSide(false);
+        }
+        if (planInfoProperties.get(DxfFileConstants.OPENING_BELOW_2_1_ON_REAR_LESS_1M) != null) {
+            String openingBelow2mrear = planInfoProperties.get(DxfFileConstants.OPENING_BELOW_2_1_ON_REAR_LESS_1M);
+            if (openingBelow2mrear.equalsIgnoreCase(DcrConstants.YES))
+                pi.setOpeningOnRear(true);
+            else
+                pi.setOpeningOnRear(false);
+        }
+        if (planInfoProperties.get(DxfFileConstants.NOC_TO_ABUT_SIDE) != null) {
+            String nocAbutSide = planInfoProperties.get(DxfFileConstants.NOC_TO_ABUT_SIDE);
+            if (nocAbutSide.equalsIgnoreCase(DcrConstants.YES))
+                pi.setNocToAbutSide(true);
+            else
+                pi.setNocToAbutSide(false);
+        }
+        if (planInfoProperties.get(DxfFileConstants.NOC_TO_ABUT_REAR) != null) {
+            String nocAbutRear = planInfoProperties.get(DxfFileConstants.NOC_TO_ABUT_REAR);
+            if (nocAbutRear.equalsIgnoreCase(DcrConstants.YES))
+                pi.setNocToAbutRear(true);
+            else
+                pi.setNocToAbutRear(false);
+        }
+
+        if (planInfoProperties.get(DxfFileConstants.ARCHITECT_NAME) != null)
+            pi.setArchitectInformation(planInfoProperties.get(DxfFileConstants.ARCHITECT_NAME));
+
+        String accwidth = "";
+        if (!planInfoProperties.isEmpty()) {
+            String accessWidth = planInfoProperties.get(DxfFileConstants.ACCESS_WIDTH);
+            accwidth = accessWidth;
+            if (accessWidth == null) {
+
+                Set<String> keySet = planInfoProperties.keySet();
+                for (String s : keySet)
+                    if (s.contains(DxfFileConstants.ACCESS_WIDTH)) {
+                        accessWidth = planInfoProperties.get(s);
+                        pl.addError(DxfFileConstants.ACCESS_WIDTH,
+                                DxfFileConstants.ACCESS_WIDTH + " is invalid .Text in dxf file is " + s);
+                    }
+
+            }
+
+            if (accessWidth == null)
+                pl.addError(DxfFileConstants.ACCESS_WIDTH, DxfFileConstants.ACCESS_WIDTH + "  Is not defined");
+            else {
+                accessWidth = accessWidth.replaceAll(regex, "");
+                if (!accessWidth.isEmpty())
+                    pi.setAccessWidth(BigDecimal.valueOf(Double.parseDouble(accessWidth)));
+                else
+                    pl.addError(DxfFileConstants.ACCESS_WIDTH,
+                            "The value for " + DxfFileConstants.ACCESS_WIDTH + " '" + accwidth + "' Is Invalid");
+
+            }
+        } else
+            pi.setAccessWidth(BigDecimal.ZERO);
+
+        return pi;
+    }
+
 }

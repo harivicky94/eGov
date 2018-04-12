@@ -8,7 +8,6 @@ import org.apache.log4j.Logger;
 import org.egov.edcr.constants.DxfFileConstants;
 import org.egov.edcr.entity.PlanDetail;
 import org.egov.edcr.entity.measurement.Yard;
-import org.egov.edcr.service.DcrService;
 import org.egov.edcr.service.MinDistance;
 import org.egov.edcr.utility.DcrConstants;
 import org.egov.edcr.utility.Util;
@@ -21,7 +20,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class SetBackService implements RuleService {
-    private Logger LOG = Logger.getLogger(SetBackService.class);
+    private Logger logger = Logger.getLogger(SetBackService.class);
     @Autowired
     @Qualifier("parentMessageSource")
     protected MessageSource edcrMessageSource;
@@ -62,12 +61,12 @@ public class SetBackService implements RuleService {
     private Yard getYard(PlanDetail pl, DXFDocument doc, String yardName) {
         Yard yard = new Yard();
         List<DXFLWPolyline> frontYardLines = Util.getPolyLinesByLayer(doc, yardName);
-        if (frontYardLines.size() > 0) {
+        if (!frontYardLines.isEmpty()) {
             yard.setPolyLine(frontYardLines.get(0));
             yard.setArea(Util.getPolyLineArea(yard.getPolyLine()));
             yard.setMean(yard.getArea().divide(BigDecimal.valueOf(yard.getPolyLine().getBounds().getWidth()), 5,
                     RoundingMode.HALF_UP));
-            if(LOG.isDebugEnabled()) LOG.debug(yardName + " Mean " + yard.getMean());
+            if(logger.isDebugEnabled()) logger.debug(yardName + " Mean " + yard.getMean());
             yard.setPresentInDxf(true);
 
         } else
