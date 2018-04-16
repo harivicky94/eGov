@@ -105,7 +105,6 @@ public class BpaThirdPartyService {
 				historyMap.put(STATUS, stateHistory.getValue());
 				Position owner = stateHistory.getOwnerPosition();
 				userObject = stateHistory.getOwnerUser();
-
 				setEmployeeDetails(userObject, historyMap, owner);
 				historyTable.add(historyMap);
 			}
@@ -131,10 +130,10 @@ public class BpaThirdPartyService {
 					eisCommonService.getDepartmentForUser(userObject.getId()) == null ? "" : eisCommonService
 							.getDepartmentForUser(userObject.getId()).getName());
 		} else if (null != owner && null != owner.getDeptDesig()) {
-			userObject = getUserPositionByPassingPosition(owner.getId());
+			User user = getUserPositionByPassingPosition(owner.getId());
 			historyMap
-					.put(USER, userObject.getUsername() == null ? ""
-																: userObject.getUsername() + "::" + userObject.getName());
+					.put(USER, user.getUsername() == null ? ""
+																: user.getUsername() + "::" + user.getName());
 			historyMap.put(DEPARTMENT, owner.getDeptDesig().getDepartment() == null ? "" : owner.getDeptDesig()
 																								.getDepartment().getName());
 		}

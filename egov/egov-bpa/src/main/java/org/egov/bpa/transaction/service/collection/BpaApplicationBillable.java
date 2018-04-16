@@ -151,7 +151,7 @@ public class BpaApplicationBillable extends AbstractBillable implements Billable
 	public BigDecimal getFunctionaryCode() {
 		List<AppConfigValues> appConfigValueList = appConfigValueService.getConfigValuesByModuleAndKey(
 				BpaConstants.APPLICATION_MODULE_TYPE, BpaConstants.BPA_DEFAULT_FUNCTIONARY_CODE);
-		return appConfigValueList.isEmpty() ? new BigDecimal(0) : new BigDecimal(appConfigValueList.get(0).getValue());
+		return appConfigValueList.isEmpty() ? BigDecimal.ZERO : new BigDecimal(appConfigValueList.get(0).getValue());
 	}
 
 	@Override

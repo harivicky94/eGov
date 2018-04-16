@@ -147,10 +147,9 @@ public class BpaNoticeService {
 	public ReportOutput generateDemandNotice(final BpaApplication bpaApplication,
 											 final Map<String, Object> ulbDetailsReportParams)
 			throws IOException {
-		ReportOutput reportOutput = new ReportOutput();
 		String fileName = "bpa_demand_notice_" + bpaApplication.getApplicationNumber();
 		BpaNotice bpaNotice = findByApplicationAndNoticeType(bpaApplication, BPA_DEMAND_NOTICE_TYPE);
-		reportOutput = getReportOutput(bpaApplication, ulbDetailsReportParams, reportOutput, fileName, bpaNotice, DEMANDNOCFILENAME, BPA_DEMAND_NOTICE_TYPE);
+		ReportOutput reportOutput = getReportOutput(bpaApplication, ulbDetailsReportParams, fileName, bpaNotice, DEMANDNOCFILENAME, BPA_DEMAND_NOTICE_TYPE);
 		reportOutput.setReportFormat(ReportFormat.PDF);
 		return reportOutput;
 	}
@@ -211,21 +210,20 @@ public class BpaNoticeService {
 	public ReportOutput generateRejectionNotice(final BpaApplication bpaApplication,
 												final Map<String, Object> ulbDetailsReportParams)
 			throws IOException {
-		ReportOutput reportOutput = new ReportOutput();
 		String fileName = "bpa_rejection_notice_" + bpaApplication.getApplicationNumber();
 		BpaNotice bpaNotice = findByApplicationAndNoticeType(bpaApplication, BPA_REJECTION_NOTICE_TYPE);
-		reportOutput = getReportOutput(bpaApplication, ulbDetailsReportParams, reportOutput, fileName, bpaNotice, BPAREJECTIONFILENAME, BPA_REJECTION_NOTICE_TYPE);
+		ReportOutput reportOutput = getReportOutput(bpaApplication, ulbDetailsReportParams, fileName, bpaNotice, BPAREJECTIONFILENAME, BPA_REJECTION_NOTICE_TYPE);
 		reportOutput.setReportFormat(ReportFormat.PDF);
 		return reportOutput;
 	}
 
-	private ReportOutput getReportOutput(BpaApplication bpaApplication, Map<String, Object> ulbDetailsReportParams, ReportOutput reportOutput, String fileName, BpaNotice bpaNotice, String bparejectionfilename, String bpaRejectionNoticeType) throws IOException {
-		ReportRequest reportInput;
+	private ReportOutput getReportOutput(BpaApplication bpaApplication, Map<String, Object> ulbDetailsReportParams, String fileName, BpaNotice bpaNotice, String bparejectionfilename, String bpaRejectionNoticeType) throws IOException {
+		ReportOutput reportOutput = new ReportOutput();
 		if (bpaNotice != null && bpaNotice.getNoticeFileStore() == null) {
 			final Map<String, Object> reportParams = buildParametersForReport(bpaApplication);
 			reportParams.putAll(ulbDetailsReportParams);
 			reportParams.putAll(buildParametersForDemandDetails(bpaApplication));
-			reportInput = new ReportRequest(bparejectionfilename, bpaApplication, reportParams);
+			ReportRequest reportInput = new ReportRequest(bparejectionfilename, bpaApplication, reportParams);
 			reportOutput = reportService.createReport(reportInput);
 			saveBpaNotices(bpaApplication, reportOutput, fileName, bpaRejectionNoticeType);
 		} else {

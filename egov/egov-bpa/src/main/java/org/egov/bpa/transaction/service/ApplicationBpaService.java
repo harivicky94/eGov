@@ -130,6 +130,7 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
 
 	private static final String APPLICATION_STATUS = "application.status";
 	private static final String NOC_UPDATION_IN_PROGRESS = "NOC updation in progress";
+	public static final String UNCHECKED = "unchecked";
 	@Autowired
 	protected ApplicationFeeService applicationFeeService;
 	@Autowired
@@ -439,7 +440,7 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
 		}
 		if (serviceTypeId != null) {
 			final Criteria feeCrit = applicationBpaBillService.getBpaFeeCriteria(serviceTypeList, feeType);
-			@SuppressWarnings("unchecked") final List<BpaFeeDetail> bpaFeeDetails = feeCrit.list();
+			@SuppressWarnings(UNCHECKED) final List<BpaFeeDetail> bpaFeeDetails = feeCrit.list();
 			for (final BpaFeeDetail feeDetail : bpaFeeDetails)
 				totalAmount = totalAmount.add(BigDecimal.valueOf(feeDetail.getAmount()));
 		} else
@@ -452,7 +453,7 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
 		BigDecimal totalAmount = BigDecimal.ZERO;
 		if (!serviceTypeIds.isEmpty()) {
 			final Criteria feeCrit = applicationBpaBillService.getBpaFeeCriteria(serviceTypeIds, BPAFEETYPE);
-			@SuppressWarnings("unchecked") final List<BpaFeeDetail> bpaFeeDetails = feeCrit.list();
+			@SuppressWarnings(UNCHECKED) final List<BpaFeeDetail> bpaFeeDetails = feeCrit.list();
 			for (final BpaFeeDetail feeDetail : bpaFeeDetails)
 				totalAmount = totalAmount.add(BigDecimal.valueOf(feeDetail.getAmount()));
 		} else
@@ -640,7 +641,7 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
 		return applicationBpaRepository.findByStatusListOrderByCreatedDateAsc(listOfBpaStatus);
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	public List<BpaApplication> getBpaApplicationsForScheduleAndReSchedule(List<BpaStatus> bpaStatusList,
 																		   List<Boundary> boundaryList,
 																		   Integer totalAvailableSlots) {
@@ -662,7 +663,7 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
 
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings(UNCHECKED)
 	public List<BpaApplication> getOneDayPermitAppForAppointment(BpaStatus bpaStatus, Boundary ward, List<Boundary> boundaryList,
 																 Integer totalAvailableSlots) {
 		final Criteria criteria = entityManager.unwrap(Session.class)
