@@ -90,14 +90,13 @@ public class BpaApplicationBillable extends AbstractBillable implements Billable
 
     @Override
     public String getBillPayee() {
-        return application.getOwner().getUser().getName();
+        return application.getOwner().getName();
     }
 
     @Override
     public String getBillAddress() {
-        if (application.getOwner() != null && !application.getOwner().getUser().getAddress().isEmpty()) {
-            return application.getOwner()
-                    .getUser().getAddress().get(0).getStreetRoadLine();
+        if (application.getOwner() != null) {
+            return application.getOwner().getAddress();
         } else {
             return StringUtils.EMPTY;
         }

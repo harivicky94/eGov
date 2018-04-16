@@ -195,6 +195,8 @@ $(document).ready(function() {
 		$('.buildingdetails').show();
 	}
 	function hideNewAndExistingBuildingDetails() {
+        $('#buildingAreaDetails tbody').find("tr").remove();
+        $('#existingBuildingAreaDetails tbody').find("tr").remove();
 		$('.handle-mandatory').removeAttr('required');
 		$('.handle-mandatory').find("span").removeClass( "mandatory" );
 		$('.buildingdetails').hide();

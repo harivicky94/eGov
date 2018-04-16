@@ -39,45 +39,32 @@
  */
 package org.egov.bpa.web.controller.transaction.citizen;
 
-import org.egov.bpa.master.entity.CheckListDetail;
-import org.egov.bpa.master.entity.ServiceType;
-import org.egov.bpa.master.entity.StakeHolder;
-import org.egov.bpa.master.service.ServiceTypeService;
-import org.egov.bpa.master.service.StakeHolderService;
-import org.egov.bpa.transaction.entity.ApplicationDocument;
-import org.egov.bpa.transaction.entity.ApplicationNocDocument;
-import org.egov.bpa.transaction.entity.ApplicationStakeHolder;
-import org.egov.bpa.transaction.entity.BpaApplication;
-import org.egov.bpa.transaction.entity.enums.ApplicantMode;
-import org.egov.bpa.transaction.service.collection.GenericBillGeneratorService;
-import org.egov.bpa.utils.BpaConstants;
-import org.egov.bpa.web.controller.transaction.BpaGenericApplicationController;
-import org.egov.commons.entity.Source;
-import org.egov.eis.service.PositionMasterService;
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
-import org.egov.pims.commons.Position;
-import org.python.icu.text.SimpleDateFormat;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.egov.bpa.master.entity.*;
+import org.egov.bpa.master.service.*;
+import org.egov.bpa.transaction.entity.*;
+import org.egov.bpa.transaction.entity.enums.*;
+import org.egov.bpa.transaction.service.*;
+import org.egov.bpa.transaction.service.collection.*;
+import org.egov.bpa.utils.*;
+import org.egov.bpa.web.controller.transaction.*;
+import org.egov.commons.entity.*;
+import org.egov.eis.service.*;
+import org.egov.infra.admin.master.entity.*;
+import org.egov.infra.workflow.matrix.entity.*;
+import org.egov.pims.commons.*;
+import org.springframework.beans.factory.annotation.*;
+import org.springframework.context.i18n.*;
+import org.springframework.stereotype.*;
+import org.springframework.ui.*;
+import org.springframework.validation.*;
+import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import javax.servlet.http.*;
+import javax.validation.*;
+import java.util.*;
 
 import static org.egov.bpa.utils.BpaConstants.*;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
+import static org.springframework.web.bind.annotation.RequestMethod.*;
 
 @Controller
 @RequestMapping(value = "/application/citizen")
@@ -109,6 +96,8 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
     private GenericBillGeneratorService genericBillGeneratorService;
     @Autowired
     private PositionMasterService positionMasterService;
+    @Autowired
+    private BuildingFloorDetailsService buildingFloorDetailsService;
 
     @RequestMapping(value = "/newconstruction-form", method = GET)
     public String showNewApplicationForm(@ModelAttribute final BpaApplication bpaApplication, final Model model,
@@ -231,7 +220,13 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
             final BindingResult resultBinder,
             final HttpServletRequest request, final Model model,
             final BindingResult errors) {
-    	
+        applicationBpaService.validateEmailAndAadhaar(bpaApplication,errors);
+        if(errors.hasErrors()) {
+            buildingFloorDetailsService.buildNewlyAddedFloorDetails(bpaApplication);
+            applicationBpaService.buildExistingAndProposedBuildingDetails(bpaApplication);
+            prepareCommonModelAttribute(model, bpaApplication);
+            return loadNewForm(bpaApplication, model, bpaApplication.getServiceType().getCode());
+        }
     	if (bpaApplicationValidationService.validateBuildingDetails(bpaApplication, model)) {
             applicationBpaService.buildExistingAndProposedBuildingDetails(bpaApplication);
             prepareCommonModelAttribute(model, bpaApplication);
@@ -293,7 +288,7 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
         bpaApplication.setAdmissionfeeAmount(applicationBpaService.setAdmissionFeeAmountForRegistrationWithAmenities(
                 bpaApplication.getServiceType().getId(), new ArrayList<ServiceType>()));
         if (bpaApplication.getOwner().getUser() != null && bpaApplication.getOwner().getUser().getId() == null) {
-            buildOwnerDetails(bpaApplication);
+            applicationBpaService.buildOwnerDetails(bpaApplication);
         }
         BpaApplication bpaApplicationRes = applicationBpaService.createNewApplication(bpaApplication, workFlowAction);
         if (citizenOrBusinessUser) { 

@@ -1,7 +1,7 @@
 package org.egov.bpa.utils;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.text.*;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.service.messaging.BPASmsAndEmailService;
 import org.egov.bpa.transaction.workflow.BpaApplicationWorkflowCustomDefaultImpl;
@@ -333,7 +333,8 @@ public class BpaUtils {
             userName = String.format("%-6s", name).replace(' ', '0').replace(',', '0');
         else
             userName = name.substring(0, 6).replace(' ', '0').replace(',', '0');
-        userNameBuilder.append(userName).append(RandomStringUtils.randomNumeric(4));
+        RandomStringGenerator generator = new RandomStringGenerator.Builder().withinRange('0', '9').build();
+        userNameBuilder.append(userName).append(generator.generate(4));
         return userNameBuilder.toString();
     }
     

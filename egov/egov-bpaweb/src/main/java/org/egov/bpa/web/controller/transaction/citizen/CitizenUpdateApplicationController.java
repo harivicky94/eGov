@@ -136,7 +136,6 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
         List<LettertoParty> lettertoPartyList = lettertoPartyService.findByBpaApplicationOrderByIdDesc(application);
         model.addAttribute("lettertopartylist", lettertoPartyList);
         model.addAttribute("inspectionList", inspectionService.findByBpaApplicationOrderByIdAsc(application));
-        application.getOwner().setPermanentAddress((PermanentAddress) application.getOwner().getUser().getAddress().get(0));
         model.addAttribute("admissionFee", applicationBpaService.setAdmissionFeeAmountForRegistrationWithAmenities(
                 application.getServiceType().getId(), application.getApplicationAmenity()));
         if(!lettertoPartyList.isEmpty() && lettertoPartyList.get(0).getSentDate() != null)
@@ -227,7 +226,7 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
         }
 
         if (bpaApplication.getOwner().getUser() != null && bpaApplication.getOwner().getUser().getId() == null)
-            buildOwnerDetails(bpaApplication);
+            applicationBpaService.buildOwnerDetails(bpaApplication);
         // To allot slot for one day permit applications
         applicationBpaService.saveAndFlushApplication(bpaApplication, workFlowAction);
         bpaUtils.updatePortalUserinbox(bpaApplication, null);

@@ -128,7 +128,7 @@ public class SearchBpaApplicationService {
 		searchBpaApplicationForm.setStatus(bpaApplication.getStatus().getDescription());
 		searchBpaApplicationForm.setPlanPermissionNumber(bpaApplication.getPlanPermissionNumber());
 		searchBpaApplicationForm.setApplicantName(
-				bpaApplication.getOwner() != null ? bpaApplication.getOwner().getUser().getName() : "");
+				bpaApplication.getOwner() != null ? bpaApplication.getOwner().getName() : "");
 		searchBpaApplicationForm.setStakeHolderName(!bpaApplication.getStakeHolder().isEmpty()
 				&& bpaApplication.getStakeHolder().get(0).getStakeHolder() != null
 						? bpaApplication.getStakeHolder().get(0).getStakeHolder().getName() : "");
@@ -153,8 +153,7 @@ public class SearchBpaApplicationService {
 		}
 		searchBpaApplicationForm.setFeeCollected(bpaDemandService.checkAnyTaxIsPendingToCollect(bpaApplication));
 		searchBpaApplicationForm.setAddress(
-				bpaApplication.getOwner() != null && !bpaApplication.getOwner().getUser().getAddress().isEmpty()
-						? bpaApplication.getOwner().getUser().getAddress().get(0).getStreetRoadLine() : "");
+				bpaApplication.getOwner() != null ? bpaApplication.getOwner().getAddress() : "");
 		searchBpaApplicationForm.setRescheduledByEmployee(bpaApplication.getIsRescheduledByEmployee());
 		searchBpaApplicationForm.setOnePermitApplication(bpaApplication.getIsOneDayPermitApplication());
 		if(BpaConstants.APPLICATION_STATUS_RESCHEDULED.equals(bpaApplication.getStatus().getCode())
@@ -182,8 +181,8 @@ public class SearchBpaApplicationService {
 
 		if (searchBpaApplicationForm.getApplicantName() != null) {
 			criteria.createAlias("bpaApplication.owner", "owner");
-			criteria.createAlias("owner.user", "user").add(
-					Restrictions.ilike("user.name", searchBpaApplicationForm.getApplicantName(), MatchMode.ANYWHERE));
+			criteria.add(
+					Restrictions.ilike("owner.name", searchBpaApplicationForm.getApplicantName(), MatchMode.ANYWHERE));
 		}
 		if (searchBpaApplicationForm.getApplicationNumber() != null) {
 			criteria.add(Restrictions.eq("bpaApplication.applicationNumber",

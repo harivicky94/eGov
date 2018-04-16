@@ -197,7 +197,7 @@ public class BpaThirdPartyService {
     public Map<String, String> checkIsEdcrUsedInBpaApplication(final String eDcrNumber) {
         Map<String, String> eDcrApplicationDetails = new HashMap<>();
         BpaApplication bpaApplication = applicationBpaService.findApplicationByEDCRNumber(eDcrNumber);
-        if(null == bpaApplication) {
+        if(null == bpaApplication || (bpaApplication != null && null == bpaApplication.getState() && BpaConstants.APPLICATION_STATUS_CANCELLED.equals(bpaApplication.getStatus()))) {
             eDcrApplicationDetails.put("isExists", "false");
             eDcrApplicationDetails.put(BpaConstants.MESSAGE, "Not used");
         } else {

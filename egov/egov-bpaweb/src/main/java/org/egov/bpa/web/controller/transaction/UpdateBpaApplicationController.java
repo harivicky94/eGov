@@ -113,7 +113,6 @@ import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.persistence.entity.PermanentAddress;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.pims.commons.Position;
@@ -269,10 +268,10 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
             mode = "showRescheduleToEmployee";
         } else if (WF_CREATED_STATE.equalsIgnoreCase(application.getStatus().getCode())) {
             mode = "view";
-        } else if (APPLICATION_STATUS_DOC_VERIFIED.equalsIgnoreCase(application.getStatus().getCode())
-                && FWD_TO_OVRSR_FOR_FIELD_INS
-                        .equalsIgnoreCase(application.getState().getNextAction())
-                && purposeInsList.isEmpty()) {
+        } else if (!application.getIsOneDayPermitApplication() &&
+                   APPLICATION_STATUS_DOC_VERIFIED.equalsIgnoreCase(application.getStatus().getCode()) &&
+                   FWD_TO_OVRSR_FOR_FIELD_INS.equalsIgnoreCase(application.getState().getNextAction()) &&
+                   purposeInsList.isEmpty()) {
             mode = "newappointment";
         } else if (FWD_TO_OVRSR_FOR_FIELD_INS.equalsIgnoreCase(application.getState().getNextAction())
                 && APPLICATION_STATUS_DOC_VERIFIED.equalsIgnoreCase(application.getStatus().getCode())
@@ -442,7 +441,6 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
             }
             // workflowContainer.setAdditionalRule(CREATE_ADDITIONAL_RULE_CREATE);
         }
-        application.getOwner().setPermanentAddress((PermanentAddress) application.getOwner().getUser().getAddress().get(0));
         prepareWorkflow(model, application, workflowContainer);
         model.addAttribute("pendingActions", workflowContainer.getPendingActions());
         model.addAttribute(AMOUNT_RULE, workflowContainer.getAmountRule());

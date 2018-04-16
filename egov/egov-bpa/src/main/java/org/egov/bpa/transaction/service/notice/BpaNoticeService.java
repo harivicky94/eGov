@@ -243,10 +243,9 @@ public class BpaNoticeService {
         reportParams.put("applicationNumber", bpaApplication.getApplicationNumber());
         reportParams.put("buildingPermitNumber",
                 bpaApplication.getPlanPermissionNumber() != null ? bpaApplication.getPlanPermissionNumber() : "");
-        reportParams.put("applicantName", bpaApplication.getOwner().getUser().getName());
+        reportParams.put("applicantName", bpaApplication.getOwner().getName());
         reportParams.put("applicantAddress",
-                bpaApplication.getOwner() != null && !bpaApplication.getOwner().getUser().getAddress().isEmpty()
-                        ? bpaApplication.getOwner().getUser().getAddress().get(0).getStreetRoadLine() : "");
+                bpaApplication.getOwner() != null ? bpaApplication.getOwner().getAddress() : "");
         reportParams.put("applicationDate", DateUtils.getDefaultFormattedDate(bpaApplication.getApplicationDate()));
         if (APPLICATION_STATUS_CANCELLED.equalsIgnoreCase(bpaApplication.getStatus().getCode())) {
             reportParams.put("rejectionReasons", buildRejectionReasons(bpaApplication));
@@ -360,7 +359,7 @@ public class BpaNoticeService {
                     .append(getMessageFromPropertyFile("tower.pole.permit.condition6"))
                     .append(getMessageFromPropertyFile("tower.pole.permit.condition7"))
                     .append(getMessageFromPropertyFileWithParameters("tower.pole.permit.condition8",
-                            bpaApplication.getOwner().getUser().getName()))
+                            bpaApplication.getOwner().getName()))
                     .append(getMessageFromPropertyFile("tower.pole.permit.condition9"))
                     .append(getMessageFromPropertyFileWithParameters("tower.pole.permit.condition10",
                             DateUtils.getDefaultFormattedDate(bpaApplication.getPlanPermissionDate()).toString()))

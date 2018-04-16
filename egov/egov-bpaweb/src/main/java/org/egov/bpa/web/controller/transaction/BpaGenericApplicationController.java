@@ -56,7 +56,7 @@ import org.egov.bpa.transaction.service.collection.*;
 import org.egov.bpa.transaction.service.messaging.*;
 import org.egov.bpa.transaction.workflow.*;
 import org.egov.bpa.utils.*;
-import org.egov.commons.service.OccupancyService;
+import org.egov.commons.service.*;
 import org.egov.dcb.bean.*;
 import org.egov.demand.model.*;
 import org.egov.eis.web.contract.*;
@@ -64,7 +64,6 @@ import org.egov.eis.web.controller.workflow.*;
 import org.egov.infra.admin.master.entity.*;
 import org.egov.infra.admin.master.service.*;
 import org.egov.infra.filestore.service.*;
-import org.egov.infra.persistence.entity.enums.*;
 import org.egov.infra.security.utils.*;
 import org.egov.infra.utils.*;
 import org.egov.infra.workflow.entity.*;
@@ -114,8 +113,6 @@ public abstract class BpaGenericApplicationController extends GenericWorkFlowCon
     private AppConfigValueService appConfigValueService;
     @Autowired
     protected BpaUtils bpaUtils;
-    @Autowired
-    protected UserService userService;
     @Autowired
     protected SecurityUtils securityUtils;
     @Autowired
@@ -233,27 +230,6 @@ public abstract class BpaGenericApplicationController extends GenericWorkFlowCon
                 }
     }
 
-    protected void buildOwnerDetails(final BpaApplication bpaApplication) {
-        List<User> users = userService.getUserByNameAndMobileNumberAndGenderForUserType(
-                bpaApplication.getOwner().getUser().getName(),
-                bpaApplication.getOwner().getUser().getMobileNumber(), bpaApplication.getOwner().getUser().getGender(),
-                UserType.CITIZEN);
-        if(StringUtils.isNotBlank(bpaApplication.getOwner().getUser().getAadhaarNumber()) && userService.getUserByAadhaarNumber(bpaApplication.getOwner().getUser().getAadhaarNumber()) != null) {
-            setUserWhenExists(bpaApplication, userService.getUserByAadhaarNumber(bpaApplication.getOwner().getUser().getAadhaarNumber()));
-        } else if (!users.isEmpty()) {
-            setUserWhenExists(bpaApplication, users.get(0));
-        } else {
-            bpaApplication.getOwner().setUser(applicationBpaService.createApplicantAsUser(bpaApplication));
-            bpaApplication.setMailPwdRequired(true);
-        }
-    }
-
-    private void setUserWhenExists(BpaApplication bpaApplication, User user) {
-        bpaApplication.getOwner().setUser(user);
-        if (!bpaApplication.getOwner().getUser().isActive())
-			bpaApplication.getOwner().getUser().setActive(true);
-    }
-
     protected String getDesinationNameByPosition(Position pos) {
         return pos.getDeptDesig() != null && pos.getDeptDesig().getDesignation() != null
                 ? pos.getDeptDesig().getDesignation().getName()
@@ -263,7 +239,7 @@ public abstract class BpaGenericApplicationController extends GenericWorkFlowCon
     protected void getAppointmentMsgForOnedayPermit(final BpaApplication bpaApplication, Model model) {
         if (bpaApplication.getIsOneDayPermitApplication() && !bpaApplication.getSlotApplications().isEmpty()) {
             String appmntDetailsMsg = messageSource.getMessage("msg.one.permit.schedule", new String[] {
-                    bpaApplication.getOwner().getUser().getName(),
+                    bpaApplication.getOwner().getName(),
                     DateUtils.getDefaultFormattedDate(
                             bpaApplication.getSlotApplications().get(0).getSlotDetail().getSlot().getAppointmentDate()),
                     bpaApplication.getSlotApplications().get(0).getSlotDetail().getAppointmentTime() },

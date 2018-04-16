@@ -51,6 +51,9 @@ public class BpaIndex {
     private String applicantGender;
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
+    private String aadhaarNumber;
+
+    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String serviceType;
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
@@ -309,6 +312,14 @@ public class BpaIndex {
 
     public void setApplicantGender(String applicantGender) {
         this.applicantGender = applicantGender;
+    }
+
+    public String getAadhaarNumber() {
+        return aadhaarNumber;
+    }
+
+    public void setAadhaarNumber(String aadhaarNumber) {
+        this.aadhaarNumber = aadhaarNumber;
     }
 
     public String getServiceType() {

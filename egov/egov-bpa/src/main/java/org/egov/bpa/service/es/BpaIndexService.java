@@ -117,11 +117,12 @@ public class BpaIndexService {
     }
 
     private void buildApplicantDetails(final BpaApplication bpaApplication, BpaIndex bpaIndex) {
-        bpaIndex.setApplicantName(bpaApplication.getOwner().getUser().getName());
+        bpaIndex.setApplicantName(bpaApplication.getOwner().getName());
         bpaIndex.setApplicantMobileNumber(bpaApplication.getOwner().getUser().getMobileNumber());
         bpaIndex.setApplicantEmailId(bpaApplication.getOwner().getUser().getEmailId());
-        bpaIndex.setApplicantAddress(bpaApplication.getOwner().getPermanentAddress().getStreetRoadLine());
-        bpaIndex.setApplicantGender(bpaApplication.getOwner().getUser().getGender().name());
+        bpaIndex.setAadhaarNumber(bpaApplication.getOwner().getUser().getAadhaarNumber());
+        bpaIndex.setApplicantAddress(bpaApplication.getOwner().getAddress());
+        bpaIndex.setApplicantGender(bpaApplication.getOwner().getGender().name());
     }
 
     private void buildBpaBuildingDetails(BpaApplication bpaApplication, BpaIndex bpaIndex) {
@@ -236,8 +237,8 @@ public class BpaIndexService {
                     .withApplicationType(bpaApplication.getIsOneDayPermitApplication().equals(true)
                             ? BpaConstants.APPLICATION_TYPE_ONEDAYPERMIT : BpaConstants.APPLICATION_TYPE_REGULAR)
                     .withOwnername(user == null ? EMPTY : user.getUsername() + "::" + user.getName())
-                    .withApplicantName(bpaApplication.getOwner().getUser().getName())
-                    .withApplicantAddress(bpaApplication.getOwner().getPermanentAddress().getStreetRoadLine())
+                    .withApplicantName(bpaApplication.getOwner().getName())
+                    .withApplicantAddress(bpaApplication.getOwner().getAddress())
                     .withStatus(bpaApplication.getStatus().getCode())
                     .withChannel(bpaApplication.getSource() == null ? Source.SYSTEM.toString()
                             : bpaApplication.getSource().name())

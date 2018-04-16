@@ -41,23 +41,16 @@ package org.egov.bpa.transaction.entity;
 
 import java.util.Date;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 import org.egov.bpa.transaction.entity.enums.GenderTitle;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.entity.PermanentAddress;
-import org.hibernate.validator.constraints.Length;
+import org.egov.infra.persistence.entity.enums.*;
+import org.egov.portal.entity.*;
+import org.hibernate.validator.constraints.*;
 
 @Entity
 @Table(name = "EGBPA_APPLICANT")
@@ -89,8 +82,14 @@ public class Applicant extends AbstractAuditable {
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
-    private User user;
-	private transient PermanentAddress permanentAddress = new PermanentAddress();
+    private Citizen user;
+    @NotNull
+    @SafeHtml
+    @Length(min = 2, max = 100)
+    private String name;
+    private String address;
+    @Enumerated(EnumType.ORDINAL)
+    private Gender gender;
     
     @Override
     public Long getId() {
@@ -174,21 +173,35 @@ public class Applicant extends AbstractAuditable {
         this.pinCode = pinCode;
     }
 
-    public PermanentAddress getPermanentAddress() {
-        return permanentAddress;
-    }
-
-    public void setPermanentAddress(PermanentAddress permanentAddress) {
-        this.permanentAddress = permanentAddress;
-    }
-
-    public User getUser() {
+    public Citizen getUser() {
 		return user;
 	}
 
-	public void setUser(User user) {
+	public void setUser(Citizen user) {
 		this.user = user;
 	}
 
-    
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public Gender getGender() {
+        return gender;
+    }
+
+    public void setGender(Gender gender) {
+        this.gender = gender;
+    }
 }

@@ -144,7 +144,7 @@ public class NewApplicationController extends BpaGenericApplicationController {
         bpaApplication.setAdmissionfeeAmount(applicationBpaService.setAdmissionFeeAmountForRegistrationWithAmenities(
                 bpaApplication.getServiceType().getId(), new ArrayList<ServiceType>()));
         if (bpaApplication.getOwner().getUser() != null && bpaApplication.getOwner().getUser().getId() == null)
-            buildOwnerDetails(bpaApplication);
+            applicationBpaService.buildOwnerDetails(bpaApplication);
 
         bpaApplication.setCitizenAccepted(true);
         bpaApplication.setArchitectAccepted(true);

@@ -151,7 +151,7 @@ public class BPASmsAndEmailService {
         if (isSmsEnabled() || isEmailEnabled()) {
             for (ApplicationStakeHolder applnStakeHolder : bpaApplication.getStakeHolder()) {
                 if (applnStakeHolder.getApplication() != null && applnStakeHolder.getApplication().getOwner() != null) {
-                    applicantName = applnStakeHolder.getApplication().getOwner().getUser().getName();
+                    applicantName = applnStakeHolder.getApplication().getOwner().getName();
                     email = applnStakeHolder.getApplication().getOwner().getUser().getEmailId();
                     mobileNo = applnStakeHolder.getApplication().getOwner().getUser().getMobileNumber();
                     loginUserName = applnStakeHolder.getApplication().getOwner().getUser().getUsername();
@@ -173,14 +173,14 @@ public class BPASmsAndEmailService {
     public void sendSMSAndEmailToscheduleAppointment(final BpaAppointmentSchedule scheduleDetails,
             final BpaApplication bpaApplication) {
         if (isSmsEnabled() || isEmailEnabled()) {
-            buildSmsAndEmailForScheduleAppointment(scheduleDetails, bpaApplication, bpaApplication.getOwner().getUser().getName(),
+            buildSmsAndEmailForScheduleAppointment(scheduleDetails, bpaApplication, bpaApplication.getOwner().getName(),
                     bpaApplication.getOwner().getUser().getMobileNumber(), bpaApplication.getOwner().getUser().getEmailId());
         }
     }
 
     public void sendSMSAndEmailToApplicantForLettertoparty(final BpaApplication bpaApplication) {
         if (isSmsEnabled() || isEmailEnabled()) {
-            buildSmsAndEmailForBPANewAppln(bpaApplication, bpaApplication.getOwner().getUser().getName(),
+            buildSmsAndEmailForBPANewAppln(bpaApplication, bpaApplication.getOwner().getName(),
                     bpaApplication.getOwner().getUser().getMobileNumber(),
                     bpaApplication.getOwner().getUser().getEmailId(), EMPTY, EMPTY);
         }
@@ -371,7 +371,7 @@ public class BPASmsAndEmailService {
 	public void sendSMSAndEmailForDocumentScrutiny(SlotApplication slotApplication) {
 		if (isSmsEnabled() || isEmailEnabled()) {
 			buildSmsAndEmailForDocumentScrutiny(slotApplication,
-			        slotApplication.getApplication().getOwner().getUser().getName(),
+			        slotApplication.getApplication().getOwner().getName(),
 			        slotApplication.getApplication().getOwner().getUser().getMobileNumber(),
 			        slotApplication.getApplication().getOwner().getUser().getEmailId());
 		}

@@ -69,8 +69,7 @@ $(document).ready(function($) {
 	        });
 		}
 	} else {
-		$("#applicantdet").prop("disabled",true);
-		$("#appDet").prop("disabled",true);
+        $('#applicantDiv :input').attr('disabled', true);
 		$("#serviceType").prop("disabled",true);
 		$("#admissionfeeAmount").prop("disabled",true);
 	}

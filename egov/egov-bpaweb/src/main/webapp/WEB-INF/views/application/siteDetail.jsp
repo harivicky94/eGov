@@ -196,7 +196,7 @@
 			<form:hidden path="siteDetail[0].registrarOffice"
 				id="registrarOfficeObjId"
 				value="${bpaApplication.siteDetail[0].registrarOffice.id}" />
-			<select class="form-control patternvalidation"
+			<select class="form-control patternvalidation registrarOffice"
 				name="registrarOffice" id="registrarOffice"
 				required="required" class="form-control ">
 				<option value="">Selected</option>

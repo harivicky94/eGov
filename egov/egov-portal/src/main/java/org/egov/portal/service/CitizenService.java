@@ -117,6 +117,11 @@ public class CitizenService {
         citizenRepository.save(citizen);
     }
 
+    @Transactional
+    public Citizen save(Citizen citizen) {
+        return citizenRepository.saveAndFlush(citizen);
+    }
+
     public Citizen getCitizenByEmailId(String emailId) {
         return citizenRepository.findByEmailId(emailId);
     }

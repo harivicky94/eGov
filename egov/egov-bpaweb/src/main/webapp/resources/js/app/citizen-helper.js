@@ -136,7 +136,7 @@ jQuery(document).ready(function($) {
     $('#bpaSave').click(function(e) {
         bootbox
             .confirm({
-                message : 'Do you really want to save the application, once the application is saved you are not allowed to modify applicant details. Please make sure entered applicant details are valid before save.',
+                message : 'Do you really want to save the application, once the application is saved you are not allowed to modify applicant details especially mobile number. Please make sure entered applicant details and mobile no. are valid before save.',
                 buttons : {
                     'cancel' : {
                         label : 'No',

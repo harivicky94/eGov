@@ -44,8 +44,7 @@ $(document).ready(
 			var citizenOrBusiness = $('#citizenOrBusinessUser').val();
 			if (citizenOrBusiness == 'true') {
 				$('#serviceType').prop("disabled", true);
-				$("#applicationDate").prop("readOnly",true); 
-				$("#applicationDate").removeClass( "form-control datepicker" ).addClass( "form-control" ); 
+				$("#applicationDate").prop("disabled",true);
 			}
 			if ($('#bpaApplication').val()=="" &&  $('#citytown') && $('#citytown').val()=="" && $('#cityName') && $('#cityName').val()) 
 				 $('#citytown').val($('#cityName').val());
@@ -239,9 +238,11 @@ $(document).ready(
 			$('#localitys').trigger("change");
 			$('#registrarOffice').change(function() {
 				$('#registrarVillageIdHdn').val($('#registrarOffice').val());
+                $('#registrarOfficeObjId').val($('#registrarOffice').val());
 			});
-			
-			$('#serviceType')
+
+
+            $('#serviceType')
 					.change(
 							function() {
 								$
@@ -325,40 +326,40 @@ $(document).ready(
 						.tab('show');
 			}
 
-			/*$('#mobileNumber').change(function(){ 
-				$.ajax({
-					url: "/bpa/getApplicantDetails",
-					type: "GET",
-					data: {
-						mobileNumber : $('#mobileNumber').val()
-					},
-					cache : false,
-					dataType: "json",
-					success: function (response) {
-							if(response.id!=undefined){
-								$('#name').val(response.name);
-								$('#emailId').val(response.emailId);
-								$('#gender').val(response.gender);
-								$('#address').val(response.address);
-								$('#userId').val(response.id); 
-								$('.applicantname').show();
-								$( "span#applicantName" ).html(response.name);
-								$("#name").prop("readOnly", true);
-								$("#emailId").prop("readOnly", true);
-								$('#gender').attr("style", "pointer-events: none;");
-								$("#address").prop("readOnly", true);
-							}else{
-								$("#name").prop("readOnly", false);
-								$("#emailId").prop("readOnly", false);
-								$('#gender').attr("style", "pointer-events:");
-								$("#address").prop("readOnly", false);
-								$('#userId').val("");
-							}
-					}, 
-					error: function (response) {
-					}
-				});
-			});*/
+            /*$('#mobileNumber').change(function(){
+                $.ajax({
+                    url: "/bpa/getApplicantDetails",
+                    type: "GET",
+                    data: {
+                        mobileNumber : $('#mobileNumber').val()
+                    },
+                    cache : false,
+                    dataType: "json",
+                    success: function (response) {
+                            if(response.id!=undefined){
+                                $('#name').val(response.name);
+                                $('#emailId').val(response.emailId);
+                                $('#gender').val(response.gender);
+                                $('#address').val(response.address);
+                                $('#userId').val(response.id);
+                                $('.applicantname').show();
+                                $( "span#applicantName" ).html(response.name);
+                                $("#name").prop("readOnly", true);
+                                $("#emailId").prop("readOnly", true);
+                                $('#gender').attr("style", "pointer-events: none;");
+                                $("#address").prop("readOnly", true);
+                            }else{
+                                $("#name").prop("readOnly", false);
+                                $("#emailId").prop("readOnly", false);
+                                $('#gender').attr("style", "pointer-events:");
+                                $("#address").prop("readOnly", false);
+                                $('#userId').val("");
+                            }
+                    },
+                    error: function (response) {
+                    }
+                });
+            });*/
 
 			// Instantiate the stakeholder name Bloodhound suggestion engine
 			var stakeholderengine = new Bloodhound({
@@ -474,5 +475,11 @@ $(document).ready(
 					}
 				});
 			}
-			
+
+            $('select.registrarOffice option').each(function () {
+                if ($(this).val() == $('#registrarVillageIdHdn').val()) {
+                    this.selected = true;
+                    return;
+            	}
+            });
 	});

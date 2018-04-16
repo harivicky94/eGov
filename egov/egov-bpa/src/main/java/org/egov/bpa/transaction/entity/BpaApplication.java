@@ -80,7 +80,6 @@ public class BpaApplication extends StateAware<Position> {
 	private String buildingplanapprovalnumber;
 	@Temporal(value = TemporalType.DATE)
 	private Date buildingPlanApprovalDate;
-	@NotNull
 	@Length(min = 1, max = 128)
 	private String applicationNumber;
 	@NotNull
@@ -229,7 +228,6 @@ public class BpaApplication extends StateAware<Position> {
 	private transient List<ApplicationPermitConditions> rejectionReasonsTemp = new ArrayList<>(0);
 	private transient List<ApplicationPermitConditions> additionalPermitConditionsTemp = new ArrayList<>(0);
 	private transient List<ServiceType> applicationAmenityTemp = new ArrayList<>(0);
-
 
 	@Override
 	public Long getId() {
@@ -552,7 +550,7 @@ public class BpaApplication extends StateAware<Position> {
 	public String getStateDetails() {
 		final SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
 		return String.format("Applicant Name: %s Application Number %s Dated %s For the service type - %s.",
-				owner != null && owner.getUser() != null ? owner.getUser().getName() : "Not Specified",
+				owner != null ? owner.getName() : "Not Specified",
 				applicationNumber != null ? applicationNumber : planPermissionNumber,
 				applicationDate != null ? formatter.format(applicationDate) : formatter.format(new Date()),
 				serviceType.getDescription() != null ? serviceType.getDescription() : "");
@@ -891,22 +889,22 @@ public class BpaApplication extends StateAware<Position> {
 	public void setTypeOfLand(OneDayPermitLandType typeOfLand) {
 		this.typeOfLand = typeOfLand;
 	}
-    
-        public Boolean getFailureInScheduler() {
-            return failureInScheduler;
-        }
-    
-        public void setFailureInScheduler(Boolean failureInScheduler) {
-            this.failureInScheduler = failureInScheduler;
-        }
-    
-        public String getSchedulerFailedRemarks() {
-            return schedulerFailedRemarks;
-        }
-    
-        public void setSchedulerFailedRemarks(String schedulerFailedRemarks) {
-            this.schedulerFailedRemarks = schedulerFailedRemarks;
-        }
+
+	public Boolean getFailureInScheduler() {
+		return failureInScheduler;
+	}
+
+	public void setFailureInScheduler(Boolean failureInScheduler) {
+		this.failureInScheduler = failureInScheduler;
+	}
+
+	public String getSchedulerFailedRemarks() {
+		return schedulerFailedRemarks;
+	}
+
+	public void setSchedulerFailedRemarks(String schedulerFailedRemarks) {
+		this.schedulerFailedRemarks = schedulerFailedRemarks;
+	}
 
 	public String geteDcrNumber() {
 		return eDcrNumber;
@@ -915,4 +913,5 @@ public class BpaApplication extends StateAware<Position> {
 	public void seteDcrNumber(String eDcrNumber) {
 		this.eDcrNumber = eDcrNumber;
 	}
+
 }

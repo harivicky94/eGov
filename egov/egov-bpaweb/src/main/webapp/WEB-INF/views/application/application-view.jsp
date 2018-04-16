@@ -244,16 +244,18 @@
 					<a
 						href="/bpa/application/createinspectiondetails/${bpaApplication.applicationNumber}"
 						class="btn btn-primary">Capture Inspection Details </a>
+				<c:if test="${!bpaApplication.isOneDayPermitApplication}">
 					<a
 						href="/bpa/application/postponeappointment/${scheduleType}/${bpaApplication.applicationNumber}"
 						class="btn btn-primary"> Reschedule Appointment </a>
+				</c:if>
 				</c:if>
 				<c:if test="${mode eq 'modifyInspection'}">
 					<a
 						href="/bpa/application/modify-inspection/${bpaApplication.applicationNumber}"
 						class="btn btn-primary">Add/Edit Inspection Details </a>
 				</c:if>
-				<c:if test="${mode eq 'newappointment'}">
+				<c:if test="${mode eq 'newappointment' && !bpaApplication.isOneDayPermitApplication}">
 					<a
 						href="/bpa/application/scheduleappointment/${bpaApplication.applicationNumber}"
 						class="btn btn-primary"> New Appointment </a>
