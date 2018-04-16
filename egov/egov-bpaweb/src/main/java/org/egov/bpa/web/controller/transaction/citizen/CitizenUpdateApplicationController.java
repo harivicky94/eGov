@@ -39,17 +39,20 @@
  */
 package org.egov.bpa.web.controller.transaction.citizen;
 
-import org.egov.bpa.transaction.entity.*;
-import org.egov.bpa.transaction.entity.enums.*;
-import org.egov.bpa.transaction.service.*;
+import org.egov.bpa.transaction.entity.BpaApplication;
+import org.egov.bpa.transaction.entity.BpaAppointmentSchedule;
+import org.egov.bpa.transaction.entity.LettertoParty;
+import org.egov.bpa.transaction.entity.SlotApplication;
+import org.egov.bpa.transaction.entity.enums.AppointmentSchedulePurpose;
+import org.egov.bpa.transaction.service.BpaAppointmentScheduleService;
+import org.egov.bpa.transaction.service.InspectionService;
+import org.egov.bpa.transaction.service.LettertoPartyService;
 import org.egov.bpa.transaction.service.collection.ApplicationBpaBillService;
 import org.egov.bpa.transaction.service.collection.GenericBillGeneratorService;
-import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.web.controller.transaction.BpaGenericApplicationController;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.persistence.entity.PermanentAddress;
-import org.egov.infra.utils.*;
+import org.egov.infra.utils.DateUtils;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,126 +60,147 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.util.List;
+import java.util.Optional;
 
-import static org.egov.bpa.utils.BpaConstants.*;
-
-import java.util.*;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_APPROVED;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CANCELLED;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CREATED;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_DOC_VERIFIED;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_PENDING_FOR_RESCHEDULING;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_REGISTERED;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_RESCHEDULED;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_SCHEDULED;
+import static org.egov.bpa.utils.BpaConstants.CHECKLIST_TYPE;
+import static org.egov.bpa.utils.BpaConstants.CHECKLIST_TYPE_NOC;
+import static org.egov.bpa.utils.BpaConstants.CREATE_ADDITIONAL_RULE_CREATE;
+import static org.egov.bpa.utils.BpaConstants.CREATE_ADDITIONAL_RULE_CREATE_ONEDAYPERMIT;
+import static org.egov.bpa.utils.BpaConstants.DISCLIMER_MESSAGE_ONEDAYPERMIT_ONSAVE;
+import static org.egov.bpa.utils.BpaConstants.DISCLIMER_MESSAGE_ONSAVE;
+import static org.egov.bpa.utils.BpaConstants.ENABLEONLINEPAYMENT;
+import static org.egov.bpa.utils.BpaConstants.WF_CANCELAPPLICATION_BUTTON;
+import static org.egov.bpa.utils.BpaConstants.WF_LBE_SUBMIT_BUTTON;
+import static org.egov.bpa.utils.BpaConstants.WF_NEW_STATE;
 
 @Controller
 @RequestMapping(value = "/application")
 public class CitizenUpdateApplicationController extends BpaGenericApplicationController {
-    private static final String COLLECT_FEE_VALIDATE = "collectFeeValidate";
-    private static final String IS_CITIZEN = "isCitizen";
-    private static final String CITIZEN_VIEW = "citizen-view";
-    private static final String BPAAPP_CITIZEN_FORM = "bpaapp-citizenForm";
-    private static final String MESSAGE = "message";
-    private static final String BPA_APPLICATION = "bpaApplication";
-    private static final String APPLICATION_HISTORY = "applicationHistory";
-    private static final String ADDITIONALRULE = "additionalRule";
-    private static final String BPAAPPLICATION_CITIZEN = "citizen_suceess";
-    @Autowired
-    private GenericBillGeneratorService genericBillGeneratorService;
-    @Autowired
-    LettertoPartyService lettertoPartyService;
-    @Autowired
-    private InspectionService inspectionService;
-    @Autowired
-    private PositionMasterService positionMasterService;
-    @Autowired
-    private ApplicationBpaBillService applicationBpaBillService;
-    @Autowired
-    private BpaAppointmentScheduleService bpaAppointmentScheduleService;
+	private static final String COLLECT_FEE_VALIDATE = "collectFeeValidate";
+	private static final String IS_CITIZEN = "isCitizen";
+	private static final String CITIZEN_VIEW = "citizen-view";
+	private static final String BPAAPP_CITIZEN_FORM = "bpaapp-citizenForm";
+	private static final String MESSAGE = "message";
+	private static final String BPA_APPLICATION = "bpaApplication";
+	private static final String APPLICATION_HISTORY = "applicationHistory";
+	private static final String ADDITIONALRULE = "additionalRule";
+	private static final String BPAAPPLICATION_CITIZEN = "citizen_suceess";
+	@Autowired
+	LettertoPartyService lettertoPartyService;
+	@Autowired
+	private GenericBillGeneratorService genericBillGeneratorService;
+	@Autowired
+	private InspectionService inspectionService;
+	@Autowired
+	private PositionMasterService positionMasterService;
+	@Autowired
+	private ApplicationBpaBillService applicationBpaBillService;
+	@Autowired
+	private BpaAppointmentScheduleService bpaAppointmentScheduleService;
 
-    @ModelAttribute
-    public BpaApplication getBpaApplication(@PathVariable final String applicationNumber) {
-        return applicationBpaService.findByApplicationNumber(applicationNumber);
-    } 
+	@ModelAttribute
+	public BpaApplication getBpaApplication(@PathVariable final String applicationNumber) {
+		return applicationBpaService.findByApplicationNumber(applicationNumber);
+	}
 
-    @RequestMapping(value = "/citizen/update/{applicationNumber}", method = RequestMethod.GET)
-    public String updateApplicationForm(final Model model, @PathVariable final String applicationNumber,
-            final HttpServletRequest request) {
-        final BpaApplication application = getBpaApplication(applicationNumber);
-        model.addAttribute("mode", "newappointment");
+	@RequestMapping(value = "/citizen/update/{applicationNumber}", method = RequestMethod.GET)
+	public String updateApplicationForm(final Model model, @PathVariable final String applicationNumber,
+										final HttpServletRequest request) {
+		final BpaApplication application = getBpaApplication(applicationNumber);
+		model.addAttribute("mode", "newappointment");
 
-        if (!application.getIsOneDayPermitApplication() && (APPLICATION_STATUS_SCHEDULED.equals(application.getStatus().getCode()) ||
-             APPLICATION_STATUS_RESCHEDULED.equals(application.getStatus().getCode()) ||
-             APPLICATION_STATUS_PENDING_FOR_RESCHEDULING.equals(application.getStatus().getCode()))
-            && !application.getIsRescheduledByCitizen()) {
-            model.addAttribute("mode", "showRescheduleToCitizen");
-        }
-        model.addAttribute(APPLICATION_HISTORY, bpaThirdPartyService.getHistory(application));
-        prepareCommonModelAttribute(model, application);
-        return loadViewdata(model, application);
-    }
+		if (!application.getIsOneDayPermitApplication() && (APPLICATION_STATUS_SCHEDULED.equals(application.getStatus().getCode()) ||
+															APPLICATION_STATUS_RESCHEDULED.equals(application.getStatus().getCode()) ||
+															APPLICATION_STATUS_PENDING_FOR_RESCHEDULING.equals(application.getStatus().getCode()))
+			&& !application.getIsRescheduledByCitizen()) {
+			model.addAttribute("mode", "showRescheduleToCitizen");
+		}
+		model.addAttribute(APPLICATION_HISTORY, bpaThirdPartyService.getHistory(application));
+		prepareCommonModelAttribute(model, application);
+		return loadViewdata(model, application);
+	}
 
-    private String loadViewdata(final Model model, final BpaApplication application) {
-        prepareFormData(model);
-        buildReceiptDetails(application);
-        application.setApplicationAmenityTemp(application.getApplicationAmenity());
-        applicationBpaService.buildExistingAndProposedBuildingDetails(application);
-        model.addAttribute("stateType", application.getClass().getSimpleName());
-        if(application.getIsOneDayPermitApplication()){
-        	model.addAttribute(ADDITIONALRULE, CREATE_ADDITIONAL_RULE_CREATE_ONEDAYPERMIT);
-        }else
-        	model.addAttribute(ADDITIONALRULE, CREATE_ADDITIONAL_RULE_CREATE);
-        model.addAttribute(BPA_APPLICATION, application);
-        model.addAttribute("currentState",
-                application.getCurrentState() != null ? application.getCurrentState().getValue() : "");
-        model.addAttribute("nocCheckListDetails", checkListDetailService
-                .findActiveCheckListByServiceType(application.getServiceType().getId(), CHECKLIST_TYPE_NOC));
-        model.addAttribute("checkListDetailList", checkListDetailService
-                .findActiveCheckListByServiceType(application.getServiceType().getId(), BpaConstants.CHECKLIST_TYPE));
-        model.addAttribute("applicationDocumentList", application.getApplicationDocument());
-        model.addAttribute("isFeeCollected", bpaDemandService.checkAnyTaxIsPendingToCollect(application));
-        List<LettertoParty> lettertoPartyList = lettertoPartyService.findByBpaApplicationOrderByIdDesc(application);
-        model.addAttribute("lettertopartylist", lettertoPartyList);
-        model.addAttribute("inspectionList", inspectionService.findByBpaApplicationOrderByIdAsc(application));
-        model.addAttribute("admissionFee", applicationBpaService.setAdmissionFeeAmountForRegistrationWithAmenities(
-                application.getServiceType().getId(), application.getApplicationAmenity()));
-        if(!lettertoPartyList.isEmpty() && lettertoPartyList.get(0).getSentDate() != null)
-            model.addAttribute("mode","showLPDetails");
+	private String loadViewdata(final Model model, final BpaApplication application) {
+		prepareFormData(model);
+		buildReceiptDetails(application);
+		application.setApplicationAmenityTemp(application.getApplicationAmenity());
+		applicationBpaService.buildExistingAndProposedBuildingDetails(application);
+		model.addAttribute("stateType", application.getClass().getSimpleName());
+		if (application.getIsOneDayPermitApplication()) {
+			model.addAttribute(ADDITIONALRULE, CREATE_ADDITIONAL_RULE_CREATE_ONEDAYPERMIT);
+		} else
+			model.addAttribute(ADDITIONALRULE, CREATE_ADDITIONAL_RULE_CREATE);
+		model.addAttribute(BPA_APPLICATION, application);
+		model.addAttribute("currentState",
+				application.getCurrentState() == null ? "" : application.getCurrentState().getValue());
+		model.addAttribute("nocCheckListDetails", checkListDetailService
+				.findActiveCheckListByServiceType(application.getServiceType().getId(), CHECKLIST_TYPE_NOC));
+		model.addAttribute("checkListDetailList", checkListDetailService
+				.findActiveCheckListByServiceType(application.getServiceType().getId(), CHECKLIST_TYPE));
+		model.addAttribute("applicationDocumentList", application.getApplicationDocument());
+		model.addAttribute("isFeeCollected", bpaDemandService.checkAnyTaxIsPendingToCollect(application));
+		List<LettertoParty> lettertoPartyList = lettertoPartyService.findByBpaApplicationOrderByIdDesc(application);
+		model.addAttribute("lettertopartylist", lettertoPartyList);
+		model.addAttribute("inspectionList", inspectionService.findByBpaApplicationOrderByIdAsc(application));
+		model.addAttribute("admissionFee", applicationBpaService.setAdmissionFeeAmountForRegistrationWithAmenities(
+				application.getServiceType().getId(), application.getApplicationAmenity()));
+		if (!lettertoPartyList.isEmpty() && lettertoPartyList.get(0).getSentDate() != null)
+			model.addAttribute("mode", "showLPDetails");
 		buildAppointmentDetailsOfScutinyAndInspection(model, application);
 		Boolean isCitizen = (Boolean) model.asMap().get(IS_CITIZEN);
-        Boolean validateCitizenAcceptance = (Boolean) model.asMap().get("validateCitizenAcceptance");
-        if (APPLICATION_STATUS_REGISTERED.equals(application.getStatus().getCode())
-            || APPLICATION_STATUS_SCHEDULED.equals(application.getStatus().getCode())
-            || APPLICATION_STATUS_RESCHEDULED.equals(application.getStatus().getCode())
-            || APPLICATION_STATUS_APPROVED.equals(application.getStatus().getCode())) {
-            if (applicationBpaService.applicationinitiatedByNonEmployee(application)
-                && applicationBpaService.checkAnyTaxIsPendingToCollect(application)) {
-                model.addAttribute(COLLECT_FEE_VALIDATE, "Please Pay Fees to Process Application");
-                String enableOrDisablePayOnline=bpaUtils.getAppconfigValueByKeyName(BpaConstants.ENABLEONLINEPAYMENT);
-                model.addAttribute("onlinePaymentEnable", (enableOrDisablePayOnline.equalsIgnoreCase("YES") ? Boolean.TRUE : Boolean.FALSE));
-            } else
-                model.addAttribute(COLLECT_FEE_VALIDATE, "");
-        }
+		Boolean validateCitizenAcceptance = (Boolean) model.asMap().get("validateCitizenAcceptance");
+		if (APPLICATION_STATUS_REGISTERED.equals(application.getStatus().getCode())
+			|| APPLICATION_STATUS_SCHEDULED.equals(application.getStatus().getCode())
+			|| APPLICATION_STATUS_RESCHEDULED.equals(application.getStatus().getCode())
+			|| APPLICATION_STATUS_APPROVED.equals(application.getStatus().getCode())) {
+			if (applicationBpaService.applicationinitiatedByNonEmployee(application)
+				&& applicationBpaService.checkAnyTaxIsPendingToCollect(application)) {
+				model.addAttribute(COLLECT_FEE_VALIDATE, "Please Pay Fees to Process Application");
+				String enableOrDisablePayOnline = bpaUtils.getAppconfigValueByKeyName(ENABLEONLINEPAYMENT);
+				model.addAttribute("onlinePaymentEnable", (enableOrDisablePayOnline.equalsIgnoreCase("YES") ? Boolean.TRUE : Boolean.FALSE));
+			} else
+				model.addAttribute(COLLECT_FEE_VALIDATE, "");
+		}
 
-        if (application.getStatus() != null
-                && application.getStatus().getCode().equals(BpaConstants.APPLICATION_STATUS_CREATED) &&
-                (!isCitizen || (isCitizen && (validateCitizenAcceptance && !application.isCitizenAccepted()))))
-            return BPAAPP_CITIZEN_FORM;
-        else
-            return CITIZEN_VIEW;
-    }
+		if (application.getStatus() != null
+			&& application.getStatus().getCode().equals(APPLICATION_STATUS_CREATED) &&
+			(!isCitizen || (isCitizen && (validateCitizenAcceptance && !application.isCitizenAccepted()))))
+			return BPAAPP_CITIZEN_FORM;
+		else
+			return CITIZEN_VIEW;
+	}
 
 	private void buildAppointmentDetailsOfScutinyAndInspection(Model model, BpaApplication application) {
 		if (APPLICATION_STATUS_SCHEDULED.equals(application.getStatus().getCode())
 			|| APPLICATION_STATUS_RESCHEDULED.equals(application.getStatus().getCode())) {
 			Optional<SlotApplication> activeSlotApplication = application.getSlotApplications().stream().reduce((slotAppln1, slotAppln2) -> slotAppln2);
-			if(activeSlotApplication.isPresent()) {
+			if (activeSlotApplication.isPresent()) {
 				model.addAttribute("appointmentDateRes", DateUtils.toDefaultDateFormat(activeSlotApplication.get().getSlotDetail().getSlot().getAppointmentDate()));
 				model.addAttribute("appointmentTimeRes", activeSlotApplication.get().getSlotDetail().getAppointmentTime());
 				model.addAttribute("appointmentTitle", "Scheduled Appointment Details For Document Scrutiny");
 			}
-		} else if(APPLICATION_STATUS_DOC_VERIFIED.equals(application.getStatus().getCode()) && application.getInspections().isEmpty()) {
-            List<BpaAppointmentSchedule> appointmentScheduledList = bpaAppointmentScheduleService.findByApplication(application,
-                    AppointmentSchedulePurpose.INSPECTION);
-			if(!appointmentScheduledList.isEmpty()) {
+		} else if (APPLICATION_STATUS_DOC_VERIFIED.equals(application.getStatus().getCode()) && application.getInspections().isEmpty()) {
+			List<BpaAppointmentSchedule> appointmentScheduledList = bpaAppointmentScheduleService.findByApplication(application,
+					AppointmentSchedulePurpose.INSPECTION);
+			if (!appointmentScheduledList.isEmpty()) {
 				model.addAttribute("appointmentDateRes", DateUtils.toDefaultDateFormat(appointmentScheduledList.get(0).getAppointmentDate()));
 				model.addAttribute("appointmentTimeRes", appointmentScheduledList.get(0).getAppointmentTime());
 				model.addAttribute("appmntInspnRemarks", appointmentScheduledList.get(0).isPostponed() ? appointmentScheduledList.get(0).getPostponementReason() : appointmentScheduledList.get(0).getRemarks());
@@ -186,82 +210,77 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
 	}
 
 	@RequestMapping(value = "/citizen/update-submit/{applicationNumber}", method = RequestMethod.POST)
-    public String updateApplication(@Valid @ModelAttribute("") BpaApplication bpaApplication,
-            @PathVariable final String applicationNumber, final BindingResult resultBinder,
-            final HttpServletRequest request, final Model model,
-            @RequestParam("files") final MultipartFile[] files) {
-        proposedBuildingFloorDetailsService.removeDuplicateProposedBuildFloorDetails(bpaApplication);
-        existingBuildingFloorDetailsService.removeDuplicateExistingBuildFloorDetails(bpaApplication);
-        if (resultBinder.hasErrors()) {
-            prepareCommonModelAttribute(model, bpaApplication);
-            return loadViewdata(model, bpaApplication);
-        }
-        if (bpaApplicationValidationService.validateBuildingDetails(bpaApplication, model)) {
-            prepareCommonModelAttribute(model, bpaApplication);
-            return loadViewdata(model, bpaApplication);
-        }
-        String workFlowAction = request.getParameter("workFlowAction");
-        Long approvalPosition = null;
-        if (!bpaApplication.getApplicationDocument().isEmpty())
-            applicationBpaService.persistOrUpdateApplicationDocument(bpaApplication);
-        applicationBpaService.buildExistingAndProposedBuildingDetails(bpaApplication);
-        bpaApplication.getApplicationAmenity().clear();
-        bpaApplication.setApplicationAmenity(bpaApplication.getApplicationAmenityTemp());
-        bpaApplication.setDemand(applicationBpaBillService.createDemand(bpaApplication));
-        String enableOrDisablePayOnline = bpaUtils.getAppconfigValueByKeyName(ENABLEONLINEPAYMENT);
-        if (workFlowAction != null && workFlowAction.equals(WF_LBE_SUBMIT_BUTTON)) {
-            final WorkFlowMatrix wfMatrix = bpaUtils.getWfMatrixByCurrentState(bpaApplication,
-                    WF_NEW_STATE);
-            if (wfMatrix != null)
-                approvalPosition = bpaUtils.getUserPositionIdByZone(wfMatrix.getNextDesignation(),
-                        bpaApplication.getSiteDetail().get(0) != null
-                                && bpaApplication.getSiteDetail().get(0).getElectionBoundary() != null
-                                        ? bpaApplication.getSiteDetail().get(0).getElectionBoundary().getId()
-                                        : null);
-            bpaUtils.redirectToBpaWorkFlow(approvalPosition, bpaApplication, WF_NEW_STATE, null, null,
-                    null);
-        } else if (workFlowAction != null && WF_CANCELAPPLICATION_BUTTON.equalsIgnoreCase(workFlowAction)) {
-            bpaApplication.setStatus(
-                    applicationBpaService.getStatusByCodeAndModuleType(APPLICATION_STATUS_CANCELLED));
-        }
+	public String updateApplication(@Valid @ModelAttribute("") BpaApplication bpaApplication,
+									@PathVariable final String applicationNumber, final BindingResult resultBinder,
+									final HttpServletRequest request, final Model model,
+									@RequestParam("files") final MultipartFile... files) {
+		proposedBuildingFloorDetailsService.removeDuplicateProposedBuildFloorDetails(bpaApplication);
+		existingBuildingFloorDetailsService.removeDuplicateExistingBuildFloorDetails(bpaApplication);
+		if (resultBinder.hasErrors()) {
+			prepareCommonModelAttribute(model, bpaApplication);
+			return loadViewdata(model, bpaApplication);
+		}
+		if (bpaApplicationValidationService.validateBuildingDetails(bpaApplication, model)) {
+			prepareCommonModelAttribute(model, bpaApplication);
+			return loadViewdata(model, bpaApplication);
+		}
+		String workFlowAction = request.getParameter("workFlowAction");
+		Long approvalPosition = null;
+		if (!bpaApplication.getApplicationDocument().isEmpty())
+			applicationBpaService.persistOrUpdateApplicationDocument(bpaApplication);
+		applicationBpaService.buildExistingAndProposedBuildingDetails(bpaApplication);
+		bpaApplication.getApplicationAmenity().clear();
+		bpaApplication.setApplicationAmenity(bpaApplication.getApplicationAmenityTemp());
+		bpaApplication.setDemand(applicationBpaBillService.createDemand(bpaApplication));
+		String enableOrDisablePayOnline = bpaUtils.getAppconfigValueByKeyName(ENABLEONLINEPAYMENT);
+		if (workFlowAction != null && workFlowAction.equals(WF_LBE_SUBMIT_BUTTON)) {
+			final WorkFlowMatrix wfMatrix = bpaUtils.getWfMatrixByCurrentState(bpaApplication,
+					WF_NEW_STATE);
+			if (wfMatrix != null)
+				approvalPosition = bpaUtils.getUserPositionIdByZone(wfMatrix.getNextDesignation(), bpaApplication.getSiteDetail().get(0).getElectionBoundary().getId());
+			bpaUtils.redirectToBpaWorkFlow(approvalPosition, bpaApplication, WF_NEW_STATE, null, null,
+					null);
+		} else if (workFlowAction != null && WF_CANCELAPPLICATION_BUTTON.equalsIgnoreCase(workFlowAction)) {
+			bpaApplication.setStatus(
+					applicationBpaService.getStatusByCodeAndModuleType(APPLICATION_STATUS_CANCELLED));
+		}
 
-        if (bpaApplication.getOwner().getUser() != null && bpaApplication.getOwner().getUser().getId() == null)
-            applicationBpaService.buildOwnerDetails(bpaApplication);
-        // To allot slot for one day permit applications
-        applicationBpaService.saveAndFlushApplication(bpaApplication, workFlowAction);
-        bpaUtils.updatePortalUserinbox(bpaApplication, null);
-        if (workFlowAction != null
-                && workFlowAction
-                        .equals(WF_LBE_SUBMIT_BUTTON)
-                && !bpaUtils.logedInuserIsCitizen()) {
-            Position pos = positionMasterService.getPositionById(bpaApplication.getCurrentState().getOwnerPosition().getId());
-            User wfUser = bpaThirdPartyService.getUserPositionByPassingPosition(pos.getId());
-            String message = messageSource.getMessage("msg.portal.forward.registration", new String[] {
-                    wfUser != null ? wfUser.getUsername().concat("~")
-                            .concat(getDesinationNameByPosition(pos))
-                            : "",
-                    bpaApplication.getApplicationNumber() }, LocaleContextHolder.getLocale());
-            if(bpaApplication.getIsOneDayPermitApplication()) {
-            	message = message.concat(DISCLIMER_MESSAGE_ONEDAYPERMIT_ONSAVE);
-                getAppointmentMsgForOnedayPermit(bpaApplication, model);
-            } else {
-            	message = message.concat(DISCLIMER_MESSAGE_ONSAVE);
-            }
-            model.addAttribute(MESSAGE, message);
-        } else if (workFlowAction != null && workFlowAction.equals(WF_CANCELAPPLICATION_BUTTON)) {
-            model.addAttribute(MESSAGE, " Application is cancelled by applicant itself successfully with application number "+bpaApplication.getApplicationNumber());
-        } else
-            model.addAttribute(MESSAGE,
-                    "Application is successfully saved with ApplicationNumber " + bpaApplication.getApplicationNumber());
-        if (workFlowAction != null && workFlowAction.equals(WF_LBE_SUBMIT_BUTTON))
-            bpaUtils.sendSmsEmailOnCitizenSubmit(bpaApplication);
+		if (bpaApplication.getOwner().getUser() != null && bpaApplication.getOwner().getUser().getId() == null)
+			applicationBpaService.buildOwnerDetails(bpaApplication);
+		// To allot slot for one day permit applications
+		applicationBpaService.saveAndFlushApplication(bpaApplication, workFlowAction);
+		bpaUtils.updatePortalUserinbox(bpaApplication, null);
+		if (workFlowAction != null
+			&& workFlowAction
+					.equals(WF_LBE_SUBMIT_BUTTON)
+			&& !bpaUtils.logedInuserIsCitizen()) {
+			Position pos = positionMasterService.getPositionById(bpaApplication.getCurrentState().getOwnerPosition().getId());
+			User wfUser = bpaThirdPartyService.getUserPositionByPassingPosition(pos.getId());
+			String message = messageSource.getMessage("msg.portal.forward.registration", new String[]{
+					wfUser == null ? "" : wfUser.getUsername().concat("~")
+												.concat(getDesinationNameByPosition(pos)),
+					bpaApplication.getApplicationNumber()}, LocaleContextHolder.getLocale());
+			if (bpaApplication.getIsOneDayPermitApplication()) {
+				message = message.concat(DISCLIMER_MESSAGE_ONEDAYPERMIT_ONSAVE);
+				getAppointmentMsgForOnedayPermit(bpaApplication, model);
+			} else {
+				message = message.concat(DISCLIMER_MESSAGE_ONSAVE);
+			}
+			model.addAttribute(MESSAGE, message);
+		} else if (workFlowAction != null && workFlowAction.equals(WF_CANCELAPPLICATION_BUTTON)) {
+			model.addAttribute(MESSAGE, " Application is cancelled by applicant itself successfully with application number " + bpaApplication.getApplicationNumber());
+		} else
+			model.addAttribute(MESSAGE,
+					"Application is successfully saved with ApplicationNumber " + bpaApplication.getApplicationNumber());
+		if (workFlowAction != null && workFlowAction.equals(WF_LBE_SUBMIT_BUTTON))
+			bpaUtils.sendSmsEmailOnCitizenSubmit(bpaApplication);
 
-        if (workFlowAction != null && workFlowAction.equals(WF_LBE_SUBMIT_BUTTON)
-            && enableOrDisablePayOnline.equalsIgnoreCase("YES") && bpaUtils.checkAnyTaxIsPendingToCollect(bpaApplication)) {
-            return genericBillGeneratorService
-                    .generateBillAndRedirectToCollection(bpaApplication, model);
-        }
-        return BPAAPPLICATION_CITIZEN;
-    }
+		if (workFlowAction != null && workFlowAction.equals(WF_LBE_SUBMIT_BUTTON)
+			&& enableOrDisablePayOnline.equalsIgnoreCase("YES") && bpaUtils.checkAnyTaxIsPendingToCollect(bpaApplication)) {
+			return genericBillGeneratorService
+					.generateBillAndRedirectToCollection(bpaApplication, model);
+		}
+		return BPAAPPLICATION_CITIZEN;
+	}
 
 }

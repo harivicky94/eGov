@@ -40,14 +40,14 @@
 
 package org.egov.bpa.transaction.repository;
 
-import org.egov.bpa.transaction.entity.*;
-import org.egov.infra.admin.master.entity.*;
-import org.egov.infra.persistence.entity.enums.*;
-import org.springframework.data.jpa.repository.*;
-import org.springframework.data.repository.query.*;
-import org.springframework.stereotype.*;
+import org.egov.bpa.transaction.entity.Applicant;
+import org.egov.infra.persistence.entity.enums.Gender;
+import org.egov.infra.persistence.entity.enums.UserType;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
-import java.util.*;
 
 @Repository
 public interface ApplicantRepository extends JpaRepository<Applicant, Long> {

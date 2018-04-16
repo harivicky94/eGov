@@ -43,10 +43,9 @@ import org.egov.bpa.master.entity.enums.ApplicationType;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.SlotApplication;
 import org.egov.bpa.transaction.entity.dto.SearchBpaApplicationForm;
-import org.egov.bpa.transaction.entity.enums.*;
+import org.egov.bpa.transaction.entity.enums.ScheduleAppointmentType;
 import org.egov.bpa.transaction.service.collection.BpaDemandService;
-import org.egov.bpa.utils.*;
-import org.egov.infra.utils.*;
+import org.egov.bpa.utils.BpaConstants;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.CriteriaSpecification;
@@ -60,7 +59,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
+
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 @Service
 @Transactional(readOnly = true)
@@ -120,18 +125,18 @@ public class SearchBpaApplicationService {
 		searchBpaApplicationForm.setServiceTypeId(bpaApplication.getServiceType().getId());
 		searchBpaApplicationForm.setStatusId(bpaApplication.getStatus().getId());
 		searchBpaApplicationForm.setServiceCode(
-				bpaApplication.getServiceType() != null ? bpaApplication.getServiceType().getCode() : "");
+				bpaApplication.getServiceType() == null ? EMPTY : bpaApplication.getServiceType().getCode());
 		searchBpaApplicationForm.setServiceType(
-				bpaApplication.getServiceType() != null ? bpaApplication.getServiceType().getDescription() : "");
+				bpaApplication.getServiceType() == null ? EMPTY : bpaApplication.getServiceType().getDescription());
 		searchBpaApplicationForm.setOccupancy(
-				bpaApplication.getOccupancy() != null ? bpaApplication.getOccupancy().getDescription() : "");
+				bpaApplication.getOccupancy() == null ? EMPTY : bpaApplication.getOccupancy().getDescription());
 		searchBpaApplicationForm.setStatus(bpaApplication.getStatus().getDescription());
 		searchBpaApplicationForm.setPlanPermissionNumber(bpaApplication.getPlanPermissionNumber());
 		searchBpaApplicationForm.setApplicantName(
-				bpaApplication.getOwner() != null ? bpaApplication.getOwner().getName() : "");
+				bpaApplication.getOwner() == null ? EMPTY : bpaApplication.getOwner().getName());
 		searchBpaApplicationForm.setStakeHolderName(!bpaApplication.getStakeHolder().isEmpty()
-				&& bpaApplication.getStakeHolder().get(0).getStakeHolder() != null
-						? bpaApplication.getStakeHolder().get(0).getStakeHolder().getName() : "");
+													&& bpaApplication.getStakeHolder().get(0).getStakeHolder() == null
+													? EMPTY : bpaApplication.getStakeHolder().get(0).getStakeHolder().getName());
 		if (bpaApplication.getState() != null && bpaApplication.getState().getOwnerPosition() != null) {
 			searchBpaApplicationForm.setCurrentOwner(bpaThirdPartyService
 					.getUserPositionByPassingPosition(bpaApplication.getState().getOwnerPosition().getId())
@@ -140,26 +145,26 @@ public class SearchBpaApplicationService {
 		}
 		if (!bpaApplication.getSiteDetail().isEmpty() && bpaApplication.getSiteDetail().get(0) != null) {
 			searchBpaApplicationForm
-					.setElectionWard(bpaApplication.getSiteDetail().get(0).getElectionBoundary() != null
-							? bpaApplication.getSiteDetail().get(0).getElectionBoundary().getName() : "");
-			searchBpaApplicationForm.setWard(bpaApplication.getSiteDetail().get(0).getAdminBoundary() != null
-					? bpaApplication.getSiteDetail().get(0).getAdminBoundary().getName() : "");
+					.setElectionWard(bpaApplication.getSiteDetail().get(0).getElectionBoundary() == null
+									 ? EMPTY : bpaApplication.getSiteDetail().get(0).getElectionBoundary().getName());
+			searchBpaApplicationForm.setWard(bpaApplication.getSiteDetail().get(0).getAdminBoundary() == null
+											 ? EMPTY : bpaApplication.getSiteDetail().get(0).getAdminBoundary().getName());
 			searchBpaApplicationForm
-					.setZone(bpaApplication.getSiteDetail().get(0).getAdminBoundary().getParent() != null
-							? bpaApplication.getSiteDetail().get(0).getAdminBoundary().getParent().getName() : "");
-			searchBpaApplicationForm.setLocality(bpaApplication.getSiteDetail().get(0).getLocationBoundary() != null
-					? bpaApplication.getSiteDetail().get(0).getLocationBoundary().getName() : "");
+					.setZone(bpaApplication.getSiteDetail().get(0).getAdminBoundary().getParent() == null
+							 ? EMPTY : bpaApplication.getSiteDetail().get(0).getAdminBoundary().getParent().getName());
+			searchBpaApplicationForm.setLocality(bpaApplication.getSiteDetail().get(0).getLocationBoundary() == null
+												 ? EMPTY : bpaApplication.getSiteDetail().get(0).getLocationBoundary().getName());
 			searchBpaApplicationForm.setReSurveyNumber(bpaApplication.getSiteDetail().get(0).getReSurveyNumber());
 		}
 		searchBpaApplicationForm.setFeeCollected(bpaDemandService.checkAnyTaxIsPendingToCollect(bpaApplication));
 		searchBpaApplicationForm.setAddress(
-				bpaApplication.getOwner() != null ? bpaApplication.getOwner().getAddress() : "");
+				bpaApplication.getOwner() == null ? EMPTY : bpaApplication.getOwner().getAddress());
 		searchBpaApplicationForm.setRescheduledByEmployee(bpaApplication.getIsRescheduledByEmployee());
 		searchBpaApplicationForm.setOnePermitApplication(bpaApplication.getIsOneDayPermitApplication());
-		if(BpaConstants.APPLICATION_STATUS_RESCHEDULED.equals(bpaApplication.getStatus().getCode())
-		   || BpaConstants.APPLICATION_STATUS_SCHEDULED.equals(bpaApplication.getStatus().getCode())) {
+		if (BpaConstants.APPLICATION_STATUS_RESCHEDULED.equals(bpaApplication.getStatus().getCode())
+			|| BpaConstants.APPLICATION_STATUS_SCHEDULED.equals(bpaApplication.getStatus().getCode())) {
 			Optional<SlotApplication> slotApplication = bpaApplication.getSlotApplications().stream().reduce((slotApp1, slotApp2) -> slotApp2);
-			if(slotApplication.isPresent()) {
+			if (slotApplication.isPresent()) {
 				searchBpaApplicationForm.setAppointmentDate(slotApplication.get().getSlotDetail().getSlot().getAppointmentDate());
 				searchBpaApplicationForm.setAppointmentTime(slotApplication.get().getSlotDetail().getAppointmentTime());
 			}
@@ -225,11 +230,11 @@ public class SearchBpaApplicationService {
 				criteria.add(Restrictions.eq("bpaApplication.isOneDayPermitApplication", true));
 		}
 		if (searchBpaApplicationForm.getElectionWardId() != null || searchBpaApplicationForm.getWardId() != null
-				|| searchBpaApplicationForm.getZoneId() != null || searchBpaApplicationForm.getZone() != null) {
+			|| searchBpaApplicationForm.getZoneId() != null || searchBpaApplicationForm.getZone() != null) {
 			criteria.createAlias("bpaApplication.siteDetail", "siteDetail");
 		}
 		if (searchBpaApplicationForm.getWardId() != null || searchBpaApplicationForm.getZoneId() != null
-				|| searchBpaApplicationForm.getZone() != null) {
+			|| searchBpaApplicationForm.getZone() != null) {
 			criteria.createAlias("siteDetail.adminBoundary", "adminBoundary");
 		}
 		if (searchBpaApplicationForm.getElectionWardId() != null) {
@@ -271,7 +276,7 @@ public class SearchBpaApplicationService {
 		criteria.add(Restrictions.eq("slotApplication.isActive", true));
 		criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 		criteria.setProjection(Projections.distinct(Projections.projectionList()
-			    .add(Projections.property("application"), "application") )).setResultTransformer(Transformers.aliasToBean(SlotApplication.class)); 
+															   .add(Projections.property("application"), "application"))).setResultTransformer(Transformers.aliasToBean(SlotApplication.class));
 		return criteria;
 	}
 
@@ -286,13 +291,13 @@ public class SearchBpaApplicationService {
 	public List<SearchBpaApplicationForm> buildSlotApplicationDetails(final SearchBpaApplicationForm searchBpaApplicationForm) {
 		final Criteria criteria = getCurrentSession().createCriteria(SlotApplication.class, "slotApplication");
 		criteria.createAlias("slotApplication.slotDetail", "slotDetail");
-		if(searchBpaApplicationForm.getAppointmentTime() != null)
+		if (searchBpaApplicationForm.getAppointmentTime() != null)
 			criteria.add(Restrictions.eq("slotDetail.appointmentTime",
 					searchBpaApplicationForm.getAppointmentTime()));
-		if(searchBpaApplicationForm.getZoneId() != null || searchBpaApplicationForm.getAppointmentDate() != null
-		   || searchBpaApplicationForm.getServiceType() != null)
+		if (searchBpaApplicationForm.getZoneId() != null || searchBpaApplicationForm.getAppointmentDate() != null
+			|| searchBpaApplicationForm.getServiceType() != null)
 			criteria.createAlias("slotDetail.slot", "slot");
-		if(searchBpaApplicationForm.getZoneId() != null) {
+		if (searchBpaApplicationForm.getZoneId() != null) {
 			criteria.createAlias("slot.zone", "zone");
 			criteria.add(Restrictions.eq("zone.id", searchBpaApplicationForm.getZoneId()));
 		}
@@ -300,13 +305,13 @@ public class SearchBpaApplicationService {
 			criteria.add(Restrictions.eq("slot.appointmentDate",
 					resetToDateTimeStamp(searchBpaApplicationForm.getAppointmentDate())));
 		}
-		if("SCHEDULE".equals(searchBpaApplicationForm.getScheduleType())) {
+		if ("SCHEDULE".equals(searchBpaApplicationForm.getScheduleType())) {
 			criteria.add(Restrictions.eq("slotApplication.scheduleAppointmentType", ScheduleAppointmentType.SCHEDULE));
-		} else if("RESCHEDULE".equals(searchBpaApplicationForm.getScheduleType())) {
+		} else if ("RESCHEDULE".equals(searchBpaApplicationForm.getScheduleType())) {
 			criteria.add(Restrictions.eq("slotApplication.scheduleAppointmentType", ScheduleAppointmentType.RESCHEDULE));
 		}
 
-		if("onedaypermit".equals(searchBpaApplicationForm.getApplicationType())) {
+		if ("onedaypermit".equals(searchBpaApplicationForm.getApplicationType())) {
 			criteria.add(Restrictions.isNotNull("slot.electionWard"));
 		} else
 			criteria.add(Restrictions.isNull("slot.electionWard"));

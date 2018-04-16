@@ -39,54 +39,53 @@
  */
 package org.egov.bpa.web.controller.adaptor;
 
-import java.lang.reflect.Type;
-
-import org.apache.commons.lang.StringUtils;
-import org.egov.bpa.transaction.entity.dto.SearchBpaApplicationReport;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import org.apache.commons.lang.StringUtils;
+import org.egov.bpa.transaction.entity.dto.SearchBpaApplicationReport;
+
+import java.lang.reflect.Type;
 
 public class SearchBpaApplicationReportAdaptor implements JsonSerializer<SearchBpaApplicationReport> {
-    @Override
-    public JsonElement serialize(final SearchBpaApplicationReport reportResultFormObj, final Type type,
-            final JsonSerializationContext jsc) {
-        final JsonObject jsonObject = new JsonObject();
-        if (reportResultFormObj != null) {
-            jsonObject.addProperty("applicationNumber", reportResultFormObj.getApplicationNumber());
-            jsonObject.addProperty("status", reportResultFormObj.getStatus());
-            jsonObject.addProperty("serviceType",
-                    StringUtils.defaultString(reportResultFormObj.getServiceType()));
-            jsonObject.addProperty("serviceType01",
-                    reportResultFormObj.getServiceType01() != null ? reportResultFormObj.getServiceType01() : 0l);
-            jsonObject.addProperty("serviceType02",
-                    reportResultFormObj.getServiceType02() != null ? reportResultFormObj.getServiceType02() : 0l);
-            jsonObject.addProperty("serviceType03",
-                    reportResultFormObj.getServiceType03() != null ? reportResultFormObj.getServiceType03() : 0l);
-            jsonObject.addProperty("serviceType04",
-                    reportResultFormObj.getServiceType04() != null ? reportResultFormObj.getServiceType04() : 0l);
-            jsonObject.addProperty("serviceType05",
-                    reportResultFormObj.getServiceType05() != null ? reportResultFormObj.getServiceType05() : 0l);
-            jsonObject.addProperty("serviceType06",
-                    reportResultFormObj.getServiceType06() != null ? reportResultFormObj.getServiceType06() : 0l);
-            jsonObject.addProperty("serviceType07",
-                    reportResultFormObj.getServiceType07() != null ? reportResultFormObj.getServiceType07() : 0l);
-            jsonObject.addProperty("serviceType08",
-                    reportResultFormObj.getServiceType08() != null ? reportResultFormObj.getServiceType08() : 0l);
-            jsonObject.addProperty("serviceType09",
-                    reportResultFormObj.getServiceType09() != null ? reportResultFormObj.getServiceType09() : 0l);
-            jsonObject.addProperty("serviceType14",
-                    reportResultFormObj.getServiceType14() != null ? reportResultFormObj.getServiceType14() : 0l);
-            jsonObject.addProperty("serviceType15",
-                    reportResultFormObj.getServiceType15() != null ? reportResultFormObj.getServiceType15() : 0l);
-            jsonObject.addProperty("zone1", reportResultFormObj.getZone1() != null ? reportResultFormObj.getZone1() : 0l);
-            jsonObject.addProperty("zone2", reportResultFormObj.getZone2() != null ? reportResultFormObj.getZone2() : 0l);
-            jsonObject.addProperty("zone3", reportResultFormObj.getZone3() != null ? reportResultFormObj.getZone3() : 0l);
-            jsonObject.addProperty("zone4", reportResultFormObj.getZone4() != null ? reportResultFormObj.getZone4() : 0l);
-            jsonObject.addProperty("id", reportResultFormObj.getId());
-        }
-        return jsonObject;
-    }
+	@Override
+	public JsonElement serialize(final SearchBpaApplicationReport reportResultFormObj, final Type type,
+								 final JsonSerializationContext jsc) {
+		final JsonObject jsonObject = new JsonObject();
+		if (reportResultFormObj != null) {
+			jsonObject.addProperty("applicationNumber", reportResultFormObj.getApplicationNumber());
+			jsonObject.addProperty("status", reportResultFormObj.getStatus());
+			jsonObject.addProperty("serviceType",
+					StringUtils.defaultString(reportResultFormObj.getServiceType()));
+			jsonObject.addProperty("serviceType01",
+					reportResultFormObj.getServiceType01() == null ? 0l : reportResultFormObj.getServiceType01());
+			jsonObject.addProperty("serviceType02",
+					reportResultFormObj.getServiceType02() == null ? 0l : reportResultFormObj.getServiceType02());
+			jsonObject.addProperty("serviceType03",
+					reportResultFormObj.getServiceType03() == null ? 0l : reportResultFormObj.getServiceType03());
+			jsonObject.addProperty("serviceType04",
+					reportResultFormObj.getServiceType04() == null ? 0l : reportResultFormObj.getServiceType04());
+			jsonObject.addProperty("serviceType05",
+					reportResultFormObj.getServiceType05() == null ? 0l : reportResultFormObj.getServiceType05());
+			jsonObject.addProperty("serviceType06",
+					reportResultFormObj.getServiceType06() == null ? 0l : reportResultFormObj.getServiceType06());
+			jsonObject.addProperty("serviceType07",
+					reportResultFormObj.getServiceType07() == null ? 0l : reportResultFormObj.getServiceType07());
+			jsonObject.addProperty("serviceType08",
+					reportResultFormObj.getServiceType08() == null ? 0l : reportResultFormObj.getServiceType08());
+			jsonObject.addProperty("serviceType09",
+					reportResultFormObj.getServiceType09() == null ? 0l : reportResultFormObj.getServiceType09());
+			jsonObject.addProperty("serviceType14",
+					reportResultFormObj.getServiceType14() == null ? 0l : reportResultFormObj.getServiceType14());
+			jsonObject.addProperty("serviceType15",
+					reportResultFormObj.getServiceType15() == null ? 0l : reportResultFormObj.getServiceType15());
+			jsonObject.addProperty("zone1", reportResultFormObj.getZone1() == null ? 0l : reportResultFormObj.getZone1());
+			jsonObject.addProperty("zone2", reportResultFormObj.getZone2() == null ? 0l : reportResultFormObj.getZone2());
+			jsonObject.addProperty("zone3", reportResultFormObj.getZone3() == null ? 0l : reportResultFormObj.getZone3());
+			jsonObject.addProperty("zone4", reportResultFormObj.getZone4() == null ? 0l : reportResultFormObj.getZone4());
+			jsonObject.addProperty("id", reportResultFormObj.getId());
+		}
+		return jsonObject;
+	}
 }

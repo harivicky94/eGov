@@ -39,141 +39,150 @@
  */
 package org.egov.bpa.transaction.entity;
 
-import java.util.Date;
-
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-
 import org.egov.bpa.transaction.entity.enums.GenderTitle;
-import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.persistence.entity.PermanentAddress;
-import org.egov.infra.persistence.entity.enums.*;
-import org.egov.portal.entity.*;
-import org.hibernate.validator.constraints.*;
+import org.egov.infra.persistence.entity.enums.Gender;
+import org.egov.portal.entity.Citizen;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import java.util.Date;
 
 @Entity
 @Table(name = "EGBPA_APPLICANT")
 @SequenceGenerator(name = Applicant.SEQ_APPLICANT, sequenceName = Applicant.SEQ_APPLICANT, allocationSize = 1)
 public class Applicant extends AbstractAuditable {
 
-    private static final long serialVersionUID = 3078684328383202788L;
-    public static final String SEQ_APPLICANT = "SEQ_EGBPA_Applicant";
+	public static final String SEQ_APPLICANT = "SEQ_EGBPA_Applicant";
+	private static final long serialVersionUID = 3078684328383202788L;
+	@Id
+	@GeneratedValue(generator = SEQ_APPLICANT, strategy = GenerationType.SEQUENCE)
+	private Long id;
+	private GenderTitle title;
+	@Length(min = 1, max = 128)
+	private String fatherorHusbandName;
+	private Date dateofBirth;
+	@Length(min = 1, max = 128)
+	private String district;
+	@Length(min = 1, max = 128)
+	private String taluk;
+	@Length(min = 1, max = 128)
+	private String area;
+	@Length(min = 1, max = 128)
+	private String city;
+	@Length(min = 1, max = 128)
+	private String state;
+	@Length(min = 1, max = 128)
+	private String pinCode;
+	@NotNull
+	@ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@JoinColumn(name = "user_id")
+	private Citizen user;
+	@NotNull
+	@SafeHtml
+	@Length(min = 2, max = 100)
+	private String name;
+	private String address;
+	@Enumerated(EnumType.ORDINAL)
+	private Gender gender;
 
-    @Id
-    @GeneratedValue(generator = SEQ_APPLICANT, strategy = GenerationType.SEQUENCE)
-    private Long id;
-    private GenderTitle title;
-    @Length(min = 1, max = 128)
-    private String fatherorHusbandName;
-    private Date dateofBirth;
-    @Length(min = 1, max = 128)
-    private String district;
-    @Length(min = 1, max = 128)
-    private String taluk;
-    @Length(min = 1, max = 128)
-    private String area;
-    @Length(min = 1, max = 128)
-    private String city;
-    @Length(min = 1, max = 128)
-    private String state;
-    @Length(min = 1, max = 128)
-    private String pinCode;
-    @NotNull
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id")
-    private Citizen user;
-    @NotNull
-    @SafeHtml
-    @Length(min = 2, max = 100)
-    private String name;
-    private String address;
-    @Enumerated(EnumType.ORDINAL)
-    private Gender gender;
-    
-    @Override
-    public Long getId() {
-        return id;
-    }
+	@Override
+	public Long getId() {
+		return id;
+	}
 
-    @Override
-    public void setId(final Long id) {
-        this.id = id;
-    }
+	@Override
+	public void setId(final Long id) {
+		this.id = id;
+	}
 
-    public GenderTitle getTitle() {
-        return title;
-    }
+	public GenderTitle getTitle() {
+		return title;
+	}
 
-    public void setTitle(final GenderTitle title) {
-        this.title = title;
-    }
+	public void setTitle(final GenderTitle title) {
+		this.title = title;
+	}
 
 
-    public Date getDateofBirth() {
-        return dateofBirth;
-    }
+	public Date getDateofBirth() {
+		return dateofBirth;
+	}
 
-    public void setDateofBirth(final Date dateofBirth) {
-        this.dateofBirth = dateofBirth;
-    }
+	public void setDateofBirth(final Date dateofBirth) {
+		this.dateofBirth = dateofBirth;
+	}
 
-    public String getDistrict() {
-        return district;
-    }
+	public String getDistrict() {
+		return district;
+	}
 
-    public void setDistrict(final String district) {
-        this.district = district;
-    }
+	public void setDistrict(final String district) {
+		this.district = district;
+	}
 
-    public String getTaluk() {
-        return taluk;
-    }
+	public String getTaluk() {
+		return taluk;
+	}
 
-    public void setTaluk(final String taluk) {
-        this.taluk = taluk;
-    }
+	public void setTaluk(final String taluk) {
+		this.taluk = taluk;
+	}
 
-    public String getArea() {
-        return area;
-    }
+	public String getArea() {
+		return area;
+	}
 
-    public void setArea(final String area) {
-        this.area = area;
-    }
+	public void setArea(final String area) {
+		this.area = area;
+	}
 
-    public String getCity() {
-        return city;
-    }
+	public String getCity() {
+		return city;
+	}
 
-    public void setCity(final String city) {
-        this.city = city;
-    }
+	public void setCity(final String city) {
+		this.city = city;
+	}
 
-    public String getState() {
-        return state;
-    }
+	public String getState() {
+		return state;
+	}
 
-    public void setState(final String state) {
-        this.state = state;
-    }
-    public String getFatherorHusbandName() {
-        return fatherorHusbandName;
-    }
+	public void setState(final String state) {
+		this.state = state;
+	}
 
-    public void setFatherorHusbandName(final String fatherorHusbandName) {
-        this.fatherorHusbandName = fatherorHusbandName;
-    }
+	public String getFatherorHusbandName() {
+		return fatherorHusbandName;
+	}
 
-    public String getPinCode() {
-        return pinCode;
-    }
+	public void setFatherorHusbandName(final String fatherorHusbandName) {
+		this.fatherorHusbandName = fatherorHusbandName;
+	}
 
-    public void setPinCode(final String pinCode) {
-        this.pinCode = pinCode;
-    }
+	public String getPinCode() {
+		return pinCode;
+	}
 
-    public Citizen getUser() {
+	public void setPinCode(final String pinCode) {
+		this.pinCode = pinCode;
+	}
+
+	public Citizen getUser() {
 		return user;
 	}
 
@@ -181,27 +190,27 @@ public class Applicant extends AbstractAuditable {
 		this.user = user;
 	}
 
-    public String getName() {
-        return name;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    public String getAddress() {
-        return address;
-    }
+	public String getAddress() {
+		return address;
+	}
 
-    public void setAddress(String address) {
-        this.address = address;
-    }
+	public void setAddress(String address) {
+		this.address = address;
+	}
 
-    public Gender getGender() {
-        return gender;
-    }
+	public Gender getGender() {
+		return gender;
+	}
 
-    public void setGender(Gender gender) {
-        this.gender = gender;
-    }
+	public void setGender(Gender gender) {
+		this.gender = gender;
+	}
 }

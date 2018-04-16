@@ -39,12 +39,6 @@
  */
 package org.egov.bpa.transaction.service.collection;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import org.apache.commons.lang.StringUtils;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.collection.constants.CollectionConstants;
@@ -64,243 +58,229 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 @Service
 @Transactional(readOnly = true)
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class BpaApplicationBillable extends AbstractBillable implements Billable {
 
-    private static final String DISPLAY_MESSAGE = "Bpa Application Fee Collection";
-    private BpaApplication application;
-    private Long userId;
-    private Boolean isCallbackForApportion = Boolean.FALSE;
-    private EgBillType billType;
-    private String referenceNumber;
-    private String transanctionReferenceNumber;
+	private static final String DISPLAY_MESSAGE = "Bpa Application Fee Collection";
+	private BpaApplication application;
+	private Long userId;
+	private Boolean isCallbackForApportion = Boolean.FALSE;
+	private EgBillType billType;
+	private String referenceNumber;
+	private String transanctionReferenceNumber;
 
-    @Autowired
-    private AppConfigValueService appConfigValueService;
+	@Autowired
+	private AppConfigValueService appConfigValueService;
 
-    @Autowired
-    private EgBillDao egBillDAO;
-    @Autowired
-    private ModuleService moduleService;
+	@Autowired
+	private EgBillDao egBillDAO;
+	@Autowired
+	private ModuleService moduleService;
 
-    @Autowired
-    private BpaDemandService bpaDemandService;
+	@Autowired
+	private BpaDemandService bpaDemandService;
 
-    @Override
-    public String getBillPayee() {
-        return application.getOwner().getName();
-    }
+	@Override
+	public String getBillPayee() {
+		return application.getOwner().getName();
+	}
 
-    @Override
-    public String getBillAddress() {
-        if (application.getOwner() != null) {
-            return application.getOwner().getAddress();
-        } else {
-            return StringUtils.EMPTY;
-        }
-    }
+	@Override
+	public String getBillAddress() {
+		return application.getOwner() == null ? "Not Mentioned" : application.getOwner().getAddress();
+	}
 
-    @Override
-    public EgDemand getCurrentDemand() {
-        return application.getDemand();
-    }
+	@Override
+	public EgDemand getCurrentDemand() {
+		return application.getDemand();
+	}
 
-    @Override
-    public String getEmailId() {
-        return application.getOwner().getUser().getEmailId();
-    }
+	@Override
+	public String getEmailId() {
+		return application.getOwner().getUser().getEmailId();
+	}
 
-    @Override
-    public List<EgDemand> getAllDemands() {
-        final List<EgDemand> demandList = new ArrayList<>();
-        demandList.add(application.getDemand());
-        return demandList;
-    }
+	@Override
+	public List<EgDemand> getAllDemands() {
+		final List<EgDemand> demandList = new ArrayList<>();
+		demandList.add(application.getDemand());
+		return demandList;
+	}
 
-    @Override
-    public EgBillType getBillType() {
-        if (billType == null)
-            billType = egBillDAO.getBillTypeByCode("AUTO");
-        return billType;
-    }
+	@Override
+	public EgBillType getBillType() {
+		return billType == null ? billType = egBillDAO.getBillTypeByCode("AUTO") : billType;
+	}
 
-    @Override
-    public Date getBillLastDueDate() {
-        return new DateTime().plusMonths(1).toDate();
-    }
+	public void setBillType(final EgBillType billType) {
+		this.billType = billType;
+	}
 
-    @Override
-    public Long getBoundaryNum() {
-        return application.getSiteDetail().get(0) != null
-                && application.getSiteDetail().get(0).getAdminBoundary() != null ? application.getSiteDetail().get(0)
-                        .getAdminBoundary().getBoundaryNum() : 0l;
-    }
+	@Override
+	public Date getBillLastDueDate() {
+		return new DateTime().plusMonths(1).toDate();
+	}
 
-    @Override
-    public String getBoundaryType() {
-        return "Ward";
-    }
+	@Override
+	public Long getBoundaryNum() {
+		return application.getSiteDetail().get(0) != null
+			   && application.getSiteDetail().get(0).getAdminBoundary() == null ? 0l : application.getSiteDetail().get(0)
+																								  .getAdminBoundary().getBoundaryNum();
+	}
 
-    @Override
-    public String getDepartmentCode() {
-        List<AppConfigValues> appConfigValueList = appConfigValueService.getConfigValuesByModuleAndKey(
-                BpaConstants.APPLICATION_MODULE_TYPE, BpaConstants.BPA_DEPARTMENT_CODE);
-        return !appConfigValueList.isEmpty() ? appConfigValueList.get(0).getValue() : "";
-    }
+	@Override
+	public String getBoundaryType() {
+		return "Ward";
+	}
 
-    @Override
-    public BigDecimal getFunctionaryCode() {
-        List<AppConfigValues> appConfigValueList = appConfigValueService.getConfigValuesByModuleAndKey(
-                BpaConstants.APPLICATION_MODULE_TYPE, BpaConstants.BPA_DEFAULT_FUNCTIONARY_CODE);
-        return !appConfigValueList.isEmpty() ? new BigDecimal(appConfigValueList.get(0).getValue()) : new BigDecimal(0);
-    }
+	@Override
+	public String getDepartmentCode() {
+		List<AppConfigValues> appConfigValueList = appConfigValueService.getConfigValuesByModuleAndKey(
+				BpaConstants.APPLICATION_MODULE_TYPE, BpaConstants.BPA_DEPARTMENT_CODE);
+		return appConfigValueList.isEmpty() ? "" : appConfigValueList.get(0).getValue();
+	}
 
-    @Override
-    public String getFundCode() {
-        List<AppConfigValues> appConfigValueList = appConfigValueService.getConfigValuesByModuleAndKey(
-                BpaConstants.APPLICATION_MODULE_TYPE, BpaConstants.BPA_DEFAULT_FUND_CODE);
-        return !appConfigValueList.isEmpty() ? appConfigValueList.get(0).getValue() : "";
-    }
+	@Override
+	public BigDecimal getFunctionaryCode() {
+		List<AppConfigValues> appConfigValueList = appConfigValueService.getConfigValuesByModuleAndKey(
+				BpaConstants.APPLICATION_MODULE_TYPE, BpaConstants.BPA_DEFAULT_FUNCTIONARY_CODE);
+		return appConfigValueList.isEmpty() ? new BigDecimal(0) : new BigDecimal(appConfigValueList.get(0).getValue());
+	}
 
-    @Override
-    public String getFundSourceCode() {
-        List<AppConfigValues> appConfigValueList = appConfigValueService.getConfigValuesByModuleAndKey(
-                BpaConstants.APPLICATION_MODULE_TYPE, BpaConstants.BPA_DEFAULT_FUND_SRC_CODE);
-        return !appConfigValueList.isEmpty() ? appConfigValueList.get(0).getValue() : "";
-    }
+	@Override
+	public String getFundCode() {
+		List<AppConfigValues> appConfigValueList = appConfigValueService.getConfigValuesByModuleAndKey(
+				BpaConstants.APPLICATION_MODULE_TYPE, BpaConstants.BPA_DEFAULT_FUND_CODE);
+		return appConfigValueList.isEmpty() ? "" : appConfigValueList.get(0).getValue();
+	}
 
-    @Override
-    public Date getIssueDate() {
-        return new Date();
-    }
+	@Override
+	public String getFundSourceCode() {
+		List<AppConfigValues> appConfigValueList = appConfigValueService.getConfigValuesByModuleAndKey(
+				BpaConstants.APPLICATION_MODULE_TYPE, BpaConstants.BPA_DEFAULT_FUND_SRC_CODE);
+		return appConfigValueList.isEmpty() ? "" : appConfigValueList.get(0).getValue();
+	}
 
-    @Override
-    public Date getLastDate() {
-        return getBillLastDueDate();
-    }
+	@Override
+	public Date getIssueDate() {
+		return new Date();
+	}
 
-    @Override
-    public Module getModule() {
-        return moduleService.getModuleByName(BpaConstants.EGMODULE_NAME);
-    }
+	@Override
+	public Date getLastDate() {
+		return getBillLastDueDate();
+	}
 
-    @Override
-    public Boolean getOverrideAccountHeadsAllowed() {
-        return false;
-    }
+	@Override
+	public Module getModule() {
+		return moduleService.getModuleByName(BpaConstants.EGMODULE_NAME);
+	}
 
-    @Override
-    public Boolean getPartPaymentAllowed() {
+	@Override
+	public Boolean getOverrideAccountHeadsAllowed() {
+		return false;
+	}
 
-        return false;
-    }
+	@Override
+	public Boolean getPartPaymentAllowed() {
+		return false;
+	}
 
-    @Override
-    public String getServiceCode() {
-        return "BPA";
+	@Override
+	public String getServiceCode() {
+		return "BPA";
+	}
 
-    }
+	@Override
+	public BigDecimal getTotalAmount() {
+		final EgDemand currentDemand = getCurrentDemand();
+		final List<Object> instVsAmt = bpaDemandService.getDmdCollAmtInstallmentWise(currentDemand);
+		BigDecimal balance = BigDecimal.ZERO;
+		for (final Object object : instVsAmt) {
+			final Object[] ddObject = (Object[]) object;
+			final BigDecimal dmdAmt = new BigDecimal((Double) ddObject[2]);
+			BigDecimal collAmt = BigDecimal.ZERO;
+			if (ddObject[2] != null)
+				collAmt = new BigDecimal((Double) ddObject[3]);
+			balance = balance.add(dmdAmt.subtract(collAmt));
+		}
+		return balance;
+	}
 
-    @Override
-    public BigDecimal getTotalAmount() {
-        final EgDemand currentDemand = getCurrentDemand();
-        final List<Object> instVsAmt = bpaDemandService.getDmdCollAmtInstallmentWise(currentDemand);
-        BigDecimal balance = BigDecimal.ZERO;
-        for (final Object object : instVsAmt) {
-            final Object[] ddObject = (Object[]) object;
-            final BigDecimal dmdAmt = new BigDecimal((Double) ddObject[2]);
-            BigDecimal collAmt = BigDecimal.ZERO;
-            if (ddObject[2] != null)
-                collAmt = new BigDecimal((Double) ddObject[3]);
-            balance = balance.add(dmdAmt.subtract(collAmt));
+	@Override
+	public Long getUserId() {
+		return userId;
+	}
 
-        }
-        return balance;
-    }
+	public void setUserId(final Long userId) {
+		this.userId = userId;
+	}
 
-    @Override
-    public Long getUserId() {
-        return userId;
-    }
+	@Override
+	public String getDescription() {
+		return "BPA Application Number: " + getApplication().getApplicationNumber();
+	}
 
-    @Override
-    public String getDescription() {
+	@Override
+	public String getDisplayMessage() {
+		return DISPLAY_MESSAGE;
+	}
 
-        return "BPA Application Number: " + getApplication().getApplicationNumber();
-    }
+	@Override
+	public String getCollModesNotAllowed() {
+		return CollectionConstants.INSTRUMENTTYPE_BANK;
+	}
 
-    @Override
-    public String getDisplayMessage() {
-        return DISPLAY_MESSAGE;
-    }
+	@Override
+	public String getConsumerId() {
+		return application.getApplicationNumber();
+	}
 
-    @Override
-    public String getCollModesNotAllowed() {
-        return CollectionConstants.INSTRUMENTTYPE_BANK;
-    }
+	@Override
+	public String getConsumerType() {
+		return application.getServiceType().getCode();
+	}
 
-    @Override
-    public String getConsumerId() {
-        return application.getApplicationNumber();
+	@Override
+	public Boolean isCallbackForApportion() {
+		return isCallbackForApportion;
+	}
 
-    }
+	@Override
+	public void setCallbackForApportion(final Boolean b) {
+		isCallbackForApportion = b;
+	}
 
-    @Override
-    public String getConsumerType() {
-        return application.getServiceType().getCode();
-    }
+	public BpaApplication getApplication() {
+		return application;
+	}
 
-    @Override
-    public Boolean isCallbackForApportion() {
-        return isCallbackForApportion;
-    }
+	public void setApplication(final BpaApplication application) {
+		this.application = application;
+	}
 
-    @Override
-    public void setCallbackForApportion(final Boolean b) {
-        isCallbackForApportion = b;
-    }
+	@Override
+	public String getReferenceNumber() {
+		return referenceNumber;
+	}
 
-    public BpaApplication getApplication() {
-        return application;
-    }
+	public void setReferenceNumber(final String referenceNumber) {
+		this.referenceNumber = referenceNumber;
+	}
 
-    public void setApplication(final BpaApplication application) {
-        this.application = application;
-    }
+	@Override
+	public String getTransanctionReferenceNumber() {
+		return transanctionReferenceNumber;
+	}
 
-    public void setUserId(final Long userId) {
-        this.userId = userId;
-    }
-
-    public void setBillType(final EgBillType billType) {
-        this.billType = billType;
-    }
-
-    public String buildAddressDetails(final BpaApplication application) {
-
-        final StringBuilder address = new StringBuilder();
-        if (application.getSiteDetail().get(0) != null)
-            address.append(application.getSiteDetail().get(0).getArea());
-        return address.toString();
-    }
-
-    @Override
-    public String getReferenceNumber() {
-        return referenceNumber;
-    }
-
-    public void setReferenceNumber(final String referenceNumber) {
-        this.referenceNumber = referenceNumber;
-    }
-
-    @Override
-    public String getTransanctionReferenceNumber() {
-        return transanctionReferenceNumber;
-    }
-
-    public void setTransanctionReferenceNumber(final String transanctionReferenceNumber) {
-        this.transanctionReferenceNumber = transanctionReferenceNumber;
-    }
+	public void setTransanctionReferenceNumber(final String transanctionReferenceNumber) {
+		this.transanctionReferenceNumber = transanctionReferenceNumber;
+	}
 }

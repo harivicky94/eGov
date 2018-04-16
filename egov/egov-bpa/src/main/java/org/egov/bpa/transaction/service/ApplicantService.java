@@ -40,12 +40,13 @@
 
 package org.egov.bpa.transaction.service;
 
-import org.egov.bpa.transaction.entity.*;
-import org.egov.bpa.transaction.repository.*;
-import org.egov.infra.persistence.entity.enums.*;
-import org.springframework.beans.factory.annotation.*;
-import org.springframework.stereotype.*;
-import org.springframework.transaction.annotation.*;
+import org.egov.bpa.transaction.entity.Applicant;
+import org.egov.bpa.transaction.repository.ApplicantRepository;
+import org.egov.infra.persistence.entity.enums.Gender;
+import org.egov.infra.persistence.entity.enums.UserType;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)

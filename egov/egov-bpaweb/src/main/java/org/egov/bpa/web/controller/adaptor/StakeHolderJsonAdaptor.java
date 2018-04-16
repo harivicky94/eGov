@@ -39,31 +39,29 @@
  */
 package org.egov.bpa.web.controller.adaptor;
 
-import java.lang.reflect.Type;
-
-import org.egov.bpa.master.entity.StakeHolder;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import org.egov.bpa.master.entity.StakeHolder;
+
+import java.lang.reflect.Type;
+
+import static org.apache.commons.lang3.StringUtils.defaultString;
 
 public class StakeHolderJsonAdaptor implements JsonSerializer<StakeHolder> {
-    @Override
-    public JsonElement serialize(final StakeHolder stakeHolder, final Type type,
-            final JsonSerializationContext jsc) {
-        final JsonObject jsonObject = new JsonObject();
-        if (stakeHolder != null) {
-            jsonObject.addProperty("name", org.apache.commons.lang.StringUtils.defaultString(stakeHolder.getName()));
-            jsonObject.addProperty("stakeHolderType",
-                    org.apache.commons.lang.StringUtils.defaultString(stakeHolder.getStakeHolderType().name()));
-            jsonObject.addProperty("code", org.apache.commons.lang.StringUtils.defaultString(stakeHolder.getCode()));
-            jsonObject.addProperty("licenceNumber",
-                    org.apache.commons.lang.StringUtils.defaultString(stakeHolder.getLicenceNumber()));
-            jsonObject.addProperty("aadharNumber",
-                    org.apache.commons.lang.StringUtils.defaultString(stakeHolder.getAadhaarNumber()));
-            jsonObject.addProperty("id", stakeHolder.getId());
-        }
-        return jsonObject;
-    }
+	@Override
+	public JsonElement serialize(final StakeHolder stakeHolder, final Type type,
+								 final JsonSerializationContext jsc) {
+		final JsonObject jsonObject = new JsonObject();
+		if (stakeHolder != null) {
+			jsonObject.addProperty("name", defaultString(stakeHolder.getName()));
+			jsonObject.addProperty("stakeHolderType", defaultString(stakeHolder.getStakeHolderType().name()));
+			jsonObject.addProperty("code", defaultString(stakeHolder.getCode()));
+			jsonObject.addProperty("licenceNumber", defaultString(stakeHolder.getLicenceNumber()));
+			jsonObject.addProperty("aadharNumber", defaultString(stakeHolder.getAadhaarNumber()));
+			jsonObject.addProperty("id", stakeHolder.getId());
+		}
+		return jsonObject;
+	}
 }

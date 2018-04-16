@@ -46,25 +46,50 @@
  */
 package org.egov.bpa.transaction.entity;
 
-import org.egov.bpa.master.entity.*;
-import org.egov.bpa.transaction.entity.dto.*;
-import org.egov.bpa.transaction.entity.enums.*;
+import org.egov.bpa.master.entity.ServiceType;
+import org.egov.bpa.transaction.entity.dto.BpaStateInfo;
+import org.egov.bpa.transaction.entity.enums.ApplicantMode;
+import org.egov.bpa.transaction.entity.enums.GovernmentType;
+import org.egov.bpa.transaction.entity.enums.OneDayPermitLandType;
 import org.egov.common.entity.Occupancy;
-import org.egov.commons.entity.*;
-import org.egov.dcb.bean.*;
-import org.egov.demand.model.*;
-import org.egov.infra.filestore.entity.*;
-import org.egov.infra.workflow.entity.*;
-import org.egov.pims.commons.*;
-import org.hibernate.validator.constraints.*;
-import org.springframework.web.multipart.*;
+import org.egov.commons.entity.Source;
+import org.egov.dcb.bean.Receipt;
+import org.egov.demand.model.EgDemand;
+import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.infra.workflow.entity.StateAware;
+import org.egov.pims.commons.Position;
+import org.hibernate.validator.constraints.Length;
+import org.springframework.web.multipart.MultipartFile;
 
-import javax.persistence.*;
-import javax.validation.constraints.*;
-import java.math.*;
-import java.text.*;
-import java.util.*;
-import java.util.stream.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "EGBPA_APPLICATION")
@@ -72,6 +97,7 @@ import java.util.stream.*;
 public class BpaApplication extends StateAware<Position> {
 
 	public static final String SEQ_APPLICATION = "SEQ_EGBPA_APPLICATION";
+	public static final String ORDER_BY_ID_ASC = "id ASC";
 	private static final long serialVersionUID = -361205348191992865L;
 	@Id
 	@GeneratedValue(generator = SEQ_APPLICATION, strategy = GenerationType.SEQUENCE)
@@ -155,10 +181,10 @@ public class BpaApplication extends StateAware<Position> {
 	private Boolean isLPRequestInitiated;
 	private Boolean failureInScheduler = false;
 	private String schedulerFailedRemarks;
-	
+
 	@Enumerated(EnumType.STRING)
-    @Column(name = "typeOfLand")
-    private OneDayPermitLandType typeOfLand;// Garden Land or Wet Land
+	@Column(name = "typeOfLand")
+	private OneDayPermitLandType typeOfLand;// Garden Land or Wet Land
 	@Length(min = 1, max = 20)
 	private String eDcrNumber;
 
@@ -177,10 +203,10 @@ public class BpaApplication extends StateAware<Position> {
 	private List<PermittedFloorDetail> permittedFloorDetail = new ArrayList<>();
 	@OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<AutoDcrMap> autoDcr = new ArrayList<>();
-	@OrderBy("id ASC")
+	@OrderBy(ORDER_BY_ID_ASC)
 	@OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<ApplicationDocument> applicationDocument = new ArrayList<>(0);
-	@OrderBy("id ASC")
+	@OrderBy(ORDER_BY_ID_ASC)
 	@OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<ApplicationNocDocument> applicationNOCDocument = new ArrayList<>(0);
 	@OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -188,7 +214,7 @@ public class BpaApplication extends StateAware<Position> {
 	private List<Inspection> inspections = new ArrayList<>();
 	@OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<LettertoParty> lettertoParty = new ArrayList<>();
-	@OrderBy("id ASC")
+	@OrderBy(ORDER_BY_ID_ASC)
 	@OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<ApplicationFee> applicationFee = new ArrayList<>();
 	@OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -209,7 +235,7 @@ public class BpaApplication extends StateAware<Position> {
 	private List<ApplicationPermitConditions> rejectionReasons = new ArrayList<>(0);
 	@OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<BpaNotice> bpaNotice = new ArrayList<>(0);
-	@OrderBy("id ASC")
+	@OrderBy(ORDER_BY_ID_ASC)
 	@OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	private List<SlotApplication> slotApplications = new ArrayList<>();
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -241,7 +267,7 @@ public class BpaApplication extends StateAware<Position> {
 
 	@Override
 	public String myLinkId() {
-		return applicationNumber != null ? applicationNumber : planPermissionNumber;
+		return applicationNumber == null ? planPermissionNumber : applicationNumber;
 	}
 
 	public String getAmenityName() {
@@ -550,10 +576,10 @@ public class BpaApplication extends StateAware<Position> {
 	public String getStateDetails() {
 		final SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
 		return String.format("Applicant Name: %s Application Number %s Dated %s For the service type - %s.",
-				owner != null ? owner.getName() : "Not Specified",
-				applicationNumber != null ? applicationNumber : planPermissionNumber,
-				applicationDate != null ? formatter.format(applicationDate) : formatter.format(new Date()),
-				serviceType.getDescription() != null ? serviceType.getDescription() : "");
+				owner == null ? "Not Specified" : owner.getName(),
+				applicationNumber == null ? planPermissionNumber : applicationNumber,
+				applicationDate == null ? formatter.format(new Date()) : formatter.format(applicationDate),
+				serviceType.getDescription() == null ? "" : serviceType.getDescription());
 	}
 
 	public BigDecimal getAdmissionfeeAmount() {
@@ -605,10 +631,7 @@ public class BpaApplication extends StateAware<Position> {
 	}
 
 	public boolean isFeeCollected() {
-		if (demand != null)
-			return demand.getBaseDemand().compareTo(demand.getAmtCollected()) <= 0;
-		else
-			return false;
+		return demand == null ? false : demand.getBaseDemand().compareTo(demand.getAmtCollected()) <= 0;
 	}
 
 	public List<ServiceType> getApplicationAmenity() {
@@ -782,8 +805,8 @@ public class BpaApplication extends StateAware<Position> {
 
 	public Set<FileStoreMapper> getTsInspnSupportDocs() {
 		return this.tsInspnSupportDocs.stream()
-								 .sorted(Comparator.comparing(FileStoreMapper::getId))
-								 .collect(Collectors.toSet());
+									  .sorted(Comparator.comparing(FileStoreMapper::getId))
+									  .collect(Collectors.toSet());
 	}
 
 	public void setTsInspnSupportDocs(Set<FileStoreMapper> tsInspnSupportDocs) {
@@ -865,7 +888,7 @@ public class BpaApplication extends StateAware<Position> {
 	public BpaStateInfo extraInfo() {
 		return super.extraInfoAs(BpaStateInfo.class);
 	}
-	
+
 	public Boolean getIsOneDayPermitApplication() {
 		return isOneDayPermitApplication;
 	}

@@ -39,61 +39,51 @@
  */
 package org.egov.bpa.web.controller.adaptor;
 
-import static org.apache.commons.lang3.StringUtils.defaultString;
-
-import java.lang.reflect.Type;
-
-import org.egov.bpa.transaction.entity.dto.SearchBpaApplicationForm;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import org.egov.bpa.utils.*;
-import org.egov.infra.utils.*;
+import org.egov.bpa.transaction.entity.dto.SearchBpaApplicationForm;
+import org.egov.bpa.utils.BpaConstants;
+import org.egov.infra.utils.DateUtils;
+
+import java.lang.reflect.Type;
+
+import static org.apache.commons.lang3.StringUtils.defaultString;
 
 public class SearchBpaApplicationFormAdaptor implements JsonSerializer<SearchBpaApplicationForm> {
-    @Override
-    public JsonElement serialize(final SearchBpaApplicationForm searchFormObj, final Type type,
-            final JsonSerializationContext jsc) {
-        final JsonObject jsonObject = new JsonObject();
-        if (searchFormObj != null) {
-            jsonObject.addProperty("applicantName",
-                    org.apache.commons.lang.StringUtils.defaultString(searchFormObj.getApplicantName()));
-            jsonObject.addProperty("applicationNumber",
-                    org.apache.commons.lang.StringUtils.defaultString(searchFormObj.getApplicationNumber()));
-            jsonObject.addProperty("applicationDate",
-                    DateUtils.toDefaultDateFormat(searchFormObj.getApplicationDate()));
-            jsonObject.addProperty("buildingplanapprovalnumber",
-                    org.apache.commons.lang.StringUtils.defaultString(searchFormObj.getBuildingplanapprovalnumber()));
-            jsonObject.addProperty("locality",
-                    org.apache.commons.lang.StringUtils.defaultString(searchFormObj.getLocality()));
-            jsonObject.addProperty("reSurveyNumber",
-                    org.apache.commons.lang.StringUtils.defaultString(searchFormObj.getReSurveyNumber()));
-            jsonObject.addProperty("address",
-                    org.apache.commons.lang.StringUtils.defaultString(searchFormObj.getAddress()));
-            jsonObject.addProperty("serviceType",
-                    org.apache.commons.lang.StringUtils.defaultString(searchFormObj.getServiceType()));
-            jsonObject.addProperty("occupancy",
-                    org.apache.commons.lang.StringUtils.defaultString(searchFormObj.getOccupancy()));
-            jsonObject.addProperty("currentOwner", searchFormObj.getCurrentOwner());
-            jsonObject.addProperty("pendingAction", searchFormObj.getPendingAction());
-            jsonObject.addProperty("electionWard", searchFormObj.getElectionWard());
-            jsonObject.addProperty("ward", org.apache.commons.lang.StringUtils.defaultString(searchFormObj.getWard()));
-            jsonObject.addProperty("zone", org.apache.commons.lang.StringUtils.defaultString(searchFormObj.getZone()));
-            jsonObject.addProperty("isFeeCollected", searchFormObj.isFeeCollected());
-            jsonObject.addProperty("status", searchFormObj.getStatus());
-            jsonObject.addProperty("rescheduledByEmployee", searchFormObj.getRescheduledByEmployee());
-            jsonObject.addProperty("onePermitApplication", searchFormObj.getOnePermitApplication());
-            if(BpaConstants.APPLICATION_STATUS_RESCHEDULED.equals(searchFormObj.getStatus())
-               || BpaConstants.APPLICATION_STATUS_SCHEDULED.equals(searchFormObj.getStatus())) {
-                jsonObject.addProperty("appointmentDate", DateUtils.toDefaultDateFormat(searchFormObj.getAppointmentDate()));
-                jsonObject.addProperty("appointmentTime", searchFormObj.getAppointmentTime());
-            }
-            jsonObject.addProperty("failureRemarks",
-                    searchFormObj.getFailureRemarks() == null ? "" : defaultString(searchFormObj.getFailureRemarks(), "N/A"));
-            jsonObject.addProperty("id", searchFormObj.getId());
-        }
-        return jsonObject;
-    }
+	@Override
+	public JsonElement serialize(final SearchBpaApplicationForm searchFormObj, final Type type,
+								 final JsonSerializationContext jsc) {
+		final JsonObject jsonObject = new JsonObject();
+		if (searchFormObj != null) {
+			jsonObject.addProperty("applicantName", defaultString(searchFormObj.getApplicantName()));
+			jsonObject.addProperty("applicationNumber", defaultString(searchFormObj.getApplicationNumber()));
+			jsonObject.addProperty("applicationDate", DateUtils.toDefaultDateFormat(searchFormObj.getApplicationDate()));
+			jsonObject.addProperty("buildingplanapprovalnumber", defaultString(searchFormObj.getBuildingplanapprovalnumber()));
+			jsonObject.addProperty("locality", defaultString(searchFormObj.getLocality()));
+			jsonObject.addProperty("reSurveyNumber", defaultString(searchFormObj.getReSurveyNumber()));
+			jsonObject.addProperty("address", defaultString(searchFormObj.getAddress()));
+			jsonObject.addProperty("serviceType", defaultString(searchFormObj.getServiceType()));
+			jsonObject.addProperty("occupancy", defaultString(searchFormObj.getOccupancy()));
+			jsonObject.addProperty("currentOwner", searchFormObj.getCurrentOwner());
+			jsonObject.addProperty("pendingAction", searchFormObj.getPendingAction());
+			jsonObject.addProperty("electionWard", searchFormObj.getElectionWard());
+			jsonObject.addProperty("ward", defaultString(searchFormObj.getWard()));
+			jsonObject.addProperty("zone", defaultString(searchFormObj.getZone()));
+			jsonObject.addProperty("isFeeCollected", searchFormObj.isFeeCollected());
+			jsonObject.addProperty("status", searchFormObj.getStatus());
+			jsonObject.addProperty("rescheduledByEmployee", searchFormObj.getRescheduledByEmployee());
+			jsonObject.addProperty("onePermitApplication", searchFormObj.getOnePermitApplication());
+			if (BpaConstants.APPLICATION_STATUS_RESCHEDULED.equals(searchFormObj.getStatus())
+				|| BpaConstants.APPLICATION_STATUS_SCHEDULED.equals(searchFormObj.getStatus())) {
+				jsonObject.addProperty("appointmentDate", DateUtils.toDefaultDateFormat(searchFormObj.getAppointmentDate()));
+				jsonObject.addProperty("appointmentTime", searchFormObj.getAppointmentTime());
+			}
+			jsonObject.addProperty("failureRemarks",
+					searchFormObj.getFailureRemarks() == null ? "" : defaultString(searchFormObj.getFailureRemarks(), "N/A"));
+			jsonObject.addProperty("id", searchFormObj.getId());
+		}
+		return jsonObject;
+	}
 }
