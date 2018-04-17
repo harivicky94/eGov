@@ -1,11 +1,13 @@
 package org.egov.edcr.rule;
 
 import java.math.BigDecimal;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.egov.edcr.constants.DxfFileConstants;
 import org.egov.edcr.entity.Block;
+import org.egov.edcr.entity.Building;
 import org.egov.edcr.entity.Floor;
 import org.egov.edcr.entity.Occupancy;
 import org.egov.edcr.entity.OccupancyType;
@@ -46,6 +48,7 @@ public class FloorAreaRatioService implements RuleService {
         for(Block block: pl.getBlocks())
         {
             BigDecimal floorArea = BigDecimal.ZERO;
+            BigDecimal builtUpArea = BigDecimal.ZERO;
 
             for (Floor floor : block.getBuilding().getFloors()) {
                 String buildUpAreaByFloor = DxfFileConstants.BLOCK_NAME_PREFIX + block.getNumber() + "_"
@@ -58,6 +61,7 @@ public class FloorAreaRatioService implements RuleService {
 
                         BigDecimal occupancyArea = Util.getPolyLineArea(pline);
                         floorArea = floorArea.add(occupancyArea);
+                        builtUpArea=builtUpArea.add(occupancyArea);
 
                         Occupancy occupancy = new Occupancy();
                         occupancy.setPolyLine(pline);
@@ -86,7 +90,10 @@ public class FloorAreaRatioService implements RuleService {
                     }
             }
 
-            block.getBuilding().setTotalBuitUpArea(floorArea);
+            block.getBuilding().setTotalBuitUpArea(builtUpArea);
+            block.getBuilding().setMostRestrictiveOccupancy(getMostRestrictiveOccupancy(block.getBuilding()));
+
+            
             if (LOG.isDebugEnabled())
                 LOG.debug("floorArea:" + floorArea);
             block.getBuilding().setTotalFloorArea(floorArea);
@@ -127,6 +134,37 @@ public class FloorAreaRatioService implements RuleService {
         }
         return pl;
 
+    }
+
+    private OccupancyType getMostRestrictiveOccupancy(Building building) {
+        OccupancyType mostRestrict = null;
+        LinkedList<OccupancyType> occupancies = new LinkedList<OccupancyType>();
+        occupancies.add(OccupancyType.OCCUPANCY_A1);
+        occupancies.add(OccupancyType.OCCUPANCY_A2);
+        occupancies.add(OccupancyType.OCCUPANCY_B1);
+        occupancies.add(OccupancyType.OCCUPANCY_B2);
+        occupancies.add(OccupancyType.OCCUPANCY_B3);
+        occupancies.add(OccupancyType.OCCUPANCY_C);
+        occupancies.add(OccupancyType.OCCUPANCY_D);
+        occupancies.add(OccupancyType.OCCUPANCY_D1);
+        occupancies.add(OccupancyType.OCCUPANCY_E);
+        occupancies.add(OccupancyType.OCCUPANCY_F);
+        occupancies.add(OccupancyType.OCCUPANCY_G1);
+        occupancies.add(OccupancyType.OCCUPANCY_G2);
+        occupancies.add(OccupancyType.OCCUPANCY_H);
+        occupancies.add(OccupancyType.OCCUPANCY_I1);
+        occupancies.add(OccupancyType.OCCUPANCY_I2);
+
+        for (Floor floor : building.getFloors()) {
+            for (Occupancy occupancy : floor.getOccupancies()) {
+                if (mostRestrict == null)
+                    mostRestrict = occupancy.getType();
+                else if (occupancies.indexOf(occupancy.getType()) > occupancies.indexOf(mostRestrict)) {
+                    mostRestrict = occupancy.getType();
+                }
+            }
+        }
+        return mostRestrict;
     }
 
     private void setOccupancyType(DXFLWPolyline pline, Occupancy occupancy) {

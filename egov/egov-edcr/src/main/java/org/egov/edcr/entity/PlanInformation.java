@@ -64,8 +64,17 @@ public class PlanInformation extends AbstractAuditable {
     
     @Transient
     private List<Occupancy> occupancies=new ArrayList<>();
-
+    @Transient
+    private Boolean parkingToMainBuilding=false;
     
+    public Boolean getParkingToMainBuilding() {
+        return parkingToMainBuilding;
+    }
+
+    public void setParkingToMainBuilding(Boolean parkingToMainBuilding) {
+        this.parkingToMainBuilding = parkingToMainBuilding;
+    }
+
     @Override
     public Long getId() {
         return id;

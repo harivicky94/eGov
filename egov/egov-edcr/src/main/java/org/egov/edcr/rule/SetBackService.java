@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 import org.egov.edcr.constants.DxfFileConstants;
 import org.egov.edcr.entity.PlanDetail;
 import org.egov.edcr.entity.measurement.Yard;
+import org.egov.edcr.entity.utility.SetBack;
 import org.egov.edcr.service.MinDistance;
 import org.egov.edcr.utility.DcrConstants;
 import org.egov.edcr.utility.Util;
@@ -27,16 +28,29 @@ public class SetBackService implements RuleService {
     
     public PlanDetail extract(PlanDetail pl, DXFDocument doc) {
        
-        pl.getPlot().setFrontYard(getYard(pl, doc, DxfFileConstants.FRONT_YARD));
-        pl.getPlot().setRearYard(getYard(pl, doc, DxfFileConstants.REAR_YARD));
-        pl.getPlot().setSideYard1(getYard(pl, doc, DxfFileConstants.SIDE_YARD_1));
-        pl.getPlot().setSideYard2(getYard(pl, doc, DxfFileConstants.SIDE_YARD_2));
+        SetBack setBack = new SetBack();
+          Yard yard= getYard(pl, doc, DxfFileConstants.FRONT_YARD);
+          yard.setMinimumDistance(MinDistance.getYardMinDistance(pl, DxfFileConstants.FRONT_YARD));
+          setBack.setFrontYard(yard);
+          pl.getPlot().setFrontYard(yard);
+          
+          yard= getYard(pl, doc, DxfFileConstants.REAR_YARD);
+          yard.setMinimumDistance(MinDistance.getYardMinDistance(pl, DxfFileConstants.REAR_YARD));
+          setBack.setRearYard(yard);
+          pl.getPlot().setRearYard(yard);
+          
+          yard= getYard(pl, doc, DxfFileConstants.SIDE_YARD_1);
+          yard.setMinimumDistance(MinDistance.getYardMinDistance(pl, DxfFileConstants.SIDE_YARD_1));
+          setBack.setSideYard1(yard);
+          pl.getPlot().setSideYard1(yard);
+          yard= getYard(pl, doc, DxfFileConstants.SIDE_YARD_2);
+          yard.setMinimumDistance(MinDistance.getYardMinDistance(pl, DxfFileConstants.SIDE_YARD_2));
 
-        pl.getPlot().getFrontYard().setMinimumDistance(MinDistance.getYardMinDistance(pl, DxfFileConstants.FRONT_YARD));
-        pl.getPlot().getSideYard1().setMinimumDistance(MinDistance.getYardMinDistance(pl, DxfFileConstants.SIDE_YARD_1));
-        pl.getPlot().getSideYard2().setMinimumDistance(MinDistance.getYardMinDistance(pl, DxfFileConstants.SIDE_YARD_2));
-        pl.getPlot().getRearYard().setMinimumDistance(MinDistance.getYardMinDistance(pl, DxfFileConstants.REAR_YARD));
+          setBack.setSideYard2(yard);
+          pl.getPlot().setSideYard2(yard);
+          pl.getPlot().getSetBacks().add(setBack);
 
+     
         if (pl.getBasement() != null) {
             pl.getPlot().setBsmtFrontYard(getYard(pl, doc, DxfFileConstants.BSMNT_FRONT_YARD));
             pl.getPlot().setBsmtRearYard(getYard(pl, doc, DxfFileConstants.BSMNT_REAR_YARD));

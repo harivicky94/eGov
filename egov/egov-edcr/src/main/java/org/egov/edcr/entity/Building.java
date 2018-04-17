@@ -39,7 +39,17 @@ public class Building extends Measurement {
     private BigDecimal distanceFromBuildingFootPrintToRoadEnd;
 
     private BigDecimal totalBuitUpArea;
+    
+    private OccupancyType  mostRestrictiveOccupancy;
 
+    public OccupancyType getMostRestrictiveOccupancy() {
+        return mostRestrictiveOccupancy;
+    }
+
+    public void setMostRestrictiveOccupancy(OccupancyType mostRestrictiveOccupancy) {
+        this.mostRestrictiveOccupancy = mostRestrictiveOccupancy;
+    }
+   
     public BigDecimal getBuildingHeight() {
         return buildingHeight;
     }

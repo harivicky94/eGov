@@ -10,7 +10,9 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.egov.edcr.constants.DxfFileConstants;
+import org.egov.edcr.entity.Building;
 import org.egov.edcr.entity.Floor;
+import org.egov.edcr.entity.OccupancyType;
 import org.egov.edcr.entity.PlanDetail;
 import org.egov.edcr.entity.Plot;
 import org.egov.edcr.entity.Result;
@@ -19,7 +21,6 @@ import org.egov.edcr.entity.RuleOutput;
 import org.egov.edcr.entity.SubRuleOutput;
 import org.egov.edcr.entity.measurement.Measurement;
 import org.egov.edcr.entity.measurement.Yard;
-import org.egov.edcr.entity.utility.RuleReportOutput;
 import org.egov.edcr.service.ReportService;
 import org.egov.edcr.utility.DcrConstants;
 import org.egov.edcr.utility.Util;
@@ -48,6 +49,21 @@ public class Rule24 extends GeneralRule {
     private static final BigDecimal FRONTYARDMINIMUM_DISTANCE = BigDecimal.valueOf(1.8);
     private static final BigDecimal FRONTYARDMEAN_DISTANCE = BigDecimal.valueOf(3);
 
+    private static final BigDecimal FRONTYARDMINIMUM_DISTANCE_1_8 = BigDecimal.valueOf(1.8);
+    private static final BigDecimal FRONTYARDMINIMUM_DISTANCE_1_2 = BigDecimal.valueOf(1.2);
+    private static final BigDecimal FRONTYARDMINIMUM_DISTANCE_3 = BigDecimal.valueOf(3);
+    private static final BigDecimal FRONTYARDMINIMUM_DISTANCE_4_5 = BigDecimal.valueOf(4.5);
+    private static final BigDecimal FRONTYARDMINIMUM_DISTANCE_5 = BigDecimal.valueOf(5);
+    private static final BigDecimal FRONTYARDMINIMUM_DISTANCE_6 = BigDecimal.valueOf(6);
+    private static final BigDecimal FRONTYARDMINIMUM_DISTANCE_7_5 = BigDecimal.valueOf(7.5);
+
+    private static final BigDecimal FRONTYARDMEAN_DISTANCE_1_8 = BigDecimal.valueOf(1.8);
+    private static final BigDecimal FRONTYARDMEAN_DISTANCE_3 = BigDecimal.valueOf(3);
+    private static final BigDecimal FRONTYARDMEAN_DISTANCE_5 = BigDecimal.valueOf(5);
+    private static final BigDecimal FRONTYARDMEAN_DISTANCE_6 = BigDecimal.valueOf(6);
+    private static final BigDecimal FRONTYARDMEAN_DISTANCE_7_5 = BigDecimal.valueOf(7.5);
+    private static final BigDecimal FRONTYARDMEAN_DISTANCE_10_5 = BigDecimal.valueOf(10.5);
+    
     private static final BigDecimal REARYARDMINIMUM_DISTANCE = BigDecimal.valueOf(1);
     private static final BigDecimal REARYARDMEAN_DISTANCE = BigDecimal.valueOf(2);
 
@@ -121,13 +137,20 @@ public class Rule24 extends GeneralRule {
 
     private String MEAN_MINIMUM = "(Minimum distance,Mean distance) ";
     private String MINIMUM_MEAN = "(Minimum distance,Mean distance) ";
+    private static final int SITEAREA_125 = 125;
+    private static final int BUILDUPAREA_300 = 300;
+    private static final int FLOORAREA_800 = 800;
+    private static final int FLOORAREA_500 = 500;
+    private static final int FLOORAREA_300 =300;
 
+    
+    
     @Autowired
     private ReportService reportService;
+    private static HashMap<String, String> errors = new HashMap<>();
 
     @Override
     public PlanDetail validate(PlanDetail planDetail) {
-        HashMap<String, String> errors = new HashMap<>();
 
         if (planDetail != null) {
 
@@ -137,14 +160,7 @@ public class Rule24 extends GeneralRule {
                 planDetail.addErrors(errors);
             }
 
-            if (planDetail.getPlot() != null && (planDetail.getPlot().getFrontYard() == null ||
-                    !planDetail.getPlot().getFrontYard().getPresentInDxf())) {
-
-                errors.put(DcrConstants.FRONT_YARD_DESC,
-                        prepareMessage(DcrConstants.OBJECTNOTDEFINED, DcrConstants.FRONT_YARD_DESC));
-                planDetail.addErrors(errors);
-            }
-
+        
             // check either of side yard present or not
             if (planDetail.getPlot() != null
                     && (planDetail.getPlot().getSideYard1() == null || !planDetail.getPlot().getSideYard1().getPresentInDxf())
@@ -162,13 +178,6 @@ public class Rule24 extends GeneralRule {
             }
 
             if (planDetail.getBasement() != null) {
-
-                if (planDetail.getPlot() != null && (planDetail.getPlot().getBsmtFrontYard() == null ||
-                        !planDetail.getPlot().getBsmtFrontYard().getPresentInDxf())) {
-                    errors.put(DcrConstants.BSMT_FRONT_YARD_DESC,
-                            prepareMessage(DcrConstants.OBJECTNOTDEFINED, DcrConstants.BSMT_FRONT_YARD_DESC));
-                    planDetail.addErrors(errors);
-                }
 
                 // check either of basement side yard present or not
                 if (planDetail.getPlot() != null
@@ -251,59 +260,297 @@ public class Rule24 extends GeneralRule {
 
     }
 
-    private void rule24_3(PlanDetail planDetail, String type) {
+    public void rule24_3(PlanDetail planDetail, String type) {
+        
+        if (planDetail.getPlot() == null)
+            return;
+        
+        validateRule24_3(planDetail);
+        
+        //MOVE BASEMENT LOGIC TO SEPARATE METHOD.
+        Plot plot = planDetail.getPlot();
+        String frontYardFieldName =  DcrConstants.FRONT_YARD_DESC;
+        String subRule = SUB_RULE_24_3;
+        String rule=DcrConstants.RULE24;
+        String subRuleDesc = SUB_RULE_24_3_DESCRIPTION;
+        String expectedMin = "";
+        String expectedMean = "";
+        Boolean valid = false;
+        BigDecimal min =BigDecimal.ZERO;
+        BigDecimal mean= BigDecimal.ZERO;
+        
         if (DcrConstants.BASEMENT.equalsIgnoreCase(type)) {
-            if (planDetail.getPlot() != null && planDetail.getPlot().getBsmtFrontYard() != null &&
-                    planDetail.getPlot().getBsmtFrontYard().getPresentInDxf()
-                    && planDetail.getPlot().getBsmtFrontYard().getMinimumDistance() != null
-                    && planDetail.getPlot().getBsmtFrontYard().getMean() != null)
-                if (planDetail.getPlot().getBsmtFrontYard().getMinimumDistance().compareTo(FRONTYARDMINIMUM_DISTANCE) >= 0 &&
-                planDetail.getPlot().getBsmtFrontYard().getMean().compareTo(FRONTYARDMEAN_DISTANCE) >= 0)
-                    planDetail.reportOutput
-                    .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_12_3, SUB_RULE_24_12_3_DESCRIPTION,
-                            DcrConstants.BSMT_FRONT_YARD_DESC,
-                            MEAN_MINIMUM + "(" + FRONTYARDMINIMUM_DISTANCE.toString() + "," + FRONTYARDMEAN_DISTANCE + ")"
-                                    + DcrConstants.IN_METER,
-                                    "(" + planDetail.getPlot().getBsmtFrontYard().getMinimumDistance().toString() + "," +
-                                            planDetail.getPlot().getBsmtFrontYard().getMean().toString() + ")"
-                                            + DcrConstants.IN_METER,
-                                            Result.Accepted, null));
-                else
-                    planDetail.reportOutput
-                    .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_12_3, SUB_RULE_24_12_3_DESCRIPTION,
-                            DcrConstants.BSMT_FRONT_YARD_DESC,
-                            MEAN_MINIMUM + "(" + FRONTYARDMINIMUM_DISTANCE.toString() + "," + FRONTYARDMEAN_DISTANCE + ")"
-                                    + DcrConstants.IN_METER,
-                                    "(" + planDetail.getPlot().getBsmtFrontYard().getMinimumDistance().toString() + "," +
-                                            planDetail.getPlot().getBsmtFrontYard().getMean().toString() + ")"
-                                            + DcrConstants.IN_METER,
-                                            Result.Not_Accepted, null));
-        } else if (planDetail.getPlot() != null && planDetail.getPlot().getFrontYard() != null &&
-                planDetail.getPlot().getFrontYard().getPresentInDxf()
-                && planDetail.getPlot().getFrontYard().getMinimumDistance() != null
-                && planDetail.getPlot().getFrontYard().getMean() != null)
-            if (planDetail.getPlot().getFrontYard().getMinimumDistance().compareTo(FRONTYARDMINIMUM_DISTANCE) >= 0 &&
-            planDetail.getPlot().getFrontYard().getMean().compareTo(FRONTYARDMEAN_DISTANCE) >= 0)
-                planDetail.reportOutput
-                .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_3, SUB_RULE_24_3_DESCRIPTION,
-                        DcrConstants.FRONT_YARD_DESC,
-                        MEAN_MINIMUM + "(" + FRONTYARDMINIMUM_DISTANCE.toString() + "," + FRONTYARDMEAN_DISTANCE + ")"
-                                + DcrConstants.IN_METER,
-                                "(" + planDetail.getPlot().getFrontYard().getMinimumDistance().toString() + "," +
-                                        planDetail.getPlot().getFrontYard().getMean().toString() + ")"
-                                        + DcrConstants.IN_METER,
-                                        Result.Accepted, null));
-            else
-                planDetail.reportOutput
-                .add(buildRuleOutputWithSubRule(DcrConstants.RULE24, SUB_RULE_24_3, SUB_RULE_24_3_DESCRIPTION,
-                        DcrConstants.FRONT_YARD_DESC,
-                        MEAN_MINIMUM + "(" + FRONTYARDMINIMUM_DISTANCE.toString() + "," + FRONTYARDMEAN_DISTANCE + ")"
-                                + DcrConstants.IN_METER,
-                                "(" + planDetail.getPlot().getFrontYard().getMinimumDistance().toString() + "," +
-                                        planDetail.getPlot().getFrontYard().getMean().toString() + ")"
-                                        + DcrConstants.IN_METER,
+            if (plot != null && plot.getBsmtFrontYard() != null &&
+                    plot.getBsmtFrontYard().getPresentInDxf()
+                    && plot.getBsmtFrontYard().getMinimumDistance() != null
+                    && plot.getBsmtFrontYard().getMean() != null)
+            {
+                min = plot.getBsmtFrontYard().getMinimumDistance();
+                mean = plot.getBsmtFrontYard().getMean();
+                subRule = SUB_RULE_24_12_3;
+                subRuleDesc = SUB_RULE_24_12_3_DESCRIPTION;
+                frontYardFieldName =  DcrConstants.BSMT_FRONT_YARD_DESC;
+            }
+        } else if (plot != null && plot.getFrontYard() != null &&
+                plot.getFrontYard().getPresentInDxf()
+                && plot.getFrontYard().getMinimumDistance() != null
+                && plot.getFrontYard().getMean() != null) {
 
-                                        Result.Not_Accepted, null));
+            min = plot.getFrontYard().getMinimumDistance();
+            mean = plot.getFrontYard().getMean();
+            
+           
+        }
+
+        if (planDetail.getBuilding() == null || plot.getArea()==null || (planDetail.getBlocks().isEmpty()))
+            return;
+        
+        Building building = planDetail.getBlocks().get(0).getBuilding(); //multiple block case, this assumption wrong.
+        OccupancyType mostRestrictiveOccupancy=building.getMostRestrictiveOccupancy();
+        if (mostRestrictiveOccupancy != null && building.getBuildingHeight()!= null) {
+            if (building.getBuildingHeight().intValue() <= 10) {
+                subRuleDesc = SUB_RULE_24_3_DESCRIPTION;
+
+                if (mostRestrictiveOccupancy.equals(OccupancyType.OCCUPANCY_A1) ||
+                        mostRestrictiveOccupancy.equals(OccupancyType.OCCUPANCY_A2) ||
+                        mostRestrictiveOccupancy.equals(OccupancyType.OCCUPANCY_F)) {
+                    if (plot.getArea().compareTo(BigDecimal.valueOf(SITEAREA_125)) <= 0) {
+                        rule = "62";
+                        subRule = "62-(1-a)";
+                        expectedMin = FRONTYARDMINIMUM_DISTANCE_1_8.toString();
+                        expectedMean = FRONTYARDMEAN_DISTANCE_3.toString();
+
+                        if (min.compareTo(FRONTYARDMINIMUM_DISTANCE_1_8) >= 0 && mean.compareTo(FRONTYARDMEAN_DISTANCE_3) >= 0) {
+                            valid = true;
+                        }
+
+                    } else {
+                        rule = DcrConstants.RULE24;
+                        subRule = SUB_RULE_24_3;
+                        expectedMin = FRONTYARDMINIMUM_DISTANCE_1_2.toString();
+                        expectedMean = FRONTYARDMEAN_DISTANCE_1_8.toString();
+
+                        if (min.compareTo(FRONTYARDMINIMUM_DISTANCE_1_2) >= 0
+                                && mean.compareTo(FRONTYARDMEAN_DISTANCE_1_8) >= 0) {
+                            valid = true;
+                        }
+                    }
+
+                }else  if (mostRestrictiveOccupancy.equals(OccupancyType.OCCUPANCY_B1) ||
+                        mostRestrictiveOccupancy.equals(OccupancyType.OCCUPANCY_B2) ||
+                        mostRestrictiveOccupancy.equals(OccupancyType.OCCUPANCY_C) ||
+                        mostRestrictiveOccupancy.equals(OccupancyType.OCCUPANCY_E) ||
+                        mostRestrictiveOccupancy.equals(OccupancyType.OCCUPANCY_H) ) {
+                    if (building.getTotalBuitUpArea().compareTo(BigDecimal.valueOf(BUILDUPAREA_300)) > 0) {
+                        rule = "54";
+                        subRule = "54-(3-i)";
+                        expectedMin = FRONTYARDMINIMUM_DISTANCE_4_5.toString();
+                        expectedMean = FRONTYARDMEAN_DISTANCE_6.toString();
+
+                        if (min.compareTo(FRONTYARDMINIMUM_DISTANCE_4_5) >= 0 && mean.compareTo(FRONTYARDMEAN_DISTANCE_6) >= 0) {
+                            valid = true;
+                        }
+
+                    } else {
+                        rule = DcrConstants.RULE24;
+                        subRule = SUB_RULE_24_3;
+                        expectedMin = FRONTYARDMINIMUM_DISTANCE_1_8.toString();
+                        expectedMean = FRONTYARDMEAN_DISTANCE_3.toString();
+
+                        if (min.compareTo(FRONTYARDMINIMUM_DISTANCE_1_8) >= 0
+                                && mean.compareTo(FRONTYARDMEAN_DISTANCE_3) >= 0) {
+                            valid = true;
+                        }
+                    }
+                    
+                    
+                }else  if (mostRestrictiveOccupancy.equals(OccupancyType.OCCUPANCY_D) ||
+                        mostRestrictiveOccupancy.equals(OccupancyType.OCCUPANCY_D1) ) {
+                    if (building.getTotalFloorArea().compareTo(BigDecimal.valueOf(FLOORAREA_800)) > 0) {
+                        rule = "55";
+                        subRule = "55-2-(3)";
+                   
+                        expectedMin = FRONTYARDMINIMUM_DISTANCE_6.toString();
+                        expectedMean = FRONTYARDMEAN_DISTANCE_10_5.toString();
+
+                        if (min.compareTo(FRONTYARDMINIMUM_DISTANCE_6) >= 0 && mean.compareTo(FRONTYARDMEAN_DISTANCE_10_5) >= 0) {
+                            valid = true;
+                        }
+
+                    } else  if(building.getTotalFloorArea().compareTo(BigDecimal.valueOf(FLOORAREA_500)) > 0 && 
+                            building.getTotalFloorArea().compareTo(BigDecimal.valueOf(FLOORAREA_800)) <= 0 ){
+                        rule = "55";
+                        subRule = "55-2-(2)";
+                        expectedMin = FRONTYARDMINIMUM_DISTANCE_5.toString();
+                        expectedMean = FRONTYARDMEAN_DISTANCE_7_5.toString();
+
+                        if (min.compareTo(FRONTYARDMINIMUM_DISTANCE_5) >= 0
+                                && mean.compareTo(FRONTYARDMEAN_DISTANCE_7_5) >= 0) {
+                            valid = true;
+                        }
+                    }else  if(building.getTotalFloorArea().compareTo(BigDecimal.valueOf(FLOORAREA_300)) > 0 && 
+                            building.getTotalFloorArea().compareTo(BigDecimal.valueOf(FLOORAREA_500)) <= 0 ){
+                        rule = "55";
+                        subRule = "55-2-(1)";
+                        expectedMin = FRONTYARDMINIMUM_DISTANCE_4_5.toString();
+                        expectedMean = FRONTYARDMEAN_DISTANCE_6.toString();
+
+                        if (min.compareTo(FRONTYARDMINIMUM_DISTANCE_4_5) >= 0
+                                && mean.compareTo(FRONTYARDMEAN_DISTANCE_6) >= 0) {
+                            valid = true;
+                        }
+                    } else {
+                        if (mostRestrictiveOccupancy.equals(OccupancyType.OCCUPANCY_D1)) {
+                            rule = "55";
+                            subRule = "55-2(Prov)";
+                            expectedMin = FRONTYARDMINIMUM_DISTANCE_3.toString();
+                            expectedMean = FRONTYARDMEAN_DISTANCE_3.toString();
+                            if (min.compareTo(FRONTYARDMINIMUM_DISTANCE_3) >= 0
+                                    && mean.compareTo(FRONTYARDMEAN_DISTANCE_3) >= 0) {
+                                valid = true;
+                            }
+                        } else {
+                            rule = "55";
+                            subRule = "55-2(Prov)";
+                            expectedMin = FRONTYARDMINIMUM_DISTANCE_1_8.toString();
+                            expectedMean = FRONTYARDMEAN_DISTANCE_3.toString();
+                            if (min.compareTo(FRONTYARDMINIMUM_DISTANCE_1_8) >= 0
+                                    && mean.compareTo(FRONTYARDMEAN_DISTANCE_3) >= 0) {
+                                valid = true;
+                            }
+
+                        }
+
+                    }
+                    
+                }else  if (mostRestrictiveOccupancy.equals(OccupancyType.OCCUPANCY_F)) {
+                    if(planDetail.getFloorUnits().isEmpty())
+                    {
+                        if(planDetail.getPlanInformation().getParkingToMainBuilding())
+                        {
+                            if (plot.getArea().compareTo(BigDecimal.valueOf(SITEAREA_125)) <= 0) {
+                                rule = "56";
+                                subRule = "56-(3d)";
+                                expectedMin = FRONTYARDMINIMUM_DISTANCE_1_2.toString();
+                                expectedMean = FRONTYARDMEAN_DISTANCE_1_8.toString();
+                                if (min.compareTo(FRONTYARDMINIMUM_DISTANCE_1_2) >= 0
+                                        && mean.compareTo(FRONTYARDMEAN_DISTANCE_1_8) >= 0) {
+                                    valid = true;
+                                }
+                            }else
+                            {
+                                rule = "56";
+                                subRule = "56-(3d)";
+                                expectedMin = FRONTYARDMINIMUM_DISTANCE_3.toString();
+                                expectedMean = FRONTYARDMEAN_DISTANCE_3.toString();
+                                if (min.compareTo(FRONTYARDMINIMUM_DISTANCE_3) >= 0
+                                        && mean.compareTo(FRONTYARDMEAN_DISTANCE_3) >= 0) {
+                                    valid = true;
+                                }
+                            }
+                            
+                        }else
+                        {
+                            rule = "56";
+                            subRule = "56-(3d)";
+                            expectedMin = FRONTYARDMINIMUM_DISTANCE_5.toString();
+                            expectedMean = FRONTYARDMEAN_DISTANCE_5.toString();
+                            if (min.compareTo(FRONTYARDMINIMUM_DISTANCE_5) >= 0
+                                    && mean.compareTo(FRONTYARDMEAN_DISTANCE_5) >= 0) {
+                                valid = true;
+                            }
+                            
+                        }
+                        
+                    }else
+                    {
+                        rule = "24";
+                        subRule = "24-(3)";
+                        expectedMin = FRONTYARDMINIMUM_DISTANCE_1_8.toString();
+                        expectedMean = FRONTYARDMEAN_DISTANCE_3.toString();
+                        if (min.compareTo(FRONTYARDMINIMUM_DISTANCE_1_8) >= 0
+                                && mean.compareTo(FRONTYARDMEAN_DISTANCE_3) >= 0) {
+                            valid = true;
+                        }
+                        
+                    }
+                }else  if (mostRestrictiveOccupancy.equals(OccupancyType.OCCUPANCY_G1)) {
+                    rule = "57";
+                    subRule = "57-(4)";
+                    expectedMin = FRONTYARDMINIMUM_DISTANCE_5.toString();
+                    expectedMean = FRONTYARDMEAN_DISTANCE_5.toString();
+                    if (min.compareTo(FRONTYARDMINIMUM_DISTANCE_5) >= 0
+                            && mean.compareTo(FRONTYARDMEAN_DISTANCE_5) >= 0) {
+                        valid = true;
+                    }
+                }else  if (mostRestrictiveOccupancy.equals(OccupancyType.OCCUPANCY_G2)) {
+                    rule = "57";
+                    subRule = "57-(4)";
+                    expectedMin = FRONTYARDMINIMUM_DISTANCE_3.toString();
+                    expectedMean = FRONTYARDMEAN_DISTANCE_3.toString();
+                    if (min.compareTo(FRONTYARDMINIMUM_DISTANCE_3) >= 0
+                            && mean.compareTo(FRONTYARDMEAN_DISTANCE_3) >= 0) {
+                        valid = true;
+                    }
+                }else  if (mostRestrictiveOccupancy.equals(OccupancyType.OCCUPANCY_I1)) {
+                    rule = "59";
+                    subRule = "59-(3)";
+                    expectedMin = FRONTYARDMINIMUM_DISTANCE_3.toString();
+                    expectedMean = FRONTYARDMEAN_DISTANCE_3.toString();
+                    if (min.compareTo(FRONTYARDMINIMUM_DISTANCE_3) >= 0
+                            && mean.compareTo(FRONTYARDMEAN_DISTANCE_3) >= 0) {
+                        valid = true;
+                    }
+                }else  if (mostRestrictiveOccupancy.equals(OccupancyType.OCCUPANCY_I2)) {
+                    rule = "59";
+                    subRule = "59-(3)";
+                    expectedMin = FRONTYARDMINIMUM_DISTANCE_7_5.toString();
+                    expectedMean = FRONTYARDMEAN_DISTANCE_7_5.toString();
+                    if (min.compareTo(FRONTYARDMINIMUM_DISTANCE_7_5) >= 0
+                            && mean.compareTo(FRONTYARDMEAN_DISTANCE_7_5) >= 0) {
+                        valid = true;
+                    }
+                }
+            } 
+            else if (building.getBuildingHeight().intValue() > 10 && building.getBuildingHeight().intValue() <= 16) {
+
+            } else if (building.getBuildingHeight().intValue() > 16) {
+
+            }
+
+            if (valid) {
+                planDetail.reportOutput
+                        .add(buildRuleOutputWithSubRule(rule, subRule, subRuleDesc, frontYardFieldName,
+                                MEAN_MINIMUM + "(" + expectedMin + "," + expectedMean + ")" + DcrConstants.IN_METER,
+                                "(" + min + "," + mean + ")" + DcrConstants.IN_METER,
+                                Result.Accepted, null));
+            } else
+                planDetail.reportOutput
+                        .add(buildRuleOutputWithSubRule(rule, subRule, subRuleDesc, frontYardFieldName,
+                                MEAN_MINIMUM + "(" + expectedMin + "," + expectedMean + ")" + DcrConstants.IN_METER,
+                                "(" + min + "," + mean + ")" + DcrConstants.IN_METER,
+                                Result.Not_Accepted, null));
+
+        }
+    }
+
+    private void validateRule24_3(PlanDetail planDetail) {
+        if (planDetail.getPlot() != null && (planDetail.getPlot().getFrontYard() == null ||
+                !planDetail.getPlot().getFrontYard().getPresentInDxf())) {
+
+            errors.put(DcrConstants.FRONT_YARD_DESC,
+                    prepareMessage(DcrConstants.OBJECTNOTDEFINED, DcrConstants.FRONT_YARD_DESC));
+            planDetail.addErrors(errors);
+        }
+        if (planDetail.getBasement() != null) {
+            if (planDetail.getPlot() != null && (planDetail.getPlot().getBsmtFrontYard() == null ||
+                    !planDetail.getPlot().getBsmtFrontYard().getPresentInDxf())) {
+                errors.put(DcrConstants.BSMT_FRONT_YARD_DESC,
+                        prepareMessage(DcrConstants.OBJECTNOTDEFINED, DcrConstants.BSMT_FRONT_YARD_DESC));
+                planDetail.addErrors(errors);
+            }
+        }
+
     }
 
     private void rule24_5(PlanDetail planDetail, String type) {

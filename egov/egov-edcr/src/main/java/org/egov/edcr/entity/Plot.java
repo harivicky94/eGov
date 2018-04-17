@@ -1,7 +1,11 @@
 package org.egov.edcr.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.egov.edcr.entity.measurement.Measurement;
 import org.egov.edcr.entity.measurement.Yard;
+import org.egov.edcr.entity.utility.SetBack;
 
 public class Plot extends Measurement {
 
@@ -10,12 +14,24 @@ public class Plot extends Measurement {
     private Yard rearYard;
     private Yard sideYard1;
     private Yard sideYard2;
+    
+    private List<SetBack> setBacks= new ArrayList<>();
+    
     private Measurement buildingFootPrint= new Measurement();
 
     private Yard bsmtFrontYard;
     private Yard bsmtRearYard;
     private Yard bsmtSideYard1;
     private Yard bsmtSideYard2;
+
+    
+    public List<SetBack> getSetBacks() {
+        return setBacks;
+    }
+
+    public void setSetBacks(List<SetBack> setBacks) {
+        this.setBacks = setBacks;
+    }
 
     public Measurement getBuildingFootPrint() {
         return buildingFootPrint;
