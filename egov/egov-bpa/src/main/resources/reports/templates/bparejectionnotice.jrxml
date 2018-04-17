@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-10-27T14:35:46 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="bparejectionnotice" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="b1715f8d-a189-45c5-a759-a3f04bc5d6b4">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
+	<import value="org.egov.infra.utils.DateUtils"/>
 	<parameter name="rejectionReasons" class="java.lang.String"/>
 	<parameter name="currentDate" class="java.lang.String"/>
 	<parameter name="isBusinessUser" class="java.lang.Boolean"/>
 	<parameter name="duplicateWatermarkPath" class="java.lang.String"/>
 	<parameter name="cityName" class="java.lang.String"/>
 	<parameter name="ulbName" class="java.lang.String"/>
+	<parameter name="logoPath" class="java.io.InputStream"/>
 	<field name="applicationNumber" class="java.lang.String"/>
 	<field name="applicationDate" class="java.util.Date"/>
 	<field name="serviceType" class="org.egov.bpa.master.entity.ServiceType"/>
@@ -30,21 +30,21 @@
 	<title>
 		<band height="96" splitType="Stretch">
 			<textField>
-				<reportElement x="0" y="40" width="555" height="20" uuid="643ee47d-a84c-4e17-a758-85b3d2fe1503"/>
+				<reportElement x="88" y="40" width="428" height="20" uuid="643ee47d-a84c-4e17-a758-85b3d2fe1503"/>
 				<textElement textAlignment="Center">
 					<font fontName="SansSerif" size="11" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["(See Rule 9(1))"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="0" y="0" width="555" height="20" uuid="ba5c4563-d93c-483f-86e2-5aae2755cd2f"/>
+				<reportElement x="88" y="0" width="428" height="20" uuid="ba5c4563-d93c-483f-86e2-5aae2755cd2f"/>
 				<textElement textAlignment="Center">
 					<font fontName="SansSerif" size="12" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{ulbName}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="0" y="20" width="555" height="20" uuid="9f0f3469-57ed-48f6-83ad-1dfab7d6e41e"/>
+				<reportElement x="88" y="20" width="428" height="20" uuid="9f0f3469-57ed-48f6-83ad-1dfab7d6e41e"/>
 				<textElement textAlignment="Center">
 					<font fontName="SansSerif" size="12" isBold="true"/>
 				</textElement>
@@ -78,6 +78,10 @@
 				</textElement>
 				<text><![CDATA[Dated : ]]></text>
 			</staticText>
+			<image>
+				<reportElement x="12" y="0" width="60" height="60" uuid="81d01a85-baca-4d87-a163-f1f059c78074"/>
+				<imageExpression><![CDATA[$P{logoPath}]]></imageExpression>
+			</image>
 		</band>
 	</title>
 	<pageHeader>
@@ -100,14 +104,14 @@
 			<textField isStretchWithOverflow="true">
 				<reportElement x="23" y="19" width="532" height="20" uuid="d7b21c92-04d4-4c38-8a61-56d9052898a3"/>
 				<textElement textAlignment="Justified"/>
-				<textFieldExpression><![CDATA["Shri./Smt.\n"+$F{owner}.getUser().getName() +",\n"+$F{owner}.getUser().getAddress().get(0).getStreetRoadLine()+"."]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Shri./Smt.\n"+$F{owner}.getName() +",\n"+$F{owner}.getAddress()+"."]]></textFieldExpression>
 			</textField>
 		</band>
 		<band height="78">
 			<textField isStretchWithOverflow="true">
 				<reportElement x="0" y="30" width="555" height="48" uuid="d9ada7e9-755a-4e4a-aaab-6eea193e0e6f"/>
 				<textElement textAlignment="Justified"/>
-				<textFieldExpression><![CDATA["       Your application, dated "+$F{applicationDate}+" for permit /Regularization for "+$F{serviceType}.getDescription()+"  in Kozhikode Corporation falling in "+$F{siteDetail}.get(0).getLocationBoundary().getName()+" Village,Revenue Ward "+$F{siteDetail}.get(0).getAdminBoundary().getBoundaryNum()+",Electoral Ward "+$F{siteDetail}.get(0).getElectionBoundary().getBoundaryNum()+",Re-Survey No."+$F{siteDetail}.get(0).getReSurveyNumber()+",is rejected due the following reason(s),"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["       Your application, dated "+DateUtils.toDefaultDateFormat($F{applicationDate})+" for permit /Regularization for "+$F{serviceType}.getDescription()+"  in Kozhikode Corporation falling in "+$F{siteDetail}.get(0).getLocationBoundary().getName()+" Village,Revenue Ward "+$F{siteDetail}.get(0).getAdminBoundary().getBoundaryNum()+",Electoral Ward "+$F{siteDetail}.get(0).getElectionBoundary().getBoundaryNum()+",Re-Survey No."+$F{siteDetail}.get(0).getReSurveyNumber()+",is rejected due the following reason(s),"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="0" y="12" width="555" height="19" uuid="bd9a4c63-8f75-42e2-ab92-b852ddc19032"/>

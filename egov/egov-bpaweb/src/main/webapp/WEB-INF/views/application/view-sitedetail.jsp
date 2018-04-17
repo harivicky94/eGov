@@ -50,6 +50,8 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+
 <div class="panel-heading toggle-header custom_form_panel_heading">
 	<div class="panel-title">
 		<spring:message code="lbl.site.details" />
@@ -303,9 +305,8 @@
 						<spring:message code="lbl.work.commence.date" />
 					</div>
 					<div class="col-sm-3 add-margin view-content">
-						<c:out
-								value="${bpaApplication.siteDetail[0].workCommencementDate}"
-								default="N/A"></c:out>
+						<fmt:formatDate value="${bpaApplication.siteDetail[0].workCommencementDate}" pattern="dd/MM/yyyy" var="workCommencementDate" />
+						<c:out value="${workCommencementDate}" default="N/A"></c:out>
 					</div>
 				</c:when>
 				<c:otherwise>
@@ -313,17 +314,15 @@
 						<spring:message code="lbl.work.commence.date" />
 					</div>
 					<div class="col-sm-3 add-margin view-content">
-						<c:out
-								value="${bpaApplication.siteDetail[0].workCommencementDate}"
-								default="N/A"></c:out>
+						<fmt:formatDate value="${bpaApplication.siteDetail[0].workCommencementDate}" pattern="dd/MM/yyyy" var="workCommencementDate1" />
+						<c:out value="${workCommencementDate1}" default="N/A"></c:out>
 					</div>
 					<div class="col-sm-3 add-margin">
 						<spring:message code="lbl.work.completion.date" />
 					</div>
 					<div class="col-sm-3 add-margin view-content">
-						<c:out
-								value="${bpaApplication.siteDetail[0].workCompletionDate}"
-								default="N/A"></c:out>
+						<fmt:formatDate value="${bpaApplication.siteDetail[0].workCompletionDate}" pattern="dd/MM/yyyy" var="workCompletionDate" />
+						<c:out value="${workCompletionDate}" default="N/A"></c:out>
 					</div>
 				</c:otherwise>
 			</c:choose>

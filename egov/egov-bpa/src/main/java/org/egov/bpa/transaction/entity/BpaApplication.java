@@ -56,6 +56,7 @@ import org.egov.commons.entity.Source;
 import org.egov.dcb.bean.Receipt;
 import org.egov.demand.model.EgDemand;
 import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.infra.utils.DateUtils;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.pims.commons.Position;
 import org.hibernate.validator.constraints.Length;
@@ -81,7 +82,6 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -574,11 +574,10 @@ public class BpaApplication extends StateAware<Position> {
 
 	@Override
 	public String getStateDetails() {
-		final SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
 		return String.format("Applicant Name: %s Application Number %s Dated %s For the service type - %s.",
 				owner == null ? "Not Specified" : owner.getName(),
 				applicationNumber == null ? planPermissionNumber : applicationNumber,
-				applicationDate == null ? formatter.format(new Date()) : formatter.format(applicationDate),
+				applicationDate == null ? DateUtils.toDefaultDateFormat(new Date()) : DateUtils.toDefaultDateFormat(applicationDate),
 				serviceType.getDescription() == null ? "" : serviceType.getDescription());
 	}
 

@@ -219,7 +219,7 @@ public class BpaNoticeService {
 
 	private ReportOutput getReportOutput(BpaApplication bpaApplication, Map<String, Object> ulbDetailsReportParams, String fileName, BpaNotice bpaNotice, String bparejectionfilename, String bpaRejectionNoticeType) throws IOException {
 		ReportOutput reportOutput = new ReportOutput();
-		if (bpaNotice != null && bpaNotice.getNoticeFileStore() == null) {
+		if (bpaNotice == null || bpaNotice.getNoticeFileStore() == null) {
 			final Map<String, Object> reportParams = buildParametersForReport(bpaApplication);
 			reportParams.putAll(ulbDetailsReportParams);
 			reportParams.putAll(buildParametersForDemandDetails(bpaApplication));
