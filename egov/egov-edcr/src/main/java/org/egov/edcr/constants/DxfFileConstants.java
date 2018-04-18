@@ -70,7 +70,7 @@ public class DxfFileConstants {
     public static final int OCCUPANCY_I1_COLOR_CODE = 12;
     public static final int OCCUPANCY_I2_COLOR_CODE = 13;
     public static final int OCCUPANCY_D1_COLOR_CODE = 16;
-
+    public static final String MTEXT_NAME_HEIGHT_M="HEIGHT_M";
 
 
     

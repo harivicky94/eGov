@@ -14,6 +14,7 @@ import org.egov.edcr.utility.DcrConstants;
 import org.egov.edcr.utility.Util;
 import org.kabeja.dxf.DXFDocument;
 import org.kabeja.dxf.DXFLWPolyline;
+import org.kabeja.dxf.DXFLayer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
@@ -27,29 +28,58 @@ public class SetBackService implements RuleService {
     protected MessageSource edcrMessageSource;
     
     public PlanDetail extract(PlanDetail pl, DXFDocument doc) {
-       
-        SetBack setBack = new SetBack();
-          Yard yard= getYard(pl, doc, DxfFileConstants.FRONT_YARD);
-          yard.setMinimumDistance(MinDistance.getYardMinDistance(pl, DxfFileConstants.FRONT_YARD));
-          setBack.setFrontYard(yard);
-          pl.getPlot().setFrontYard(yard);
-          
-          yard= getYard(pl, doc, DxfFileConstants.REAR_YARD);
-          yard.setMinimumDistance(MinDistance.getYardMinDistance(pl, DxfFileConstants.REAR_YARD));
-          setBack.setRearYard(yard);
-          pl.getPlot().setRearYard(yard);
-          
-          yard= getYard(pl, doc, DxfFileConstants.SIDE_YARD_1);
-          yard.setMinimumDistance(MinDistance.getYardMinDistance(pl, DxfFileConstants.SIDE_YARD_1));
-          setBack.setSideYard1(yard);
-          pl.getPlot().setSideYard1(yard);
-          yard= getYard(pl, doc, DxfFileConstants.SIDE_YARD_2);
-          yard.setMinimumDistance(MinDistance.getYardMinDistance(pl, DxfFileConstants.SIDE_YARD_2));
+        DXFLayer yardLayer = new DXFLayer();
+        String yardName ="";
+        int yardLevel = 0;
+        while (yardLayer != null) {       
+                 SetBack setBack = new SetBack();
+                 setBack.setLevel(yardLevel);
+                 
+                  yardName = DxfFileConstants.FRONT_YARD  + "_L_"+ yardLevel;
+                  yardLayer = doc.getDXFLayer(yardName);
+                   if (!yardLayer.getName().equalsIgnoreCase(yardName)) {
+                      break;
+                  }
+                   
+                   String height = Util.getMtextByLayerName(doc, DxfFileConstants.MTEXT_NAME_HEIGHT_M);
+                   if (!height.isEmpty()){
+                       height = height.replaceAll("[^\\d.]", "");
+                       setBack.setHeight(BigDecimal.valueOf(Double.parseDouble(height)));
+                   }
+                         
+                  Yard yard= getYard(pl, doc, DxfFileConstants.FRONT_YARD+ "_L_"+ yardLevel);
+                    if (yard != null) {
+                        yard.setMinimumDistance(MinDistance.getYardMinDistance(pl, DxfFileConstants.FRONT_YARD+ "_L_"+ yardLevel));
+                        setBack.setFrontYard(yard);
+                        pl.getPlot().setFrontYard(yard);
+                    }
+            
+                    yard = getYard(pl, doc, DxfFileConstants.REAR_YARD+ "_L_"+ yardLevel);
+                    if (yard != null) {
+                        yard.setMinimumDistance(MinDistance.getYardMinDistance(pl, DxfFileConstants.REAR_YARD+ "_L_"+ yardLevel));
+                        setBack.setRearYard(yard);
+                        pl.getPlot().setRearYard(yard);
+                    }
+            
+                    yard = getYard(pl, doc, DxfFileConstants.SIDE_YARD_1+ "_L_"+ yardLevel);
+                    if (yard != null) {
+                        yard.setMinimumDistance(MinDistance.getYardMinDistance(pl, DxfFileConstants.SIDE_YARD_1+ "_L_"+ yardLevel));
+                        setBack.setSideYard1(yard);
+                        pl.getPlot().setSideYard1(yard);
+                    }
+                    yard = getYard(pl, doc, DxfFileConstants.SIDE_YARD_2+ "_L_"+ yardLevel);
+                    if (yard != null) {
+                        yard.setMinimumDistance(MinDistance.getYardMinDistance(pl, DxfFileConstants.SIDE_YARD_2+ "_L_"+ yardLevel));
+            
+                        setBack.setSideYard2(yard);
+                        pl.getPlot().setSideYard2(yard);
+                    }
+                    yardLevel++;
+                    pl.getPlot().getSetBacks().add(setBack);
 
-          setBack.setSideYard2(yard);
-          pl.getPlot().setSideYard2(yard);
-          pl.getPlot().getSetBacks().add(setBack);
+        }
 
+          
      
         if (pl.getBasement() != null) {
             pl.getPlot().setBsmtFrontYard(getYard(pl, doc, DxfFileConstants.BSMNT_FRONT_YARD));

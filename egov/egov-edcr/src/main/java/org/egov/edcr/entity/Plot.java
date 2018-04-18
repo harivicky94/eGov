@@ -25,6 +25,15 @@ public class Plot extends Measurement {
     private Yard bsmtSideYard2;
 
     
+    public SetBack getGrondLevelSetBack(){
+        SetBack setBack=null;
+        
+        for( SetBack setback: getSetBacks())
+        {
+            if(setback.getLevel()==0) return setback; 
+        }
+        return setBack;
+    }
     public List<SetBack> getSetBacks() {
         return setBacks;
     }
