@@ -244,7 +244,7 @@ public class BpaNoticeService {
 		bpaNotice.setNoticeGeneratedDate(new Date());
 		bpaNotice.setNoticeType(noticeType);
 		application.addNotice(bpaNotice);
-		applicationBpaService.saveAndFlushApplication(application);
+		applicationBpaService.saveBpaApplication(application);
 		return bpaNotice;
 	}
 

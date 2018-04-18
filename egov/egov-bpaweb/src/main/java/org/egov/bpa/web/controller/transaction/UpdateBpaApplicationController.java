@@ -518,7 +518,7 @@ public class UpdateBpaApplicationController extends BpaGenericApplicationControl
 		if (null == approvalPosition) {
 			pos = positionMasterService.getPositionById(bpaAppln.getCurrentState().getOwnerPosition().getId());
 		}
-		User user = bpaThirdPartyService.getUserPositionByPassingPosition(approvalPosition);
+		User user = bpaThirdPartyService.getUserPositionByPassingPosition(approvalPosition == null ? pos.getId() : approvalPosition);
 		if (WF_REJECT_BUTTON.equalsIgnoreCase(workFlowAction)) {
 			message = getMessageOnRejectionInitiation(approvalComent, bpaAppln, user, MSG_REJECT_FORWARD_REGISTRATION, pos);
 		} else if (WF_SAVE_BUTTON.equalsIgnoreCase(workFlowAction)) {

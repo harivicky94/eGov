@@ -630,7 +630,7 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
 
 	@Transactional
 	public void saveBpaApplication(BpaApplication bpaApp) {
-		applicationBpaRepository.save(bpaApp);
+		applicationBpaRepository.saveAndFlush(bpaApp);
 	}
 
 	public void saveApplicationForScheduler(BpaApplication bpaApp) {
