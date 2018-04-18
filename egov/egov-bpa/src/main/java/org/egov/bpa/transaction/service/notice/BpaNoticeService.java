@@ -182,7 +182,7 @@ public class BpaNoticeService {
 		ReportOutput reportOutput = new ReportOutput();
 		ReportRequest reportInput = null;
 		BpaNotice bpaNotice = findByApplicationAndNoticeType(bpaApplication, PERMIT_ORDER_NOTICE_TYPE);
-		if (bpaNotice != null && bpaNotice.getNoticeFileStore() == null) {
+		if (bpaNotice == null || bpaNotice.getNoticeFileStore() == null) {
 			String reportFileName;
 			if (getServicesForBuildPermit().contains(bpaApplication.getServiceType().getCode())) {
 				reportFileName = BUILDINGPERMITFILENAME;
@@ -278,10 +278,10 @@ public class BpaNoticeService {
 		reportParams.put("serviceTypeDesc", serviceTypeDesc.toString());
 		reportParams.put("serviceTypeForDmd", bpaApplication.getServiceType().getDescription());
 		reportParams.put("amenities", amenities == null ? EMPTY : amenities);
-		reportParams.put("occupancy", bpaApplication.getOccupancy());
+		reportParams.put("occupancy", bpaApplication.getOccupancy().getDescription());
 		if (!bpaApplication.getSiteDetail().isEmpty()) {
 			reportParams.put("electionWard", bpaApplication.getSiteDetail().get(0).getElectionBoundary().getName());
-			reportParams.put("revenueWard", bpaApplication.getSiteDetail().get(0).getAdminBoundary());
+			reportParams.put("revenueWard", bpaApplication.getSiteDetail().get(0).getAdminBoundary().getName());
 			reportParams.put("landExtent", bpaApplication.getSiteDetail().get(0).getExtentinsqmts());
 			reportParams.put("buildingNo", bpaApplication.getSiteDetail().get(0).getPlotnumber() == null
 										   ? EMPTY : bpaApplication.getSiteDetail().get(0).getPlotnumber());
