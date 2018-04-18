@@ -41,6 +41,8 @@
 
 $(document).ready(function($) {
 
+    if ($('#invalidStakeholder').val())
+        bootbox.alert($('#invalidStakeholder').val());
 
 	//toggle between multiple tab
 	jQuery('form').validate({

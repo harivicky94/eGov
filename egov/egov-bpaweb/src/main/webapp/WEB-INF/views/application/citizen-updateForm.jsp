@@ -57,6 +57,8 @@
 			<input type="hidden"  id="validateCitizenAcceptance" name="validateCitizenAcceptance" value="${validateCitizenAcceptance}"/>
 			<input type="hidden"  id="citizenDisclaimerAccepted" name="citizenDisclaimerAccepted" value="${citizenDisclaimerAccepted}"/>
 			<input type="hidden"  id="isCitizen" name="isCitizen" value="${isCitizen}"/>
+			<input type="hidden" id="invalidStakeholder" name="invalidStakeholder"
+					   value="${invalidStakeholder}" />
 		<ul class="nav nav-tabs" id="settingstab">
 				<li class="active"><a data-toggle="tab"
 					href="#appliccation-info" data-tabidx=0><spring:message

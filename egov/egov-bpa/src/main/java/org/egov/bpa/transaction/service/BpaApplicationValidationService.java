@@ -39,29 +39,9 @@
  */
 package org.egov.bpa.transaction.service;
 
-import static org.egov.bpa.utils.BpaConstants.BUILDINGHEIGHT_GROUND;
-import static org.egov.bpa.utils.BpaConstants.EGMODULE_NAME;
-import static org.egov.bpa.utils.BpaConstants.EXTENTINSQMTS;
-import static org.egov.bpa.utils.BpaConstants.FLOOR_COUNT;
-import static org.egov.bpa.utils.BpaConstants.TOTAL_PLINT_AREA;
-import static org.egov.bpa.utils.BpaConstants.SCALING_FACTOR;
-import static org.egov.bpa.utils.BpaConstants.getServicesForValidation;
-import static org.egov.bpa.utils.BpaConstants.getStakeholderType1Restrictions;
-import static org.egov.bpa.utils.BpaConstants.getStakeholderType2Restrictions;
-import static org.egov.bpa.utils.BpaConstants.getStakeholderType3Restrictions;
-import static org.egov.bpa.utils.BpaConstants.getStakeholderType4Restrictions;
-import static org.egov.bpa.utils.BpaConstants.getStakeholderType5Restrictions;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import org.egov.bpa.transaction.entity.ApplicationFloorDetail;
 import org.egov.bpa.transaction.entity.BpaApplication;
+import org.egov.bpa.transaction.entity.BuildingDetail;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
@@ -72,6 +52,27 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import static org.egov.bpa.utils.BpaConstants.BUILDINGHEIGHT_GROUND;
+import static org.egov.bpa.utils.BpaConstants.EGMODULE_NAME;
+import static org.egov.bpa.utils.BpaConstants.EXTENTINSQMTS;
+import static org.egov.bpa.utils.BpaConstants.FLOOR_COUNT;
+import static org.egov.bpa.utils.BpaConstants.SCALING_FACTOR;
+import static org.egov.bpa.utils.BpaConstants.TOTAL_PLINT_AREA;
+import static org.egov.bpa.utils.BpaConstants.getServicesForValidation;
+import static org.egov.bpa.utils.BpaConstants.getStakeholderType1Restrictions;
+import static org.egov.bpa.utils.BpaConstants.getStakeholderType2Restrictions;
+import static org.egov.bpa.utils.BpaConstants.getStakeholderType3Restrictions;
+import static org.egov.bpa.utils.BpaConstants.getStakeholderType4Restrictions;
+import static org.egov.bpa.utils.BpaConstants.getStakeholderType5Restrictions;
 
 /**
  * @author vinoth
@@ -110,12 +111,19 @@ public class BpaApplicationValidationService {
      * @return
      */
     public boolean checkStakeholderIsValid(final BpaApplication bpaApplication) {
+        Integer noOfFloors = 0;
+        BigDecimal totalPlinthArea = BigDecimal.ZERO;
+        BigDecimal heightOfBuilding = BigDecimal.ZERO;
+        if(!bpaApplication.getBuildingDetail().isEmpty()) {
+            BuildingDetail detail= bpaApplication.getBuildingDetail().get(0);
+            noOfFloors = detail.getFloorCount();
+            totalPlinthArea = detail.getTotalPlintArea();
+            heightOfBuilding = detail.getHeightFromGroundWithOutStairRoom();
+        }
         return validateStakeholder(bpaApplication.getServiceType().getCode(),
                 bpaApplication.getStakeHolder().get(0).getStakeHolder().getStakeHolderType().getStakeHolderTypeVal(),
                 bpaApplication.getSiteDetail().get(0).getExtentinsqmts(),
-                bpaApplication.getBuildingDetail().get(0).getFloorCount(),
-                bpaApplication.getBuildingDetail().get(0).getHeightFromGroundWithOutStairRoom(),
-                bpaApplication.getBuildingDetail().get(0).getTotalPlintArea());
+                noOfFloors, totalPlinthArea, heightOfBuilding);
     }
 
     /**
@@ -363,17 +371,17 @@ public class BpaApplicationValidationService {
     public Boolean validateBuildingDetails(final BpaApplication application, final Model model) {
         if (isBuildingFloorDetailsValidationRequired()
                 && getServicesForValidation().contains(application.getServiceType().getCode())) {
-            List<ApplicationFloorDetail> existingFloorDetails = new ArrayList<>();
+            List<ApplicationFloorDetail> deletedFloorDetails = new ArrayList<>();
             for (ApplicationFloorDetail applicationFloorDetails : application.getBuildingDetail().get(0)
                     .getApplicationFloorDetails()) {
                 if (application.getBuildingDetail().get(0).getDeletedFloorIds() != null
                         && application.getBuildingDetail().get(0).getDeletedFloorIds().length > 0
                         && Arrays.asList(application.getBuildingDetail().get(0).getDeletedFloorIds())
                                 .contains(applicationFloorDetails.getId())) {
-                    existingFloorDetails.add(applicationFloorDetails);
+                    deletedFloorDetails.add(applicationFloorDetails);
                 }
             }
-            application.getBuildingDetail().get(0).delete(existingFloorDetails);
+            application.getBuildingDetail().get(0).delete(deletedFloorDetails);
             buildingFloorDetailsService.buildNewlyAddedFloorDetails(application);
             Map<String, String> violationCoverage = checkIsViolatingCoverageArea(application);
             if (TRUE.equalsIgnoreCase(violationCoverage.get(IS_VIOLATING))) {
@@ -490,4 +498,5 @@ public class BpaApplicationValidationService {
         return "YES".equalsIgnoreCase(
                 appConfigValue != null && !appConfigValue.isEmpty() ? appConfigValue.get(0).getValue() : "NO");
     }
+
 }

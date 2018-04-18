@@ -125,20 +125,19 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
 	public String updateApplicationForm(final Model model, @PathVariable final String applicationNumber,
 										final HttpServletRequest request) {
 		final BpaApplication application = getBpaApplication(applicationNumber);
-		model.addAttribute("mode", "newappointment");
-
-		if (!application.getIsOneDayPermitApplication() && (APPLICATION_STATUS_SCHEDULED.equals(application.getStatus().getCode()) ||
-															APPLICATION_STATUS_RESCHEDULED.equals(application.getStatus().getCode()) ||
-															APPLICATION_STATUS_PENDING_FOR_RESCHEDULING.equals(application.getStatus().getCode()))
-			&& !application.getIsRescheduledByCitizen()) {
-			model.addAttribute("mode", "showRescheduleToCitizen");
-		}
 		model.addAttribute(APPLICATION_HISTORY, bpaThirdPartyService.getHistory(application));
 		prepareCommonModelAttribute(model, application);
 		return loadViewdata(model, application);
 	}
 
 	private String loadViewdata(final Model model, final BpaApplication application) {
+		model.addAttribute("mode", "newappointment");
+		if (!application.getIsOneDayPermitApplication() && (APPLICATION_STATUS_SCHEDULED.equals(application.getStatus().getCode()) ||
+															APPLICATION_STATUS_RESCHEDULED.equals(application.getStatus().getCode()) ||
+															APPLICATION_STATUS_PENDING_FOR_RESCHEDULING.equals(application.getStatus().getCode()))
+			&& !application.getIsRescheduledByCitizen()) {
+			model.addAttribute("mode", "showRescheduleToCitizen");
+		}
 		prepareFormData(model);
 		buildReceiptDetails(application);
 		application.setApplicationAmenityTemp(application.getApplicationAmenity());
@@ -214,21 +213,33 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
 									@PathVariable final String applicationNumber, final BindingResult resultBinder,
 									final HttpServletRequest request, final Model model,
 									@RequestParam("files") final MultipartFile... files) {
+
 		proposedBuildingFloorDetailsService.removeDuplicateProposedBuildFloorDetails(bpaApplication);
 		existingBuildingFloorDetailsService.removeDuplicateExistingBuildFloorDetails(bpaApplication);
+
 		if (resultBinder.hasErrors()) {
 			prepareCommonModelAttribute(model, bpaApplication);
 			return loadViewdata(model, bpaApplication);
 		}
+
 		if (bpaApplicationValidationService.validateBuildingDetails(bpaApplication, model)) {
 			prepareCommonModelAttribute(model, bpaApplication);
 			return loadViewdata(model, bpaApplication);
 		}
+
+		applicationBpaService.buildExistingAndProposedBuildingDetails(bpaApplication);
+		if (!bpaApplicationValidationService.checkStakeholderIsValid(bpaApplication)) {
+			String message = bpaApplicationValidationService.getValidationMessageForBusinessResgistration(bpaApplication);
+			model.addAttribute("invalidStakeholder", message);
+			prepareCommonModelAttribute(model, bpaApplication);
+			return loadViewdata(model, bpaApplication);
+		}
+
 		String workFlowAction = request.getParameter("workFlowAction");
 		Long approvalPosition = null;
 		if (!bpaApplication.getApplicationDocument().isEmpty())
 			applicationBpaService.persistOrUpdateApplicationDocument(bpaApplication);
-		applicationBpaService.buildExistingAndProposedBuildingDetails(bpaApplication);
+
 		bpaApplication.getApplicationAmenity().clear();
 		bpaApplication.setApplicationAmenity(bpaApplication.getApplicationAmenityTemp());
 		bpaApplication.setDemand(applicationBpaBillService.createDemand(bpaApplication));
