@@ -123,7 +123,7 @@ public class BpaApplicationValidationService {
         return validateStakeholder(bpaApplication.getServiceType().getCode(),
                 bpaApplication.getStakeHolder().get(0).getStakeHolder().getStakeHolderType().getStakeHolderTypeVal(),
                 bpaApplication.getSiteDetail().get(0).getExtentinsqmts(),
-                noOfFloors, totalPlinthArea, heightOfBuilding);
+                noOfFloors, heightOfBuilding, totalPlinthArea);
     }
 
     /**
