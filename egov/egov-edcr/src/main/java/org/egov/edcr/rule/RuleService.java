@@ -10,5 +10,7 @@ public interface RuleService {
     public PlanDetail validate(PlanDetail pl);
 
     public PlanDetail process(PlanDetail pl);
+    
+    
 
 }
