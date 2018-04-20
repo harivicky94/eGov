@@ -20,7 +20,9 @@ public class PlanDetail {
     private PlanInformation planInformation;
     private Plot plot;
     private List<Block>  blocks=new ArrayList<>();
+    private VirtualBuilding virtualBuilding;
     private Building building;
+
     public ReportOutput reportOutput = new ReportOutput();
     private Boolean edcrPassed = false;
     private ElectricLine electricLine;
@@ -40,7 +42,6 @@ public class PlanDetail {
     
 
  
-
     public List<Block> getBlocks() {
         return blocks;
     }
@@ -186,6 +187,12 @@ public class PlanDetail {
         this.plot = plot;
     }
 
+    public VirtualBuilding getVirtualBuilding() {
+        return virtualBuilding;
+    }
+    public void setVirtualBuilding(VirtualBuilding virtualBuilding) {
+        this.virtualBuilding = virtualBuilding;
+    }
     public Building getBuilding() {
         return building;
     }

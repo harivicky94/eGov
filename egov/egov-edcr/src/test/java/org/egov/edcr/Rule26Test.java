@@ -1,9 +1,13 @@
 package org.egov.edcr;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.egov.edcr.entity.Building;
 import org.egov.edcr.entity.ElectricLine;
+import org.egov.edcr.entity.OccupancyType;
 import org.egov.edcr.entity.PlanDetail;
 import org.egov.edcr.entity.PlanInformation;
 import org.egov.edcr.entity.Plot;
@@ -16,7 +20,22 @@ import org.egov.edcr.rule.Rule31;
 public class Rule26Test {
 
     public static void main(String[] args) {
-        Rule31 rule23= new Rule31();
+        
+
+        LinkedList<OccupancyType> occupancies=new LinkedList<OccupancyType>();  
+        occupancies.add(OccupancyType.OCCUPANCY_C);
+        occupancies.add(OccupancyType.OCCUPANCY_A1);
+        occupancies.add(OccupancyType.OCCUPANCY_A2);
+        occupancies.add(OccupancyType.OCCUPANCY_B1);
+        occupancies.add(OccupancyType.OCCUPANCY_B2);
+        occupancies.add(OccupancyType.OCCUPANCY_B3);
+        System.out.println("index of B1 --->"+  occupancies.indexOf(OccupancyType.OCCUPANCY_B1));
+        System.out.println("index of A2 --->"+  occupancies.indexOf(OccupancyType.OCCUPANCY_A2));
+        System.out.println("index of C --->"+  occupancies.indexOf(OccupancyType.OCCUPANCY_C));
+
+        
+        
+     /*   Rule31 rule23= new Rule31();
         PlanDetail planDetail= new PlanDetail();
         NotifiedRoad notifiedRoad= new NotifiedRoad();
         NonNotifiedRoad nonNotifiedRoad= new NonNotifiedRoad();
@@ -24,7 +43,21 @@ public class Rule26Test {
         
         nonNotifiedRoad.setShortestDistanceToRoad(BigDecimal.valueOf(2));
      
+        List<Integer> firstList= new ArrayList<Integer>();
+        List<Integer> secondList= new ArrayList<Integer>();
         
+        firstList.add(100);
+        firstList.add(101);
+        firstList.add(102);
+        secondList.add(100);
+        
+        for (Integer first: firstList)
+        {
+          if(secondList.contains(first)) continue;
+          else
+              System.out.println(" value is  " + first);
+        }
+
         
         planDetail.setNonNotifiedRoads(java.util.Arrays.asList(nonNotifiedRoad));
         planDetail.setNotifiedRoads(java.util.Arrays.asList(notifiedRoad));
@@ -88,15 +121,15 @@ public class Rule26Test {
         planDetail=rule23.process(planDetail);
         System.out.println("Errors : " +  planDetail.getErrors() + "\n  Report output: "+ planDetail.reportOutput);
         
-     /* for(RuleOutput ruleout: planDetail.reportOutput.ruleOutPuts)
+      for(RuleOutput ruleout: planDetail.reportOutput.ruleOutPuts)
       {
           System.out.println( ruleout);
          for (SubRuleOutput subruleout: ruleout.subRuleOutputs)
          { System.out.println( subruleout.);
        //  System.out.println( subruleout.result);
          }
-      }*/
-        
+      }
+        */
         
         
     }

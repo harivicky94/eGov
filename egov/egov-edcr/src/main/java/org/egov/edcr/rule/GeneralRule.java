@@ -16,6 +16,7 @@ import org.egov.edcr.entity.Plot;
 import org.egov.edcr.entity.Result;
 import org.egov.edcr.entity.RuleOutput;
 import org.egov.edcr.entity.SubRuleOutput;
+import org.egov.edcr.entity.VirtualBuilding;
 import org.egov.edcr.entity.measurement.Measurement;
 import org.egov.edcr.entity.utility.RuleReportOutput;
 import org.egov.edcr.utility.DcrConstants;
@@ -103,7 +104,10 @@ public class GeneralRule implements RuleService {
         /*
          * TEMPORARY ADDED FOR TESTING.
          */
+        VirtualBuilding virtualBuilding = new VirtualBuilding();
         Building building = new Building();
+
+        pl.setVirtualBuilding(virtualBuilding);
         pl.setBuilding(building);
 
         extractPlotDetails(pl, doc);
@@ -185,7 +189,7 @@ public class GeneralRule implements RuleService {
         List<DXFLWPolyline> polyLinesByLayer;
 
         DXFLayer blockLayer = new DXFLayer();
-
+        BigDecimal maximumHeight=BigDecimal.ZERO;
         int blockNumber = 0;
         while (blockLayer != null) {
             blockNumber++;
@@ -194,6 +198,10 @@ public class GeneralRule implements RuleService {
             if (!blockLayer.getName().equalsIgnoreCase(blockName)) {
                 break;
             }
+            
+            BigDecimal ht = Util.getSingleDimensionValueByLayer(doc, DxfFileConstants.BLOCK_NAME_PREFIX + blockNumber + "_" +DxfFileConstants.HEIGHT_OF_BUILDING, pl);
+            maximumHeight= maximumHeight.compareTo(ht)>0?maximumHeight:ht;
+            
             polyLinesByLayer = Util.getPolyLinesByLayer(doc, blockName);
 
             Block block = new Block();
@@ -202,7 +210,9 @@ public class GeneralRule implements RuleService {
 
             Building building = new Building();
             building.setPolyLine(polyLinesByLayer.get(0));
-
+            
+            building.setHeight(ht);// add height of building
+            
             polyLinesByLayer = Util.getPolyLinesByLayer(doc,
                     DxfFileConstants.BLOCK_NAME_PREFIX + blockNumber + "_" + DxfFileConstants.SHADE_OVERHANG);
             if (!polyLinesByLayer.isEmpty()) {
@@ -220,7 +230,7 @@ public class GeneralRule implements RuleService {
             pl.addError(DxfFileConstants.BUILDING_FOOT_PRINT, edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
                     new String[] { DxfFileConstants.BUILDING_FOOT_PRINT }, null));
         }
-
+            pl.getVirtualBuilding().setBuildingHeight(maximumHeight);
     }
 
     private void extractOpenStairs(DXFDocument doc, Building building) {

@@ -7,6 +7,7 @@ import static org.egov.edcr.utility.DcrConstants.DECIMALDIGITS_MEASUREMENTS;
 import static org.egov.edcr.utility.DcrConstants.ROUNDMODE_MEASUREMENTS;
 
 import java.math.BigDecimal;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -24,9 +25,6 @@ import org.egov.edcr.utility.DcrConstants;
 import org.egov.edcr.utility.Util;
 import org.kabeja.dxf.DXFDocument;
 import org.kabeja.dxf.DXFLWPolyline;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 
 public class FloorAreaRatioService extends GeneralRule implements RuleService {
@@ -167,7 +165,7 @@ public class FloorAreaRatioService extends GeneralRule implements RuleService {
      * layer) Color is not available here when color availble change to getPolyLinesByLayerAndColor Api if required
      */
     private PlanDetail extractTotalFloorArea(PlanDetail pl, DXFDocument doc) {
-
+        EnumSet<OccupancyType> distinctOccupancyTypes = EnumSet.noneOf(OccupancyType.class);
         for (Block block : pl.getBlocks()) {
             BigDecimal floorArea = BigDecimal.ZERO;
             BigDecimal builtUpArea = BigDecimal.ZERO;
@@ -186,6 +184,7 @@ public class FloorAreaRatioService extends GeneralRule implements RuleService {
                     occupancy.setArea(occupancyArea);
                     setOccupancyType(pline, occupancy);
                     floor.addOccupancy(occupancy);
+                    distinctOccupancyTypes.add(occupancy.getType());
 
                 }
 
@@ -222,6 +221,7 @@ public class FloorAreaRatioService extends GeneralRule implements RuleService {
                 
             }
         }
+        pl.getVirtualBuilding().setOccupancies(distinctOccupancyTypes);
         return pl;
 
     }

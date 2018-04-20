@@ -45,6 +45,8 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 @Service
 public class Rule24 extends GeneralRule {
+    private static final BigDecimal FIVE = BigDecimal.valueOf(5);
+
     private static final String RULE24_10 = "24-10";
 
     private static final String ABUTEXTERIORORINTERIOR = " shall abut on an exterior or interior open space or verandah ";
@@ -61,13 +63,13 @@ public class Rule24 extends GeneralRule {
     private static final BigDecimal FRONTYARDMINIMUM_DISTANCE_1_2 = BigDecimal.valueOf(1.2);
     private static final BigDecimal FRONTYARDMINIMUM_DISTANCE_3 = BigDecimal.valueOf(3);
     private static final BigDecimal FRONTYARDMINIMUM_DISTANCE_4_5 = BigDecimal.valueOf(4.5);
-    private static final BigDecimal FRONTYARDMINIMUM_DISTANCE_5 = BigDecimal.valueOf(5);
+    private static final BigDecimal FRONTYARDMINIMUM_DISTANCE_5 = FIVE;
     private static final BigDecimal FRONTYARDMINIMUM_DISTANCE_6 = BigDecimal.valueOf(6);
     private static final BigDecimal FRONTYARDMINIMUM_DISTANCE_7_5 = BigDecimal.valueOf(7.5);
 
     private static final BigDecimal FRONTYARDMEAN_DISTANCE_1_8 = BigDecimal.valueOf(1.8);
     private static final BigDecimal FRONTYARDMEAN_DISTANCE_3 = BigDecimal.valueOf(3);
-    private static final BigDecimal FRONTYARDMEAN_DISTANCE_5 = BigDecimal.valueOf(5);
+    private static final BigDecimal FRONTYARDMEAN_DISTANCE_5 = FIVE;
     private static final BigDecimal FRONTYARDMEAN_DISTANCE_6 = BigDecimal.valueOf(6);
     private static final BigDecimal FRONTYARDMEAN_DISTANCE_7_5 = BigDecimal.valueOf(7.5);
     private static final BigDecimal FRONTYARDMEAN_DISTANCE_10_5 = BigDecimal.valueOf(10.5);
@@ -286,10 +288,12 @@ public class Rule24 extends GeneralRule {
         if (setback==null || planDetail.getBuilding() == null || plot.getArea()==null || (planDetail.getBlocks().isEmpty()))
             return;
         
-        Building building = planDetail.getBlocks().get(0).getBuilding(); //multiple block case, this assumption wrong.
-        OccupancyType mostRestrictiveOccupancy=building.getMostRestrictiveOccupancy();
-        if (mostRestrictiveOccupancy != null && building.getBuildingHeight()!= null) {
-            if (building.getBuildingHeight().intValue() <= 10) {
+   //     Building building = planDetail.getBlocks().get(0).getBuilding(); //multiple block case, this assumption wrong.
+   //     OccupancyType mostRestrictiveOccupancy=planDetail.getVirtualBuilding().getMostRestrictiveOccupancy();
+        
+      for(OccupancyType  mostRestrictiveOccupancy : planDetail.getVirtualBuilding().getOccupancies() )  
+        if ( planDetail.getVirtualBuilding().getBuildingHeight()!= null) {
+            if (planDetail.getVirtualBuilding().getBuildingHeight().intValue() <= 10) {
                 subRuleDesc = SUB_RULE_24_3_DESCRIPTION;
 
                 if (mostRestrictiveOccupancy.equals(OccupancyType.OCCUPANCY_A1) ||
@@ -322,7 +326,7 @@ public class Rule24 extends GeneralRule {
                         mostRestrictiveOccupancy.equals(OccupancyType.OCCUPANCY_C) ||
                         mostRestrictiveOccupancy.equals(OccupancyType.OCCUPANCY_E) ||
                         mostRestrictiveOccupancy.equals(OccupancyType.OCCUPANCY_H) ) {
-                    if (building.getTotalBuitUpArea().compareTo(BigDecimal.valueOf(BUILDUPAREA_300)) > 0) {
+                    if (planDetail.getVirtualBuilding().getTotalBuitUpArea().compareTo(BigDecimal.valueOf(BUILDUPAREA_300)) > 0) {
                         rule = "54";
                         subRule = "54-(3-i)";
                         expectedMin = FRONTYARDMINIMUM_DISTANCE_4_5.toString();
@@ -347,7 +351,7 @@ public class Rule24 extends GeneralRule {
                     
                 }else  if (mostRestrictiveOccupancy.equals(OccupancyType.OCCUPANCY_D) ||
                         mostRestrictiveOccupancy.equals(OccupancyType.OCCUPANCY_D1) ) {
-                    if (building.getTotalFloorArea().compareTo(BigDecimal.valueOf(FLOORAREA_800)) > 0) {
+                    if (planDetail.getVirtualBuilding().getTotalFloorArea().compareTo(BigDecimal.valueOf(FLOORAREA_800)) > 0) {
                         rule = "55";
                         subRule = "55-2-(3)";
                    
@@ -358,8 +362,8 @@ public class Rule24 extends GeneralRule {
                             valid = true;
                         }
 
-                    } else  if(building.getTotalFloorArea().compareTo(BigDecimal.valueOf(FLOORAREA_500)) > 0 && 
-                            building.getTotalFloorArea().compareTo(BigDecimal.valueOf(FLOORAREA_800)) <= 0 ){
+                    } else  if(planDetail.getVirtualBuilding().getTotalFloorArea().compareTo(BigDecimal.valueOf(FLOORAREA_500)) > 0 && 
+                            planDetail.getVirtualBuilding().getTotalFloorArea().compareTo(BigDecimal.valueOf(FLOORAREA_800)) <= 0 ){
                         rule = "55";
                         subRule = "55-2-(2)";
                         expectedMin = FRONTYARDMINIMUM_DISTANCE_5.toString();
@@ -369,8 +373,8 @@ public class Rule24 extends GeneralRule {
                                 && mean.compareTo(FRONTYARDMEAN_DISTANCE_7_5) >= 0) {
                             valid = true;
                         }
-                    }else  if(building.getTotalFloorArea().compareTo(BigDecimal.valueOf(FLOORAREA_300)) > 0 && 
-                            building.getTotalFloorArea().compareTo(BigDecimal.valueOf(FLOORAREA_500)) <= 0 ){
+                    }else  if(planDetail.getVirtualBuilding().getTotalFloorArea().compareTo(BigDecimal.valueOf(FLOORAREA_300)) > 0 && 
+                            planDetail.getVirtualBuilding().getTotalFloorArea().compareTo(BigDecimal.valueOf(FLOORAREA_500)) <= 0 ){
                         rule = "55";
                         subRule = "55-2-(1)";
                         expectedMin = FRONTYARDMINIMUM_DISTANCE_4_5.toString();
@@ -508,7 +512,7 @@ public class Rule24 extends GeneralRule {
                 
                 
             } 
-            else if (building.getBuildingHeight().intValue() > 10 && building.getBuildingHeight().intValue() <= 16) {
+            else if (planDetail.getVirtualBuilding().getBuildingHeight().intValue() > 10 && planDetail.getVirtualBuilding().getBuildingHeight().intValue() <= 16) {
 
                 BigDecimal minval = BigDecimal.valueOf(1.2);
                 BigDecimal meanval = BigDecimal.valueOf(1.8);
@@ -521,16 +525,11 @@ public class Rule24 extends GeneralRule {
                         minval = BigDecimal.valueOf(1.8);
                         meanval = BigDecimal.valueOf(3);
                     }
-                } else
-                { //for other occupancies.
-                    minval = BigDecimal.valueOf(1.8);
-                    meanval = BigDecimal.valueOf(3);
-                    
-                }
+                
                     for (SetBack setbacks : planDetail.getPlot().getSetBacks()) {
                         if (setbacks.getHeight() != null && setbacks.getHeight().compareTo(BigDecimal.TEN)>=0) {
                             rule = "24";
-                            subRule = "24-(8)";
+                            subRule = "24-(3)";
                             BigDecimal minValue = (BigDecimal.valueOf(0.5)
                                     .multiply(BigDecimal.valueOf(Math.ceil((setbacks.getHeight().subtract(BigDecimal.TEN)
                                             .divide(BigDecimal.valueOf(3), 2, RoundingMode.HALF_UP)).doubleValue()))))
@@ -559,16 +558,396 @@ public class Rule24 extends GeneralRule {
                         }
 
                     }
+                  }else 
+                {
 
-               
+                    BigDecimal distanceIncrementBasedOnHeight = (BigDecimal.valueOf(0.5)
+                            .multiply(BigDecimal.valueOf(Math.ceil((planDetail.getVirtualBuilding().getBuildingHeight().subtract(BigDecimal.TEN)
+                                    .divide(BigDecimal.valueOf(3), 2, RoundingMode.HALF_UP)).doubleValue()))));
 
-            } else if (building.getBuildingHeight().intValue() > 16) {
-                    //      pending
+                    if (mostRestrictiveOccupancy.equals(OccupancyType.OCCUPANCY_B1) ||
+                            mostRestrictiveOccupancy.equals(OccupancyType.OCCUPANCY_B2) ||
+                            mostRestrictiveOccupancy.equals(OccupancyType.OCCUPANCY_C) ||
+                            mostRestrictiveOccupancy.equals(OccupancyType.OCCUPANCY_E) ||
+                            mostRestrictiveOccupancy.equals(OccupancyType.OCCUPANCY_H)) {
+
+                        if (planDetail.getVirtualBuilding().getTotalBuitUpArea().compareTo(BigDecimal.valueOf(BUILDUPAREA_300)) > 0) {
+                            rule = "54";
+                            subRule = "54-(3-i)";
+                            minval = distanceIncrementBasedOnHeight.add(FRONTYARDMINIMUM_DISTANCE_4_5);
+                            meanval = distanceIncrementBasedOnHeight.add(FRONTYARDMEAN_DISTANCE_6);
+                            valid = validateMinimumAndMeanValue(valid, min, mean, minval, meanval);
+
+                        } else {
+                            rule = DcrConstants.RULE24;
+                            subRule = SUB_RULE_24_3;
+                            minval = distanceIncrementBasedOnHeight.add(FRONTYARDMINIMUM_DISTANCE_1_8);
+                            meanval = distanceIncrementBasedOnHeight.add(FRONTYARDMEAN_DISTANCE_3);
+                             valid = validateMinimumAndMeanValue(valid, min, mean, minval, meanval);
+                        }
+
+                    } else if (mostRestrictiveOccupancy.equals(OccupancyType.OCCUPANCY_D) ||
+                            mostRestrictiveOccupancy.equals(OccupancyType.OCCUPANCY_D1)) {
+                        if (planDetail.getVirtualBuilding().getTotalFloorArea().compareTo(BigDecimal.valueOf(FLOORAREA_800)) > 0) {
+                            rule = "55";
+                            subRule = "55-2-(3)";
+                            minval = distanceIncrementBasedOnHeight.add(FRONTYARDMINIMUM_DISTANCE_6);
+                            meanval = distanceIncrementBasedOnHeight.add(FRONTYARDMEAN_DISTANCE_10_5);
+                            valid = validateMinimumAndMeanValue(valid, min, mean, minval, meanval);
+
+                        } else if (planDetail.getVirtualBuilding().getTotalFloorArea().compareTo(BigDecimal.valueOf(FLOORAREA_500)) > 0 &&
+                                planDetail.getVirtualBuilding().getTotalFloorArea().compareTo(BigDecimal.valueOf(FLOORAREA_800)) <= 0) {
+                            rule = "55";
+                            subRule = "55-2-(2)";
+                            minval = distanceIncrementBasedOnHeight.add(FRONTYARDMINIMUM_DISTANCE_5);
+                            meanval = distanceIncrementBasedOnHeight.add(FRONTYARDMEAN_DISTANCE_7_5);
+                            valid = validateMinimumAndMeanValue(valid, min, mean, minval, meanval);
+                        } else if (planDetail.getVirtualBuilding().getTotalFloorArea().compareTo(BigDecimal.valueOf(FLOORAREA_300)) > 0 &&
+                                planDetail.getVirtualBuilding().getTotalFloorArea().compareTo(BigDecimal.valueOf(FLOORAREA_500)) <= 0) {
+                            rule = "55";
+                            subRule = "55-2-(1)";
+
+                            minval = distanceIncrementBasedOnHeight.add(FRONTYARDMINIMUM_DISTANCE_4_5);
+                            meanval = distanceIncrementBasedOnHeight.add(FRONTYARDMEAN_DISTANCE_6);
+                            valid = validateMinimumAndMeanValue(valid, min, mean, minval, meanval);
+                        } else {
+                            if (mostRestrictiveOccupancy.equals(OccupancyType.OCCUPANCY_D1)) {
+                                rule = "55";
+                                subRule = "55-2(Prov)";
+                                minval = distanceIncrementBasedOnHeight.add(FRONTYARDMINIMUM_DISTANCE_3);
+                                meanval = distanceIncrementBasedOnHeight.add(FRONTYARDMEAN_DISTANCE_3);
+                                valid = validateMinimumAndMeanValue(valid, min, mean, minval, meanval);
+                            } else {
+                                rule = "55";
+                                subRule = "55-2(Prov)";
+                                minval = distanceIncrementBasedOnHeight.add(FRONTYARDMINIMUM_DISTANCE_1_8);
+                                meanval = distanceIncrementBasedOnHeight.add(FRONTYARDMEAN_DISTANCE_3);
+                                valid = validateMinimumAndMeanValue(valid, min, mean, minval, meanval);
+
+                            }
+
+                        }
+
+                    } else if (mostRestrictiveOccupancy.equals(OccupancyType.OCCUPANCY_F)) {
+                        if (planDetail.getFloorUnits().isEmpty()) {
+                            if (planDetail.getPlanInformation().getParkingToMainBuilding()) {
+                                if (plot.getArea().compareTo(BigDecimal.valueOf(SITEAREA_125)) <= 0) {
+                                    rule = "56";
+                                    subRule = RULE563D;
+                                    minval = distanceIncrementBasedOnHeight.add(FRONTYARDMINIMUM_DISTANCE_1_2);
+                                    meanval = distanceIncrementBasedOnHeight.add(FRONTYARDMEAN_DISTANCE_1_8);
+                                    valid = validateMinimumAndMeanValue(valid, min, mean, minval, meanval);
+                                } else {
+                                    rule = "56";
+                                    subRule = RULE563D;
+                                    minval = distanceIncrementBasedOnHeight.add(FRONTYARDMINIMUM_DISTANCE_3);
+                                    meanval = distanceIncrementBasedOnHeight.add(FRONTYARDMEAN_DISTANCE_3);
+                                    valid = validateMinimumAndMeanValue(valid, min, mean, minval, meanval);
+                                }
+
+                            } else {
+                                rule = "56";
+                                subRule = RULE563D;
+                                minval = distanceIncrementBasedOnHeight.add(FRONTYARDMINIMUM_DISTANCE_5);
+                                meanval = distanceIncrementBasedOnHeight.add(FRONTYARDMEAN_DISTANCE_5);
+                                valid = validateMinimumAndMeanValue(valid, min, mean, minval, meanval);
+
+                            }
+
+                        } else {
+                            rule = "24";
+                            subRule = "24-(3)";
+                            minval = distanceIncrementBasedOnHeight.add(FRONTYARDMINIMUM_DISTANCE_1_8);
+                            meanval = distanceIncrementBasedOnHeight.add(FRONTYARDMEAN_DISTANCE_3);
+                            valid = validateMinimumAndMeanValue(valid, min, mean, minval, meanval);
+
+                        }
+                    } else if (mostRestrictiveOccupancy.equals(OccupancyType.OCCUPANCY_G1)) {
+                        rule = "57";
+                        subRule = "57-(4)";
+                        minval = distanceIncrementBasedOnHeight.add(FRONTYARDMINIMUM_DISTANCE_5);
+                        meanval = distanceIncrementBasedOnHeight.add(FRONTYARDMEAN_DISTANCE_5);
+                        valid = validateMinimumAndMeanValue(valid, min, mean, minval, meanval);
+                    } else if (mostRestrictiveOccupancy.equals(OccupancyType.OCCUPANCY_G2)) {
+                        rule = "57";
+                        subRule = "57-(4)";
+                        minval = distanceIncrementBasedOnHeight.add(FRONTYARDMINIMUM_DISTANCE_3);
+                        meanval = distanceIncrementBasedOnHeight.add(FRONTYARDMEAN_DISTANCE_3);
+                        valid = validateMinimumAndMeanValue(valid, min, mean, minval, meanval);
+                    } else if (mostRestrictiveOccupancy.equals(OccupancyType.OCCUPANCY_I1)) {
+                        rule = "59";
+                        subRule = "59-(3)";
+                        minval = distanceIncrementBasedOnHeight.add(FRONTYARDMINIMUM_DISTANCE_3);
+                        meanval = distanceIncrementBasedOnHeight.add(FRONTYARDMEAN_DISTANCE_3);
+                        valid = validateMinimumAndMeanValue(valid, min, mean, minval, meanval);
+                    } else if (mostRestrictiveOccupancy.equals(OccupancyType.OCCUPANCY_I2)) {
+                        rule = "59";
+                        subRule = "59-(3)";
+                        minval = distanceIncrementBasedOnHeight.add(FRONTYARDMINIMUM_DISTANCE_7_5);
+                        meanval = distanceIncrementBasedOnHeight.add(FRONTYARDMEAN_DISTANCE_7_5);
+                        valid = validateMinimumAndMeanValue(valid, min, mean, minval, meanval);
+                    }
+                    
+
+                    if (valid) {
+                        planDetail.reportOutput
+                                .add(buildRuleOutputWithSubRule(rule, subRule, subRuleDesc, frontYardFieldName,
+                                        meanMinumumLabel + "(" + minval + "," + meanval + ")" + DcrConstants.IN_METER,
+                                        "(" + min + "," + mean + ")" + DcrConstants.IN_METER,
+                                        Result.Accepted, null));
+                    } else
+                        planDetail.reportOutput
+                                .add(buildRuleOutputWithSubRule(rule, subRule, subRuleDesc, frontYardFieldName,
+                                        meanMinumumLabel + "(" + minval + "," + meanval + ")" + DcrConstants.IN_METER,
+                                        "(" + min + "," + mean + ")" + DcrConstants.IN_METER,
+                                        Result.Not_Accepted, null));
+                    
+      
+                }       
+
+            } else if (planDetail.getVirtualBuilding().getBuildingHeight().intValue() > 16) {
+
+
+                BigDecimal minval = BigDecimal.valueOf(1.2);
+                BigDecimal meanval = BigDecimal.valueOf(1.8);
+                rule = "24";
+                subRule = "24-(3)";
+                if (mostRestrictiveOccupancy.equals(OccupancyType.OCCUPANCY_A1) ||
+                        mostRestrictiveOccupancy.equals(OccupancyType.OCCUPANCY_A2) ||
+                        mostRestrictiveOccupancy.equals(OccupancyType.OCCUPANCY_F)) {
+
+                    if (plot.getArea().compareTo(BigDecimal.valueOf(SITEAREA_125)) > 0) {
+                        rule = "62";
+                        subRule = "62-(1-a)";
+                        minval = BigDecimal.valueOf(1.8);
+                        meanval = BigDecimal.valueOf(3);
+                    }
+                
+                    for (SetBack setbacks : planDetail.getPlot().getSetBacks()) {
+                        if (setbacks.getHeight() != null && setbacks.getHeight().compareTo(BigDecimal.TEN)>=0) {
+                              BigDecimal minValue = (BigDecimal.valueOf(0.5)
+                                    .multiply(BigDecimal.valueOf(Math.ceil((setbacks.getHeight().subtract(BigDecimal.TEN)
+                                            .divide(BigDecimal.valueOf(3), 2, RoundingMode.HALF_UP)).doubleValue()))))
+                                                    .add(minval);
+                            BigDecimal meanValue = (BigDecimal.valueOf(0.5)
+                                    .multiply(BigDecimal.valueOf(Math.ceil((setbacks.getHeight().subtract(BigDecimal.TEN)
+                                            .divide(BigDecimal.valueOf(3), 2, RoundingMode.HALF_UP)).doubleValue()))))
+                                                    .add(meanval);
+                            minValue= minValue.compareTo(FIVE)<=0?FIVE:minValue;
+                            meanValue= meanValue.compareTo(FIVE)<=0?FIVE:meanValue; 
+
+                            if (min.compareTo(minValue) >= 0
+                                    && mean.compareTo(meanValue) >= 0) {
+                                planDetail.reportOutput
+                                        .add(buildRuleOutputWithSubRule(rule, subRule, subRuleDesc,
+                                                frontYardFieldName + " Level " + setbacks.getLevel(),
+                                                meanMinumumLabel + "(" + minValue + "," + meanValue + ")" + DcrConstants.IN_METER,
+                                                "(" + min + "," + mean + ")" + DcrConstants.IN_METER,
+                                                Result.Accepted, null));
+                            } else
+                                planDetail.reportOutput
+                                        .add(buildRuleOutputWithSubRule(rule, subRule, subRuleDesc,
+                                                frontYardFieldName + " Level " + setbacks.getLevel(),
+                                                meanMinumumLabel + "(" + minValue + "," + meanValue + ")" + DcrConstants.IN_METER,
+                                                "(" + min + "," + mean + ")" + DcrConstants.IN_METER,
+                                                Result.Not_Accepted, null));
+                        }
+
+                    }
+                  }else 
+                {
+
+                    BigDecimal distanceIncrementBasedOnHeight = (BigDecimal.valueOf(0.5)
+                            .multiply(BigDecimal.valueOf(Math.ceil((planDetail.getVirtualBuilding().getBuildingHeight().subtract(BigDecimal.TEN)
+                                    .divide(BigDecimal.valueOf(3), 2, RoundingMode.HALF_UP)).doubleValue()))));
+
+                    if (mostRestrictiveOccupancy.equals(OccupancyType.OCCUPANCY_B1) ||
+                            mostRestrictiveOccupancy.equals(OccupancyType.OCCUPANCY_B2) ||
+                            mostRestrictiveOccupancy.equals(OccupancyType.OCCUPANCY_C) ||
+                            mostRestrictiveOccupancy.equals(OccupancyType.OCCUPANCY_E) ||
+                            mostRestrictiveOccupancy.equals(OccupancyType.OCCUPANCY_H)) {
+
+                        if (planDetail.getVirtualBuilding().getTotalBuitUpArea().compareTo(BigDecimal.valueOf(BUILDUPAREA_300)) > 0) {
+                            rule = "54";
+                            subRule = "54-(3-i)";
+                            minval = distanceIncrementBasedOnHeight.add(FRONTYARDMINIMUM_DISTANCE_4_5);
+                            meanval = distanceIncrementBasedOnHeight.add(FRONTYARDMEAN_DISTANCE_6);
+                            
+                            minval= minval.compareTo(FIVE)<=0?FIVE:minval;
+                            meanval= meanval.compareTo(FIVE)<=0?FIVE:meanval;
+                            valid = validateMinimumAndMeanValue(valid, min, mean, minval, meanval);
+
+                        } else {
+                            rule = DcrConstants.RULE24;
+                            subRule = SUB_RULE_24_3;
+                            minval = distanceIncrementBasedOnHeight.add(FRONTYARDMINIMUM_DISTANCE_1_8);
+                            meanval = distanceIncrementBasedOnHeight.add(FRONTYARDMEAN_DISTANCE_3);
+                            minval= minval.compareTo(FIVE)<=0?FIVE:minval;
+                            meanval= meanval.compareTo(FIVE)<=0?FIVE:meanval;
+                             valid = validateMinimumAndMeanValue(valid, min, mean, minval, meanval);
+                        }
+
+                    } else if (mostRestrictiveOccupancy.equals(OccupancyType.OCCUPANCY_D) ||
+                            mostRestrictiveOccupancy.equals(OccupancyType.OCCUPANCY_D1)) {
+                        if (planDetail.getVirtualBuilding().getTotalFloorArea().compareTo(BigDecimal.valueOf(FLOORAREA_800)) > 0) {
+                            rule = "55";
+                            subRule = "55-2-(3)";
+                            minval = distanceIncrementBasedOnHeight.add(FRONTYARDMINIMUM_DISTANCE_6);
+                            meanval = distanceIncrementBasedOnHeight.add(FRONTYARDMEAN_DISTANCE_10_5);
+                            minval= minval.compareTo(FIVE)<=0?FIVE:minval;
+                            meanval= meanval.compareTo(FIVE)<=0?FIVE:meanval;
+                            valid = validateMinimumAndMeanValue(valid, min, mean, minval, meanval);
+
+                        } else if (planDetail.getVirtualBuilding().getTotalFloorArea().compareTo(BigDecimal.valueOf(FLOORAREA_500)) > 0 &&
+                                planDetail.getVirtualBuilding().getTotalFloorArea().compareTo(BigDecimal.valueOf(FLOORAREA_800)) <= 0) {
+                            rule = "55";
+                            subRule = "55-2-(2)";
+                            minval = distanceIncrementBasedOnHeight.add(FRONTYARDMINIMUM_DISTANCE_5);
+                            meanval = distanceIncrementBasedOnHeight.add(FRONTYARDMEAN_DISTANCE_7_5);
+                            minval= minval.compareTo(FIVE)<=0?FIVE:minval;
+                            meanval= meanval.compareTo(FIVE)<=0?FIVE:meanval;
+                            valid = validateMinimumAndMeanValue(valid, min, mean, minval, meanval);
+                        } else if (planDetail.getVirtualBuilding().getTotalFloorArea().compareTo(BigDecimal.valueOf(FLOORAREA_300)) > 0 &&
+                                planDetail.getVirtualBuilding().getTotalFloorArea().compareTo(BigDecimal.valueOf(FLOORAREA_500)) <= 0) {
+                            rule = "55";
+                            subRule = "55-2-(1)";
+
+                            minval = distanceIncrementBasedOnHeight.add(FRONTYARDMINIMUM_DISTANCE_4_5);
+                            meanval = distanceIncrementBasedOnHeight.add(FRONTYARDMEAN_DISTANCE_6);
+                            minval= minval.compareTo(FIVE)<=0?FIVE:minval;
+                            meanval= meanval.compareTo(FIVE)<=0?FIVE:meanval;
+                            valid = validateMinimumAndMeanValue(valid, min, mean, minval, meanval);
+                        } else {
+                            if (mostRestrictiveOccupancy.equals(OccupancyType.OCCUPANCY_D1)) {
+                                rule = "55";
+                                subRule = "55-2(Prov)";
+                                minval = distanceIncrementBasedOnHeight.add(FRONTYARDMINIMUM_DISTANCE_3);
+                                meanval = distanceIncrementBasedOnHeight.add(FRONTYARDMEAN_DISTANCE_3);
+                                minval= minval.compareTo(FIVE)<=0?FIVE:minval;
+                                meanval= meanval.compareTo(FIVE)<=0?FIVE:meanval;
+                                valid = validateMinimumAndMeanValue(valid, min, mean, minval, meanval);
+                            } else {
+                                rule = "55";
+                                subRule = "55-2(Prov)";
+                                minval = distanceIncrementBasedOnHeight.add(FRONTYARDMINIMUM_DISTANCE_1_8);
+                                meanval = distanceIncrementBasedOnHeight.add(FRONTYARDMEAN_DISTANCE_3);
+                                minval= minval.compareTo(FIVE)<=0?FIVE:minval;
+                                meanval= meanval.compareTo(FIVE)<=0?FIVE:meanval;
+                                valid = validateMinimumAndMeanValue(valid, min, mean, minval, meanval);
+
+                            }
+
+                        }
+
+                    } else if (mostRestrictiveOccupancy.equals(OccupancyType.OCCUPANCY_F)) {
+                        if (planDetail.getFloorUnits().isEmpty()) {
+                            if (planDetail.getPlanInformation().getParkingToMainBuilding()) {
+                                if (plot.getArea().compareTo(BigDecimal.valueOf(SITEAREA_125)) <= 0) {
+                                    rule = "56";
+                                    subRule = RULE563D;
+                                    minval = distanceIncrementBasedOnHeight.add(FRONTYARDMINIMUM_DISTANCE_1_2);
+                                    meanval = distanceIncrementBasedOnHeight.add(FRONTYARDMEAN_DISTANCE_1_8);
+                                    minval= minval.compareTo(FIVE)<=0?FIVE:minval;
+                                    meanval= meanval.compareTo(FIVE)<=0?FIVE:meanval;
+                                    valid = validateMinimumAndMeanValue(valid, min, mean, minval, meanval);
+                                } else {
+                                    rule = "56";
+                                    subRule = RULE563D;
+                                    minval = distanceIncrementBasedOnHeight.add(FRONTYARDMINIMUM_DISTANCE_3);
+                                    meanval = distanceIncrementBasedOnHeight.add(FRONTYARDMEAN_DISTANCE_3);
+                                    minval= minval.compareTo(FIVE)<=0?FIVE:minval;
+                                    meanval= meanval.compareTo(FIVE)<=0?FIVE:meanval;
+                                    valid = validateMinimumAndMeanValue(valid, min, mean, minval, meanval);
+                                }
+
+                            } else {
+                                rule = "56";
+                                subRule = RULE563D;
+                                minval = distanceIncrementBasedOnHeight.add(FRONTYARDMINIMUM_DISTANCE_5);
+                                meanval = distanceIncrementBasedOnHeight.add(FRONTYARDMEAN_DISTANCE_5);
+                                minval= minval.compareTo(FIVE)<=0?FIVE:minval;
+                                meanval= meanval.compareTo(FIVE)<=0?FIVE:meanval;
+                                valid = validateMinimumAndMeanValue(valid, min, mean, minval, meanval);
+
+                            }
+
+                        } else {
+                            rule = "24";
+                            subRule = "24-(3)";
+                            minval = distanceIncrementBasedOnHeight.add(FRONTYARDMINIMUM_DISTANCE_1_8);
+                            meanval = distanceIncrementBasedOnHeight.add(FRONTYARDMEAN_DISTANCE_3);
+                            minval= minval.compareTo(FIVE)<=0?FIVE:minval;
+                            meanval= meanval.compareTo(FIVE)<=0?FIVE:meanval;
+                            valid = validateMinimumAndMeanValue(valid, min, mean, minval, meanval);
+
+                        }
+                    } else if (mostRestrictiveOccupancy.equals(OccupancyType.OCCUPANCY_G1)) {
+                        rule = "57";
+                        subRule = "57-(4)";
+                        minval = distanceIncrementBasedOnHeight.add(FRONTYARDMINIMUM_DISTANCE_5);
+                        meanval = distanceIncrementBasedOnHeight.add(FRONTYARDMEAN_DISTANCE_5);
+                        minval= minval.compareTo(FIVE)<=0?FIVE:minval;
+                        meanval= meanval.compareTo(FIVE)<=0?FIVE:meanval;
+                        valid = validateMinimumAndMeanValue(valid, min, mean, minval, meanval);
+                    } else if (mostRestrictiveOccupancy.equals(OccupancyType.OCCUPANCY_G2)) {
+                        rule = "57";
+                        subRule = "57-(4)";
+                        minval = distanceIncrementBasedOnHeight.add(FRONTYARDMINIMUM_DISTANCE_3);
+                        meanval = distanceIncrementBasedOnHeight.add(FRONTYARDMEAN_DISTANCE_3);
+                        minval= minval.compareTo(FIVE)<=0?FIVE:minval;
+                        meanval= meanval.compareTo(FIVE)<=0?FIVE:meanval;
+                        valid = validateMinimumAndMeanValue(valid, min, mean, minval, meanval);
+                    } else if (mostRestrictiveOccupancy.equals(OccupancyType.OCCUPANCY_I1)) {
+                        rule = "59";
+                        subRule = "59-(3)";
+                        minval = distanceIncrementBasedOnHeight.add(FRONTYARDMINIMUM_DISTANCE_3);
+                        meanval = distanceIncrementBasedOnHeight.add(FRONTYARDMEAN_DISTANCE_3);
+                        minval= minval.compareTo(FIVE)<=0?FIVE:minval;
+                        meanval= meanval.compareTo(FIVE)<=0?FIVE:meanval;
+                        valid = validateMinimumAndMeanValue(valid, min, mean, minval, meanval);
+                    } else if (mostRestrictiveOccupancy.equals(OccupancyType.OCCUPANCY_I2)) {
+                        rule = "59";
+                        subRule = "59-(3)";
+                        minval = distanceIncrementBasedOnHeight.add(FRONTYARDMINIMUM_DISTANCE_7_5);
+                        meanval = distanceIncrementBasedOnHeight.add(FRONTYARDMEAN_DISTANCE_7_5);
+                        minval= minval.compareTo(FIVE)<=0?FIVE:minval;
+                        meanval= meanval.compareTo(FIVE)<=0?FIVE:meanval;
+                        valid = validateMinimumAndMeanValue(valid, min, mean, minval, meanval);
+                    }
+                    
+
+                    if (valid) {
+                        planDetail.reportOutput
+                                .add(buildRuleOutputWithSubRule(rule, subRule, subRuleDesc, frontYardFieldName,
+                                        meanMinumumLabel + "(" + minval + "," + meanval + ")" + DcrConstants.IN_METER,
+                                        "(" + min + "," + mean + ")" + DcrConstants.IN_METER,
+                                        Result.Accepted, null));
+                    } else
+                        planDetail.reportOutput
+                                .add(buildRuleOutputWithSubRule(rule, subRule, subRuleDesc, frontYardFieldName,
+                                        meanMinumumLabel + "(" + minval + "," + meanval + ")" + DcrConstants.IN_METER,
+                                        "(" + min + "," + mean + ")" + DcrConstants.IN_METER,
+                                        Result.Not_Accepted, null));
+                    
+      
+                }       
+
+            
             }
 
           
 
         }
+    
+    
+    }
+
+    private Boolean validateMinimumAndMeanValue(Boolean valid, BigDecimal min, BigDecimal mean, BigDecimal minval,
+            BigDecimal meanval) {
+        if (min.compareTo(minval) >= 0 && mean.compareTo(meanval) >= 0) {
+            valid = true;
+        }
+        return valid;
     }
 
     private void validateRule24_3(PlanDetail planDetail) {
