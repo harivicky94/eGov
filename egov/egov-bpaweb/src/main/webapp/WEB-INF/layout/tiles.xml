@@ -448,4 +448,18 @@
 		<put-attribute name="body"
 			value="/WEB-INF/views/reports/search-scheduler-failure-records-report.jsp" />
 	</definition>
+		<definition name="search-stakeholder-forapproval"
+		extends="base_layout">
+		<put-attribute name="page-title" value="title.search.stakeholder"
+			cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/stakeholder/search-stakeholder-forapproval.jsp" />
+	</definition>
+		<definition name="stakeholder-remarks"
+		extends="base_layout">
+		<put-attribute name="page-title" value="title.approve.stakeholder"
+			cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/stakeholder/stakeholder-remarks.jsp" />
+	</definition>
 </tiles-definitions>
