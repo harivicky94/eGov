@@ -109,12 +109,12 @@ public class BPASmsAndEmailService {
     private static final String MSG_KEY_SMS_CANCELL_APPLN = "msg.bpa.cancel.appln.sms";
     private static final String SUBJECT_KEY_EMAIL_CANCELL_APPLN = "msg.bpa.cancel.appln.email.subject";
     private static final String BODY_KEY_EMAIL_CANCELL_APPLN = "msg.bpa.cancel.appln.email.body";
-    private static final String MSG_KEY_SMS_STAKEHOLDER_NEW_CITIZEN = "msg.newstakeholder.sms.citizen";
-    private static final String BODY_KEY_EMAIL_STAKEHOLDER_NEW_CITIZEN = "msg.newstakeholder.email.body.citizen";
-    private static final String SUBJECT_KEY_EMAIL_STAKEHOLDER_NEW_CITIZEN = "msg.newstakeholder.email.subject.citizen";
-    private static final String MSG_KEY_SMS_STAKEHOLDER_REJECTION = "msg.stakeholder.rejection.sms";
-    private static final String BODY_KEY_EMAIL_STAKEHOLDER_REJECTION = "msg.stakeholder.rejection.email.body";
-    private static final String SUBJECT_KEY_EMAIL_STAKEHOLDER_REJECTION = "msg.stakeholder.rejection.email.sublect";
+    private static final String SMS_STK_CTZ = "msg.newstakeholder.sms.citizen";
+    private static final String EMLB_STK_CTZ = "msg.newstakeholder.email.body.citizen";
+    private static final String EMLS_STK_CTZ = "msg.newstakeholder.email.subject.citizen";
+    private static final String SMS_STK_RJCT = "msg.stakeholder.rejection.sms";
+    private static final String EMLB_STK_RJCT = "msg.stakeholder.rejection.email.body";
+    private static final String EMLS_STK_RJCT = "msg.stakeholder.rejection.email.subject";
 
     @Autowired
     private NotificationService notificationService;
@@ -133,7 +133,7 @@ public class BPASmsAndEmailService {
     public void sendSMSForStakeHolder(final StakeHolder stakeHolder, Boolean isCitizenCrtn) {
         String msgKey;
         if (isCitizenCrtn) {
-            msgKey = MSG_KEY_SMS_STAKEHOLDER_NEW_CITIZEN;
+            msgKey = SMS_STK_CTZ;
         } else {
             msgKey = MSG_KEY_SMS_STAKEHOLDER_NEW;
         }
@@ -144,7 +144,7 @@ public class BPASmsAndEmailService {
     }
     
     public void sendSMSToStkHldrForRejection(final StakeHolder stakeHolder) {
-        String msgKey = MSG_KEY_SMS_STAKEHOLDER_REJECTION;
+        String msgKey = SMS_STK_RJCT;
         if (isSmsEnabled() && stakeHolder.getMobileNumber() != null) {
             String message = buildMessageDtlsFrRejection(stakeHolder, msgKey);
             notificationService.sendSMS(stakeHolder.getMobileNumber(), message);
@@ -158,8 +158,8 @@ public class BPASmsAndEmailService {
     }
     
     public void sendEmailToStkHldrForRejection(StakeHolder stakeHolder) {
-        String msgKeyMail = BODY_KEY_EMAIL_STAKEHOLDER_REJECTION;
-        String msgKeyMailSubject = SUBJECT_KEY_EMAIL_STAKEHOLDER_REJECTION;
+        String msgKeyMail = EMLB_STK_RJCT;
+        String msgKeyMailSubject = EMLS_STK_RJCT;
         if (isEmailEnabled() && stakeHolder.getEmailId() != null) {
             final String message = buildMessageDtlsFrRejection(stakeHolder, msgKeyMail);
             final String subject = bpaMessageSource.getMessage(msgKeyMailSubject, null, null);
@@ -171,8 +171,8 @@ public class BPASmsAndEmailService {
         String msgKeyMail;
         String msgKeyMailSubject;
         if (isCitizen) {
-            msgKeyMail = BODY_KEY_EMAIL_STAKEHOLDER_NEW_CITIZEN;
-            msgKeyMailSubject = SUBJECT_KEY_EMAIL_STAKEHOLDER_NEW_CITIZEN;
+            msgKeyMail = EMLB_STK_CTZ;
+            msgKeyMailSubject = EMLS_STK_CTZ;
         } else {
             msgKeyMail = BODY_KEY_EMAIL_STAKEHOLDER_NEW;
             msgKeyMailSubject = SUBJECT_KEY_EMAIL_STAKEHOLDER_NEW;

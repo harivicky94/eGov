@@ -169,8 +169,8 @@ public class StakeHolderController {
                                           final BindingResult errors, final RedirectAttributes redirectAttributes) {
         validateStakeholder(stakeHolder, errors);
         if (checkIsUserExists(stakeHolder, model)) return STAKEHOLDER_NEW;
-        if (securityUtils.getCurrentUser().getType().equals(UserType.SYSTEM) && (
-             !citizenService.isValidOTP(stakeHolder.getActivationCode(), stakeHolder.getMobileNumber())))
+        if (securityUtils.getCurrentUser().getType().equals(UserType.SYSTEM) && 
+             !citizenService.isValidOTP(stakeHolder.getActivationCode(), stakeHolder.getMobileNumber()))
                 errors.rejectValue("activationCode", "error.otp.verification.failed");
         
         if (errors.hasErrors()) {

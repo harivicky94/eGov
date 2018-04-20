@@ -117,7 +117,6 @@ public class BpaConstants {
     public static final String WF_END_STATE = "END";
     public static final String CREATE_ADDITIONAL_RULE_CREATE = "CREATEBPAAPPLICATION";
     public static final String CREATE_ADDITIONAL_RULE_CREATE_ONEDAYPERMIT = "CREATEBPAAPPLICATION-ONEDAYPERMIT";
-    public static final String CREATE_ADDITIONAL_RULE_STAKEHOLDER = "CREATESTAKEHOLDER";
     public static final String FIELD_INSPECTION_COMPLETED = "Field Inspection completed";
     public static final String WF_TS_INSPECTION_INITIATED = "Town Surveyor Inspection Initiated";
     public static final String WF_AE_APPROVAL_PENDING = "AE Approval Pending";
