@@ -61,7 +61,7 @@ $(document).ready( function () {
 	}
 	//form submit
 	$('#buttonSubmit').click(function(e) {
-		if ($('form').valid()) {
+		if ($('form').valid() && validateUploadFilesMandatory()) {
 			console.log('submitted')
 		} else {
 			e.preventDefault();
