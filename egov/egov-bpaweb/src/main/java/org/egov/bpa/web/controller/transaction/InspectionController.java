@@ -40,7 +40,6 @@
 package org.egov.bpa.web.controller.transaction;
 
 import org.egov.bpa.transaction.entity.BpaApplication;
-import org.egov.bpa.transaction.entity.Docket;
 import org.egov.bpa.transaction.entity.Inspection;
 import org.egov.bpa.transaction.entity.enums.PlanScrutinyValues;
 import org.egov.bpa.transaction.service.InspectionService;
@@ -56,7 +55,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.validation.Valid;
 import java.util.Date;
-import java.util.List;
 
 @Controller
 @RequestMapping(value = "/application")
