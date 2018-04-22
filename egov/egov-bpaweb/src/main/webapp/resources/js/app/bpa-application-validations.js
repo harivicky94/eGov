@@ -353,6 +353,8 @@ $(document).ready(function() {
 		    {
 			   	  $('#constStages').attr('required', false);
 				  $('#stateOfConstruction').attr('required', false);
+                  $('#workCommencementDate').attr('required', false);
+                  $('#workCompletionDate').attr('required', false);
 				  $('#constDiv').hide();
 		    }
 		});
