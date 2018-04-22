@@ -39,19 +39,12 @@
  */
 package org.egov.bpa.web.controller.transaction;
 
-import java.util.Date;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.entity.Docket;
 import org.egov.bpa.transaction.entity.Inspection;
+import org.egov.bpa.transaction.entity.enums.PlanScrutinyValues;
 import org.egov.bpa.transaction.service.InspectionService;
 import org.egov.bpa.utils.BpaConstants;
-import org.egov.eis.web.contract.WorkflowContainer;
-import org.egov.infra.security.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -60,73 +53,68 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.validation.Valid;
+import java.util.Date;
+import java.util.List;
 
 @Controller
 @RequestMapping(value = "/application")
 public class InspectionController extends BpaGenericApplicationController {
-    private static final String CREATEINSPECTIONDETAIL_FORM = "createinspectiondetail-form";
+	private static final String CREATEINSPECTIONDETAIL_FORM = "createinspectiondetail-form";
 
-    @Autowired
-    private InspectionService inspectionService;
+	@Autowired
+	private InspectionService inspectionService;
 
-    @ModelAttribute
-    public Inspection getInspectionForBpaAPplication() {
-        return new Inspection();
-    }
+	@RequestMapping(value = "/createinspectiondetails/{applicationNumber}", method = RequestMethod.GET)
+	public String inspectionDetailForm(final Model model, @PathVariable final String applicationNumber) {
+		loadApplication(model, applicationNumber);
+		return CREATEINSPECTIONDETAIL_FORM;
+	}
 
-    @RequestMapping(value = "/createinspectiondetails/{applicationNumber}", method = RequestMethod.GET)
-    public String inspectionDetailForm(final Model model, @PathVariable final String applicationNumber,
-            final HttpServletRequest request) {
-        loadApplication(model, applicationNumber);
-        return CREATEINSPECTIONDETAIL_FORM;
-    }
+	@RequestMapping(value = "/createinspectiondetails/{applicationNumber}", method = RequestMethod.POST)
+	public String createInspection(@Valid @ModelAttribute final Inspection inspection,
+								   @PathVariable final String applicationNumber, final Model model, final BindingResult resultBinder) {
+		inspection.setDocket(inspectionService.buildDocDetFromUI(inspection));
+		if (resultBinder.hasErrors()) {
+			loadApplication(model, applicationNumber);
+			return CREATEINSPECTIONDETAIL_FORM;
+		}
+		final Inspection savedInspection = inspectionService.save(inspection, applicationBpaService.findByApplicationNumber(applicationNumber));
+		model.addAttribute("message", "Inspection Saved Successfully");
+		return "redirect:/application/view-inspection/" + savedInspection.getId();
+	}
 
-    @RequestMapping(value = "/createinspectiondetails/{applicationNumber}", method = RequestMethod.POST)
-    public String createScheduleAppointment(@Valid @ModelAttribute final Inspection inspection,
-            @PathVariable final String applicationNumber, final Model model, final BindingResult resultBinder,
-            final RedirectAttributes redirectAttributes,
-            final HttpServletRequest request) {
-        final BpaApplication application = applicationBpaService.findByApplicationNumber(applicationNumber);
-        final List<Docket> docket = inspectionService.buildDocDetFromUI(inspection);
-        inspection.setDocket(docket);
-        if (resultBinder.hasErrors()) {
-            loadApplication(model, applicationNumber);
-            return CREATEINSPECTIONDETAIL_FORM;
-        }
-        final Inspection savedInspection = inspectionService.save(inspection, application);
-        model.addAttribute("message", "Inspection Saved Successfully");
-        return "redirect:/application/view-inspection/" + savedInspection.getId();
-    }
-
-    private void loadApplication(final Model model, final String applicationNumber) {
-        final BpaApplication application = applicationBpaService.findByApplicationNumber(applicationNumber);
-        if (application != null && application.getState() != null
-                && application.getState().getValue().equalsIgnoreCase(BpaConstants.APPLICATION_STATUS_REGISTERED)) {
-            prepareWorkflowDataForInspection(model, application);
-            model.addAttribute("loginUser", securityUtils.getCurrentUser());
-            model.addAttribute(BpaConstants.APPLICATION_HISTORY,
-                    bpaThirdPartyService.getHistory(application));
-        }
-        final Inspection inspection = getInspectionForBpaAPplication();
-        inspection.setInspectionDate(new Date());
-        inspectionService.buildDocketDetailList(inspection);
-        model.addAttribute("inspection", inspection);
-        model.addAttribute("docketDetailLocList", inspection.getDocketDetailLocList());
-        model.addAttribute("docketDetailMeasumentList", inspection.getDocketDetailMeasumentList());
-        model.addAttribute("docketDetailAccessList", inspection.getDocketDetailAccessList());
-        model.addAttribute("docketDetlSurroundingPlotList", inspection.getDocketDetlSurroundingPlotList());
-        model.addAttribute("docketDetailLandTypeList", inspection.getDocketDetailLandTypeList());
-        model.addAttribute("docketDetailProposedWorkList", inspection.getDocketDetailProposedWorkList());
-        model.addAttribute("docketDetailWorkAsPerPlanList", inspection.getDocketDetailWorkAsPerPlanList());
-        model.addAttribute("docketDetailHgtAbuttRoadList", inspection.getDocketDetailHgtAbuttRoadList());
-        model.addAttribute("docketDetailAreaLoc", inspection.getDocketDetailAreaLoc());
-        model.addAttribute("docketDetailLengthOfCompWall", inspection.getDocketDetailLengthOfCompWall());
-        model.addAttribute("docketDetailNumberOfWell", inspection.getDocketDetailNumberOfWell());
-        model.addAttribute("docketDetailErectionTower", inspection.getDocketDetailErectionTower());
-        model.addAttribute("docketDetailShutter", inspection.getDocketDetailShutter());
-        model.addAttribute("docketDetailRoofConversion", inspection.getDocketDetailRoofConversion());
-        model.addAttribute(BpaConstants.BPA_APPLICATION, application);
-    }
+	private void loadApplication(final Model model, final String applicationNumber) {
+		final BpaApplication application = applicationBpaService.findByApplicationNumber(applicationNumber);
+		if (application != null && application.getState() != null
+			&& application.getState().getValue().equalsIgnoreCase(BpaConstants.APPLICATION_STATUS_REGISTERED)) {
+			prepareWorkflowDataForInspection(model, application);
+			model.addAttribute("loginUser", securityUtils.getCurrentUser());
+			model.addAttribute(BpaConstants.APPLICATION_HISTORY,
+					bpaThirdPartyService.getHistory(application));
+		}
+		final Inspection inspection = new Inspection();
+		inspection.setInspectionDate(new Date());
+		inspectionService.buildDocketDetailList(inspection);
+		model.addAttribute("inspection", inspection);
+		model.addAttribute("docketDetailLocList", inspection.getDocketDetailLocList());
+		model.addAttribute("docketDetailMeasumentList", inspection.getDocketDetailMeasumentList());
+		model.addAttribute("docketDetailAccessList", inspection.getDocketDetailAccessList());
+		model.addAttribute("docketDetlSurroundingPlotList", inspection.getDocketDetlSurroundingPlotList());
+		model.addAttribute("docketDetailLandTypeList", inspection.getDocketDetailLandTypeList());
+		model.addAttribute("docketDetailProposedWorkList", inspection.getDocketDetailProposedWorkList());
+		model.addAttribute("docketDetailWorkAsPerPlanList", inspection.getDocketDetailWorkAsPerPlanList());
+		model.addAttribute("docketDetailHgtAbuttRoadList", inspection.getDocketDetailHgtAbuttRoadList());
+		model.addAttribute("docketDetailAreaLoc", inspection.getDocketDetailAreaLoc());
+		model.addAttribute("docketDetailLengthOfCompWall", inspection.getDocketDetailLengthOfCompWall());
+		model.addAttribute("docketDetailNumberOfWell", inspection.getDocketDetailNumberOfWell());
+		model.addAttribute("docketDetailErectionTower", inspection.getDocketDetailErectionTower());
+		model.addAttribute("docketDetailShutter", inspection.getDocketDetailShutter());
+		model.addAttribute("docketDetailRoofConversion", inspection.getDocketDetailRoofConversion());
+		model.addAttribute("planScrutinyCheckList", checkListDetailService.findActiveCheckListByChecklistType("PLANSCRUTINY"));
+		model.addAttribute("planScrutinyValues", PlanScrutinyValues.values());
+		model.addAttribute(BpaConstants.BPA_APPLICATION, application);
+	}
 
 }

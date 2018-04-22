@@ -69,6 +69,11 @@
 			</div>
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-body custom-form ">
+					<jsp:include page="plan-scrutiny-checklist.jsp"></jsp:include>
+				</div>
+			</div>
+			<div class="panel panel-primary" data-collapsed="0">
+				<div class="panel-body custom-form ">
 					<jsp:include page="inspectiondetail-form.jsp"></jsp:include>
 				</div>
 			</div>

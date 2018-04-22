@@ -44,7 +44,11 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 
-
+<div class="panel-heading toggle-header custom_form_panel_heading">
+    <div class="panel-title">
+        <spring:message code="lbl.inspn.details" />
+    </div>
+</div>
 <c:choose>
 	<c:when test="${!docketDetailLocList.isEmpty()}">
 		<div class="panel-heading custom_form_panel_heading">
