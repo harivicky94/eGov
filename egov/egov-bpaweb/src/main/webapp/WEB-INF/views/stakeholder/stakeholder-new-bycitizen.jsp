@@ -54,7 +54,9 @@
            id="stakeHolderByCitizenform" cssClass="form-horizontal form-groups-bordered"
            enctype="multipart/form-data">
     <input type="hidden" name="isBusinessUser" id="isBusinessUser" value="${isBusinessUser}">
-    <ul class="nav nav-tabs" id="settingstab">
+	<input type="hidden" name="source" id="source"
+		value="${stakeHolder.source}">
+	<ul class="nav nav-tabs" id="settingstab">
         <li class="active"><a data-toggle="tab" href="#applicant-info"
                               data-tabidx=0><spring:message code='lbl.applicant.info'/></a></li>
         <li><a data-toggle="tab" href="#checklist-info" data-tabidx=1><spring:message code='title.documentdetail'/></a>

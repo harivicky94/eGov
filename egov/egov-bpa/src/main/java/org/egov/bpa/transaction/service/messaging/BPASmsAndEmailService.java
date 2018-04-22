@@ -109,6 +109,12 @@ public class BPASmsAndEmailService {
     private static final String MSG_KEY_SMS_CANCELL_APPLN = "msg.bpa.cancel.appln.sms";
     private static final String SUBJECT_KEY_EMAIL_CANCELL_APPLN = "msg.bpa.cancel.appln.email.subject";
     private static final String BODY_KEY_EMAIL_CANCELL_APPLN = "msg.bpa.cancel.appln.email.body";
+    private static final String SMS_STK_CTZ = "msg.newstakeholder.sms.citizen";
+    private static final String EMLB_STK_CTZ = "msg.newstakeholder.email.body.citizen";
+    private static final String EMLS_STK_CTZ = "msg.newstakeholder.email.subject.citizen";
+    private static final String SMS_STK_RJCT = "msg.stakeholder.rejection.sms";
+    private static final String EMLB_STK_RJCT = "msg.stakeholder.rejection.email.body";
+    private static final String EMLS_STK_RJCT = "msg.stakeholder.rejection.email.subject";
 
     @Autowired
     private NotificationService notificationService;
@@ -124,19 +130,55 @@ public class BPASmsAndEmailService {
         return ApplicationThreadLocals.getMunicipalityName();
     }
 
-    public void sendSMSForStakeHolder(final StakeHolder stakeHolder) {
-        String msgKey = MSG_KEY_SMS_STAKEHOLDER_NEW;
+    public void sendSMSForStakeHolder(final StakeHolder stakeHolder, Boolean isCitizenCrtn) {
+        String msgKey;
+        if (isCitizenCrtn) {
+            msgKey = SMS_STK_CTZ;
+        } else {
+            msgKey = MSG_KEY_SMS_STAKEHOLDER_NEW;
+        }
         if (isSmsEnabled() && stakeHolder.getMobileNumber() != null) {
-            String message = buildMessageDetails(stakeHolder, msgKey);
+            String message = buildMessageDetails(stakeHolder, msgKey, isCitizenCrtn);
+            notificationService.sendSMS(stakeHolder.getMobileNumber(), message);
+        }
+    }
+    
+    public void sendSMSToStkHldrForRejection(final StakeHolder stakeHolder) {
+        String msgKey = SMS_STK_RJCT;
+        if (isSmsEnabled() && stakeHolder.getMobileNumber() != null) {
+            String message = buildMessageDtlsFrRejection(stakeHolder, msgKey);
             notificationService.sendSMS(stakeHolder.getMobileNumber(), message);
         }
     }
 
-    public void sendEmailForStakeHolder(final StakeHolder stakeHolder) {
-        String msgKeyMail = BODY_KEY_EMAIL_STAKEHOLDER_NEW;
-        String msgKeyMailSubject = SUBJECT_KEY_EMAIL_STAKEHOLDER_NEW;
+    private String buildMessageDtlsFrRejection(StakeHolder stakeHolder, String msgKey) {
+        return bpaMessageSource.getMessage(msgKey, new String[] { stakeHolder.getName(),
+                stakeHolder.getStakeHolderType().getStakeHolderTypeVal(), stakeHolder.getComments(), getMunicipalityName() },
+                null);
+    }
+    
+    public void sendEmailToStkHldrForRejection(StakeHolder stakeHolder) {
+        String msgKeyMail = EMLB_STK_RJCT;
+        String msgKeyMailSubject = EMLS_STK_RJCT;
         if (isEmailEnabled() && stakeHolder.getEmailId() != null) {
-            final String message = buildMessageDetails(stakeHolder, msgKeyMail);
+            final String message = buildMessageDtlsFrRejection(stakeHolder, msgKeyMail);
+            final String subject = bpaMessageSource.getMessage(msgKeyMailSubject, null, null);
+            notificationService.sendEmail(stakeHolder.getEmailId(), subject, message);
+        }
+    }
+
+    public void sendEmailForStakeHolder(final StakeHolder stakeHolder, Boolean isCitizen) {
+        String msgKeyMail;
+        String msgKeyMailSubject;
+        if (isCitizen) {
+            msgKeyMail = EMLB_STK_CTZ;
+            msgKeyMailSubject = EMLS_STK_CTZ;
+        } else {
+            msgKeyMail = BODY_KEY_EMAIL_STAKEHOLDER_NEW;
+            msgKeyMailSubject = SUBJECT_KEY_EMAIL_STAKEHOLDER_NEW;
+        }
+        if (isEmailEnabled() && stakeHolder.getEmailId() != null) {
+            final String message = buildMessageDetails(stakeHolder, msgKeyMail,isCitizen);
             final String subject = bpaMessageSource.getMessage(msgKeyMailSubject, null, null);
             notificationService.sendEmail(stakeHolder.getEmailId(), subject, message);
         }
@@ -348,9 +390,16 @@ public class BPASmsAndEmailService {
         return smsMsg;
     }
 
-    private String buildMessageDetails(final StakeHolder stakeHolder, String msgKeyMail) {
+    private String buildMessageDetails(final StakeHolder stakeHolder, String msgKeyMail, Boolean isCitizen) {
+        if(isCitizen){
+            return bpaMessageSource.getMessage(msgKeyMail, new String[] { stakeHolder.getName(),stakeHolder.getStakeHolderType().getStakeHolderTypeVal(), getMunicipalityName() }, null);
+        }
+        else
+            
+        {
         return bpaMessageSource.getMessage(msgKeyMail, new String[] { stakeHolder.getName(), stakeHolder.getCode(),
                 stakeHolder.getUsername(), stakeHolder.getMobileNumber(), getMunicipalityName() }, null);
+        }
     }
 
     public Boolean isSmsEnabled() {
@@ -468,4 +517,6 @@ public class BPASmsAndEmailService {
                 .getConfigValuesByModuleAndKey(APPLICATION_MODULE_TYPE, "HELPLINENUMBER");
         return !appConfigValueList.isEmpty() ? appConfigValueList.get(0).getValue() : "";
     }
+
+  
 }

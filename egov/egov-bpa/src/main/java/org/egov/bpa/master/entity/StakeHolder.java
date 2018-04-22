@@ -38,6 +38,7 @@ import javax.validation.constraints.NotNull;
 
 import org.egov.bpa.transaction.entity.StakeHolderDocument;
 import org.egov.bpa.transaction.entity.enums.StakeHolderType;
+import org.egov.commons.entity.Source;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.CorrespondenceAddress;
 import org.egov.infra.persistence.entity.PermanentAddress;
@@ -48,7 +49,7 @@ import org.hibernate.validator.constraints.Length;
 @Entity
 @Table(name = "EGBPA_MSTR_STAKEHOLDER")
 @Unique(fields = { "code", "coaEnrolmentNumber", "tinNumber" }, enableDfltMsg = true)
-public class StakeHolder extends User {
+public class StakeHolder  extends User {
 
     private static final long serialVersionUID = 3078684328383202788L;
     @Enumerated(EnumType.ORDINAL)
@@ -65,6 +66,8 @@ public class StakeHolder extends User {
     @NotNull
     @Temporal(value = TemporalType.DATE)
     private Date buildingLicenceIssueDate;
+    @Enumerated(EnumType.ORDINAL)
+    private Source source;
     @Temporal(value = TemporalType.DATE)
     private Date buildingLicenceExpiryDate;
     @Length(min = 1, max = 64)
@@ -82,7 +85,7 @@ public class StakeHolder extends User {
     private String organizationMobNo;
     private Boolean isOnbehalfOfOrganization;
     @NotNull
-    private Boolean isActive;
+    private Boolean isActive = false;
     @Length(max = 11)
     private String tinNumber;
     @Length(max = 50)
@@ -95,6 +98,15 @@ public class StakeHolder extends User {
     private transient PermanentAddress permanentAddress = new PermanentAddress();
     private transient List<CheckListDetail> checkListDocuments = new ArrayList<>(0);
     private transient String activationCode;
+    private String comments;
+
+    public String getComments() {
+        return comments;
+    }
+
+    public void setComments(String comments) {
+        this.comments = comments;
+    }
 
     public StakeHolder() {
         setType(UserType.BUSINESS);
@@ -276,4 +288,12 @@ public class StakeHolder extends User {
     public void setActivationCode(String activationCode) {
         this.activationCode = activationCode;
     }
+    public Source getSource() {
+        return source;
+    }
+
+    public void setSource(Source source) {
+        this.source = source;
+    }
+
 }

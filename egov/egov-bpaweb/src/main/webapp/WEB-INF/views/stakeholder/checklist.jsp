@@ -79,6 +79,9 @@
 				id="stakeHolderDocument[${status.index}].checkListDetail.id"
 				path="stakeHolderDocument[${status.index}].checkListDetail.id"
 				value="${doc.checkListDetail.id}" />
+					<form:hidden id="stakeHolderDocument${status.index}.checkListDetail.isMandatory"
+						path="stakeHolderDocument[${status.index}].checkListDetail.isMandatory"
+						value="${doc.checkListDetail.isMandatory}" />
 			<div class="col-sm-4 add-margin ">
 				<c:out value="${doc.checkListDetail.description}"></c:out>
 				<c:if test="${doc.checkListDetail.isMandatory}">
@@ -88,7 +91,7 @@
 			<div class="col-sm-8 add-margin">
 					<div class="files-upload-container"
 					    data-file-max-size="2"
-					    <c:if test="${doc.checkListDetail.isMandatory eq true && fn:length(docs.getSupportDocs()) eq 0}">required</c:if>
+					    <c:if test="${doc.checkListDetail.isMandatory eq true && fn:length(doc.getSupportDocs()) eq 0}">required</c:if>
 						data-allowed-extenstion="doc,docx,xls,xlsx,rtf,pdf,txt,zip,jpeg,jpg,png,gif,tiff">
 						<div class="files-viewer">
 

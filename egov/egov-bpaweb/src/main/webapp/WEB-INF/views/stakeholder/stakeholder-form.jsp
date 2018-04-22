@@ -140,6 +140,7 @@
 		</form:select>
 		<form:errors path="stakeHolderType" cssClass="error-msg" />
 	</div>
+	<c:if test="${isEmployee}">
 <label class="col-sm-2 control-label text-right"><spring:message
 			code="lbl.status" /></label>
 	<div class="col-sm-3 add-margin">
@@ -147,6 +148,7 @@
 		<form:radiobutton path="isActive" value="false" /> <spring:message code="lbl.in.active" />
 		<form:errors path="isActive" cssClass="error-msg" />
 	</div>	
+	</c:if>
 </div>
 
 <div class="form-group">

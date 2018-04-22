@@ -67,7 +67,7 @@ $(document).ready( function () {
     });
 
     function validateForm(validator) {
-        if ($('form').valid()) {
+        if ($('form').valid() && validateUploadFilesMandatory()) {
             return true;
         } else {
             $.each(validator.invalidElements(), function(index, elem){
