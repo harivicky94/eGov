@@ -116,8 +116,7 @@ public class InspectionService {
 		if (inspection.getInspectionDate() == null)
 			inspection.setInspectionDate(new Date());
 		buildInspectionFiles(inspection);
-		inspection.getPlanScrutinyChecklistTemp().forEach(planScrutiny -> planScrutiny.setInspection(inspection));
-		inspection.setPlanScrutinyChecklist(inspection.getPlanScrutinyChecklistTemp());
+		inspection.getPlanScrutinyChecklist().forEach(planScrutiny -> planScrutiny.setInspection(inspection));
 		inspection.setApplication(application);
 		inspection.getDocket().get(0).setInspection(inspection);
 		buildDocketDetails(inspection.getDocket().get(0));

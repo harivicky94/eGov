@@ -218,7 +218,6 @@ public class Inspection extends AbstractAuditable {
 	private transient List<String> deletedDocketDetailsFilestoreIds;
 	private transient MultipartFile[] files;
 	private transient Map<Long, String> encodedImages = new HashMap<>();
-	private transient List<PlanScrutinyChecklist> planScrutinyChecklistTemp = new ArrayList<>(0);
 
 	@Override
 	public Long getId() {
@@ -836,13 +835,5 @@ public class Inspection extends AbstractAuditable {
 
 	public void setPlanScrutinyChecklist(List<PlanScrutinyChecklist> planScrutinyChecklist) {
 		this.planScrutinyChecklist = planScrutinyChecklist;
-	}
-
-	public List<PlanScrutinyChecklist> getPlanScrutinyChecklistTemp() {
-		return planScrutinyChecklistTemp;
-	}
-
-	public void setPlanScrutinyChecklistTemp(List<PlanScrutinyChecklist> planScrutinyChecklistTemp) {
-		this.planScrutinyChecklistTemp = planScrutinyChecklistTemp;
 	}
 }

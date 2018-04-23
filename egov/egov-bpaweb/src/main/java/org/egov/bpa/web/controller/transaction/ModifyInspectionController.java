@@ -71,7 +71,6 @@ public class ModifyInspectionController extends BpaGenericApplicationController 
 		final List<Inspection> inspections = inspectionService.findByBpaApplicationOrderByIdAsc(applicationBpaService.findByApplicationNumber(applicationNumber));
 		if (!inspections.isEmpty())
 			inspection = inspections.get(0);
-		inspection.setPlanScrutinyChecklistTemp(inspection.getPlanScrutinyChecklist());
 		return inspection;
 	}
 
