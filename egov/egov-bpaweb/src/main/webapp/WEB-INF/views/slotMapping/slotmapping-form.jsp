@@ -98,9 +98,9 @@
 								code="lbl.slotmapping.numberofapplications" /> <span
 							class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
-							<form:input type="text" cssClass="form-control"
+							<form:input type="text" cssClass="form-control inline-elem patternvalidation"
 								path="maxSlotsAllowed" id="maxSlotsAllowed" maxlength="2"
-								required="true" />
+								required="true" data-pattern="number" />
 							<form:errors path="maxSlotsAllowed" cssClass="error-msg" />
 						</div>
 						<label
@@ -109,7 +109,7 @@
 							class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin ">
 							<form:input type="text"
-								cssClass="form-control maxRescheduledSlotsAllowed"
+								cssClass="form-control inline-elem patternvalidation maxRescheduledSlotsAllowed" data-pattern="number"
 								path="maxRescheduledSlotsAllowed" required="true"
 								id="maxRescheduledSlotsAllowed" maxlength="2" />
 							<form:errors path="maxRescheduledSlotsAllowed"

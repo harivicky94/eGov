@@ -68,7 +68,7 @@
 						<spring:message code="lbl.slotmapping.applicationtype" />
 					</div>
 					<div class="col-sm-3 add-margin view-content">
-						<c:out value="${slotMapping.applType}" default="N/A"></c:out>
+						<c:out value="${slotMapping.applType.applicationTypeVal}" default="N/A"></c:out>
 					</div>
 				</div>
 

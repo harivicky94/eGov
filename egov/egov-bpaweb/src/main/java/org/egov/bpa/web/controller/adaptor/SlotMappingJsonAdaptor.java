@@ -25,7 +25,7 @@ public class SlotMappingJsonAdaptor implements JsonSerializer<SlotMapping> {
 			jsonObject.addProperty("electionWard",
                     slotmapping.getElectionWard() != null ? defaultString(slotmapping.getElectionWard().getName(), "N/A") : "");
 			jsonObject.addProperty("zone", defaultString(slotmapping.getZone().getName()));
-			jsonObject.addProperty("applType", defaultString(slotmapping.getApplType().toString()));
+			jsonObject.addProperty("applType", defaultString(slotmapping.getApplType().getApplicationTypeVal()));
 			jsonObject.addProperty("day", slotmapping.getDay() != null
 					? WorkingDays.getEnumNameForValue(slotmapping.getDay()).toString() : "");
 			jsonObject.addProperty("id", slotmapping.getId());
