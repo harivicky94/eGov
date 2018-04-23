@@ -65,6 +65,13 @@ $(document).ready( function () {
             });
         }
     });
+    
+	$('#buildingLicenceExpiryDate').on('changeDate', function() {
+		var expirydate = $(this).val();
+		if(expirydate <= $('#buildingLicenceIssueDate').val()){
+			bootbox.alert("Please make sure that issue date is less than expiry date.");
+		}
+		});
 
     function validateForm(validator) {
         if ($('form').valid() && validateUploadFilesMandatory()) {

@@ -68,6 +68,13 @@ $(document).ready( function () {
 		}
 	});
 	
+	$('#buildingLicenceExpiryDate').on('changeDate', function() {
+	var expirydate = $(this).val();
+	if(expirydate <= $('#buildingLicenceIssueDate').val()){
+		bootbox.alert("Please make sure that issue date is less than expiry date.");
+	}
+	});
+	
 	//validate form while toggle between multiple tab
 	jQuery('form').validate({
 		ignore: ".ignore",
@@ -139,3 +146,4 @@ if(stakeHolderId){
 	$('#emailId').prop("disabled", true);
 	$('#mobileNumber').prop("disabled", true);
 }
+

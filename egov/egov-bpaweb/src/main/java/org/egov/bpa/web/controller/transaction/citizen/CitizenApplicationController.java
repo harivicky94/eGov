@@ -114,6 +114,8 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
 
 	private static final String BPAAPPLICATION_CITIZEN = "citizen_suceess";
 
+        private static final String COMMON_ERROR = "common-error";
+
 	@Autowired
 	private ServiceTypeService serviceTypeService;
 	@Autowired
@@ -124,6 +126,7 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
 	private PositionMasterService positionMasterService;
 	@Autowired
 	private BuildingFloorDetailsService buildingFloorDetailsService;
+
 
 	@RequestMapping(value = "/newconstruction-form", method = GET)
 	public String showNewApplicationForm(@ModelAttribute final BpaApplication bpaApplication, final Model model,
@@ -138,6 +141,15 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
 	}
 
 	private String loadNewForm(final BpaApplication bpaApplication, final Model model, String serviceCode) {
+	        User user = securityUtils.getCurrentUser();
+	        if(user != null){
+	           StakeHolder stkHldr = stakeHolderService.findById(user.getId());
+	           if(stkHldr != null && stkHldr.getBuildingLicenceExpiryDate().before(stakeHolderService.resetFromDateTimeStamp(new Date()))){
+	                model.addAttribute(MESSAGE,
+	                        messageSource.getMessage("msg.stakeholder.expiry.reached", new String[] {user.getName()}, null));
+	                return COMMON_ERROR;
+	           }
+	        }
 		prepareFormData(model);
 		bpaApplication.setApplicationDate(new Date());
 		prepareCommonModelAttribute(model, bpaApplication);
