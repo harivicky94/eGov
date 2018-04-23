@@ -63,9 +63,9 @@ public class DcrConstants {
     public static final String WASTEDISPOSAL_NOTDEFINED_VALUE = "Waste disposal not defined in the plan.";
     public static final String LESSTHANOREQUAL = "Less than or equal to ";
     public static final String IN_METER = "(MTR)";
-    public static final String FILESTORE_MODULECODE = "EDCR";
+    public static final String FILESTORE_MODULECODE = "Digit DCR";
     public static final String SEQ_ECDR_APPLICATIONNO = "SEQ_ECDR_APPLICATIONNO";
-    public static final String APPLICATION_MODULE_TYPE = "EDCR";
+    public static final String APPLICATION_MODULE_TYPE = "Digit DCR";
     // ----- names
 
     public static Integer FLOOR_COLOUR_CODE = 10;
@@ -108,7 +108,7 @@ public class DcrConstants {
     public static final String HABITABLE_ROOM = "Habitable Room";
 
     public static final String ERROR_CODE_PLAN_NOT_EXIST = "EDCR - 01";
-    public static final String ERROR_MSG_PLAN_NOT_EXIST = "Dear applicant with entered E-DCR number there is no application detail found, please make sure you are using approved plan E-DCR number.";
+    public static final String ERROR_MSG_PLAN_NOT_EXIST = "Dear applicant with entered Building Plan Scrutiny number there is no application detail found, please make sure you are using approved plan Building Plan Scrutiny number.";
     public static final String HORIZONTAL_ELECTRICLINE_DISTANCE_NOC = "NOC from Chief Electrical Inspector or an officer authorized by him shall be obtained. ";
     public static final String NOTIFIED_ROAD = "Notified road ";
     public static final String NONNOTIFIED_ROAD = "Non Notified road ";

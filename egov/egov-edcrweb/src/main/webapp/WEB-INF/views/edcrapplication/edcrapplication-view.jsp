@@ -9,7 +9,7 @@
     <div class="col-md-12">
         <div class="panel panel-primary" data-collapsed="0">
             <div class="panel-heading">
-                <div class="panel-title">E-DCR Application Details</div>
+                <div class="panel-title"><spring:message code="lbl.dcr.appln.details"/></div>
             </div>
             <div class="panel-body custom">
                 <div class="row add-border">
