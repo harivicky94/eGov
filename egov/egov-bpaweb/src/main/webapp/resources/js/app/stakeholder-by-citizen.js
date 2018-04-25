@@ -66,12 +66,22 @@ $(document).ready( function () {
         }
     });
     
-	$('#buildingLicenceExpiryDate').on('changeDate', function() {
-		var expirydate = $(this).val();
-		if(expirydate <= $('#buildingLicenceIssueDate').val()){
-			bootbox.alert("Please make sure that issue date is less than expiry date.");
-		}
-		});
+    $('#buildingLicenceExpiryDate').on('changeDate', function() {
+    if($('#buildingLicenceExpiryDate') && $('#buildingLicenceIssueDate')) {
+    var expirydate = $(this).val();
+    var expiryDateTime = moment(expirydate,["DD/MM/YYYY"]);
+
+	var issuedate = $('#buildingLicenceIssueDate').val();
+	var issueDateTime = moment(issuedate,["DD/MM/YYYY"]);
+
+	if(expiryDateTime <= issueDateTime){
+	bootbox.alert("Please make sure that issue date is less than expiry date.");
+	}
+	if(expiryDateTime <= moment(new Date(),[ "DD/MM/YYYY" ])){
+	bootbox.alert("Please make sure that the expiry date is greater than today's date.");
+	}
+	}
+    });
 
     function validateForm(validator) {
         if ($('form').valid() && validateUploadFilesMandatory()) {
