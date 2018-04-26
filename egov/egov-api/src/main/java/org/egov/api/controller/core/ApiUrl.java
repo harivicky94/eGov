@@ -136,4 +136,11 @@ public class ApiUrl {
 	public final static String EMPLOYEE_GET_ROUTED_COMPLAINT = "/employee/routedcomplaints/{page}/{pageSize}";
 	public final static String EMPLOYEE_GET_ROUTED_COMPLAINT_COUNT = "/employee/routedcomplaintcount";
 
+	
+	/**
+	 * PushBox URLs
+	 */
+	
+	public final static String UPDATE_USER_TOKEN = "/pushbox/updateToken";
+	public final static String SEND_NOTIFICATIONS = "/pushbox/sendNotifications";
 }
