@@ -296,6 +296,8 @@
         <module>egov-mrsweb</module>
         <module>egov-services</module>
         <module>egov-pushbox</module>
+        <module>egov-eventnotification</module>
+        <module>egov-eventnotificationweb</module>
     </modules>
 
     <dependencyManagement>
