@@ -117,7 +117,7 @@
 					</div>
 					<div class="col-md-6 side-space">
 						<div class="col-md-12 community-card">
-							<a href="/bpa/stakeholder/createbycitizen" target="_blank">
+							<a href="#"  onclick="window.open('/bpa/stakeholder/createbycitizen','BL',config='height=800, width=1100, toolbar=no, menubar=no, scrollbars=yes, resizable=no,location=no, directories=no, status=no')">
 								<div class="rounded-circle"><i class="fa fa-user a"></i></div>&nbsp;
 								<div class="label-font">
 									<spring:message code="lbl.bldng.create.ac"/><br>
