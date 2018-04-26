@@ -29,23 +29,23 @@
  */
 package org.egov.bpa.master.repository;
 
-import java.util.List;
-
 import org.egov.bpa.master.entity.CheckListDetail;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface CheckListDetailRepository extends JpaRepository<CheckListDetail, Long> {
 
     CheckListDetail findByCode(String code);
 
-    @Query("from  CheckListDetail cd where cd.isActive = true AND cd.checkList.serviceType.id = :serviceTypeId AND cd.checkList.checklistType = :checklistType order by code  asc")
+    @Query("from  CheckListDetail cd where cd.isActive = true AND cd.checkList.serviceType.id = :serviceTypeId AND cd.checkList.checklistType = :checklistType order by cd.isMandatory desc, cd.description asc")
     List<CheckListDetail> findActiveCheckListByServiceType(@Param("serviceTypeId") Long serviceTypeId,
             @Param("checklistType") String checklistType);
 
-    @Query("from  CheckListDetail cd where cd.isActive = true AND  cd.checkList.checklistType = :checklistType")
+    @Query("from  CheckListDetail cd where cd.isActive = true AND  cd.checkList.checklistType = :checklistType order by cd.isMandatory desc, cd.description asc")
     List<CheckListDetail> findActiveCheckListByChecklistType(@Param("checklistType") String checklistType);
 }

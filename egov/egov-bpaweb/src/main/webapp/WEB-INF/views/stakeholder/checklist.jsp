@@ -90,7 +90,7 @@
 			</div>
 			<div class="col-sm-8 add-margin">
 					<div class="files-upload-container"
-					    data-file-max-size="2"
+					    data-file-max-size="5"
 					    <c:if test="${doc.checkListDetail.isMandatory eq true && fn:length(doc.getSupportDocs()) eq 0}">required</c:if>
 						data-allowed-extenstion="doc,docx,xls,xlsx,rtf,pdf,txt,zip,jpeg,jpg,png,gif,tiff">
 						<div class="files-viewer">

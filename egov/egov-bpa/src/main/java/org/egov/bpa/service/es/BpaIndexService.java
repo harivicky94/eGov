@@ -1,12 +1,5 @@
 package org.egov.bpa.service.es;
 
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import org.apache.commons.lang3.time.DateUtils;
 import org.egov.bpa.entity.es.BpaIndex;
 import org.egov.bpa.repository.es.BpaIndexRepository;
@@ -31,12 +24,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+
 @Service
 @Transactional(readOnly = true)
 public class BpaIndexService {
 
-    private static final String UPDATE_URL = "/bpa/application/update/%s";
-    private static final String MODULE_NAME = "BPA";
     private static final String APP_CONFIG_KEY = "SLAFORBPAAPPLICATION";
     private static final String GOVERNMENT_TYPE_GOV = "Government";
     private static final String GOVERNMENT_TYPE_QUASI_GOV = "Quasi Government";
@@ -228,7 +226,8 @@ public class BpaIndexService {
         if (applicationIndex != null && bpaApplication.getId() != null)
             buildApplicationIndexForUpdate(bpaApplication, user, applicationIndex);
         else {
-            List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(MODULE_NAME,
+            String viewUrl = "/bpa/application/view/%s";
+            List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(BpaConstants.APPLICATION_MODULE_TYPE,
                     APP_CONFIG_KEY);
             Date disposalDate = calculateDisposalDate(appConfigValue);
             applicationIndex = ApplicationIndex.builder().withModuleName(BpaConstants.APPL_INDEX_MODULE_NAME)
@@ -246,7 +245,7 @@ public class BpaIndexService {
                     .withMobileNumber(bpaApplication.getOwner().getUser().getMobileNumber())
                     .withAadharNumber(bpaApplication.getOwner().getUser().getAadhaarNumber() == null
                             ? EMPTY : bpaApplication.getOwner().getUser().getAadhaarNumber())
-                    .withUrl(String.format(UPDATE_URL, bpaApplication.getApplicationNumber()))
+                    .withUrl(String.format(viewUrl, bpaApplication.getApplicationNumber()))
                     .withClosed(ClosureStatus.NO)
                     .withSla(appConfigValue.get(0).getValue() == null ? 0 : Integer.valueOf(appConfigValue.get(0).getValue()))
                     .withDisposalDate(disposalDate)
@@ -260,7 +259,7 @@ public class BpaIndexService {
     private void buildApplicationIndexForUpdate(final BpaApplication bpaApplication, User user,
             ApplicationIndex applicationIndex) {
         applicationIndex.setStatus(bpaApplication.getStatus().getCode());
-        applicationIndex.setOwnerName(user != null ? user.getUsername() + "::" + user.getName() : "");
+        applicationIndex.setOwnerName(user == null ? "" : user.getUsername() + "::" + user.getName());
         if (bpaApplication.getStatus().getCode().equals(BpaConstants.APPLICATION_STATUS_CANCELLED)) {
             applicationIndex.setApproved(ApprovalStatus.REJECTED);
             applicationIndex.setClosed(ClosureStatus.YES);
@@ -276,29 +275,29 @@ public class BpaIndexService {
     }
 
     private User getCurrentUser(final BpaApplication bpaApplication) {
-        List<Assignment> asignList = null;
-        Assignment assignment = null;
         User user = null;
-        if (bpaApplication.getState() != null
-                && bpaApplication.getState().getOwnerPosition() != null) {
-            assignment = assignmentService.getPrimaryAssignmentForPositionAndDate(bpaApplication.getState()
-                    .getOwnerPosition().getId(), new Date());
+        if (bpaApplication.getState() == null || bpaApplication.getState().getOwnerPosition() == null) {
+            user = securityUtils.getCurrentUser();
+        } else {
+            Assignment assignment = assignmentService.getPrimaryAssignmentForPositionAndDate(bpaApplication.getState()
+                                                                                                           .getOwnerPosition().getId(), new Date());
+            List<Assignment> asignList;
             if (assignment != null) {
                 asignList = new ArrayList<>();
                 asignList.add(assignment);
             } else
                 asignList = assignmentService.getAssignmentsForPosition(bpaApplication.getState()
-                        .getOwnerPosition().getId(), new Date());
+                                                                                      .getOwnerPosition().getId(), new Date());
             if (!asignList.isEmpty())
                 user = userService.getUserById(asignList.get(0).getEmployee().getId());
-        } else
-            user = securityUtils.getCurrentUser();
+        }
+
         return user;
     }
 
-    public Date calculateDisposalDate(List<AppConfigValues> appConfigValue) {
+    private Date calculateDisposalDate(List<AppConfigValues> appConfigValue) {
         return DateUtils.addDays(new Date(),
-                appConfigValue.get(0) != null && appConfigValue.get(0).getValue() != null
-                        ? Integer.valueOf(appConfigValue.get(0).getValue()) : 0);
+                appConfigValue.get(0) == null || appConfigValue.get(0).getValue() == null
+                        ? 0 : Integer.valueOf(appConfigValue.get(0).getValue()));
     }
 }

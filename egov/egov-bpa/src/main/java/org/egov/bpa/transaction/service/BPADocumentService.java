@@ -39,55 +39,43 @@
 
 package org.egov.bpa.transaction.service;
 
-import static org.egov.bpa.utils.BpaConstants.STAKE_HOLDER_CHECK_LIST_TYPE;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.egov.bpa.master.entity.CheckListDetail;
+import org.egov.bpa.master.service.CheckListDetailService;
+import org.egov.bpa.transaction.entity.StakeHolderDocument;
+import org.hibernate.Session;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.ArrayList;
+import java.util.List;
 
-import org.egov.bpa.master.entity.CheckListDetail;
-import org.egov.bpa.transaction.entity.ApplicationDocument;
-import org.egov.bpa.transaction.entity.StakeHolderDocument;
-import org.hibernate.Criteria;
-import org.hibernate.Session;
-import org.hibernate.criterion.Restrictions;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import static org.egov.bpa.utils.BpaConstants.STAKE_HOLDER_CHECK_LIST_TYPE;
 
 @Service
 @Transactional(readOnly = true)
 public class BPADocumentService {
-    @PersistenceContext
-    private EntityManager entityManager;
 
-    public Session getCurrentSession() {
-        return entityManager.unwrap(Session.class);
-    }
+	@PersistenceContext
+	private EntityManager entityManager;
+	@Autowired
+	private CheckListDetailService checkListDetailService;
 
-    @SuppressWarnings("unchecked")
-    public List<StakeHolderDocument> getStakeHolderDocuments() {
-        List<StakeHolderDocument> stakeHolderDocument = new ArrayList<>();
-        final Criteria criteria = getCurrentSession().createCriteria(
-                CheckListDetail.class, "checklistdetails");
-        criteria.createAlias("checklistdetails.checkList", "checklist")
-                .add(Restrictions.eq("checklist.checklistType", STAKE_HOLDER_CHECK_LIST_TYPE));
-        List<CheckListDetail> checkDet = criteria.list();
-        for (CheckListDetail stkeDoc : checkDet) {
-            StakeHolderDocument stakeHolder = new StakeHolderDocument();
-            stakeHolder.setCheckListDetail(stkeDoc);
-            stakeHolderDocument.add(stakeHolder);
-        }
-        return stakeHolderDocument;
-    }
+	public Session getCurrentSession() {
+		return entityManager.unwrap(Session.class);
+	}
 
-    @SuppressWarnings("unchecked")
-    public List<ApplicationDocument> getApplicationDocuments(Long applicationId) {
-        final Criteria criteria = getCurrentSession().createCriteria(
-                ApplicationDocument.class, "appdoc")
-                .createAlias("appdoc.application", "application");
-        criteria.add(Restrictions.eq("application.id", applicationId));
-        return criteria.list();
-    }
+	public List<StakeHolderDocument> getStakeHolderDocuments() {
+		List<StakeHolderDocument> stakeHolderDocument = new ArrayList<>();
+		List<CheckListDetail> checkDet = checkListDetailService.findActiveCheckListByChecklistType(STAKE_HOLDER_CHECK_LIST_TYPE);
+		for (CheckListDetail stkeDoc : checkDet) {
+			StakeHolderDocument stakeHolder = new StakeHolderDocument();
+			stakeHolder.setCheckListDetail(stkeDoc);
+			stakeHolderDocument.add(stakeHolder);
+		}
+		return stakeHolderDocument;
+	}
+
 }
