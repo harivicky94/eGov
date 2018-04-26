@@ -74,7 +74,7 @@ $(document)
 												"data" : getFormData($('form')),
 												"dataSrc": function ( json ) {
 													json.data.forEach(function(item){
-														item["rowTotal"] = item.zone1 + item.zone2 + item.zone3 + item.zone4;
+														item["rowTotal"] = item.zone1N + item.zone1S + item.zone2 + item.zone3 + item.zone4;
 													});
 									                return json.data;
 									            },   
@@ -120,9 +120,9 @@ $(document)
 														"sClass" : "text-left"
 													},
 													{
-														"data" : "zone1",
+														"data" : "zone1N",
 														 render : function(data, type, row, meta) {
-															return parseInt(row.zone1)!==0? '<a onclick="openPopup(\'/bpa/reports/servicewise-statusreport/view?'
+															return parseInt(row.zone1N)!==0? '<a onclick="openPopup(\'/bpa/reports/servicewise-statusreport/view?'
 																	+ 'serviceType='+row.serviceType
 																	+ '&'
 																	+ 'applicantName='+applicantName
@@ -137,7 +137,7 @@ $(document)
 																	+ '&'
 																	+ 'electionWard='+electionWardId
 																	+ '&'
-																	+ 'zone=ZONE-1 (MAIN OFFICE)'
+																	+ 'zone=ZONE-1 NORTH (MAIN OFFICE)'
 																	+ '&'
 																	+ 'zoneId='+zoneId
 																	+ '&'
@@ -145,10 +145,40 @@ $(document)
 																	+ '&'
 																	+ 'revenueWard='+wardId
 																	+ '\')" href="javascript:void(0);">'
-																	+ row.zone1 + '</a>':row.zone1;
+																	+ row.zone1N + '</a>':row.zone1N;
 														},
 														"sClass" : "text-center"
 													},
+                                                {
+                                                    "data" : "zone1S",
+                                                    render : function(data, type, row, meta) {
+                                                        return parseInt(row.zone1S)!==0? '<a onclick="openPopup(\'/bpa/reports/servicewise-statusreport/view?'
+                                                            + 'serviceType='+row.serviceType
+                                                            + '&'
+                                                            + 'applicantName='+applicantName
+                                                            + '&'
+                                                            + 'applicationNumber='+applicationNumber
+                                                            + '&'
+                                                            + 'fromDate='+from
+                                                            + '&'
+                                                            + 'toDate='+to
+                                                            + '&'
+                                                            + 'ward='+wardId
+                                                            + '&'
+                                                            + 'electionWard='+electionWardId
+                                                            + '&'
+                                                            + 'zone=ZONE-1 SOUTH (MAIN OFFICE)'
+                                                            + '&'
+                                                            + 'zoneId='+zoneId
+                                                            + '&'
+                                                            + 'status='+statusId
+                                                            + '&'
+                                                            + 'revenueWard='+wardId
+                                                            + '\')" href="javascript:void(0);">'
+                                                            + row.zone1S + '</a>':row.zone1S;
+                                                    },
+                                                    "sClass" : "text-center"
+                                                },
 													{
 														"data" : "zone2",
 														render : function(data, type, row, meta) {
@@ -257,11 +287,12 @@ $(document)
 															updateTotalFooter(4, api);
 															updateTotalFooter(5, api);
 															updateTotalFooter(6, api);
+                                                            updateTotalFooter(7, api);
 															
 															}
 													},
 													"aoColumnDefs" : [ {
-														"aTargets" : [2,3,4,5,6],
+														"aTargets" : [2,3,4,5,6,7],
 														"mRender" : function(data, type, full) {
 															return formatNumberInr(data);    
 														}

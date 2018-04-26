@@ -68,7 +68,8 @@
 				<tr>
 					<th>Sl.No.</th>
 					<th>Service Type</th>
-					<th>ZONE-1</th>
+					<th>ZONE-1 NORTH</th>
+					<th>ZONE-1 SOUTH</th>
 					<th>ZONE-2</th>
 					<th>ZONE-3</th>
 					<th>ZONE-4</th>
@@ -79,6 +80,7 @@
 				<tr>
 						<td></td>
 						<td>Total</td>
+					    <td></td>
 						<td></td>
 						<td></td>
 						<td></td>

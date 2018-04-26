@@ -39,21 +39,38 @@
  */
 package org.egov.bpa.transaction.service.report;
 
-import org.egov.bpa.transaction.entity.*;
-import org.egov.bpa.transaction.entity.dto.*;
-import org.egov.bpa.transaction.service.*;
-import org.hibernate.*;
-import org.hibernate.criterion.*;
-import org.springframework.beans.factory.annotation.*;
-import org.springframework.stereotype.*;
-import org.springframework.transaction.annotation.*;
+import org.egov.bpa.transaction.entity.SlotDetail;
+import org.egov.bpa.transaction.entity.dto.SearchBpaApplicationForm;
+import org.egov.bpa.transaction.entity.dto.SearchBpaApplicationReport;
+import org.egov.bpa.transaction.entity.dto.SlotDetailsHelper;
+import org.egov.bpa.transaction.service.SearchBpaApplicationService;
+import org.hibernate.Criteria;
+import org.hibernate.Session;
+import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Restrictions;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.*;
-import java.util.*;
-import java.util.Map.*;
-import java.util.stream.*;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
-import static org.egov.bpa.utils.BpaConstants.*;
+import static org.egov.bpa.utils.BpaConstants.ADDING_OF_EXTENSION;
+import static org.egov.bpa.utils.BpaConstants.ALTERATION;
+import static org.egov.bpa.utils.BpaConstants.AMENITIES;
+import static org.egov.bpa.utils.BpaConstants.CHANGE_IN_OCCUPANCY;
+import static org.egov.bpa.utils.BpaConstants.DEMOLITION;
+import static org.egov.bpa.utils.BpaConstants.DIVISION_OF_PLOT;
+import static org.egov.bpa.utils.BpaConstants.NEW_CONSTRUCTION;
+import static org.egov.bpa.utils.BpaConstants.PERM_FOR_HUT_OR_SHED;
+import static org.egov.bpa.utils.BpaConstants.POLE_STRUCTURES;
+import static org.egov.bpa.utils.BpaConstants.RECONSTRUCTION;
+import static org.egov.bpa.utils.BpaConstants.TOWER_CONSTRUCTION;
 
 @Service
 @Transactional(readOnly = true)
@@ -139,7 +156,8 @@ public class BpaReportsService {
                 Collectors.groupingBy(SearchBpaApplicationForm::getServiceType,
                         Collectors.groupingBy(SearchBpaApplicationForm::getZone, Collectors.counting())));
         for (final Entry<String, Map<String, Long>> statusCountResMap : resultMap.entrySet()) {
-            Long zone1 = 0l;
+            Long zone1N = 0l;
+            Long zone1S = 0l;
             Long zone2 = 0l;
             Long zone3 = 0l;
             Long zone4 = 0l;
@@ -147,9 +165,12 @@ public class BpaReportsService {
             bpaApplicationReport.setServiceType(statusCountResMap.getKey());
             for (final Entry<String, Long> statusCountMap : statusCountResMap.getValue().entrySet()) {
 
-                if ("ZONE-1 (MAIN OFFICE)".equalsIgnoreCase(statusCountMap.getKey())) {
-                    zone1 = zone1 + statusCountMap.getValue();
-                    bpaApplicationReport.setZone1(zone1);
+                if ("ZONE-1 NORTH (MAIN OFFICE)".equalsIgnoreCase(statusCountMap.getKey())) {
+                    zone1N = zone1N + statusCountMap.getValue();
+                    bpaApplicationReport.setZone1N(zone1N);
+                } else if ("ZONE-1 SOUTH (MAIN OFFICE)".equalsIgnoreCase(statusCountMap.getKey())) {
+                    zone1S = zone1S + statusCountMap.getValue();
+                    bpaApplicationReport.setZone1S(zone1S);
                 } else if ("ZONE-2 (ELATHUR ZONAL OFFICE)".equalsIgnoreCase(statusCountMap.getKey())) {
                     zone2 = zone2 + statusCountMap.getValue();
                     bpaApplicationReport.setZone2(zone2);
