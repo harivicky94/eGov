@@ -78,9 +78,12 @@ $(document).ready( function () {
 
 	if(expiryDateTime <= issueDateTime){
 		bootbox.alert("Please make sure that issue date is less than expiry date.");
+		$('#buildingLicenceIssueDate').val('');
+		$('#buildingLicenceExpiryDate').val('');
 	}
 	if(expiryDateTime <= moment(new Date(),[ "DD/MM/YYYY" ])){
 		bootbox.alert("Please make sure that the expiry date is greater than today's date.");
+		$('#buildingLicenceExpiryDate').val('');
 	}
     }
 	});
