@@ -47,7 +47,12 @@
  */
 
 $(document).ready(function(){
+
+    $('#new-pass').popover({trigger: "focus", placement: "bottom"});
+
 	$('.password-error').hide();
+    $('.password-error-msg').hide();
+
 	$('.totalServicesAppliedHide').hide();
 	$('.totalServicesCompletedHide').hide();
 	$('#servicesCmpletedDiv').attr('style', 'opacity: 0.7;cursor: pointer');
@@ -132,47 +137,71 @@ $(document).ready(function(){
   $('table tbody tr').click(function(){
     $('#myModal').modal('show');
   });
-  
 
-  $('.checkpassword').blur(function(){
-  	if(($('#new-pass').val()!="") && ($('#retype-pass').val()!=""))
-  	{
-  		if ($('#new-pass').val() === $('#retype-pass').val()) {
-  			
-  			}else{
-  			$('.password-error').show();
-  			$('#retype-pass').addClass('error');
-  		}
-  	}
-  });
+    $('#passwordForm').on('submit', function (e) {
+        e.preventDefault();
+        $.ajax({
+            url: '/egi/home/password/update',
+            type: 'GET',
+            data: {
+                'currentPwd': $("#old-pass").val(),
+                'newPwd': $("#new-pass").val(),
+                'retypeNewPwd': $("#retype-pass").val()
+            },
+            success: function (data) {
+                var msg = "";
+                if (data == "SUCCESS") {
+                    $("#old-pass").val("");
+                    $("#new-pass").val("");
+                    $("#retype-pass").val("");
+                    $('.change-password').modal('hide');
+                    bootbox.alert("Your password has been updated.");
+                    $('.pass-cancel').removeAttr('disabled');
+                    $('#pass-alert').hide();
+                } else if (data == "NEWPWD_UNMATCH") {
+                    msg = "New password you have entered does not match with retyped password.";
+                    $("#new-pass").val("");
+                    $("#retype-pass").val("");
+                    $('.change-password').modal('show');
+                } else if (data == "CURRPWD_UNMATCH") {
+                    msg = "Old password you have entered is incorrect.";
+                    $("#old-pass").val("");
+                    $('.change-password').modal('show');
+                } else if (data == "NEWPWD_INVALID") {
+                    msg = $('.password-error-msg').html();
+                    $("#new-pass").val("");
+                    $("#retype-pass").val("");
+                    $('.change-password').modal('show');
+                }
+                $('#pwd-incorrt-match').removeClass('alert-success');
+                $('#pwd-incorrt-match').addClass('alert-danger');
+                $('.password-error').html(msg).show();
 
-  $('#btnChangePwd').click(function(e){
-         e.preventDefault();
-         $.ajax({
-             url: '/egi/home/password/update',
-             type: 'GET',
-             data: {'currentPwd': $("#old-pass").val(), 'newPwd':$("#new-pass").val(),'retypeNewPwd':$("#retype-pass").val()},
-             success: function(data) {
-             	var msg = "";
-             	if (data == "SUCCESS") {
-             		msg = "Your password has been updated.";
-             	} else if (data == "NEWPWD_UNMATCH") {
-             		msg = "New password you have entered does not match with retyped password.";
-             	} else if (data == "CURRPWD_UNMATCH") {
-             		msg = "Old password you have entered is incorrect.";
-             	}  else if (data = "NEWPWD_INVALID") {
-             		msg = $('#errorPwdInvalid').val() + "\"" + " ' / \ and space]";
-             	}
-             	bootbox.alert(msg);
-             },
-             error: function() {
-             	bootbox.alert("Internal server error occurred, please try after sometime.");
-             }, complete : function() {
-             	$('.change-password, .loader-class').modal('hide');
-             	resetValues();
-             }
-     }); 
-  });
+            },
+            error: function () {
+                bootbox.alert("Internal server error occurred, please try after sometime.");
+            }
+        });
+
+    });
+
+    $('.checkpassword').blur(function () {
+        if (($('#new-pass').val() != "") && ($('#retype-pass').val() != "")) {
+            if ($('#new-pass').val() == $('#retype-pass').val()) {
+                $('#pwd-incorrt-match').removeClass('alert-danger');
+                $('#pwd-incorrt-match').addClass('alert-success');
+                $('.password-error').show();
+                $('.password-error').html('Password is matching');
+                $('#retype-pass').addClass('error');
+            } else if ($('#new-pass').val() !== $('#retype-pass').val()) {
+                $('#pwd-incorrt-match').removeClass('alert-success');
+                $('#pwd-incorrt-match').addClass('alert-danger');
+                $('.password-error').show();
+                $('.password-error').html('Password is not matching');
+                $('#retype-pass').addClass('error');
+            }
+        }
+    });
   
   $('#serviceGroup').change(function(){
 	  var selected = $(this).val();

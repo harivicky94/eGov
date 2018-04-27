@@ -50,96 +50,128 @@
 <%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-    <meta name="description" content="eGov ERP System"/>
-    <meta name="author" content="eGovernments Foundation"/>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+        <meta name="description" content="eGov ERP System"/>
+        <meta name="author" content="eGovernments Foundation"/>
 
-    <title><tiles:insertAttribute name="title"/></title>
+        <title><tiles:insertAttribute name="title"/></title>
 
-    <link rel="stylesheet" href="<cdn:url value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>">
-    <link rel="stylesheet" href="<cdn:url value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css?rnd=${app_release_no}' context='/egi'/>">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link href="<cdn:url value='/resources/css/citizen.css?rnd=${app_release_no}'/>" rel="stylesheet">
-    <link href="<cdn:url value='/resources/css/scrollbar.css'/>" rel="stylesheet">
-    <link rel="icon" href="<cdn:url value='/resources/global/images/favicon.png' context='/egi'/>" sizes="32x32">
+        <spring:eval expression="@environment.getProperty('user.pwd.strength')" var="pwdstrengthmsg"/>
+        <spring:message code="usr.pwd.strength.msg.${pwdstrengthmsg}" var="pwdmsg" htmlEscape="true"/>
 
-    <script src="<cdn:url value='/resources/global/js/jquery/jquery.js' context='/egi'/>"></script>
-    <script src="<cdn:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
-    <script src="<cdn:url value='/resources/global/js/bootstrap/bootbox.min.js' context='/egi'/>"></script>
-    <script src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery.matchHeight/0.7.0/jquery.matchHeight-min.js"></script>
-    <script src="<cdn:url value='/resources/js/citizen.js?rnd=${app_release_no}'/>"></script>
+        <link rel="stylesheet" href="<cdn:url value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>">
+        <link rel="stylesheet"
+              href="<cdn:url value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css?rnd=${app_release_no}' context='/egi'/>">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <link href="<cdn:url value='/resources/css/citizen.css?rnd=${app_release_no}'/>" rel="stylesheet">
+        <link href="<cdn:url value='/resources/css/scrollbar.css'/>" rel="stylesheet">
+        <link rel="icon" href="<cdn:url value='/resources/global/images/favicon.png' context='/egi'/>" sizes="32x32">
 
-    <%-- <script src="<cdn:url value='/resources/global/js/egov/custom.js?rnd=${app_release_no}' context='/egi'/>"></script> --%>
-    <%-- <script src="<cdn:url value='/resources/js/app/homepagecitizen.js?rnd=${app_release_no}' context='/egi'/>"></script> --%>
+        <script src="<cdn:url value='/resources/global/js/jquery/jquery.js' context='/egi'/>"></script>
+        <script src="<cdn:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
+        <script src="<cdn:url value='/resources/global/js/bootstrap/bootbox.min.js' context='/egi'/>"></script>
+        <script src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/jquery.matchHeight/0.7.0/jquery.matchHeight-min.js"></script>
+        <script src="<cdn:url value='/resources/js/citizen.js?rnd=${app_release_no}'/>"></script>
+
+        <%-- <script src="<cdn:url value='/resources/global/js/egov/custom.js?rnd=${app_release_no}' context='/egi'/>"></script> --%>
+        <%-- <script src="<cdn:url value='/resources/js/app/homepagecitizen.js?rnd=${app_release_no}' context='/egi'/>"></script> --%>
 
 
-    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-    <script src="<cdn:url value='/resources/global/js/ie8/html5shiv.min.js' context='/egi'/>"></script>
-    <script src="<cdn:url value='/resources/global/js/ie8/respond.min.js' context='/egi'/>"></script>
-    <![endif]-->
-    <script>
-        var googleapikey = '${sessionScope.googleApiKey}';
-        var citylat = ${sessionScope.citylat};
-        var citylng = ${sessionScope.citylng};
-    </script>
-</head>
-<body>
-<spring:htmlEscape defaultHtmlEscape="true" />
-<tiles:insertAttribute name="body"/>
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+        <script src="<cdn:url value='/resources/global/js/ie8/html5shiv.min.js' context='/egi'/>"></script>
+        <script src="<cdn:url value='/resources/global/js/ie8/respond.min.js' context='/egi'/>"></script>
+        <![endif]-->
+        <script>
+            var googleapikey = '${sessionScope.googleApiKey}';
+            var citylat = ${sessionScope.citylat};
+            var citylng = ${sessionScope.citylng};
+        </script>
+    </head>
+    <body>
+    <spring:htmlEscape defaultHtmlEscape="true"/>
+    <tiles:insertAttribute name="body"/>
 
-<div class="modal fade change-password" data-backdrop="static">
-    <div class="modal-dialog">
-        <div class="modal-content">
+    <div class="modal fade change-password" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog">
+            <div class="modal-content">
 
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title">Change Password</h4>
-            </div>
+                <div class="modal-header">
+                    <button type="button" class="close pass-cancel" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">Change Password</h4>
+                </div>
 
-            <div class="modal-body">
-                <form id="passwordForm" class="form-horizontal form-groups-bordered">
-                    <div class="form-group">
-                        <div class="col-md-4">
-                            <label class="control-label">Old Password</label>
+                <div class="modal-body">
+
+                    <c:if test="${dflt_pwd_reset_req}">
+                        <div class="alert alert-warning" role="alert" id="pass-alert">
+                            <i class="fa fa-exclamation-triangle"></i> Security alert...! You are using default password,
+                            please reset your password.
                         </div>
-                        <div class="col-md-8 add-margin">
-                            <input type="password" class="form-control" id="old-pass">
+                    </c:if>
+                    <form id="passwordForm" class="form-horizontal form-groups-bordered">
+                        <div class="form-group">
+                            <div class="col-md-4">
+                                <label class="control-label">Old Password</label>
+                            </div>
+                            <div class="col-md-8 add-margin">
+                                <input type="password" autocomplete="new-password" class="form-control" id="old-pass"
+                                       required="required">
+                            </div>
                         </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="col-md-4">
-                            <label class="control-label">New Password</label>
+                        <div class="form-group" id="wrap">
+                            <div class="col-md-4">
+                                <label class="control-label">New Password</label>
+                            </div>
+                            <div class="col-md-8 add-margin">
+                                <input type="password" class="form-control checkpassword" id="new-pass" maxlength="32"
+                                       required="required" data-container="#wrap" data-toggle="popover"
+                                       data-content="${pwdmsg}">
+                            </div>
                         </div>
-                        <div class="col-md-8 add-margin">
-                            <input type="password" class="form-control checkpassword" id="new-pass">
+                        <div class="form-group">
+                            <div class="col-md-4">
+                                <label class="control-label">Re-type Password</label>
+                            </div>
+                            <div class="col-md-8 add-margin">
+                                <input type="password" class="form-control checkpassword" autocomplete="new-password"
+                                       id="retype-pass">
+                                <div id="pwd-incorrt-match"
+                                     class="password-error error-msg alert alert-danger display-hide">Password is not matching
+                                </div>
+                                <div class="password-error-msg display-hide">${pwdmsg}</div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="col-md-4">
-                            <label class="control-label">Re-type Password</label>
+                        <div class="form-group text-right">
+                            <div class="col-md-12 add-margin">
+                                <button type="submit" class="btn btn-primary" id="btnChangePwd">Change Password</button>
+                                <button type="button" class="btn btn-default pass-cancel" data-dismiss="modal">Cancel
+                                </button>
+                            </div>
                         </div>
-                        <div class="col-md-8 add-margin">
-                            <input type="password" class="form-control checkpassword" id="retype-pass">
-                            <div class="password-error error-msg display-hide">Password is incorrect</div>
-                        </div>
-                    </div>
-                    <div class="form-group text-right">
-                        <div class="col-md-12 add-margin">
-                            <button type="button" class="btn btn-primary" id="btnChangePwd">Change Password</button>
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                        </div>
-                    </div>
-                </form>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-</div>
-</body>
+    <c:if test="${dflt_pwd_reset_req}">
+        <script>
+            $('.change-password').modal('show');
+            $('.pass-cancel').attr('disabled', 'disabled');
+        </script>
+    </c:if>
+    <c:if test="${warn_pwd_expire}">
+        <script>
+            var pwdExpireInDays = ${pwd_expire_in_days};
+            bootbox.alert("Your password will expire in " + pwdExpireInDays + " day(s), please update your password.");
+        </script>
+    </c:if>
+    </body>
 </html>
