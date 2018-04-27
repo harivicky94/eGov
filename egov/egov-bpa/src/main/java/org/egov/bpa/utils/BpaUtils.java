@@ -174,7 +174,7 @@ public class BpaUtils {
 		Module module = moduleService.getModuleByName(EGMODULE_NAME);
 		boolean isResolved = false;
 		String url = "/bpa/application/citizen/update/" + application.getApplicationNumber();
-		final PortalInboxBuilder portalInboxBuilder = new PortalInboxBuilder(module,
+		final PortalInboxBuilder portalInboxBuilder = new PortalInboxBuilder(module, application.getOwner().getName(),
 				application.getServiceType().getDescription(), application.getApplicationNumber(),
 				application.getPlanPermissionNumber(), application.getId(), "Success", "Success", url, isResolved,
 				status, new Date(), application.getState(), portalInboxUser);

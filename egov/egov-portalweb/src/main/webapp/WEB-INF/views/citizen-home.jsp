@@ -180,7 +180,7 @@
                 <c:forEach items="${totalServicesPending}" var="inboxItem" varStatus="item">
 		                 <tr onclick="openPopUp('${inboxItem.portalInbox.link}');" class = "${inboxItem.portalInbox.module.contextRoot } showAll">
 							 <td><span class="spansno">${item.index + 1}</span></td>
-							 <td>${inboxItem.portalInbox.portalInboxUsers[0].user.name}</td>
+							 <td>${inboxItem.portalInbox.applicantName == null ? inboxItem.portalInbox.portalInboxUsers[0].user.name : inboxItem.portalInbox.applicantName}</td>
 							 <td>${inboxItem.portalInbox.applicationNumber}</td>
 		                    <td>
 			                   <fmt:formatDate
