@@ -39,26 +39,28 @@
 
 package org.egov.bpa.autonumber.impl;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import org.egov.bpa.autonumber.StakeHolderCodeGenerator;
 import org.egov.bpa.master.entity.StakeHolder;
 import org.egov.infra.persistence.utils.GenericSequenceNumberGenerator;
+import org.egov.infra.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 
 @Service
 public class StakeHolderCodeGeneratorImpl implements StakeHolderCodeGenerator {
 
-    private static final String SEQ_STAKEHOLDERCODE = "SEQ_EGBPA_STAKEHOLDER_CODE";
+	private static final String SEQ_STAKEHOLDERCODE = "SEQ_EGBPA_STAKEHOLDER_CODE";
 
-    @Autowired
-    private GenericSequenceNumberGenerator genericSequenceNumberGenerator;
+	@Autowired
+	private GenericSequenceNumberGenerator genericSequenceNumberGenerator;
 
-    @Override
-    public String generateStakeHolderCode(final StakeHolder stakeHolder) {
-        return new SimpleDateFormat("ddMMyyyy").format(new Date())
-                .concat(String.format("%s%06d", "", genericSequenceNumberGenerator.getNextSequence(SEQ_STAKEHOLDERCODE)));
-    }
+	@Override
+	public String generateStakeHolderCode(final StakeHolder stakeHolder) {
+		return String.format(
+				"%s%06d", new StringBuilder().append("BL")
+											 .append(String.valueOf(LocalDateTime.now().getMonthValue())).append(DateUtils.currentYear()),
+				genericSequenceNumberGenerator.getNextSequence(SEQ_STAKEHOLDERCODE));
+	}
 }

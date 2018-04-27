@@ -81,9 +81,9 @@
 				<div class="panel-heading"></div>
 				<div class="panel-body">
 					<div class="form-group">
-						<label class="col-sm-2 control-label text-right"><spring:message
+						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.comments" /> </label>
-						<div class="col-sm-3 add-margin">
+						<div class="col-sm-9 add-margin">
 							<form:textarea type="text" cssClass="form-control"
 								path="comments" id="comments" maxlength="1024" />
 							<form:errors path="comments" cssClass="error-msg" />
@@ -98,12 +98,9 @@
 			value="Approve">
 			<spring:message code='lbl.approve' />
 		</button>
-		<button type="submit" class='btn btn-primary' id="btnReject"
+		<button type="submit" class='btn btn-danger' id="btnReject"
 			value="Reject">
 			<spring:message code='lbl.reject' />
-		</button>
-		<button type="reset" class="btn btn-danger">
-			<spring:message code="lbl.reset" />
 		</button>
 		<a href='javascript:void(0)' class='btn btn-default'
 			onclick='self.close()'><spring:message code='lbl.close' /></a>

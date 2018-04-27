@@ -39,18 +39,6 @@
  */
 package org.egov.bpa.master.service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.apache.commons.lang3.ArrayUtils;
 import org.egov.bpa.autonumber.StakeHolderCodeGenerator;
 import org.egov.bpa.master.entity.StakeHolder;
@@ -80,6 +68,17 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -146,7 +145,7 @@ public class StakeHolderService {
         stakeHolder.setAddress(addressList);
         stakeHolder.setUsername(stakeHolder.getEmailId());
         stakeHolder.updateNextPwdExpiryDate(environmentSettings.userPasswordExpiryInDays());
-        stakeHolder.setPassword(passwordEncoder.encode(stakeHolder.getMobileNumber()));
+        stakeHolder.setPassword(passwordEncoder.encode("demo"));
         stakeHolder.addRole(roleService.getRoleByName(BpaConstants.ROLE_BUSINESS_USER));
         stakeHolder.setActive(stakeHolder.getIsActive());
         processAndStoreApplicationDocuments(stakeHolder);
@@ -280,11 +279,11 @@ public class StakeHolderService {
     }
 
     public boolean checkIsEmailAlreadyExists(final StakeHolder stakeHolder) {
-        return stakeHolderRepository.findByEmailId(stakeHolder.getEmailId()) != null ? true : false;
+        return stakeHolderRepository.findByEmailId(stakeHolder.getEmailId()) == null ? false : true;
     }
 
     public boolean checkIsStakeholderCodeAlreadyExists(final StakeHolder stakeHolder) {
-        return stakeHolderRepository.findByCode(stakeHolder.getCode()) != null ? true : false;
+        return stakeHolderRepository.findByCode(stakeHolder.getCode()) == null ? false : true;
     }
 
     public List<SearchStakeHolderForm> searchForApproval(SearchStakeHolderForm srchStkHldrFrm) {
@@ -327,10 +326,10 @@ public class StakeHolderService {
     public StakeHolder updateForApproval(StakeHolder stakeHolder, String stkHldrStatus) {
         stakeHolder.setLastModifiedBy(securityUtils.getCurrentUser());
         stakeHolder.setLastModifiedDate(new Date());
-        if (stkHldrStatus.equals("Approve")) {
+        if ("Approve".equals(stkHldrStatus)) {
             stakeHolder.setIsActive(true);
             stakeHolder.setActive(true);
-        } else if (stkHldrStatus.equals("Reject")) {
+        } else if ("Reject".equals(stkHldrStatus)) {
             stakeHolder.setIsActive(false);
             stakeHolder.setActive(false);
         }

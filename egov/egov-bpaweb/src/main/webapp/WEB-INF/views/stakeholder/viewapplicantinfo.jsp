@@ -111,7 +111,7 @@
 			<c:out value="${stakeHolder.name}"></c:out>
 		</div>
 		<div class="col-sm-3 add-margin">
-			<spring:message code="lbl.code" />
+			<spring:message code="lbl.stakeholder.ackno" />
 		</div>
 		<div class="col-sm-3 add-margin view-content">
 			<c:out value="${stakeHolder.code}" default="N/A"></c:out>

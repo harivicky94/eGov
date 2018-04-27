@@ -86,4 +86,5 @@
 <link rel="stylesheet"
 	href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>">
 <script src="<cdn:url value='/resources/js/app/stakeholder.js?rnd=${app_release_no}'/> "></script>
+<script src="<cdn:url value='/resources/js/app/stakeholder-common.js?rnd=${app_release_no}'/> "></script>
 <script src="<cdn:url value='/resources/js/app/viewdocumentsupload.js?rnd=${app_release_no}'/> "></script>

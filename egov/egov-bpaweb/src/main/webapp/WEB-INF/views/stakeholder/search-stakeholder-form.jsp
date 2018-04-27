@@ -66,15 +66,14 @@
 					</div>
 					<label class="col-sm-2 control-label text-right"><spring:message code="lbl.stakeholder.type" /></label>
 					<div class="col-sm-3 add-margin">
-						<form:select path="stakeHolderType"
-							id="stakeHolderType" cssClass="form-control">
-							<form:option value="">
-								<spring:message code="lbl.select" />
-							</form:option>
-							<form:options items="${stakeHolderTypeList}" />
-						</form:select>
-						<form:errors path="stakeHolderType"
-							cssClass="add-margin error-msg" />
+						<select name="stakeHolderType" id="stakeHolderType"
+								class="form-control">
+							<option value=""><spring:message code="lbl.select" /></option>
+							<c:forEach items="${stakeHolderTypes}" var="stkhldrtype">
+								<option value="${stkhldrtype}">${stkhldrtype.stakeHolderTypeVal}</option>
+							</c:forEach>
+						</select>
+						<form:errors path="stakeHolderType" cssClass="error-msg" />
 					</div>
 				</div>
 

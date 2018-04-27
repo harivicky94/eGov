@@ -76,7 +76,7 @@
 				<tr>
 					<th><spring:message code="lbl.applicant.name" /></th>
 					<th><spring:message code="lbl.stakeholder.type" /></th>
-					<th><spring:message code="lbl.code" /></th>
+					<th><spring:message code="lbl.stakeholder.ackno" /></th>
 					<th><spring:message code="lbl.lic.no" /></th>
 					<th><spring:message code="lbl.aadhar" /></th>
 					<th><spring:message code="lbl.action" /></th>

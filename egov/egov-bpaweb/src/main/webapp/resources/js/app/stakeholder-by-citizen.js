@@ -47,16 +47,12 @@
  */
 
 $(document).ready( function () {
-    $('#otp-section,#create-section').hide();
 
-    //validate form while toggle between multiple tab
-    jQuery('form').validate({
-        ignore: ".ignore",
-        invalidHandler: function(e, validator){
-            if(validator.errorList.length)
-                $('#settingstab a[href="#' + jQuery(validator.errorList[0].element).closest(".tab-pane").attr('id') + '"]').tab('show');
-        }
-    });
+    $('#infoModal').modal('show');
+    $('#mobileNumber1').val('');
+    $('#emailId1').val(' ');
+
+    $('#otp-section,#create-section').hide();
 
     var validator=$('form').validate({
         highlight: function(element, errorClass) {
@@ -65,25 +61,35 @@ $(document).ready( function () {
             });
         }
     });
-    
-    $('#buildingLicenceExpiryDate').on('changeDate', function() {
-    if($('#buildingLicenceExpiryDate') && $('#buildingLicenceIssueDate')) {
-    var expirydate = $(this).val();
-    var expiryDateTime = moment(expirydate,["DD/MM/YYYY"]);
 
-	var issuedate = $('#buildingLicenceIssueDate').val();
-	var issueDateTime = moment(issuedate,["DD/MM/YYYY"]);
-
-	if(expiryDateTime <= issueDateTime){
-	bootbox.alert("Please make sure that issue date is less than expiry date.");
-	$('#buildingLicenceIssueDate').val('');
-	$('#buildingLicenceExpiryDate').val('');
-	}
-	if(expiryDateTime <= moment(new Date(),[ "DD/MM/YYYY" ])){
-	bootbox.alert("Please make sure that the expiry date is greater than today's date.");
-	$('#buildingLicenceExpiryDate').val('');
-	}
-	}
+    $('#buttonSubmit').click(function(e) {
+        bootbox
+            .confirm({
+                message : 'Do you really to want submit the application, once application is submitted then information cannot modify. Please cross verify once before submit.',
+                buttons : {
+                    'cancel' : {
+                        label : 'No',
+                        className : 'btn-danger'
+                    },
+                    'confirm' : {
+                        label : 'Yes',
+                        className : 'btn-primary'
+                    }
+                },
+                callback : function(result) {
+                    if (result) {
+                        if(validateForm(validator)) {
+                            $('#stakeHolderByCitizenform').trigger('submit');
+                        } else {
+                            e.preventDefault();
+                        }
+                    } else {
+                        e.stopPropagation();
+                        e.preventDefault();
+                    }
+                }
+            });
+        return false;
     });
 
     function validateForm(validator) {
@@ -93,7 +99,6 @@ $(document).ready( function () {
             $.each(validator.invalidElements(), function(index, elem){
                 if(!$(elem).is(":visible") && !$(elem).closest('div.panel-body').is(":visible")){
                     $(elem).closest('div.panel-body').show();
-                    console.log("elem", $(elem));
                 }
             });
             validator.focusInvalid();
@@ -101,31 +106,10 @@ $(document).ready( function () {
         }
     }
 
-    // On edit form load checking is both addresses same then adding/removing check box value
-	if( $('input[id="correspondenceAddress.houseNoBldgApt"]').val() != '' && $('input[id="correspondenceAddress.streetRoadLine"]').val() != ''
-		&& $('input[id="permanentAddress.houseNoBldgApt"]').val() != '' && $('input[id="permanentAddress.streetRoadLine"]').val() != ''){
-	if ($('input[id="permanentAddress.houseNoBldgApt"]').val() === $('input[id="correspondenceAddress.houseNoBldgApt"]').val()
-		&& $('input[id="permanentAddress.streetRoadLine"]').val() === $('input[id="correspondenceAddress.streetRoadLine"]').val() 
-		&& $('input[id="permanentAddress.areaLocalitySector"]').val() === $('input[id="correspondenceAddress.areaLocalitySector"]').val()) {
-		$('#isAddressSame').attr( "checked", "checked" );
-	} else {
-		$('#isAddressSame').removeAttr( "checked" );
-	}
-	}
-
-    $('#buttonSubmit').click(function(e){
-        if(validateForm(validator)){
-            $('#mobileNumber').val();
-            $('#stakeHolderByCitizenform').trigger('submit');
-        }else{
-            e.preventDefault();
-        }
-    });
-
     $('#otpbtn').click(function (e) {
         if (validateForm(validator)) {
             $.ajax({
-                url: "/portal/citizen/signup/otp/" + $('#mobileNumber').val(),
+                url: "/portal/citizen/signup/otp/" + $('#mobileNumber1').val(),
                 dataType: "json",
                 success: function (data) {
                     if (data) {
@@ -139,16 +123,15 @@ $(document).ready( function () {
                     console.error('Error while sending otp');
                     $(this).show();
                 }
-
             });
         } else {
             e.preventDefault();
         }
     });
 
-    $(document).on('click','.otp-view',function(){
+    $(document).on('click','.otp-view',function() {
         if($(this).hasClass('otp-view')){
-            if($(this).data('view') == 'show'){
+            if('show' == $(this).data('view')) {
                 $(this).closest('.form-group').find('input').attr({type : 'text', autocomplete : 'off'});
                 $(this).parent().empty().html('<i class="fa fa-eye-slash otp-view" data-view="hide" aria-hidden="true"></i>');
             }else{
@@ -157,66 +140,4 @@ $(document).ready( function () {
             }
         }
     });
-	
-// mobile number validation
-$('.mobileno-field').blur( function () {
-	 var mobileno = $(this).val();
-		if (mobileno.length < 10) {
-			bootbox.alert("Please enter 10 digit mobile number");
-			$(this).val('');
-		}
-	});
-// To coping present address to permanent address if both same
-$('#isAddressSame').click(function(e) {
-	if($('#isAddressSame').is(':checked')){
-		$('input[id="permanentAddress.houseNoBldgApt"]').val($('input[id="correspondenceAddress.houseNoBldgApt"]').val());
-		$('input[id="permanentAddress.streetRoadLine"]').val($('input[id="correspondenceAddress.streetRoadLine"]').val());
-		$('input[id="permanentAddress.areaLocalitySector"]').val($('input[id="correspondenceAddress.areaLocalitySector"]').val());
-		$('input[id="permanentAddress.cityTownVillage"]').val($('input[id="correspondenceAddress.cityTownVillage"]').val());
-		$('input[id="permanentAddress.district"]').val($('input[id="correspondenceAddress.district"]').val());
-		$('input[id="permanentAddress.state"]').val($('input[id="correspondenceAddress.state"]').val());
-		$('input[id="permanentAddress.pinCode"]').val($('input[id="correspondenceAddress.pinCode"]').val());
-		$('input[id="permanentAddress.postOffice"]').val($('input[id="correspondenceAddress.postOffice"]').val());
-	}
 });
-
-// To show/hide Organization details based on user selection
-$("input[name='isOnbehalfOfOrganization']").change(function(){
-    var isOnbehalfOfOrganization = $(this).val();
-if(isOnbehalfOfOrganization === 'true') {
-	$('#showhide').removeClass('hide');
-	$('.addremoverequired').attr( "required", "true" );
-	$('.toggle-madatory').find("span").addClass( "mandatory" );
-} else {
-	$('#showhide').addClass('hide');
-	$('.addremoverequired').removeAttr( "required" );
-	$('.toggle-madatory').find("span").removeClass( "mandatory" );
-}
-});
-if ($('#invalidBuildingLicensee').val())
-	bootbox.alert($('#invalidBuildingLicensee').val());
-
-// email validation
-$('input[id$="emailId"]').blur(function() {
-		var pattern = new RegExp("^[\\w!#$%&'*+/=?`{|}~^-]+(?:\\.[\\w!#$%&'*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$");
-		var email = $(this).val();
-		if (!pattern.test(email) && $(this).val().length > 0) {
-			var span = $(this).siblings('span'); 
-	    	$(span).addClass('error-msg');
-	    	$(span).text('Please enter valid email..!');
-			$(this).show();
-			$(this).val("");
-		} else {
-			var span1 = $(this).siblings('span'); 
-			$(span1).removeClass('error-msg');
-	    	$(span1).text('');
-		}
-	});
-
-});
-	
-var stakeHolderId = $('#stakeHolderId').val();
-if(stakeHolderId){
-	$('#emailId').prop("disabled", true);
-	$('#mobileNumber').prop("disabled", true);
-}

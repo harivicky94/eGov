@@ -39,23 +39,6 @@
  */
 package org.egov.bpa.transaction.service.messaging;
 
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_MODULE_TYPE;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CANCELLED;
-import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_REGISTERED;
-import static org.egov.bpa.utils.BpaConstants.CREATEDLETTERTOPARTY;
-import static org.egov.bpa.utils.BpaConstants.EGMODULE_NAME;
-import static org.egov.bpa.utils.BpaConstants.NO;
-import static org.egov.bpa.utils.BpaConstants.SENDEMAILFORBPA;
-import static org.egov.bpa.utils.BpaConstants.SENDSMSFORBPA;
-import static org.egov.bpa.utils.BpaConstants.SMSEMAILTYPELETTERTOPARTY;
-import static org.egov.bpa.utils.BpaConstants.SMSEMAILTYPENEWBPAREGISTERED;
-import static org.egov.bpa.utils.BpaConstants.YES;
-
-import java.util.List;
-import java.util.Locale;
-
 import org.egov.bpa.master.entity.StakeHolder;
 import org.egov.bpa.transaction.entity.ApplicationStakeHolder;
 import org.egov.bpa.transaction.entity.BpaApplication;
@@ -75,6 +58,23 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Locale;
+
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_MODULE_TYPE;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_CANCELLED;
+import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_REGISTERED;
+import static org.egov.bpa.utils.BpaConstants.CREATEDLETTERTOPARTY;
+import static org.egov.bpa.utils.BpaConstants.EGMODULE_NAME;
+import static org.egov.bpa.utils.BpaConstants.NO;
+import static org.egov.bpa.utils.BpaConstants.SENDEMAILFORBPA;
+import static org.egov.bpa.utils.BpaConstants.SENDSMSFORBPA;
+import static org.egov.bpa.utils.BpaConstants.SMSEMAILTYPELETTERTOPARTY;
+import static org.egov.bpa.utils.BpaConstants.SMSEMAILTYPENEWBPAREGISTERED;
+import static org.egov.bpa.utils.BpaConstants.YES;
 
 @Service
 public class BPASmsAndEmailService {
@@ -131,54 +131,53 @@ public class BPASmsAndEmailService {
     }
 
     public void sendSMSForStakeHolder(final StakeHolder stakeHolder, Boolean isCitizenCrtn) {
-        String msgKey;
+        String message;
         if (isCitizenCrtn) {
-            msgKey = SMS_STK_CTZ;
+            message = bpaMessageSource.getMessage(SMS_STK_CTZ, new String[]{stakeHolder.getCode()}, null);
         } else {
-            msgKey = MSG_KEY_SMS_STAKEHOLDER_NEW;
+            message = bpaMessageSource.getMessage(MSG_KEY_SMS_STAKEHOLDER_NEW, new String[]{stakeHolder.getStakeHolderType().getStakeHolderTypeVal(),
+                    stakeHolder.getUsername(), "demo"}, null);
         }
         if (isSmsEnabled() && stakeHolder.getMobileNumber() != null) {
-            String message = buildMessageDetails(stakeHolder, msgKey, isCitizenCrtn);
-            notificationService.sendSMS(stakeHolder.getMobileNumber(), message);
-        }
-    }
-    
-    public void sendSMSToStkHldrForRejection(final StakeHolder stakeHolder) {
-        String msgKey = SMS_STK_RJCT;
-        if (isSmsEnabled() && stakeHolder.getMobileNumber() != null) {
-            String message = buildMessageDtlsFrRejection(stakeHolder, msgKey);
             notificationService.sendSMS(stakeHolder.getMobileNumber(), message);
         }
     }
 
-    private String buildMessageDtlsFrRejection(StakeHolder stakeHolder, String msgKey) {
-        return bpaMessageSource.getMessage(msgKey, new String[] { stakeHolder.getName(),
-                stakeHolder.getStakeHolderType().getStakeHolderTypeVal(), stakeHolder.getComments(), getMunicipalityName() },
-                null);
+    public void sendSMSToStkHldrForRejection(final StakeHolder stakeHolder) {
+        String msgKey = SMS_STK_RJCT;
+        if (isSmsEnabled() && stakeHolder.getMobileNumber() != null) {
+            String message = bpaMessageSource.getMessage(msgKey, new String[]{stakeHolder.getCode(), stakeHolder.getComments()},
+                    null);
+            notificationService.sendSMS(stakeHolder.getMobileNumber(), message);
+        }
     }
-    
+
     public void sendEmailToStkHldrForRejection(StakeHolder stakeHolder) {
         String msgKeyMail = EMLB_STK_RJCT;
         String msgKeyMailSubject = EMLS_STK_RJCT;
         if (isEmailEnabled() && stakeHolder.getEmailId() != null) {
-            final String message = buildMessageDtlsFrRejection(stakeHolder, msgKeyMail);
+            final String message = bpaMessageSource.getMessage(msgKeyMail, new String[]{stakeHolder.getName(),
+                            stakeHolder.getStakeHolderType().getStakeHolderTypeVal(), stakeHolder.getCode(), stakeHolder.getComments(), getMunicipalityName()},
+                    null);
             final String subject = bpaMessageSource.getMessage(msgKeyMailSubject, null, null);
             notificationService.sendEmail(stakeHolder.getEmailId(), subject, message);
         }
     }
 
     public void sendEmailForStakeHolder(final StakeHolder stakeHolder, Boolean isCitizen) {
-        String msgKeyMail;
         String msgKeyMailSubject;
+        String message;
         if (isCitizen) {
-            msgKeyMail = EMLB_STK_CTZ;
             msgKeyMailSubject = EMLS_STK_CTZ;
+            message = bpaMessageSource.getMessage(EMLB_STK_CTZ, new String[]{stakeHolder.getName(),
+                            stakeHolder.getStakeHolderType().getStakeHolderTypeVal(), stakeHolder.getCode(), getMunicipalityName()},
+                    null);
         } else {
-            msgKeyMail = BODY_KEY_EMAIL_STAKEHOLDER_NEW;
             msgKeyMailSubject = SUBJECT_KEY_EMAIL_STAKEHOLDER_NEW;
+            message = bpaMessageSource.getMessage(BODY_KEY_EMAIL_STAKEHOLDER_NEW, new String[]{stakeHolder.getName(), stakeHolder.getStakeHolderType().getStakeHolderTypeVal(),
+                    stakeHolder.getUsername(), "demo", ApplicationThreadLocals.getDomainURL(), getMunicipalityName()}, null);
         }
         if (isEmailEnabled() && stakeHolder.getEmailId() != null) {
-            final String message = buildMessageDetails(stakeHolder, msgKeyMail,isCitizen);
             final String subject = bpaMessageSource.getMessage(msgKeyMailSubject, null, null);
             notificationService.sendEmail(stakeHolder.getEmailId(), subject, message);
         }
@@ -388,18 +387,6 @@ public class BPASmsAndEmailService {
             smsMsg = getCancelApplnMessage(code, applicantName, bpaApplication);
         }
         return smsMsg;
-    }
-
-    private String buildMessageDetails(final StakeHolder stakeHolder, String msgKeyMail, Boolean isCitizen) {
-        if(isCitizen){
-            return bpaMessageSource.getMessage(msgKeyMail, new String[] { stakeHolder.getName(),stakeHolder.getStakeHolderType().getStakeHolderTypeVal(), getMunicipalityName() }, null);
-        }
-        else
-            
-        {
-        return bpaMessageSource.getMessage(msgKeyMail, new String[] { stakeHolder.getName(), stakeHolder.getCode(),
-                stakeHolder.getUsername(), stakeHolder.getMobileNumber(), getMunicipalityName() }, null);
-        }
     }
 
     public Boolean isSmsEnabled() {

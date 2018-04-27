@@ -39,36 +39,29 @@
  */
 package org.egov.bpa.web.controller.ajax;
 
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletResponse;
-
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 import org.apache.commons.io.IOUtils;
 import org.egov.bpa.master.entity.BpaScheme;
 import org.egov.bpa.master.entity.BpaSchemeLandUsage;
-import org.egov.common.entity.Occupancy;
 import org.egov.bpa.master.entity.PostalAddress;
 import org.egov.bpa.master.entity.RegistrarOfficeVillage;
 import org.egov.bpa.master.entity.SlotMapping;
 import org.egov.bpa.master.entity.StakeHolder;
 import org.egov.bpa.master.entity.enums.ApplicationType;
 import org.egov.bpa.master.service.BpaSchemeService;
-import org.egov.commons.service.OccupancyService;
 import org.egov.bpa.master.service.PostalAddressService;
 import org.egov.bpa.master.service.RegistrarOfficeVillageService;
 import org.egov.bpa.master.service.SlotMappingService;
 import org.egov.bpa.master.service.StakeHolderService;
 import org.egov.bpa.transaction.entity.enums.StakeHolderType;
-import org.egov.bpa.transaction.service.*;
+import org.egov.bpa.transaction.service.ApplicationBpaService;
+import org.egov.bpa.transaction.service.BpaThirdPartyService;
 import org.egov.bpa.utils.BpaConstants;
+import org.egov.common.entity.Occupancy;
+import org.egov.commons.service.OccupancyService;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.AssignmentAdaptor;
 import org.egov.eis.service.AssignmentService;
@@ -91,10 +84,16 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
-import com.google.gson.reflect.TypeToken;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 public class BpaAjaxController {
@@ -355,5 +354,16 @@ public class BpaAjaxController {
     @ResponseBody
     public Map<String, String> validateEdcrIsUsedInBpaApplication(@RequestParam final String eDcrNumber) {
         return bpaThirdPartyService.checkIsEdcrUsedInBpaApplication(eDcrNumber);
+    }
+
+    @RequestMapping(value = "/validate/emailandmobile", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public Boolean validateEmailAndMobileNumber(@RequestParam final String inputType, @RequestParam final String inputValue) {
+        if ("email".equalsIgnoreCase(inputType)) {
+            return userService.getUserByEmailId(inputValue) == null ? false : true;
+        } else if ("mobile".equalsIgnoreCase(inputType)) {
+            return userService.getUserByMobileNumberAndType(inputValue, UserType.BUSINESS).isEmpty() ? false : true;
+        }
+        return false;
     }
 }

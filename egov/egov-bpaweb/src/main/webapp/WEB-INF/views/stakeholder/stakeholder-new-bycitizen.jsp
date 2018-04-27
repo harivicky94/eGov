@@ -54,9 +54,9 @@
            id="stakeHolderByCitizenform" cssClass="form-horizontal form-groups-bordered"
            enctype="multipart/form-data">
     <input type="hidden" name="isBusinessUser" id="isBusinessUser" value="${isBusinessUser}">
-	<input type="hidden" name="source" id="source"
-		value="${stakeHolder.source}">
-	<ul class="nav nav-tabs" id="settingstab">
+    <input type="hidden" name="source" id="source"
+           value="${stakeHolder.source}">
+    <ul class="nav nav-tabs" id="settingstab">
         <li class="active"><a data-toggle="tab" href="#applicant-info"
                               data-tabidx=0><spring:message code='lbl.applicant.info'/></a></li>
         <li><a data-toggle="tab" href="#checklist-info" data-tabidx=1><spring:message code='title.documentdetail'/></a>
@@ -81,7 +81,7 @@
                 <i class="fa fa-key fa-fw theme-color style-color"></i>
             </div>
             <form:password path="activationCode" id="activationcode" cssClass="form-control style-form"
-                           placeholder="OTP" minlength="5" maxlength="5" autocomplete="off" />
+                           placeholder="Enter OTP" minlength="5" maxlength="5" autocomplete="off"/>
             <span class="mandatory set-mandatory"></span>
             <div class="input-group-addon"
                  style="background:#fff;border:none;border-bottom:1px solid #D0D2D7;cursor:default;">
@@ -97,21 +97,48 @@
             <i class="fa fa-key" aria-hidden="true"></i>
             <spring:message code="lbl.generate.otp"/>
         </button>
+        <a href='javascript:void(0)' class='btn btn-default'
+           onclick='self.close()'><spring:message code='lbl.close'/></a>
     </div>
     <div class="text-center" id="create-section">
         <button type="submit" class='btn btn-primary' id="buttonSubmit">
-            <spring:message code="lbl.create"/>
+            <spring:message code="lbl.submit"/>
         </button>
         <a href='javascript:void(0)' class='btn btn-default'
            onclick='self.close()'><spring:message code='lbl.close'/></a>
     </div>
 </form:form>
 
+<div class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true"  id="infoModal">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="alert alert-warning">
+                    <strong>Details required for new building licensee account</strong>
+                </div>
+            </div>
+            <div class="modal-body">
+                <ul>
+                    <li>For new building licensee account, you need to have <span class="view-content">Mobile Number, Email Id, Aadhaar Number, License Number, License validity</span> details.</li>
+                    <li>Along with above details, you will have to submit few documents, Please check <span class="view-content">DOCUMENT DETAILS</span> tab for more details on the documents to be submitted.</li>
+                    <li>Before proceeding please make sure you have all the required documents.</li>
+                    <li>All mandatory details and documents are marked with Asterisk <span class="error-msg">(*)</span> symbol.</li>
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal">OK</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script
         src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
 <link rel="stylesheet"
       href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>">
-      <script
-		src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/moment.min.js' context='/egi'/>"></script>
+<script
+        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/moment.min.js' context='/egi'/>"></script>
 <script src="<cdn:url value='/resources/js/app/stakeholder-by-citizen.js?rnd=${app_release_no}'/> "></script>
+<script src="<cdn:url value='/resources/js/app/stakeholder-common.js?rnd=${app_release_no}'/> "></script>
 <script src="<cdn:url value='/resources/js/app/documentsuploadvalidation.js?rnd=${app_release_no}'/> "></script>
