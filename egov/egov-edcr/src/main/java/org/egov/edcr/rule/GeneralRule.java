@@ -183,6 +183,8 @@ public class GeneralRule implements RuleService {
                     building.setMaxFloor(BigDecimal.valueOf(building.getFloors().size()));
                     building.setFloorsAboveGround(BigDecimal.valueOf(building.getFloors().size()));
                     building.setTotalFloors(BigDecimal.valueOf(building.getFloors().size()));
+                    //Adding total floors.
+                    pl.getVirtualBuilding().setFloorsAboveGround(pl.getVirtualBuilding().getFloorsAboveGround().add(BigDecimal.valueOf(building.getFloors().size())));
                 }
                 blockNumber++;
             } else
@@ -323,6 +325,7 @@ public class GeneralRule implements RuleService {
             else
                 pi.setSecurityZone(false);
         }
+        // Labels changed check
         if (planInfoProperties.get(DxfFileConstants.OPENING_BELOW_2_1_ON_SIDE_LESS_1M) != null) {
             String openingBelow2mside = planInfoProperties.get(DxfFileConstants.OPENING_BELOW_2_1_ON_SIDE_LESS_1M);
             if (openingBelow2mside.equalsIgnoreCase(DcrConstants.YES))
@@ -330,6 +333,7 @@ public class GeneralRule implements RuleService {
             else
                 pi.setOpeningOnSide(false);
         }
+     // Labels changed check
         if (planInfoProperties.get(DxfFileConstants.OPENING_BELOW_2_1_ON_REAR_LESS_1M) != null) {
             String openingBelow2mrear = planInfoProperties.get(DxfFileConstants.OPENING_BELOW_2_1_ON_REAR_LESS_1M);
             if (openingBelow2mrear.equalsIgnoreCase(DcrConstants.YES))
@@ -337,6 +341,7 @@ public class GeneralRule implements RuleService {
             else
                 pi.setOpeningOnRear(false);
         }
+     // Labels changed check
         if (planInfoProperties.get(DxfFileConstants.NOC_TO_ABUT_SIDE) != null) {
             String nocAbutSide = planInfoProperties.get(DxfFileConstants.NOC_TO_ABUT_SIDE);
             if (nocAbutSide.equalsIgnoreCase(DcrConstants.YES))
@@ -344,6 +349,7 @@ public class GeneralRule implements RuleService {
             else
                 pi.setNocToAbutSide(false);
         }
+     // Labels changed check
         if (planInfoProperties.get(DxfFileConstants.NOC_TO_ABUT_REAR) != null) {
             String nocAbutRear = planInfoProperties.get(DxfFileConstants.NOC_TO_ABUT_REAR);
             if (nocAbutRear.equalsIgnoreCase(DcrConstants.YES))

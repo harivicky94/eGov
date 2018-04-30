@@ -58,7 +58,13 @@ public class PlanInformation extends AbstractAuditable {
 
     @Transient
     private Boolean openingOnSide=false;
-
+    @Transient
+    private Boolean openingBelow2mts=false;
+    @Transient
+    private Boolean openingAbove2mts=false;
+    @Transient
+    private Boolean nocToAbutAdjascentSide=false;
+    
     @Transient
     private Boolean openingOnRear=false;
     
@@ -188,6 +194,30 @@ public class PlanInformation extends AbstractAuditable {
 
     public void setOpeningOnSide(Boolean openingOnSide) {
         this.openingOnSide = openingOnSide;
+    }
+
+    public Boolean getOpeningBelow2mts() {
+        return openingBelow2mts;
+    }
+
+    public void setOpeningBelow2mts(Boolean openingBelow2mts) {
+        this.openingBelow2mts = openingBelow2mts;
+    }
+
+    public Boolean getOpeningAbove2mts() {
+        return openingAbove2mts;
+    }
+
+    public void setOpeningAbove2mts(Boolean openingAbove2mts) {
+        this.openingAbove2mts = openingAbove2mts;
+    }
+
+    public Boolean getNocToAbutAdjascentSide() {
+        return nocToAbutAdjascentSide;
+    }
+
+    public void setNocToAbutAdjascentSide(Boolean nocToAbutAdjascentSide) {
+        this.nocToAbutAdjascentSide = nocToAbutAdjascentSide;
     }
 
     public Boolean getOpeningOnRear() {

@@ -9,9 +9,18 @@ public class VirtualBuilding {
     private BigDecimal totalBuitUpArea;
     private BigDecimal totalFloorArea;
     private OccupancyType mostRestrictive;
+    private BigDecimal floorsAboveGround;
+
     
     
-    
+    public BigDecimal getFloorsAboveGround() {
+        return floorsAboveGround;
+    }
+
+    public void setFloorsAboveGround(BigDecimal floorsAboveGround) {
+        this.floorsAboveGround = floorsAboveGround;
+    }
+
     public BigDecimal getTotalBuitUpArea() {
         return totalBuitUpArea;
     }
