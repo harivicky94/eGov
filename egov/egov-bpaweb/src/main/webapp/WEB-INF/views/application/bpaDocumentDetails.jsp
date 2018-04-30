@@ -57,6 +57,10 @@
 		<spring:message code="lbl.encloseddocuments" />
 		-
 		<spring:message code="lbl.checklist" />
+		<span class="error-msg">
+		 (
+		<spring:message code="lbl.supp.doc.types"/>
+		)</span>
 	</div>
 </div>
 <div class="panel-body">
