@@ -3,6 +3,7 @@ package org.egov.edcr.rule;
 import java.math.BigDecimal;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -21,6 +22,7 @@ import org.egov.edcr.entity.measurement.Measurement;
 import org.egov.edcr.entity.utility.RuleReportOutput;
 import org.egov.edcr.utility.DcrConstants;
 import org.egov.edcr.utility.Util;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.kabeja.dxf.DXFBlock;
 import org.kabeja.dxf.DXFConstants;
 import org.kabeja.dxf.DXFDimension;
@@ -32,6 +34,7 @@ import org.kabeja.dxf.DXFMText;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
 
 import ar.com.fdvs.dj.domain.builders.FastReportBuilder;
@@ -48,7 +51,12 @@ public class GeneralRule implements RuleService {
 
         return planDetail;
     }
+    
+   /* public String getLocaleMessage(String code, String args) {
+        return edcrMessageSource.getMessage(code, new String[] { args }, LocaleContextHolder.getLocale());
 
+    }
+*/
     public PlanDetail process(PlanDetail planDetail) {
         return planDetail;
 
@@ -87,6 +95,10 @@ public class GeneralRule implements RuleService {
 
         return ruleOutput;
     }
+    
+    
+   
+
 
     protected RuleOutput buildRuleOutputWithMainRule(String mainRule, String ruleDescription, Result status, String message) {
         RuleOutput ruleOutput = new RuleOutput();
@@ -114,6 +126,11 @@ public class GeneralRule implements RuleService {
         extractBuildingDetails(pl, doc);
         extractFloorDetails(pl, doc);
         return pl;
+
+    }
+    
+    public String getLocaleMessage(String code, String ...args) {
+        return edcrMessageSource.getMessage(code, args, LocaleContextHolder.getLocale());
 
     }
 

@@ -71,7 +71,7 @@ public class DcrConstants {
     public static Integer FLOOR_COLOUR_CODE = 10;
 
     public static final int DECIMALDIGITS = 10;
-    public static final int DECIMALDIGITS_MEASUREMENTS = 3;
+    public static final int DECIMALDIGITS_MEASUREMENTS = 2;
 
     public static final String BUILDING_EXTERIOR_WALL = "BUILDING_EXTERIOR_WALL";
     public static final String OCCUPANCY = "Occupancy";

@@ -8,6 +8,7 @@ public class VirtualBuilding {
     private EnumSet<OccupancyType> occupancies= EnumSet.noneOf(OccupancyType.class);
     private BigDecimal totalBuitUpArea;
     private BigDecimal totalFloorArea;
+    private OccupancyType mostRestrictive;
     
     
     
@@ -42,5 +43,15 @@ public class VirtualBuilding {
     public void setBuildingHeight(BigDecimal buildingHeight) {
         this.buildingHeight = buildingHeight;
     }
+
+    public OccupancyType getMostRestrictive() {
+        return mostRestrictive;
+    }
+
+    public void setMostRestrictive(OccupancyType mostRestrictive) {
+        this.mostRestrictive = mostRestrictive;
+    }
+    
+    
 
 }

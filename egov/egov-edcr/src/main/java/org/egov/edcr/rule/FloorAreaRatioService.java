@@ -9,7 +9,6 @@ import static org.egov.edcr.utility.DcrConstants.ROUNDMODE_MEASUREMENTS;
 import java.math.BigDecimal;
 import java.util.EnumSet;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -21,22 +20,25 @@ import org.egov.edcr.entity.Occupancy;
 import org.egov.edcr.entity.OccupancyType;
 import org.egov.edcr.entity.PlanDetail;
 import org.egov.edcr.entity.Result;
+import org.egov.edcr.entity.RuleOutput;
+import org.egov.edcr.entity.SubRuleOutput;
+import org.egov.edcr.entity.utility.RuleReportOutput;
 import org.egov.edcr.utility.DcrConstants;
 import org.egov.edcr.utility.Util;
 import org.kabeja.dxf.DXFDocument;
 import org.kabeja.dxf.DXFLWPolyline;
-import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.stereotype.Service;
 
+@Service
 public class FloorAreaRatioService extends GeneralRule implements RuleService {
 
     private static final Logger LOG = Logger.getLogger(FloorAreaRatioService.class);
 
-    private static final String SUB_RULE_31_1 = "31(1)";
-    private static final String SUB_RULE_31_1_DESCRIPTION = "FAR";
-    private static final String FAR_WITH_ADDN_FEE = "Should be less than ?  with additional fee ? ";
-    private static final String FAR = "Should be less than ? ";
-
-    private static final BigDecimal onePointFive = BigDecimal.valueOf(1.5);
+    private static final String RULE_NAME_KEY = "far.rulename";
+    private static final String RULE_DESCRIPTION_KEY = "far.description";
+    private static final String RULE_EXPECTED_KEY = "far.expected";
+    private static final String RULE_ACTUAL_KEY = "far.actual";  
+    private static final BigDecimal onePointFive = BigDecimal.valueOf(1.5); 
     private static final BigDecimal two = BigDecimal.valueOf(2.0);
     private static final BigDecimal twoPointFive = BigDecimal.valueOf(2.5);
     private static final BigDecimal three = BigDecimal.valueOf(3.0);
@@ -44,6 +46,7 @@ public class FloorAreaRatioService extends GeneralRule implements RuleService {
     private static final BigDecimal four = BigDecimal.valueOf(4.0);
 
     String buildUpAreaByFloor = BLOCK_NAME_PREFIX + "?" + "_" + FLOOR_NAME_PREFIX + "?" + "_" + BUILT_UP_AREA;
+
     String farDeductByFloor = DxfFileConstants.BLOCK_NAME_PREFIX + "?" + "_" + DxfFileConstants.FLOOR_NAME_PREFIX
             + "?" + "_" + DxfFileConstants.FAR_DEDUCT;
 
@@ -58,32 +61,24 @@ public class FloorAreaRatioService extends GeneralRule implements RuleService {
         HashMap<String, String> errors = new HashMap<>();
         for (Block block : pl.getBlocks()) {
             if (block.getBuilding().getTotalBuitUpArea() == null)
-                errors.put(DcrConstants.FAR, getMessage(DcrConstants.OBJECTNOTDEFINED, DcrConstants.FAR));
+                errors.put(DcrConstants.FAR, getLocaleMessage(DcrConstants.OBJECTNOTDEFINED, DcrConstants.FAR));
             pl.addErrors(errors);
         }
 
         for (Block block : pl.getBlocks()) {
             if (block.getBuilding().getTotalFloorArea() == null)
-                errors.put(DcrConstants.FAR, getMessage(DcrConstants.OBJECTNOTDEFINED, DcrConstants.FAR));
+                errors.put(DcrConstants.FAR, getLocaleMessage(DcrConstants.OBJECTNOTDEFINED, DcrConstants.FAR));
             pl.addErrors(errors);
         }
 
         return pl;
     }
 
-    private String getMessage(String code, String args) {
-        return edcrMessageSource.getMessage(code, new String[] { args }, LocaleContextHolder.getLocale());
-
-    }
-
     @Override
     public PlanDetail process(PlanDetail pl) {
-        BigDecimal builtUpArea = BigDecimal.ZERO;
-        OccupancyType mostRestrictiveOccupancy = OccupancyType.OCCUPANCY_A1;
-        for (Block block : pl.getBlocks()) {
-            builtUpArea = builtUpArea.add(block.getBuilding().getTotalBuitUpArea());
-            mostRestrictiveOccupancy = block.getBuilding().getMostRestrictiveOccupancy();
-        }
+        
+        BigDecimal builtUpArea = pl.getVirtualBuilding().getTotalBuitUpArea();
+        OccupancyType   mostRestrictiveOccupancy=  pl.getVirtualBuilding().getMostRestrictive();
         BigDecimal far = builtUpArea.divide(pl.getPlot().getArea(), DECIMALDIGITS_MEASUREMENTS, ROUNDMODE_MEASUREMENTS);
 
         switch (mostRestrictiveOccupancy) {
@@ -136,26 +131,45 @@ public class FloorAreaRatioService extends GeneralRule implements RuleService {
     }
 
     private void processFar(PlanDetail pl, BigDecimal far, BigDecimal upperLimit, BigDecimal additionFeeLimit) {
-       
-        if (far.doubleValue() <= upperLimit.doubleValue()) {
+
+        if (far.doubleValue() <= upperLimit.doubleValue()) { 
+            
             if (far.doubleValue() > additionFeeLimit.doubleValue()) {
-                BigDecimal additonalFee = pl.getPlot().getArea().multiply(new BigDecimal(5000)).multiply(far.subtract(additionFeeLimit));
+                BigDecimal additonalFee = pl.getPlot().getArea().multiply(new BigDecimal(5000))
+                        .multiply(far.subtract(additionFeeLimit));
+                
+                String actualResult = getLocaleMessage(RULE_ACTUAL_KEY, additonalFee.toString());
+                String expectedResult = getLocaleMessage(RULE_EXPECTED_KEY, additonalFee.toString());
+                pl.reportOutput.add(buildResult(actualResult, expectedResult, Result.Verify));
+            } else {
 
-                pl.reportOutput.add(buildRuleOutputWithSubRule(DcrConstants.RULE31, SUB_RULE_31_1,
-                        SUB_RULE_31_1_DESCRIPTION, DcrConstants.FAR,
-                        String.format(FAR_WITH_ADDN_FEE, upperLimit, additonalFee),
-                        far.toString(), Result.Verify, null));
-            } else
-                pl.reportOutput.add(buildRuleOutputWithSubRule(DcrConstants.RULE31, SUB_RULE_31_1,
-                        SUB_RULE_31_1_DESCRIPTION, DcrConstants.FAR,
-                        String.format(FAR, upperLimit),
-                        far.toString(), Result.Accepted, null));
+                String actualResult = getLocaleMessage(RULE_ACTUAL_KEY);
+                String expectedResult = getLocaleMessage(RULE_EXPECTED_KEY);
+                pl.reportOutput.add(buildResult(actualResult, expectedResult, Result.Accepted));
+            }
+        } else {
+            String actualResult = getLocaleMessage(RULE_ACTUAL_KEY);
+            String expectedResult = getLocaleMessage(RULE_EXPECTED_KEY);
+            pl.reportOutput.add(buildResult(actualResult, expectedResult, Result.Not_Accepted));
 
-        } else
-            pl.reportOutput.add(buildRuleOutputWithSubRule(DcrConstants.RULE31, SUB_RULE_31_1,
-                    SUB_RULE_31_1_DESCRIPTION, DcrConstants.FAR,
-                    String.format(FAR, upperLimit),
-                    far.toString(), Result.Not_Accepted, null));
+        }
+
+    }
+
+    private RuleOutput buildResult(String expectedResult, String actualResult, Result result) {
+        RuleOutput ruleOutput = new RuleOutput();
+        ruleOutput.key = getLocaleMessage(RULE_NAME_KEY);
+        ruleOutput.ruleDescription = getLocaleMessage(RULE_DESCRIPTION_KEY);
+        SubRuleOutput subRuleOutput = new SubRuleOutput();
+        RuleReportOutput ruleReportOutput = new RuleReportOutput();
+        ruleReportOutput.setActualResult(actualResult);
+        ruleReportOutput.setExpectedResult(expectedResult);
+        ruleReportOutput.setFieldVerified(ruleOutput.key);
+        ruleReportOutput.setStatus(result.name());
+        subRuleOutput.add(ruleReportOutput);
+        ruleOutput.subRuleOutputs.add(subRuleOutput);
+        return ruleOutput;
+
     }
 
     /**
@@ -166,6 +180,7 @@ public class FloorAreaRatioService extends GeneralRule implements RuleService {
      */
     private PlanDetail extractTotalFloorArea(PlanDetail pl, DXFDocument doc) {
         EnumSet<OccupancyType> distinctOccupancyTypes = EnumSet.noneOf(OccupancyType.class);
+        BigDecimal totalBuiltUpArea=BigDecimal.ZERO;
         for (Block block : pl.getBlocks()) {
             BigDecimal floorArea = BigDecimal.ZERO;
             BigDecimal builtUpArea = BigDecimal.ZERO;
@@ -204,6 +219,7 @@ public class FloorAreaRatioService extends GeneralRule implements RuleService {
             }
 
             block.getBuilding().setTotalBuitUpArea(builtUpArea);
+            totalBuiltUpArea.add(builtUpArea);
             block.getBuilding().setMostRestrictiveOccupancy(getMostRestrictiveOccupancy(block.getBuilding()));
 
             LOG.debug("floorArea:" + floorArea);
@@ -217,41 +233,38 @@ public class FloorAreaRatioService extends GeneralRule implements RuleService {
                 BigDecimal cvDeduct = BigDecimal.ZERO;
                 List<DXFLWPolyline> cvDeductPlines = Util.getPolyLinesByLayer(doc, DxfFileConstants.COVERGAE_DEDUCT);
                 for (DXFLWPolyline pline : cvDeductPlines)
-                    cvDeduct=   cvDeduct.add(Util.getPolyLineArea(pline));
-                
+                    cvDeduct = cvDeduct.add(Util.getPolyLineArea(pline));
+
             }
         }
         pl.getVirtualBuilding().setOccupancies(distinctOccupancyTypes);
+        pl.getVirtualBuilding().setTotalBuitUpArea(totalBuiltUpArea);
+        distinctOccupancyTypes.size();
+        pl.getVirtualBuilding().setMostRestrictive(OccupancyType.OCCUPANCY_A1);   
+        
+       /* OccupancyType mostRestrict;
+        for (OccupancyType occupancy : distinctOccupancyTypes) {
+            mostRestrict = occupancy;
+            if (OccupancyType.valueOf(occupancy) > occupancies.indexOf(mostRestrict))
+                mostRestrict = occupancy.getType();
+        }*/
         return pl;
 
     }
 
     private OccupancyType getMostRestrictiveOccupancy(Building building) {
         OccupancyType mostRestrict = null;
-        LinkedList<OccupancyType> occupancies = new LinkedList<>();
-        occupancies.add(OccupancyType.OCCUPANCY_A1);
-        occupancies.add(OccupancyType.OCCUPANCY_A2);
-        occupancies.add(OccupancyType.OCCUPANCY_B1);
-        occupancies.add(OccupancyType.OCCUPANCY_B2);
-        occupancies.add(OccupancyType.OCCUPANCY_B3);
-        occupancies.add(OccupancyType.OCCUPANCY_C);
-        occupancies.add(OccupancyType.OCCUPANCY_D);
-        occupancies.add(OccupancyType.OCCUPANCY_D1);
-        occupancies.add(OccupancyType.OCCUPANCY_E);
-        occupancies.add(OccupancyType.OCCUPANCY_F);
-        occupancies.add(OccupancyType.OCCUPANCY_G1);
-        occupancies.add(OccupancyType.OCCUPANCY_G2);
-        occupancies.add(OccupancyType.OCCUPANCY_H);
-        occupancies.add(OccupancyType.OCCUPANCY_I1);
-        occupancies.add(OccupancyType.OCCUPANCY_I2);
+      /*  List<OccupancyType> list;
+        list.addAll( OccupancyType.values())
+        OccupancyType[] values = OccupancyType.values();
+        
 
         for (Floor floor : building.getFloors())
-            for (Occupancy occupancy : floor.getOccupancies())
-            {
-                  mostRestrict = occupancy.getType();
-                  if (occupancies.indexOf(occupancy.getType()) > occupancies.indexOf(mostRestrict))
+            for (Occupancy occupancy : floor.getOccupancies()) {
+                mostRestrict = occupancy.getType();
+                if (values.indexOf(occupancy.getType()) > occupancies.indexOf(mostRestrict))
                     mostRestrict = occupancy.getType();
-            }
+            }*/
         return mostRestrict;
     }
 
