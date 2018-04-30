@@ -67,8 +67,8 @@ $(document).ready(
                     } else {
                         $('#edcrApplicationNumber').html(response.applicationNumber);
                         $('#edcrUploadedDate').html(response.applicationDate);
-                        $('#edcrDxfFile').html('<a href="/egi/downloadfile?fileStoreId=' + response.dxfFile.fileStoreId + '&moduleName=EDCR&toSave=true">' + response.dxfFile.fileName + '</a>');
-                        $('#edcrPlanReportOutput').html('<a href="/egi/downloadfile?fileStoreId=' + response.reportOutput.fileStoreId + '&moduleName=EDCR&toSave=true">' + response.reportOutput.fileName + '</a>');
+                        $('#edcrDxfFile').html('<a href="/egi/downloadfile?fileStoreId=' + response.dxfFile.fileStoreId + '&moduleName=Digit DCR&toSave=true">' + response.dxfFile.fileName + '</a>');
+                        $('#edcrPlanReportOutput').html('<a href="/egi/downloadfile?fileStoreId=' + response.reportOutput.fileStoreId + '&moduleName=Digit DCR&toSave=true">' + response.reportOutput.fileName + '</a>');
                     }
                 },
                 error: function (response) {

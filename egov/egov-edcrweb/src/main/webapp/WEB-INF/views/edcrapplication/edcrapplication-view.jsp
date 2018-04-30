@@ -21,7 +21,8 @@
                     <div class="col-xs-3 add-margin"><spring:message code="lbl.applicationdate"/>
                     </div>
                     <div class="col-sm-3 add-margin view-content">
-                        <fmt:formatDate pattern="dd/MM/yyyyy" value="${edcrApplication.applicationDate}"/>
+                        <fmt:formatDate value="${edcrApplication.applicationDate}" pattern="dd/MM/yyyy" var="applicationDate" />
+                        <c:out value="${applicationDate}" default="N/A"></c:out>
                     </div>
                 </div>
                 <div class="row add-border">

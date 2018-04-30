@@ -81,7 +81,7 @@
                     <td><c:set value="false" var="isDocFound"></c:set>
                         <c:if test="${docs.dxfFileId.fileStoreId ne null}">
                             <c:set value="true" var="isDocFound"></c:set>
-                            <a href="/egi/downloadfile?fileStoreId=${docs.dxfFileId.fileStoreId}&moduleName=EDCR&toSave=true">
+                            <a href="/egi/downloadfile?fileStoreId=${docs.dxfFileId.fileStoreId}&moduleName=Digit DCR&toSave=true">
                                     ${docs.dxfFileId.fileName}<br>
                             </a>
                             <c:if test="${!loop.last}">,</c:if>&nbsp;
@@ -93,7 +93,7 @@
                         <c:if test="${docs.reportOutputId.fileStoreId ne null}">
                             <c:set value="true" var="isDocFound"></c:set>
                             <a
-                                    href="/egi/downloadfile?fileStoreId=${docs.reportOutputId.fileStoreId}&moduleName=EDCR&toSave=true">
+                                    href="/egi/downloadfile?fileStoreId=${docs.reportOutputId.fileStoreId}&moduleName=Digit DCR&toSave=true">
                                     ${docs.reportOutputId.fileName}<br>
                             </a>
                             <c:if test="${!loop.last}">,</c:if>&nbsp;
