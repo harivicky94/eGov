@@ -65,20 +65,22 @@
 							</select>
 							<form:errors path="stakeHolderType" cssClass="error-msg" />
 						</div>
-						<label class="col-sm-2 control-label text-right"><spring:message
+					</div>
+					<div class="form-group">
+						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.fromDate" /></label>
 						<div class="col-sm-3 add-margin">
 							<form:input path="fromDate" class="form-control datepicker"
-								data-date-end-date="0d" id="fromDate"
-								data-inputmask="'mask': 'd/m/y'" />
+										data-date-end-date="0d" id="fromDate"
+										data-inputmask="'mask': 'd/m/y'" />
 							<form:errors path="fromDate" cssClass="add-margin error-msg" />
 						</div>
-						<label class="col-sm-3 control-label text-right"><spring:message
+						<label class="col-sm-2 control-label text-right"><spring:message
 								code="lbl.toDate" /></label>
 						<div class="col-sm-3 add-margin">
 							<form:input path="toDate" class="form-control datepicker"
-								data-date-end-date="0d" id="toDate"
-								data-inputmask="'mask': 'd/m/y'" />
+										data-date-end-date="0d" id="toDate"
+										data-inputmask="'mask': 'd/m/y'" />
 							<form:errors path="toDate" cssClass="add-margin error-msg" />
 						</div>
 					</div>

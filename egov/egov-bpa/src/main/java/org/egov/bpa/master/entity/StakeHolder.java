@@ -105,7 +105,7 @@ public class StakeHolder extends User {
 	private String organizationMobNo;
 	private Boolean isOnbehalfOfOrganization;
 	@NotNull
-	private Boolean isActive = false;
+	private Boolean isActive;
 	@Length(max = 11)
 	private String tinNumber;
 	@Length(max = 50)

@@ -97,6 +97,7 @@ public class StakeHolderController {
 	private static final String SRCH_STKHLDR_FR_APPRVL = "search-stakeholder-forapproval";
 	private static final String STAKE_HOLDER_FORM = "searchStakeHolderForm";
 	private static final String STKHLDR_APP_REJ_CMNT = "stakeholder-remarks";
+	public static final String STAKE_HOLDER_TYPES = "stakeHolderTypes";
 	@Autowired
 	private StakeHolderService stakeHolderService;
 	@Autowired
@@ -119,7 +120,9 @@ public class StakeHolderController {
 
 	@RequestMapping(value = "/create", method = RequestMethod.GET)
 	public String showStakeHolder(final Model model) {
-		prepareModel(model, new StakeHolder());
+		StakeHolder stakeHolder = new StakeHolder();
+		stakeHolder.setIsActive(true);
+		prepareModel(model, stakeHolder);
 		return STAKEHOLDER_NEW;
 	}
 
@@ -128,7 +131,7 @@ public class StakeHolderController {
 		model.addAttribute("isEmployee", securityUtils.getCurrentUser().getType().equals(UserType.EMPLOYEE) || "egovernments".equals(securityUtils.getCurrentUser().getUsername()) ? Boolean.TRUE : Boolean.FALSE);
 		model.addAttribute("isBusinessUser", securityUtils.getCurrentUser().getType().equals(UserType.SYSTEM) ? Boolean.TRUE : Boolean.FALSE);
 		model.addAttribute("genderList", Arrays.asList(Gender.values()));
-		model.addAttribute("stakeHolderTypes", Arrays.asList(StakeHolderType.values()));
+		model.addAttribute(STAKE_HOLDER_TYPES, Arrays.asList(StakeHolderType.values()));
 		model.addAttribute("isOnbehalfOfOrganization", false);
 	}
 
@@ -153,6 +156,7 @@ public class StakeHolderController {
 	public String showOnlineStakeHolder(final Model model) {
 		StakeHolder stakeHolder = new StakeHolder();
 		stakeHolder.setSource(Source.ONLINE);
+		stakeHolder.setIsActive(false);
 		prepareModel(model, stakeHolder);
 		return STAKEHOLDER_NEW_BY_CITIZEN;
 	}
@@ -248,7 +252,7 @@ public class StakeHolderController {
 	@RequestMapping(value = "/search/update", method = RequestMethod.GET)
 	public String searchEditStakeHolder(final Model model) {
 		model.addAttribute(STAKE_HOLDER, new StakeHolder());
-		model.addAttribute("stakeHolderTypes", Arrays.asList(StakeHolderType.values()));
+		model.addAttribute(STAKE_HOLDER_TYPES, Arrays.asList(StakeHolderType.values()));
 		return SEARCH_STAKEHOLDER_EDIT;
 	}
 
@@ -264,7 +268,7 @@ public class StakeHolderController {
 	@RequestMapping(value = "/search/view", method = RequestMethod.GET)
 	public String searchViewStakeHolder(final Model model) {
 		model.addAttribute(STAKE_HOLDER, new StakeHolder());
-		model.addAttribute("stakeHolderTypes", Arrays.asList(StakeHolderType.values()));
+		model.addAttribute(STAKE_HOLDER_TYPES, Arrays.asList(StakeHolderType.values()));
 		return SEARCH_STAKEHOLDER_VIEW;
 	}
 
@@ -280,7 +284,7 @@ public class StakeHolderController {
 	@RequestMapping(value = "/search", method = RequestMethod.GET)
 	public String searchStakeHolderForApprovalView(Model model) {
 		model.addAttribute(STAKE_HOLDER_FORM, new SearchStakeHolderForm());
-		model.addAttribute("stakeHolderTypes", Arrays.asList(StakeHolderType.values()));
+		model.addAttribute(STAKE_HOLDER_TYPES, Arrays.asList(StakeHolderType.values()));
 		return SRCH_STKHLDR_FR_APPRVL;
 	}
 

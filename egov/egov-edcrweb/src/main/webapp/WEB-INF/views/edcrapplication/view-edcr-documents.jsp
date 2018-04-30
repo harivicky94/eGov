@@ -101,7 +101,8 @@
                         <c:if test="${!isDocFound}">
                             N/A
                         </c:if></td>
-                    <td><c:out value="${docs.createdDate}" default="N/A"></c:out> </td>
+                    <td><fmt:formatDate value="${docs.createdDate}" pattern="dd/MM/yyyy HH:mm:ss" var="createdDate" />
+                        <c:out value="${createdDate}" default="N/A"></c:out></td>
                     <td><c:out value="${docs.status}" default="N/A"></c:out> </td>
                 </tr>
             </c:forEach>

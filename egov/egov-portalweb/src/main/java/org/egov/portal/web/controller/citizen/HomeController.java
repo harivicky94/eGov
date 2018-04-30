@@ -94,9 +94,6 @@ public class HomeController {
     @Autowired
     private CityService cityService;
 
-    @Value("${user.pwd.expiry.days}")
-    private Integer userPasswordExpiryInDays;
-
     @Value("${dev.mode}")
     private boolean devMode;
 
