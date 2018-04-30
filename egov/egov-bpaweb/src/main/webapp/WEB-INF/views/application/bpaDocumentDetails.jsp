@@ -57,10 +57,6 @@
 		<spring:message code="lbl.encloseddocuments" />
 		-
 		<spring:message code="lbl.checklist" />
-		<span class="error-msg">
-		 (
-		<spring:message code="lbl.supp.doc.types"/>
-		)</span>
 	</div>
 </div>
 <div class="panel-body">
@@ -74,8 +70,8 @@
 		<label class="col-sm-3 ">
 			<spring:message code="lbl.remarks"/>
 		</label>
-		<label class="col-sm-4 ">
-			<spring:message code="lbl.attachdocument"/>
+		<label class="col-sm-6 ">
+			<spring:message code="lbl.attachdocument"/><span class="error-msg"> (<spring:message code="lbl.supp.doc.types"/>)</span>
 			<br>
 			<small class="error-msg"><spring:message
 					code="lbl.mesg.document"/></small>
@@ -122,7 +118,7 @@
 						cssClass="add-margin error-msg" />
 				</div>
 
-				<div class="col-sm-4 add-margin">
+				<div class="col-sm-6 add-margin">
 					<div class="files-upload-container"
 					    data-file-max-size="5"
 					    <c:if test="${docs.checklistDetail.isMandatory eq true && fn:length(docs.getOrderedSupportDocs()) eq 0}">required</c:if>
