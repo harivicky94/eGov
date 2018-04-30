@@ -184,7 +184,7 @@ public class GeneralRule implements RuleService {
                     building.setFloorsAboveGround(BigDecimal.valueOf(building.getFloors().size()));
                     building.setTotalFloors(BigDecimal.valueOf(building.getFloors().size()));
                     //Adding total floors.
-                    pl.getVirtualBuilding().setFloorsAboveGround(pl.getVirtualBuilding().getFloorsAboveGround().add(BigDecimal.valueOf(building.getFloors().size())));
+                    pl.getVirtualBuilding().setFloorsAboveGround(BigDecimal.valueOf(building.getFloors().size()));
                 }
                 blockNumber++;
             } else
