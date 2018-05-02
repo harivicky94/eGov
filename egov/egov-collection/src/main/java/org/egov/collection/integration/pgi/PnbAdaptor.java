@@ -8,8 +8,10 @@ import java.util.Locale;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
+import org.apache.struts2.ServletActionContext;
 import org.egov.collection.config.properties.CollectionApplicationProperties;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.OnlinePayment;
@@ -98,17 +100,11 @@ public class PnbAdaptor implements PaymentGatewayAdaptor {
 	public PaymentResponse parsePaymentResponse(final String response) {
 		LOGGER.info("Response message from PNB Payment gateway: " + response);
 		final PaymentResponse pnbResponse = new DefaultPaymentResponse();
-		String merchantResponse = "";
 		try {
-			if (response != null && !response.isEmpty()) {
-				String[] splitData = response.split(",");
-				LOGGER.info("splitData>>>>>>>>> "+splitData);
-				if (splitData[1] != "")
-					merchantResponse = splitData[1].split("=")[1];
-				LOGGER.info("merchantResponse>>>>>>>>> "+merchantResponse);
-			}
+			final HttpServletRequest httpRequest = ServletActionContext.getRequest();
+			LOGGER.info("merchantResponse>>>>>>>>> "+httpRequest.getParameter("merchantResponse"));
 			AWLMEAPI objAWLMEAPI = new AWLMEAPI();
-			ResMsgDTO objResMsgDTO = objAWLMEAPI.parseTrnResMsg(merchantResponse,
+			ResMsgDTO objResMsgDTO = objAWLMEAPI.parseTrnResMsg(httpRequest.getParameter("merchantResponse"), 
 					collectionApplicationProperties.pnbEncryptionKey());
 			LOGGER.info("objResMsgDTO>>>>>>>>> "+objResMsgDTO);
 			// Punjab national bank Payment Gateway returns Response Code 'S'
