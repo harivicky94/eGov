@@ -102,12 +102,15 @@ public class PnbAdaptor implements PaymentGatewayAdaptor {
 		try {
 			if (response != null && !response.isEmpty()) {
 				String[] splitData = response.split(",");
+				LOGGER.info("splitData>>>>>>>>> "+splitData);
 				if (splitData[1] != "")
 					merchantResponse = splitData[1].split("=")[1];
+				LOGGER.info("merchantResponse>>>>>>>>> "+merchantResponse);
 			}
 			AWLMEAPI objAWLMEAPI = new AWLMEAPI();
 			ResMsgDTO objResMsgDTO = objAWLMEAPI.parseTrnResMsg(merchantResponse,
 					collectionApplicationProperties.pnbEncryptionKey());
+			LOGGER.info("objResMsgDTO>>>>>>>>> "+objResMsgDTO);
 			// Punjab national bank Payment Gateway returns Response Code 'S'
 			// for successful
 			// transactions, so converted it to 0300
@@ -118,7 +121,7 @@ public class PnbAdaptor implements PaymentGatewayAdaptor {
 			pnbResponse.setErrorDescription(objResMsgDTO.getStatusDesc());
 			pnbResponse.setAdditionalInfo6(objResMsgDTO.getAddField2().replace("-", "").replace("/", ""));
 			pnbResponse.setReceiptId(objResMsgDTO.getOrderId());
-
+			LOGGER.info("PaymentResponse >>>>>>>>> "+pnbResponse);
                         LOGGER.info("Response message from PNB Payment gateway: Auth Status: " + pnbResponse.getAuthStatus());
                         LOGGER.info("Response message from PNB Payment gateway: Error Description: " + pnbResponse.getErrorDescription());
                         LOGGER.info("Response message from PNB Payment gateway: AdditionalInfo6: " + pnbResponse.getAdditionalInfo6());
@@ -129,6 +132,7 @@ public class PnbAdaptor implements PaymentGatewayAdaptor {
 				pnbResponse.setTxnAmount(new BigDecimal(objResMsgDTO.getTrnAmt()).divide(PAISE_RUPEE_CONVERTER));
 				pnbResponse.setTxnReferenceNo(objResMsgDTO.getPgMeTrnRefNo());
 				pnbResponse.setTxnDate(getTransactionDate(objResMsgDTO.getTrnReqDate()));
+				LOGGER.info("On success >>>>>>>>> "+pnbResponse);
 			}
 		} catch (final Exception exp) {
 			LOGGER.error(exp);
