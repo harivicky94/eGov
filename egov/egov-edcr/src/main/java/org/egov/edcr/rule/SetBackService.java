@@ -111,26 +111,6 @@ public class SetBackService extends GeneralRule implements RuleService {
     
     public PlanDetail extract(PlanDetail pl, DXFDocument doc) {
         extractSetBack(pl, doc);
-          
-     
-        if (pl.getBasement() != null) {
-            pl.getPlot().setBsmtFrontYard(getYard(pl, doc, DxfFileConstants.BSMNT_FRONT_YARD));
-            pl.getPlot().setBsmtRearYard(getYard(pl, doc, DxfFileConstants.BSMNT_REAR_YARD));
-            pl.getPlot().setBsmtSideYard1(getYard(pl, doc, DxfFileConstants.BSMNT_SIDE_YARD_1));
-            pl.getPlot().setBsmtSideYard2(getYard(pl, doc, DxfFileConstants.BSMNT_SIDE_YARD_2));
-
-            pl.getPlot().getBsmtFrontYard()
-                    .setMinimumDistance(MinDistance.getBasementYardMinDistance(pl, DxfFileConstants.BSMNT_FRONT_YARD));
-            pl.getPlot().getBsmtSideYard1()
-                    .setMinimumDistance(MinDistance.getBasementYardMinDistance(pl, DxfFileConstants.BSMNT_SIDE_YARD_1));
-            pl.getPlot().getBsmtSideYard2()
-                    .setMinimumDistance(MinDistance.getBasementYardMinDistance(pl, DxfFileConstants.BSMNT_SIDE_YARD_2));
-            pl.getPlot().getBsmtRearYard()
-                    .setMinimumDistance(MinDistance.getBasementYardMinDistance(pl, DxfFileConstants.BSMNT_REAR_YARD));
-        }
-
-
-        
         return pl;
     }
 
@@ -151,6 +131,7 @@ public class SetBackService extends GeneralRule implements RuleService {
                    String height = Util.getMtextByLayerName(doc, DxfFileConstants.MTEXT_NAME_HEIGHT_M);
                    if (!height.isEmpty()){
                        height = height.replaceAll("[^\\d.]", "");
+                       if (!height.isEmpty())
                        setBack.setHeight(BigDecimal.valueOf(Double.parseDouble(height)));
                    }
                          
@@ -212,12 +193,12 @@ public class SetBackService extends GeneralRule implements RuleService {
 
     
     public PlanDetail process(PlanDetail pl) {
-        rule24_3(pl, DcrConstants.NON_BASEMENT);
-
+        rule24_3(pl);
+        rule24_5(pl);
         return pl;
     }
 
-    private void rule24_5(PlanDetail planDetail, String type) {
+    private void rule24_5(PlanDetail planDetail) {
         validateRule24_5(planDetail);
         Yard sideYard1 = null;
         Yard sideYard2 = null;
@@ -392,7 +373,7 @@ public class SetBackService extends GeneralRule implements RuleService {
                             .valueOf(Math.ceil((buildingHeight.subtract(BigDecimal.TEN)
                                     .divide(BigDecimal.valueOf(3), 2, RoundingMode.HALF_UP)).doubleValue()))));
 
-            processSideYardOtherThanResidentialCases(planDetail, plot, min, max, mostRestrictiveOccupancy, subRule, rule,
+            processSideYardForOccupanciesOtherThanA1A2F(planDetail, plot, min, max, mostRestrictiveOccupancy, subRule, rule,
                     side1Desc, side2Desc, side1FieldName, side2FieldName, valid1, valid2, buildingHeight, side1val, side2val,distanceIncrementBasedOnHeight,true);
 
         }
@@ -493,13 +474,13 @@ private void checkSideYardBetweenTenToSixteenMts(PlanDetail planDetail, Plot plo
                             .valueOf(Math.ceil((buildingHeight.subtract(BigDecimal.TEN)
                                     .divide(BigDecimal.valueOf(3), 2, RoundingMode.HALF_UP)).doubleValue()))));
 
-            processSideYardOtherThanResidentialCases(planDetail, plot, min, max, mostRestrictiveOccupancy, subRule, rule,
+            processSideYardForOccupanciesOtherThanA1A2F(planDetail, plot, min, max, mostRestrictiveOccupancy, subRule, rule,
                     side1Desc, side2Desc, side1FieldName, side2FieldName, valid1, valid2, buildingHeight, side1val, side2val,distanceIncrementBasedOnHeight,false);
 
         }
  }
 
-private void processSideYardOtherThanResidentialCases(PlanDetail planDetail, Plot plot, double min, double max,
+private void processSideYardForOccupanciesOtherThanA1A2F (PlanDetail planDetail, Plot plot, double min, double max,
         OccupancyType mostRestrictiveOccupancy, String subRule, String rule, String side1Desc, String side2Desc,
         String side1FieldName, String side2FieldName, Boolean valid1, Boolean valid2, BigDecimal buildingHeight,
         BigDecimal side1val, BigDecimal side2val,BigDecimal distanceIncrementBasedOnHeight, Boolean checkMinimum5mtsCondition) {
@@ -907,13 +888,13 @@ private void checkSideYardLessThanTenOrEqualToMts(PlanDetail planDetail, Plot pl
         }
         }else
         {
-            processSideYardOtherThanResidentialCases(planDetail, plot, min, max, mostRestrictiveOccupancy, subRule, rule,
+            processSideYardForOccupanciesOtherThanA1A2F(planDetail, plot, min, max, mostRestrictiveOccupancy, subRule, rule,
                     side1Desc, side2Desc, side1FieldName, side2FieldName, valid1, valid2, buildingHeight, side1val, side2val,BigDecimal.ZERO,false);
 
         }
     }
 
-public void rule24_3(PlanDetail planDetail, String type) {
+public void rule24_3(PlanDetail planDetail) {
         
         if (planDetail.getPlot() == null)
             return;
@@ -977,46 +958,7 @@ public void rule24_3(PlanDetail planDetail, String type) {
      if (mostRestrictiveOccupancy.equals(OccupancyType.OCCUPANCY_A1) ||
              mostRestrictiveOccupancy.equals(OccupancyType.OCCUPANCY_A2) ||
              mostRestrictiveOccupancy.equals(OccupancyType.OCCUPANCY_F)) {
-
-         if (plot.getArea().compareTo(BigDecimal.valueOf(SITEAREA_125)) > 0) {
-              subRule = SUB_RULE_24_3;
-              rule = DcrConstants.RULE24;
-             minval = BigDecimal.valueOf(1.8);
-             meanval = BigDecimal.valueOf(3);
-         }
-
-         for (SetBack setbacks : planDetail.getPlot().getSetBacks()) {
-              if (setbacks.getHeight() != null && setbacks.getHeight().compareTo(BigDecimal.TEN) >= 0) {
-                  //Using height defined in levels
-                 BigDecimal minValue = (BigDecimal.valueOf(VALUE_0_5)
-                         .multiply(BigDecimal.valueOf(Math.ceil((setbacks.getHeight().subtract(BigDecimal.TEN)
-                                 .divide(BigDecimal.valueOf(3), 2, RoundingMode.HALF_UP)).doubleValue()))))
-                                         .add(minval);
-                 BigDecimal meanValue = (BigDecimal.valueOf(VALUE_0_5)
-                         .multiply(BigDecimal.valueOf(Math.ceil((setbacks.getHeight().subtract(BigDecimal.TEN)
-                                 .divide(BigDecimal.valueOf(3), 2, RoundingMode.HALF_UP)).doubleValue()))))
-                                         .add(meanval);
-                 minValue = minValue.compareTo(FIVE) <= 0 ? FIVE : minValue;
-                 meanValue = meanValue.compareTo(FIVE) <= 0 ? FIVE : meanValue;
-//compare with each setback frontyard, level wise minimum and mean distaince.
-                 if (setbacks.getFrontYard().getMinimumDistance().compareTo(minValue) >= 0
-                         && setbacks.getFrontYard().getMean().compareTo(meanValue) >= 0) {
-                     planDetail.reportOutput
-                             .add(buildRuleOutputWithSubRule(rule, subRule, subRuleDesc,
-                                     frontYardFieldName + LEVEL + setbacks.getLevel(),
-                                     meanMinumumLabel + "(" + minValue + "," + meanValue + ")" + DcrConstants.IN_METER,
-                                     "(" + setbacks.getFrontYard().getMinimumDistance() + "," + setbacks.getFrontYard().getMean() + ")" + DcrConstants.IN_METER,
-                                     Result.Accepted, null));
-                 } else
-                     planDetail.reportOutput
-                             .add(buildRuleOutputWithSubRule(rule, subRule, subRuleDesc,
-                                     frontYardFieldName + LEVEL + setbacks.getLevel(),
-                                     meanMinumumLabel + "(" + minValue + "," + meanValue + ")" + DcrConstants.IN_METER,
-                                     "(" + setbacks.getFrontYard().getMinimumDistance() + "," + setbacks.getFrontYard().getMean() + ")" + DcrConstants.IN_METER,
-                                     Result.Not_Accepted, null));
-             }
-
-         }
+         processFrontYardForOccupancyA1A2F(planDetail, plot, frontYardFieldName, subRuleDesc,true);
      } else {
 
          BigDecimal distanceIncrementBasedOnHeight = (BigDecimal.valueOf(VALUE_0_5)
@@ -1025,7 +967,7 @@ public void rule24_3(PlanDetail planDetail, String type) {
                                  .divide(BigDecimal.valueOf(3), 2, RoundingMode.HALF_UP)).doubleValue()))));
 
 
-         valid = processFrontYardOtherThanResidentials(planDetail, plot, frontYardFieldName, subRuleDesc, min, mean,
+         valid = processFrontYardForOccupanciesOtherThanA1A2F(planDetail, plot, frontYardFieldName, subRuleDesc, min, mean,
                 mostRestrictiveOccupancy, subRule, rule, valid, minval, meanval, distanceIncrementBasedOnHeight,true);
 
      }
@@ -1072,7 +1014,7 @@ public void rule24_3(PlanDetail planDetail, String type) {
                              Result.Not_Accepted, null));
 
      } else {
-         valid = processFrontYardOtherThanResidentials(planDetail, plot, frontYardFieldName, subRuleDesc, min, mean,
+         valid = processFrontYardForOccupanciesOtherThanA1A2F(planDetail, plot, frontYardFieldName, subRuleDesc, min, mean,
                  mostRestrictiveOccupancy, subRule, rule, valid, minval, meanval, BigDecimal.ZERO,false);
 
      }
@@ -1083,9 +1025,7 @@ public void rule24_3(PlanDetail planDetail, String type) {
          String subRuleDesc, BigDecimal min, BigDecimal mean, OccupancyType mostRestrictiveOccupancy) {
      String subRule = SUB_RULE_24_3;
      String rule = DcrConstants.RULE24;
-     
      Boolean valid = false;
-
      BigDecimal minval = BigDecimal.valueOf(1.8);
      BigDecimal meanval = BigDecimal.valueOf(3);
 
@@ -1093,51 +1033,7 @@ public void rule24_3(PlanDetail planDetail, String type) {
              mostRestrictiveOccupancy.equals(OccupancyType.OCCUPANCY_A2) ||
              mostRestrictiveOccupancy.equals(OccupancyType.OCCUPANCY_F)) {
 
-         if (plot.getArea().compareTo(BigDecimal.valueOf(SITEAREA_125)) > 0) {
-             subRule = SUB_RULE_24_3;
-             rule = DcrConstants.RULE24;
-             minval = BigDecimal.valueOf(1.8);
-             meanval = BigDecimal.valueOf(3);
-         }else
-         {
-             rule = RULE_62;
-             subRule = RULE_62_1_A;
-             minval = BigDecimal.valueOf(1.2);
-             meanval = BigDecimal.valueOf(1.8);
-         }
-
-         for (SetBack setbacks : planDetail.getPlot().getSetBacks()) {
-             if (setbacks.getHeight() != null && setbacks.getHeight().compareTo(BigDecimal.TEN) >= 0) {
-                 rule = RULE_24;
-                 subRule = RULE_24_3;
-                 BigDecimal minValue = (BigDecimal.valueOf(VALUE_0_5)
-                         .multiply(BigDecimal.valueOf(Math.ceil((setbacks.getHeight().subtract(BigDecimal.TEN)
-                                 .divide(BigDecimal.valueOf(3), 2, RoundingMode.HALF_UP)).doubleValue()))))
-                                         .add(minval);
-
-                 BigDecimal meanValue = (BigDecimal.valueOf(VALUE_0_5)
-                         .multiply(BigDecimal.valueOf(Math.ceil((setbacks.getHeight().subtract(BigDecimal.TEN)
-                                 .divide(BigDecimal.valueOf(3), 2, RoundingMode.HALF_UP)).doubleValue()))))
-                                         .add(meanval);
-//compare with each setback frontyard, level wise minimum and mean distaince.
-                 if (setbacks.getFrontYard().getMinimumDistance().compareTo(minValue) >= 0
-                         && setbacks.getFrontYard().getMean().compareTo(meanValue) >= 0) {
-                     planDetail.reportOutput
-                             .add(buildRuleOutputWithSubRule(rule, subRule, subRuleDesc,
-                                     frontYardFieldName + LEVEL + setbacks.getLevel(),
-                                     meanMinumumLabel + "(" + minValue + "," + meanValue + ")" + DcrConstants.IN_METER,
-                                     "(" + setbacks.getFrontYard().getMinimumDistance() + "," + setbacks.getFrontYard().getMean() + ")" + DcrConstants.IN_METER,
-                                     Result.Accepted, null));
-                 } else
-                     planDetail.reportOutput
-                             .add(buildRuleOutputWithSubRule(rule, subRule, subRuleDesc,
-                                     frontYardFieldName + LEVEL + setbacks.getLevel(),
-                                     meanMinumumLabel + "(" + minValue + "," + meanValue + ")" + DcrConstants.IN_METER,
-                                     "(" + setbacks.getFrontYard().getMinimumDistance() + "," + setbacks.getFrontYard().getMean() + ")" + DcrConstants.IN_METER,
-                                     Result.Not_Accepted, null));
-             }
-
-         }
+         processFrontYardForOccupancyA1A2F(planDetail, plot, frontYardFieldName, subRuleDesc,false);
      } else {
 
          BigDecimal distanceIncrementBasedOnHeight = (BigDecimal.valueOf(VALUE_0_5)
@@ -1145,14 +1041,70 @@ public void rule24_3(PlanDetail planDetail, String type) {
                          .valueOf(Math.ceil((planDetail.getVirtualBuilding().getBuildingHeight().subtract(BigDecimal.TEN)
                                  .divide(BigDecimal.valueOf(3), 2, RoundingMode.HALF_UP)).doubleValue()))));
 
-         valid = processFrontYardOtherThanResidentials(planDetail, plot, frontYardFieldName, subRuleDesc, min, mean,
+         valid = processFrontYardForOccupanciesOtherThanA1A2F(planDetail, plot, frontYardFieldName, subRuleDesc, min, mean,
                 mostRestrictiveOccupancy, subRule, rule, valid, minval, meanval, distanceIncrementBasedOnHeight,false);
 
      }
      return valid;
  }
 
-private Boolean processFrontYardOtherThanResidentials(PlanDetail planDetail, Plot plot, String frontYardFieldName,
+private void processFrontYardForOccupancyA1A2F(PlanDetail planDetail, Plot plot, String frontYardFieldName, String subRuleDesc,boolean checkMinimumValue) {
+    String subRule;
+    String rule;
+    BigDecimal minval;
+    BigDecimal meanval;
+    if (plot.getArea().compareTo(BigDecimal.valueOf(SITEAREA_125)) > 0) {
+         subRule = SUB_RULE_24_3;
+         rule = DcrConstants.RULE24;
+         minval = BigDecimal.valueOf(1.8);
+         meanval = BigDecimal.valueOf(3);
+     }else
+     {
+         rule = RULE_62;
+         subRule = RULE_62_1_A;
+         minval = BigDecimal.valueOf(1.2);
+         meanval = BigDecimal.valueOf(1.8);
+     }
+
+     for (SetBack setbacks : planDetail.getPlot().getSetBacks()) {
+         if (setbacks.getHeight() != null && setbacks.getHeight().compareTo(BigDecimal.TEN) >= 0) {
+             rule = RULE_24;
+             subRule = RULE_24_3;
+             BigDecimal minValue = (BigDecimal.valueOf(VALUE_0_5)
+                     .multiply(BigDecimal.valueOf(Math.ceil((setbacks.getHeight().subtract(BigDecimal.TEN)
+                             .divide(BigDecimal.valueOf(3), 2, RoundingMode.HALF_UP)).doubleValue()))))
+                                     .add(minval);
+
+             BigDecimal meanValue = (BigDecimal.valueOf(VALUE_0_5)
+                     .multiply(BigDecimal.valueOf(Math.ceil((setbacks.getHeight().subtract(BigDecimal.TEN)
+                             .divide(BigDecimal.valueOf(3), 2, RoundingMode.HALF_UP)).doubleValue()))))
+                                     .add(meanval);
+            if(checkMinimumValue){ 
+             minValue = minValue.compareTo(FIVE) <= 0 ? FIVE : minValue;
+             meanValue = meanValue.compareTo(FIVE) <= 0 ? FIVE : meanValue;
+            }
+              //compare with each setback frontyard, level wise minimum and mean distaince.
+             if (setbacks.getFrontYard().getMinimumDistance().compareTo(minValue) >= 0
+                     && setbacks.getFrontYard().getMean().compareTo(meanValue) >= 0) {
+                 planDetail.reportOutput
+                         .add(buildRuleOutputWithSubRule(rule, subRule, subRuleDesc,
+                                 frontYardFieldName + LEVEL + setbacks.getLevel(),
+                                 meanMinumumLabel + "(" + minValue + "," + meanValue + ")" + DcrConstants.IN_METER,
+                                 "(" + setbacks.getFrontYard().getMinimumDistance() + "," + setbacks.getFrontYard().getMean() + ")" + DcrConstants.IN_METER,
+                                 Result.Accepted, null));
+             } else
+                 planDetail.reportOutput
+                         .add(buildRuleOutputWithSubRule(rule, subRule, subRuleDesc,
+                                 frontYardFieldName + LEVEL + setbacks.getLevel(),
+                                 meanMinumumLabel + "(" + minValue + "," + meanValue + ")" + DcrConstants.IN_METER,
+                                 "(" + setbacks.getFrontYard().getMinimumDistance() + "," + setbacks.getFrontYard().getMean() + ")" + DcrConstants.IN_METER,
+                                 Result.Not_Accepted, null));
+         }
+
+     }
+}
+
+private Boolean processFrontYardForOccupanciesOtherThanA1A2F(PlanDetail planDetail, Plot plot, String frontYardFieldName,
         String subRuleDesc, BigDecimal min, BigDecimal mean, OccupancyType mostRestrictiveOccupancy, String subRule, String rule,
             Boolean valid, BigDecimal minval, BigDecimal meanval, BigDecimal distanceIncrementBasedOnHeight,
             Boolean checkMinimum5mtsCondition) {
