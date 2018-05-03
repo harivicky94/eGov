@@ -127,8 +127,7 @@
         <label class="col-sm-2 control-label text-right"><spring:message
                 code="lbl.stakeholder.type"/> <span class="mandatory"></span></label>
         <div class="col-sm-3 add-margin">
-            <select name="stakeHolderType" id="stakeHolderType"
-                    class="form-control">
+            <select name="stakeHolderType" required="required" id="stakeHolderType" class="form-control">
                 <option value=""><spring:message code="lbl.select" /></option>
                 <c:forEach items="${stakeHolderTypes}" var="stkhldrtype">
                     <option value="${stkhldrtype}" <c:if test="${fn:contains(stakeHolderTypes, stkhldrtype)}"> Selected </c:if>>${stkhldrtype.stakeHolderTypeVal}</option>
@@ -288,8 +287,8 @@
                 code="lbl.aadhar"/><span class="mandatory"></span></label>
         <div class="col-sm-3 add-margin">
             <form:input type="text" cssClass="form-control patternvalidation"
-                        path="aadhaarNumber" data-pattern="number" minlength="12" maxlength="12" autocomplete="off" id="aadhaarNumber"
-                        required="required"/>
+                        path="aadhaarNumber" data-pattern="number" maxlength="12" autocomplete="off" id="aadhaarNumber"
+                        required="required"/><span class=""></span>
             <form:errors path="aadhaarNumber" cssClass="error-msg"/>
         </div>
         <label class="col-sm-2 control-label text-right"><spring:message

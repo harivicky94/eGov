@@ -156,6 +156,24 @@ $(document).ready( function () {
 		}
 	});
 
+    // aadhaarNumber validation
+    $('#aadhaarNumber').blur( function () {
+        var aadhaar = $(this).val();
+        if (aadhaar && aadhaar.length < 12) {
+            var span = $(this).siblings('span');
+            $(span).addClass('error-msg');
+            $(span).text('Aadhaar should be 12 digit number');
+            $(this).focus();
+            $(this).show();
+            $(this).val("");
+        } else {
+            var span1 = $(this).siblings('span');
+            $(span1).removeClass('error-msg');
+            $(span1).text('');
+            checkIsAadhaarExists();
+        }
+    });
+
     var stakeHolderId = $('#stakeHolderId').val();
     if(stakeHolderId){
         $('#emailId1').prop("disabled", true);
@@ -215,6 +233,38 @@ $(document).ready( function () {
                         $('#emailId1').focus();
                     } else {
                         var span1 = $('#emailId1').siblings('span');
+                        $(span1).removeClass('error-msg');
+                        $(span1).text('');
+                    }
+                },
+                error: function (response) {
+                    console.log('Error occured, while validating mobile number!!!!')
+                }
+            });
+        }
+    }
+
+    function checkIsAadhaarExists() {
+        if($('#aadhaarNumber').val()) {
+            $.ajax({
+                url: "/bpa/validate/emailandmobile",
+                type: "GET",
+                data: {
+                    inputType : 'aadhaar',
+                    inputValue : $('#aadhaarNumber').val(),
+                },
+                cache: false,
+                dataType: "json",
+                success: function (response) {
+                    if(true == response) {
+                        var span = $('#aadhaarNumber').siblings('span');
+                        $(span).addClass('error-msg');
+                        $(span).text('Aadhaar number is already exists');
+                        $('#aadhaarNumber').show();
+                        $('#aadhaarNumber').val('');
+                        $('#aadhaarNumber').focus();
+                    } else {
+                        var span1 = $('#aadhaarNumber').siblings('span');
                         $(span1).removeClass('error-msg');
                         $(span1).text('');
                     }

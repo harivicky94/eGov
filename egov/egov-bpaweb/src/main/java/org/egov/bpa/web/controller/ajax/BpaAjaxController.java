@@ -363,6 +363,8 @@ public class BpaAjaxController {
             return userService.getUserByEmailId(inputValue) == null ? false : true;
         } else if ("mobile".equalsIgnoreCase(inputType)) {
             return userService.getUserByMobileNumberAndType(inputValue, UserType.BUSINESS).isEmpty() ? false : true;
+        } else if ("aadhaar".equalsIgnoreCase(inputType)) {
+            return userService.getUserByAadhaarNumber(inputValue) == null ? false : true;
         }
         return false;
     }
