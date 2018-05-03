@@ -77,7 +77,7 @@ public class FloorAreaRatioService extends GeneralRule implements RuleService {
     @Override
     public PlanDetail process(PlanDetail pl) {
         
-        BigDecimal builtUpArea = pl.getVirtualBuilding().getTotalBuitUpArea();
+        BigDecimal builtUpArea =  pl.getVirtualBuilding().getTotalBuitUpArea();
         OccupancyType   mostRestrictiveOccupancy=  pl.getVirtualBuilding().getMostRestrictive();
         BigDecimal far = builtUpArea.divide(pl.getPlot().getArea(), DECIMALDIGITS_MEASUREMENTS, ROUNDMODE_MEASUREMENTS);
 
@@ -138,18 +138,18 @@ public class FloorAreaRatioService extends GeneralRule implements RuleService {
                 BigDecimal additonalFee = pl.getPlot().getArea().multiply(new BigDecimal(5000))
                         .multiply(far.subtract(additionFeeLimit));
                 
-                String actualResult = getLocaleMessage(RULE_ACTUAL_KEY, additonalFee.toString());
-                String expectedResult = getLocaleMessage(RULE_EXPECTED_KEY, additonalFee.toString());
+                String actualResult = getLocaleMessage(RULE_ACTUAL_KEY, far.toString(), additonalFee.toString());
+                String expectedResult = getLocaleMessage(RULE_EXPECTED_KEY,far.toString(), additonalFee.toString());
                 pl.reportOutput.add(buildResult(actualResult, expectedResult, Result.Verify));
-            } else {
+            } else {  
 
-                String actualResult = getLocaleMessage(RULE_ACTUAL_KEY);
-                String expectedResult = getLocaleMessage(RULE_EXPECTED_KEY);
+                String actualResult = getLocaleMessage(RULE_ACTUAL_KEY,far.toString(),BigDecimal.ZERO.toString());
+                String expectedResult = getLocaleMessage(RULE_EXPECTED_KEY,far.toString(),BigDecimal.ZERO.toString());
                 pl.reportOutput.add(buildResult(actualResult, expectedResult, Result.Accepted));
             }
         } else {
-            String actualResult = getLocaleMessage(RULE_ACTUAL_KEY);
-            String expectedResult = getLocaleMessage(RULE_EXPECTED_KEY);
+            String actualResult = getLocaleMessage(RULE_ACTUAL_KEY,far.toString(),BigDecimal.ZERO.toString());
+            String expectedResult = getLocaleMessage(RULE_EXPECTED_KEY,far.toString(),BigDecimal.ZERO.toString());
             pl.reportOutput.add(buildResult(actualResult, expectedResult, Result.Not_Accepted));
 
         }
@@ -219,8 +219,8 @@ public class FloorAreaRatioService extends GeneralRule implements RuleService {
             }
 
             block.getBuilding().setTotalBuitUpArea(builtUpArea);
-            totalBuiltUpArea.add(builtUpArea);
-            block.getBuilding().setMostRestrictiveOccupancy(getMostRestrictiveOccupancy(block.getBuilding()));
+            totalBuiltUpArea=  totalBuiltUpArea.add(builtUpArea);
+           // block.getBuilding().setMostRestrictiveOccupancy(getMostRestrictiveOccupancy(block.getBuilding()));
 
             LOG.debug("floorArea:" + floorArea);
             block.getBuilding().setTotalFloorArea(floorArea);
@@ -242,31 +242,12 @@ public class FloorAreaRatioService extends GeneralRule implements RuleService {
         distinctOccupancyTypes.size();
         pl.getVirtualBuilding().setMostRestrictive(OccupancyType.OCCUPANCY_A1);   
         
-       /* OccupancyType mostRestrict;
-        for (OccupancyType occupancy : distinctOccupancyTypes) {
-            mostRestrict = occupancy;
-            if (OccupancyType.valueOf(occupancy) > occupancies.indexOf(mostRestrict))
-                mostRestrict = occupancy.getType();
-        }*/
+      
         return pl;
 
     }
 
-    private OccupancyType getMostRestrictiveOccupancy(Building building) {
-        OccupancyType mostRestrict = null;
-      /*  List<OccupancyType> list;
-        list.addAll( OccupancyType.values())
-        OccupancyType[] values = OccupancyType.values();
-        
-
-        for (Floor floor : building.getFloors())
-            for (Occupancy occupancy : floor.getOccupancies()) {
-                mostRestrict = occupancy.getType();
-                if (values.indexOf(occupancy.getType()) > occupancies.indexOf(mostRestrict))
-                    mostRestrict = occupancy.getType();
-            }*/
-        return mostRestrict;
-    }
+    
 
     private void setOccupancyType(DXFLWPolyline pline, Occupancy occupancy) {
         if (pline.getColor() == DxfFileConstants.OCCUPANCY_A1_COLOR_CODE)
