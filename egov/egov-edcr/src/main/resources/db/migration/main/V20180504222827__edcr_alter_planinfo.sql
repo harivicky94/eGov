@@ -1,0 +1,1 @@
+alter table edcr_planinfo add column plandetail bigint;
