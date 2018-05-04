@@ -342,16 +342,14 @@ public class Util {
             return dxfCircles;
         if(dxfDocument.containsDXFLayer(name)){
         DXFLayer dxfLayer = dxfDocument.getDXFLayer(name);
-        if (dxfLayer.getName().equalsIgnoreCase(name)){
         
-        if (dxfLayer.hasDXFEntities(DXFConstants.ENTITY_TYPE_CIRCLE)) {
+        if (dxfLayer.getName().equalsIgnoreCase(name) && dxfLayer.hasDXFEntities(DXFConstants.ENTITY_TYPE_CIRCLE)) {
             List dxfCircleEntities = dxfLayer.getDXFEntities(DXFConstants.ENTITY_TYPE_CIRCLE);
             for (Object dxfEntity : dxfCircleEntities) {
                 DXFCircle dxflwPolyline = (DXFCircle) dxfEntity;
                 dxfCircles.add(dxflwPolyline);
             }
             
-        } 
         }
         }
         return dxfCircles;

@@ -33,7 +33,6 @@ public class Rule104 extends GeneralRule {
     private static final BigDecimal TWO_MTR = BigDecimal.valueOf(2);
     private static final BigDecimal ONE_ANDHALF_MTR = BigDecimal.valueOf(1.5);
 
-    private static final BigDecimal a = BigDecimal.valueOf(1.8);
     private static final String SUB_RULE_104_1_DESCRIPTION = "Open well: Minimum distance between street boundary and the well ";
     private static final String SUB_RULE_104_2_DESCRIPTION = "Minimum distance nearest point of boundary and the well ";
     private static final String SUB_RULE_104_4_DESCRIPTION = "Minimum distance from well to nearest point on leach pit, soak pit, refuse pit, earth closet or septic tanks ";
