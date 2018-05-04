@@ -41,10 +41,18 @@ package org.egov.edcr.entity;
 
 import org.egov.edcr.entity.measurement.Measurement;
 
-import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import static javax.persistence.CascadeType.ALL;
 
 
 @Entity
@@ -55,10 +63,10 @@ public class FloorUnit extends Measurement{
     public static final String SEQ_EDCR_FLOORUNIT = "SEQ_EDCR_FLOORUNIT";
     private static final long serialVersionUID = 4031045804642205206L;
 
-    @OneToMany(mappedBy = "floorUnit", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "floorUnit", cascade = ALL)
     private List<Deduction> deductions = new ArrayList<>();
 
-    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY,cascade = ALL)
     @JoinColumn(name = "planDetail")
     private PlanDetail fuPlanDetail;
 

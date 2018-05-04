@@ -39,9 +39,15 @@
  */
 package org.egov.edcr.entity;
 
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+
 import org.egov.edcr.entity.measurement.Measurement;
 
-import javax.persistence.*;
 
 @Entity
 @Table(name = "EDCR_ROOM")

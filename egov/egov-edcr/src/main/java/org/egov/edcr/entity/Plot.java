@@ -42,10 +42,15 @@ package org.egov.edcr.entity;
 import org.egov.edcr.entity.measurement.Measurement;
 import org.egov.edcr.entity.measurement.Yard;
 
-import javax.persistence.*;
 
 import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.FetchType.LAZY;
+
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 
 @Entity
 @Table(name = "EDCR_PLOT")

@@ -42,8 +42,17 @@ package org.egov.edcr.entity.measurement;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.kabeja.dxf.DXFLWPolyline;
-import javax.persistence.*;
 import java.math.BigDecimal;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.persistence.InheritanceType;
 
 @Entity
 @Table(name = "EDCR_MEASUREMENT")

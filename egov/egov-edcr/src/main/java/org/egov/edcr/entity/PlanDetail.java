@@ -39,16 +39,29 @@
  */
 package org.egov.edcr.entity;
 
-import org.egov.edcr.entity.measurement.*;
+import org.egov.edcr.entity.measurement.CulDeSacRoad;
+import org.egov.edcr.entity.measurement.Lane;
+import org.egov.edcr.entity.measurement.NonNotifiedRoad;
+import org.egov.edcr.entity.measurement.NotifiedRoad;
 import org.egov.edcr.entity.utility.Utility;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 
-import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.FetchType.LAZY;
@@ -105,13 +118,13 @@ public class PlanDetail extends AbstractAuditable{
     private List<Lane> laneRoads = new ArrayList<>();
 
     @Transient
-    private Map<String, String> errors = new HashMap<>();
+    private Map<String, String> errors = new ConcurrentHashMap<>();
 
     @Transient
-    private Map<String, String> noObjectionCertificates = new HashMap<>();
+    private Map<String, String> noObjectionCertificates = new ConcurrentHashMap<>();
 
     @Transient
-    private Map<String, String> generalInformation = new HashMap<>();
+    private Map<String, String> generalInformation = new ConcurrentHashMap<>();
 
     @OneToOne(fetch = LAZY, orphanRemoval = true, cascade = ALL)
     @JoinColumn(name = "basement")

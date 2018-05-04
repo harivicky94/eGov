@@ -41,9 +41,16 @@ package org.egov.edcr.entity;
 
 import org.egov.edcr.entity.measurement.Measurement;
 
-import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 
 import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.FetchType.LAZY;
@@ -62,7 +69,7 @@ public class Floor extends Measurement{
     private List<Room> habitableRooms = new ArrayList<>();
 
     
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = ALL)
     @JoinColumn(name = "exterior")
     private Exterior exterior;
 
@@ -70,7 +77,7 @@ public class Floor extends Measurement{
     @OneToMany(mappedBy = "floor", fetch = LAZY, cascade = ALL)
     private List<OpenSpace> openSpaces = new ArrayList<>();
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = LAZY)
     @JoinColumn(name = "building")
     private Building buildingDetail;
 

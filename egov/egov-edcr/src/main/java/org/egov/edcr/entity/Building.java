@@ -41,10 +41,16 @@ package org.egov.edcr.entity;
 
 import org.egov.edcr.entity.measurement.Measurement;
 
-import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 
 import static javax.persistence.CascadeType.ALL;
 import static javax.persistence.FetchType.LAZY;
@@ -63,11 +69,11 @@ public class Building extends Measurement{
 
     private BigDecimal totalFloorArea;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = LAZY)
+    @OneToOne(cascade = ALL, fetch = LAZY)
     @JoinColumn(name="exteriorWall")
     private ExteriorWall exteriorWall;
 
-    @OneToOne(cascade = CascadeType.ALL, fetch = LAZY)
+    @OneToOne(cascade = ALL, fetch = LAZY)
     @JoinColumn(name = "shade")
     private Shade shade;
 

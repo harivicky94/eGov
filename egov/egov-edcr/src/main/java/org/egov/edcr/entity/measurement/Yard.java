@@ -39,8 +39,10 @@
  */
 package org.egov.edcr.entity.measurement;
 
-
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name = "EDCR_YARD")
