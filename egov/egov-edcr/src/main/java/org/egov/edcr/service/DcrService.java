@@ -4,8 +4,10 @@ import static org.egov.infra.security.utils.SecureCodeUtils.generatePDF417Code;
 
 import java.io.File;
 import java.io.InputStream;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -97,6 +99,9 @@ public class DcrService {
 
     private ReportUtil reportUtil;
 
+    @Autowired
+    private PlanDetailService planDetailService;
+
     public PlanDetail getPlanDetail() {
         return planDetail;
     }
@@ -121,6 +126,7 @@ public class DcrService {
         // planDetail= generalRule.validate(planDetail);
         // EXTRACT DATA FROM DXFFILE TO planDetail;
         planDetail = extractService.extract(dxf1File, dcrApplication);
+        planDetailService.save(planDetail);
         if (planDetail.getBuilding().getBuildingHeight().compareTo(BigDecimal.valueOf(10)) > 0)
             planDetail.addError("Cannot Process",
                     " This report is incomplete. All rules are not processed. Only Building up to 10 Mtr height is considered for processing.");

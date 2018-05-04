@@ -14,18 +14,23 @@ import org.apache.log4j.Logger;
 import org.egov.edcr.constants.DxfFileConstants;
 import org.egov.edcr.entity.Basement;
 import org.egov.edcr.entity.Building;
+import org.egov.edcr.entity.Deduction;
 import org.egov.edcr.entity.EdcrApplication;
 import org.egov.edcr.entity.ElectricLine;
+import org.egov.edcr.entity.Exterior;
 import org.egov.edcr.entity.Floor;
 import org.egov.edcr.entity.FloorUnit;
+import org.egov.edcr.entity.OpenSpace;
+import org.egov.edcr.entity.OpenStair;
+import org.egov.edcr.entity.ParkingSlot;
 import org.egov.edcr.entity.PlanDetail;
 import org.egov.edcr.entity.PlanInformation;
 import org.egov.edcr.entity.Plot;
 import org.egov.edcr.entity.RoadOutput;
 import org.egov.edcr.entity.Room;
+import org.egov.edcr.entity.Shade;
 import org.egov.edcr.entity.measurement.CulDeSacRoad;
 import org.egov.edcr.entity.measurement.Lane;
-import org.egov.edcr.entity.measurement.Measurement;
 import org.egov.edcr.entity.measurement.NonNotifiedRoad;
 import org.egov.edcr.entity.measurement.NotifiedRoad;
 import org.egov.edcr.entity.measurement.WasteDisposal;
@@ -171,6 +176,7 @@ public class DXFExtractService {
         for (DXFLWPolyline resUnit : residentialUnit) {
             FloorUnit floorUnit = new FloorUnit();
             floorUnit.setPolyLine(resUnit);
+            floorUnit.setFuPlanDetail(pl);
             i++;
             Polygon polygon = Util.getPolygon(resUnit);
             Iterator vertexIterator = resUnit.getVertexIterator();
@@ -192,8 +198,9 @@ public class DXFExtractService {
                     // Point point1=new org.egov.edcr.utility.math.Point(point.getX(), point.getY());
                     if (RAY_CASTING.contains(point, polygon)) {
                         contains = true;
-                        Measurement measurement = new Measurement();
+                        Deduction measurement = new Deduction();
                         measurement.setPolyLine(residentialDeduct);
+                        measurement.setFloorUnit(floorUnit);
                         floorUnit.getDeductions().add(measurement);
                     }
 
@@ -221,15 +228,17 @@ public class DXFExtractService {
                 for (DXFLWPolyline pline : bldparking) {
                     if(LOG.isDebugEnabled()) LOG.debug("Width:"+pline.getBounds().getWidth());
                     if(LOG.isDebugEnabled()) LOG.debug("Height"+pline.getBounds().getHeight());
-                    Measurement measurement = new Measurement();
+                    ParkingSlot measurement = new ParkingSlot();
                     measurement.setWidth(BigDecimal.valueOf(pline.getBounds().getWidth()));
                     measurement.setHeight(BigDecimal.valueOf(pline.getBounds().getHeight()));
                     measurement.setPolyLine(pline);
+                    measurement.setPsplanDetail(pl);
                     pl.getParkingSlots().add(measurement);
                 }
             }
         }
-    }
+        }
+    
 
     private void extractFloorDetails(DXFDocument doc, PlanDetail pl) {
 
@@ -243,6 +252,7 @@ public class DXFExtractService {
                 break;
 
             Floor floor = new Floor();
+            floor.setBuildingDetail(pl.getBuilding());
             floor.setName(floorName);
             List dxfPolyLineEntities = layer.getDXFEntities(DXFConstants.ENTITY_TYPE_LWPOLYLINE);
             if (dxfPolyLineEntities != null)
@@ -252,16 +262,18 @@ public class DXFExtractService {
                     if (dxflwPolyline.getColor() == DxfFileConstants.HABITABLE_ROOM_COLOR) {
                         Room habitable = new Room();
                         habitable.setPolyLine(dxflwPolyline);
+                        habitable.setFloorData(floor);
                         floor.getHabitableRooms().add(habitable);
                     }
                     if (dxflwPolyline.getColor() == DxfFileConstants.FLOOR_EXTERIOR_WALL_COLOR) {
-                        Measurement extWall = new Measurement();
+                        Exterior extWall = new Exterior();
                         extWall.setPolyLine(dxflwPolyline);
                         floor.setExterior(extWall);
                     }
                     if (dxflwPolyline.getColor() == DxfFileConstants.FLOOR_OPENSPACE_COLOR) {
-                        Measurement openSpace = new Measurement();
+                        OpenSpace openSpace = new OpenSpace();
                         openSpace.setPolyLine(dxflwPolyline);
+                        openSpace.setFloor(floor);
                         floor.getOpenSpaces().add(openSpace);
                     }
                 }
@@ -293,12 +305,12 @@ public class DXFExtractService {
                         floor.getHabitableRooms().add(habitable);
                     }
                     if (dxflwPolyline.getColor() == DxfFileConstants.FLOOR_EXTERIOR_WALL_COLOR) {
-                        Measurement extWall = new Measurement();
+                        Exterior extWall = new Exterior();
                         extWall.setPolyLine(dxflwPolyline);
                         floor.setExterior(extWall);
                     }
                     if (dxflwPolyline.getColor() == DxfFileConstants.FLOOR_OPENSPACE_COLOR) {
-                        Measurement openSpace = new Measurement();
+                        OpenSpace openSpace = new OpenSpace();
                         openSpace.setPolyLine(dxflwPolyline);
                         floor.getOpenSpaces().add(openSpace);
                     }
@@ -325,7 +337,7 @@ public class DXFExtractService {
 
         polyLinesByLayer = Util.getPolyLinesByLayer(doc, DxfFileConstants.SHADE_OVERHANG);
 
-        Measurement shade = new Measurement();
+        Shade shade = new Shade();
         if (polyLinesByLayer.size() > 0) {
             shade.setPolyLine(polyLinesByLayer.get(0));
         }
@@ -359,9 +371,10 @@ public class DXFExtractService {
                         ;
                         if (!text2.isEmpty()) {
                             value = BigDecimal.valueOf(Double.parseDouble(text2));
-                            Measurement openPlot = new Measurement();
+                            OpenStair openPlot = new OpenStair();
                             openPlot
                                     .setMinimumDistance(value);
+                            openPlot.setBuildingDetail(building);
                             building.getOpenStairs().add(openPlot);
                         }
 
@@ -604,6 +617,7 @@ public class DXFExtractService {
         for (DXFLWPolyline roadPline : notifiedRoads) {
 
             NotifiedRoad road = new NotifiedRoad();
+            road.setNotifiedRoadPlanDetail(pl);
             road.setPresentInDxf(true);
             road.setPolyLine(roadPline);
             pl.getNotifiedRoads().add(road);
@@ -613,6 +627,7 @@ public class DXFExtractService {
         for (DXFLWPolyline roadPline : nonNotifiedRoads) {
 
             NonNotifiedRoad road = new NonNotifiedRoad();
+            road.setNonNotifiedRoadPlanDetail(pl);
             road.setPresentInDxf(true);
             road.setPolyLine(roadPline);
             pl.getNonNotifiedRoads().add(road);
@@ -622,6 +637,7 @@ public class DXFExtractService {
         for (DXFLWPolyline roadPline : culdSacRoads) {
 
             CulDeSacRoad road = new CulDeSacRoad();
+            road.setCulDeSacPlanDetail(pl);
             road.setPresentInDxf(true);
             road.setPolyLine(roadPline);
             pl.getCuldeSacRoads().add(road);
@@ -630,6 +646,7 @@ public class DXFExtractService {
         List<DXFLWPolyline> laneRoads = Util.getPolyLinesByLayer(doc, DxfFileConstants.LANE_1);
         for (DXFLWPolyline roadPline : laneRoads) {
             Lane road = new Lane();
+            road.setLanePlanDetail(pl);
             road.setPresentInDxf(true);
             road.setPolyLine(roadPline);
             pl.getLaneRoads().add(road);

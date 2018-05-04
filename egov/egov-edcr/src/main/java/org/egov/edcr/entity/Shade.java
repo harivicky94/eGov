@@ -39,71 +39,13 @@
  */
 package org.egov.edcr.entity;
 
+import javax.persistence.Entity;
+import javax.persistence.Table;
+
 import org.egov.edcr.entity.measurement.Measurement;
 
-import javax.persistence.Entity;
-import javax.persistence.OneToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import java.math.BigDecimal;
-
-import static javax.persistence.CascadeType.ALL;
-import static javax.persistence.FetchType.LAZY;
-
-
 @Entity
-@Table(name = "EDCR_ELECTRICLINE")
-@SequenceGenerator(name = ElectricLine.SEQ_EDCR_ELECTRIC_LINE, sequenceName = ElectricLine.SEQ_EDCR_ELECTRIC_LINE, allocationSize = 1)
-public class ElectricLine extends Measurement {
-
-    public static final String SEQ_EDCR_ELECTRIC_LINE = "SEQ_EDCR_ELECTRIC_LINE";
-    private static final long serialVersionUID = -2132152973548122050L;
-
-    private BigDecimal verticalDistance;
-
-    private BigDecimal horizontalDistance;
-
-    private BigDecimal voltage;
-
-    @OneToOne(mappedBy = "electricLine", cascade = ALL, fetch = LAZY)
-    private PlanDetail planDetail;
-
-    public BigDecimal getVerticalDistance() {
-        return verticalDistance;
-    }
-
-    public void setVerticalDistance(BigDecimal verticalDistance) {
-        this.verticalDistance = verticalDistance;
-    }
-
-    public BigDecimal getHorizontalDistance() {
-        return horizontalDistance;
-    }
-
-    public void setHorizontalDistance(BigDecimal horizontalDistance) {
-        this.horizontalDistance = horizontalDistance;
-    }
-
-    public BigDecimal getVoltage() {
-        return voltage;
-    }
-
-    public void setVoltage(BigDecimal voltage) {
-        this.voltage = voltage;
-    }
-    
-    public PlanDetail getPlanDetail() {
-        return planDetail;
-    }
-    
-    public void setPlanDetail(PlanDetail planDetail) {
-        this.planDetail = planDetail;
-    }
-
-    @Override
-    public String toString() {
-        return "ElectricLine :verticalDistance=" + verticalDistance + ", horizontalDistance=" + horizontalDistance + ", voltage="
-                + voltage + "";
-    }
-
+@Table(name = "EDCR_SHADE")
+public class Shade extends Measurement {
+    private static final long serialVersionUID = 250047819885633590L;
 }

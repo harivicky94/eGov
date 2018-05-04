@@ -599,9 +599,9 @@ public class Util {
 
     }
 
-    public static void print(HashMap<String, String> errors) {
-        if(LOG.isDebugEnabled()) LOG.debug(errors.getClass().getName());
-        Iterator<Entry<String, String>> iterator = errors.entrySet().iterator();
+    public static void print(Map<String, String> map) {
+        if(LOG.isDebugEnabled()) LOG.debug(map.getClass().getName());
+        Iterator<Entry<String, String>> iterator = map.entrySet().iterator();
         while (iterator.hasNext()) {
             Entry<String, String> next = iterator.next();
             if(LOG.isDebugEnabled()) LOG.debug(next.getKey() + "---" + next.getValue());
