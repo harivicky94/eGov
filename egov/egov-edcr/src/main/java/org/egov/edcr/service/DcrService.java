@@ -4,6 +4,8 @@ import static org.egov.infra.security.utils.SecureCodeUtils.generatePDF417Code;
 
 import java.io.File;
 import java.io.InputStream;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -119,9 +121,9 @@ public class DcrService {
         // planDetail= generalRule.validate(planDetail);
         // EXTRACT DATA FROM DXFFILE TO planDetail;
         planDetail = extractService.extract(dxf1File, dcrApplication);
-        if (planDetail.getBuilding().getBuildingHeight().intValue() > 10)
+        if (planDetail.getBuilding().getBuildingHeight().compareTo(BigDecimal.valueOf(10)) > 0)
             planDetail.addError("Cannot Process",
-                    " This report is not complete . Not all rules are not processed. Only Buildings up to 10 Mtr height will be considered for  processing");
+                    " This report is incomplete. All rules are not processed. Only Building up to 10 Mtr height is considered for processing.");
         // return planDetail;
 
         List<PlanRule> planRules = planRuleService.findRulesByPlanDetail(planDetail);
@@ -293,6 +295,19 @@ public class DcrService {
         final JRDataSource ds1 = new JRBeanCollectionDataSource(planDetail.getReportOutput().getRuleOutPuts());
 
         final Map valuesMap = new HashMap();
+        valuesMap.put("buildUpArea", planDetail.getBuilding().getTotalBuitUpArea() != null
+                ? planDetail.getBuilding().getTotalBuitUpArea().setScale(2, RoundingMode.HALF_UP) : BigDecimal.valueOf(0));
+        valuesMap.put("floorArea", planDetail.getBuilding().getTotalFloorArea() != null
+                ? planDetail.getBuilding().getTotalFloorArea().setScale(2, RoundingMode.HALF_UP) : BigDecimal.valueOf(0));
+        valuesMap.put("carpetArea",
+                planDetail.getBuilding().getTotalFloorArea().multiply(BigDecimal.valueOf(0.8)).setScale(2, RoundingMode.HALF_UP));
+        valuesMap.put("plotArea", planDetail.getPlot().getArea() != null
+                ? planDetail.getPlot().getArea().setScale(2, RoundingMode.HALF_UP) : BigDecimal.valueOf(0));
+        valuesMap.put("far", planDetail.getBuilding().getFar() != null
+                ? planDetail.getBuilding().getFar().setScale(2, RoundingMode.HALF_UP) : BigDecimal.valueOf(0));
+        valuesMap.put("coverage", planDetail.getBuilding().getCoverage() != null
+                ? planDetail.getBuilding().getCoverage().setScale(2, RoundingMode.HALF_UP) : BigDecimal.valueOf(0));
+
         valuesMap.put("applicationNumber", applicationNumber);
         valuesMap.put("applicationDate", applicationDate);
         valuesMap.put("errors", planDetail.getErrors());

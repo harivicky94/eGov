@@ -20,6 +20,7 @@ import org.egov.edcr.entity.SubRuleOutput;
 import org.egov.edcr.entity.utility.RuleReportOutput;
 import org.egov.edcr.utility.math.Polygon;
 import org.kabeja.dxf.DXFBlock;
+import org.kabeja.dxf.DXFCircle;
 import org.kabeja.dxf.DXFConstants;
 import org.kabeja.dxf.DXFDimension;
 import org.kabeja.dxf.DXFDimensionStyle;
@@ -334,7 +335,28 @@ public class Util {
         return dxflwPolylines;
     
     }
+    public static List<DXFCircle> getPolyCircleByLayer(DXFDocument dxfDocument, String name) {
 
+        List<DXFCircle> dxfCircles = new ArrayList<>();
+        if (name == null)
+            return dxfCircles;
+        if(dxfDocument.containsDXFLayer(name)){
+        DXFLayer dxfLayer = dxfDocument.getDXFLayer(name);
+        if (dxfLayer.getName().equalsIgnoreCase(name)){
+        
+        if (dxfLayer.hasDXFEntities(DXFConstants.ENTITY_TYPE_CIRCLE)) {
+            List dxfCircleEntities = dxfLayer.getDXFEntities(DXFConstants.ENTITY_TYPE_CIRCLE);
+            for (Object dxfEntity : dxfCircleEntities) {
+                DXFCircle dxflwPolyline = (DXFCircle) dxfEntity;
+                dxfCircles.add(dxflwPolyline);
+            }
+            
+        } 
+        }
+        }
+        return dxfCircles;
+    
+    }
     public static BigDecimal getPolyLineArea(DXFPolyline dxfPolyline) {
 
         ArrayList x = new ArrayList();

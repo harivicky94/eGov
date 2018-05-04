@@ -100,7 +100,7 @@ public class Rule34 extends GeneralRule {
                             groupUnitByArea.get("ABOVE250") != null ? groupUnitByArea.get("ABOVE250") + 1 : 1);
                 }
             }
-            System.out.println("Parking Unit area on group " +groupUnitByArea);
+            //System.out.println("Parking Unit area on group " +groupUnitByArea);
 
             if (groupUnitByArea.size() > 0) {
                 totalParkingRequired = (groupUnitByArea.get("WITHIN60") != null ? Math.floor(groupUnitByArea.get("WITHIN60") / 3)
@@ -115,18 +115,18 @@ public class Rule34 extends GeneralRule {
                             .add(buildRuleOutputWithSubRule(DcrConstants.RULE34, SUB_RULE_34_2, SUB_RULE_34_2_DESCRIPTION,
                                     "Total Parking",
                                     Math.floor(totalParkingRequired)
-                                            + " Numbers ",
+                                            + "",
                                     planDetail.getParkingSlots().size()
-                                            + " Numbers ",
+                                            + "",
                                     Result.Not_Accepted, null));
                 } else {
                     planDetail.reportOutput
                             .add(buildRuleOutputWithSubRule(DcrConstants.RULE34, SUB_RULE_34_2, SUB_RULE_34_2_DESCRIPTION,
                                     "Total Parking",
                                     Math.floor(totalParkingRequired)
-                                            + " Numbers ",
+                                            + "",
                                     planDetail.getParkingSlots().size()
-                                            + " Numbers " + " for Total floors " + planDetail.getFloorUnits().size(),
+                                            + "",
                                     Result.Accepted, null));
                 }
             }

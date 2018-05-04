@@ -54,6 +54,11 @@ public class DxfFileConstants {
     public static final int COLOUR_CODE_NONNOTIFIEDROAD=2;
     public static final int COLOUR_CODE_LANE=5;
     public static final int COLOUR_CODE_CULDESAC=6;
-    
+    public static String LAYER_NAME_WELL = "WELL";
+    public static String DIST_WELL = "DIST_WELL";
+    public static final int COLOUR_CODE_WELLTOBOUNDARY=7;
+    public static final int COLOUR_CODE_WELLTOLEACHPIT=8;
+
+
 
 }

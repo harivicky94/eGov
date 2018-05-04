@@ -4,5 +4,5 @@ import java.math.BigDecimal;
 
 public class RoadOutput {
     public String colourCode;
-    public BigDecimal roadDistainceToPlot;
+    public BigDecimal distance;
 }

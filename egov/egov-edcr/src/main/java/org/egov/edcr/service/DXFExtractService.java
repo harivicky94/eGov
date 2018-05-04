@@ -30,11 +30,13 @@ import org.egov.edcr.entity.measurement.NonNotifiedRoad;
 import org.egov.edcr.entity.measurement.NotifiedRoad;
 import org.egov.edcr.entity.measurement.WasteDisposal;
 import org.egov.edcr.entity.measurement.Yard;
+import org.egov.edcr.entity.utility.WellUtility;
 import org.egov.edcr.utility.DcrConstants;
 import org.egov.edcr.utility.Util;
 import org.egov.edcr.utility.math.Polygon;
 import org.egov.edcr.utility.math.Ray;
 import org.kabeja.dxf.DXFBlock;
+import org.kabeja.dxf.DXFCircle;
 import org.kabeja.dxf.DXFConstants;
 import org.kabeja.dxf.DXFDimension;
 import org.kabeja.dxf.DXFDocument;
@@ -448,7 +450,7 @@ public class DXFExtractService {
             BigDecimal coverage = BigDecimal.valueOf(100);
 
             if (buildingFootPrintArea != null && pl.getPlanInformation().getPlotArea() != null
-                    && pl.getPlanInformation().getPlotArea().intValue() > 0) {
+                    && pl.getPlanInformation().getPlotArea().floatValue() > 0) {
                 coverage = buildingFootPrintArea.subtract(cvDeduct).multiply(BigDecimal.valueOf(100)).divide(
                         pl.getPlanInformation().getPlotArea(),
                         DcrConstants.DECIMALDIGITS_MEASUREMENTS, DcrConstants.ROUNDMODE_MEASUREMENTS);
@@ -645,10 +647,7 @@ public class DXFExtractService {
     private void extractShortestDistanceToPlotFromRoadCenter(DXFDocument doc, PlanDetail pl) {
         List<DXFDimension> shortestDistanceCentralLineRoadDimension = Util.getDimensionsByLayer(doc,
                 DxfFileConstants.DIST_CL_ROAD);
-        List<RoadOutput> shortDistainceFromCenter = new ArrayList<RoadOutput>();
-
-        shortDistainceFromCenter = roadDistanceWithColourCode(doc, shortestDistanceCentralLineRoadDimension,
-                shortDistainceFromCenter);
+        List<RoadOutput> shortDistainceFromCenter = extractDistanceWithColourCode(doc, shortestDistanceCentralLineRoadDimension);
 
         List<BigDecimal> notifiedRoadDistance = new ArrayList<BigDecimal>();
         List<BigDecimal> nonNotifiedRoadDistance = new ArrayList<BigDecimal>();
@@ -657,16 +656,15 @@ public class DXFExtractService {
 
         for (RoadOutput roadOutput : shortDistainceFromCenter) {
             if (Integer.valueOf(roadOutput.colourCode) == DxfFileConstants.COLOUR_CODE_NOTIFIEDROAD) {
-                notifiedRoadDistance.add(roadOutput.roadDistainceToPlot);
+                notifiedRoadDistance.add(roadOutput.distance);
+            }else if (Integer.valueOf(roadOutput.colourCode) == DxfFileConstants.COLOUR_CODE_NONNOTIFIEDROAD) {
+                nonNotifiedRoadDistance.add(roadOutput.distance);
             }
-            if (Integer.valueOf(roadOutput.colourCode) == DxfFileConstants.COLOUR_CODE_NONNOTIFIEDROAD) {
-                nonNotifiedRoadDistance.add(roadOutput.roadDistainceToPlot);
+            else if (Integer.valueOf(roadOutput.colourCode) == DxfFileConstants.COLOUR_CODE_CULDESAC) {
+                culdesacRoadDistance.add(roadOutput.distance);
             }
-            if (Integer.valueOf(roadOutput.colourCode) == DxfFileConstants.COLOUR_CODE_CULDESAC) {
-                culdesacRoadDistance.add(roadOutput.roadDistainceToPlot);
-            }
-            if (Integer.valueOf(roadOutput.colourCode) == DxfFileConstants.COLOUR_CODE_LANE) {
-                laneDistance.add(roadOutput.roadDistainceToPlot);
+            else if (Integer.valueOf(roadOutput.colourCode) == DxfFileConstants.COLOUR_CODE_LANE) {
+                laneDistance.add(roadOutput.distance);
             }
         }
 
@@ -690,27 +688,25 @@ public class DXFExtractService {
 
     private void extractShortestDistanceToPlot(DXFDocument doc, PlanDetail pl) {
         List<DXFDimension> shortestDistanceDimension = Util.getDimensionsByLayer(doc, DxfFileConstants.SHORTEST_DISTANCE_TO_ROAD);
-        List<RoadOutput> shortDistaineToPlot = new ArrayList<RoadOutput>();
+        List<RoadOutput> shortDistaineToPlot  = extractDistanceWithColourCode(doc, shortestDistanceDimension);
 
-        shortDistaineToPlot = roadDistanceWithColourCode(doc, shortestDistanceDimension, shortDistaineToPlot);
-
-        List<BigDecimal> notifiedRoadDistance = new ArrayList<BigDecimal>();
-        List<BigDecimal> nonNotifiedRoadDistance = new ArrayList<BigDecimal>();
-        List<BigDecimal> culdesacRoadDistance = new ArrayList<BigDecimal>();
-        List<BigDecimal> laneDistance = new ArrayList<BigDecimal>();
+        List<BigDecimal> notifiedRoadDistance = new ArrayList<>();
+        List<BigDecimal> nonNotifiedRoadDistance = new ArrayList<>();
+        List<BigDecimal> culdesacRoadDistance = new ArrayList<>();
+        List<BigDecimal> laneDistance = new ArrayList<>();
 
         for (RoadOutput roadOutput : shortDistaineToPlot) {
             if (Integer.valueOf(roadOutput.colourCode) == DxfFileConstants.COLOUR_CODE_NOTIFIEDROAD) {
-                notifiedRoadDistance.add(roadOutput.roadDistainceToPlot);
+                notifiedRoadDistance.add(roadOutput.distance);
             }
-            if (Integer.valueOf(roadOutput.colourCode) == DxfFileConstants.COLOUR_CODE_NONNOTIFIEDROAD) {
-                nonNotifiedRoadDistance.add(roadOutput.roadDistainceToPlot);
+            else if (Integer.valueOf(roadOutput.colourCode) == DxfFileConstants.COLOUR_CODE_NONNOTIFIEDROAD) {
+                nonNotifiedRoadDistance.add(roadOutput.distance);
             }
-            if (Integer.valueOf(roadOutput.colourCode) == DxfFileConstants.COLOUR_CODE_CULDESAC) {
-                culdesacRoadDistance.add(roadOutput.roadDistainceToPlot);
+            else if (Integer.valueOf(roadOutput.colourCode) == DxfFileConstants.COLOUR_CODE_CULDESAC) {
+                culdesacRoadDistance.add(roadOutput.distance);
             }
-            if (Integer.valueOf(roadOutput.colourCode) == DxfFileConstants.COLOUR_CODE_LANE) {
-                laneDistance.add(roadOutput.roadDistainceToPlot);
+            else if (Integer.valueOf(roadOutput.colourCode) == DxfFileConstants.COLOUR_CODE_LANE) {
+                laneDistance.add(roadOutput.distance);
             }
         }
 
@@ -732,9 +728,11 @@ public class DXFExtractService {
         }
     }
 
-    private List<RoadOutput> roadDistanceWithColourCode(DXFDocument doc,
-            List<DXFDimension> shortestDistanceCentralLineRoadDimension,
-            List<RoadOutput> clcolourCodeWithDimension) {
+    private List<RoadOutput> extractDistanceWithColourCode(DXFDocument doc,
+            List<DXFDimension> shortestDistanceCentralLineRoadDimension
+            ) {
+        List<RoadOutput> shortDistainceFromCenter = new ArrayList<>();
+
         if (null != shortestDistanceCentralLineRoadDimension) {
 
             for (Object dxfEntity : shortestDistanceCentralLineRoadDimension) {
@@ -758,9 +756,9 @@ public class DXFExtractService {
                         if (!text2.isEmpty()) {
                             value = BigDecimal.valueOf(Double.parseDouble(text2));
                             RoadOutput roadOutput = new RoadOutput();
-                            roadOutput.roadDistainceToPlot = value;
+                            roadOutput.distance = value;
                             roadOutput.colourCode = String.valueOf(line.getColor());
-                            clcolourCodeWithDimension.add(roadOutput);
+                            shortDistainceFromCenter.add(roadOutput);
                         }
 
                     }
@@ -768,7 +766,7 @@ public class DXFExtractService {
 
             }
         }
-        return clcolourCodeWithDimension;
+        return shortDistainceFromCenter;
     }
 
     private void extractDistanceFromBuildingToRoadEnd(DXFDocument doc, PlanDetail pl) {
@@ -820,7 +818,23 @@ public class DXFExtractService {
                 disposal.setPolyLine(pline);
                 pl.getUtility().addWasteDisposal(disposal);
             }
+        List<DXFCircle> wellCircle = Util.getPolyCircleByLayer(doc, DxfFileConstants.LAYER_NAME_WELL);
+        if (wellCircle.size() > 0)
+            for (DXFCircle circle : wellCircle) {
+                WellUtility well = new WellUtility();
+                well.setPresentInDxf(true);
+                well.setCircle(circle);
+                pl.getUtility().addWells(well);
+            }
 
+        List<DXFDimension> distanceFromWell = Util.getDimensionsByLayer(doc,
+                DxfFileConstants.DIST_WELL);
+        List<RoadOutput> distFrmWellWithColor  = extractDistanceWithColourCode(doc, distanceFromWell  );
+
+        if (distFrmWellWithColor.size()>0) {
+            pl.getUtility().setWellDistance(distFrmWellWithColor);
+        }
+        
         return pl;
 
     }

@@ -27,6 +27,8 @@ public class DcrConstants {
     public static final String RULE62 = "RULE62";
     public static final String RULE24 = "RULE24";
     public static final String RULE34 = "RULE34";
+    public static final String RULE104 = "RULE104";
+
     public static final String OBJECTDEFINED_DESC = " Defined in the plan.";
     public static final String WASTEDISPOSAL_DEFINED_KEY = "WASTEDISPOSAL_DEFINED";
     public static final String OBJECTNOTDEFINED_DESC = " Not defined in the plan.";
@@ -62,7 +64,7 @@ public class DcrConstants {
     public static final String MAXIMUM_NUMBEROF_FLOOR = "Maximum Number of floor ";
     public static final String WASTEDISPOSAL_NOTDEFINED_VALUE = "Waste disposal not defined in the plan.";
     public static final String LESSTHANOREQUAL = "Less than or equal to ";
-    public static final String IN_METER = "(MTR)";
+    public static final String IN_METER = " M "; 
     public static final String FILESTORE_MODULECODE = "Digit DCR";
     public static final String SEQ_ECDR_APPLICATIONNO = "SEQ_ECDR_APPLICATIONNO";
     public static final String APPLICATION_MODULE_TYPE = "Digit DCR";
@@ -114,6 +116,7 @@ public class DcrConstants {
     public static final String NONNOTIFIED_ROAD = "Non Notified road ";
     public static final String CULDESAC_ROAD = "Cul-de-sac road ";
     public static final String LANE_ROAD = "Lane road ";
-
+    public static final String WELL = "Well";
+    public static final String WELL_DISTANCE_FROMROAD = "Minimum distance between street boundary and the well ";
 
 }

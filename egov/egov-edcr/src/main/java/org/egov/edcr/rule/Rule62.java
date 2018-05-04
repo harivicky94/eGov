@@ -369,7 +369,7 @@ public class Rule62 extends GeneralRule {
         if (max >= 0.9)
             valid2 = true;
 
-        if (plotArea.intValue() <= 125) {
+        if (plotArea.compareTo(BigDecimal.valueOf(125)) <= 0) {
             if (min >= 0.6) {
                 valid1 = true;
                 side1Expected = SIDE_YARD_1_EXPECTED;

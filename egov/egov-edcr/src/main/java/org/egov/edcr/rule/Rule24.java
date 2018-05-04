@@ -95,17 +95,17 @@ public class Rule24 extends GeneralRule {
     private static final String BASEMENT_SIDE_YARD_1_DESC = "Minimum open space on Basement Side 1";
     private static final String BASEMENT_SIDE_YARD_2_DESC = "Minimum open space on Basement Side 2";
 
-    private static final String SIDE_YARD_1_EXPECTED_WITHNOC_NO_OPENING = " 0 MTR With No opening on side up to 2.1 MTR height and NOC to Abut next plot";
-    private static final String SIDE_YARD_1_EXPECTED_NO_OPENING = " Minimum .75 MTR With no opening on side up to 2.1 MTR height";
+    private static final String SIDE_YARD_1_EXPECTED_WITHNOC_NO_OPENING = " 0 M With No opening on side up to 2.1 M height and NOC to Abut next plot";
+    private static final String SIDE_YARD_1_EXPECTED_NO_OPENING = " Minimum .75 M With no opening on side up to 2.1 M height";
     private static final String SIDE_YARD_1_EXPECTED = " Minimum 1 MTR ";
     private static final String SIDE_YARD_2_EXPECTED = "Minimum 1 MTR ";
 
-    private static final String REAR_YARD_EXPECTED_WITHNOC_NO_OPENING = " 0 MTR With No opening on rear up to 2.1 MTR height and NOC to Abut next plot";
-    private static final String REAR_YARD_EXPECTED_NO_OPENING = " Minimum .75 MTR With no opening on rear up to 2.1 MTR height";
-    private static final String REAR_YARD_EXPECTED_MIN = " Minimum 1 MTR ";
-    private static final String REAR_YARD_EXPECTED_MEAN = " Average 1.5 MTR ";
-    private static final String REAR_YARD_EXPECTED_MEAN_ABOVE_7 = " Average 2.0 MTR ";
-    private static final String REAR_YARD_EXPECTED_MIN_ABOVE_7 = " Minimum 1 MTR ";
+    private static final String REAR_YARD_EXPECTED_WITHNOC_NO_OPENING = " 0 M With No opening on rear up to 2.1 M height and NOC to Abut next plot";
+    private static final String REAR_YARD_EXPECTED_NO_OPENING = " Minimum .75 M With no opening on rear up to 2.1 M height";
+    private static final String REAR_YARD_EXPECTED_MIN = " Minimum 1 M ";
+    private static final String REAR_YARD_EXPECTED_MEAN = " Average 1.5 M ";
+    private static final String REAR_YARD_EXPECTED_MEAN_ABOVE_7 = " Average 2.0 M ";
+    private static final String REAR_YARD_EXPECTED_MIN_ABOVE_7 = " Minimum 1 M ";
     // private static final String SIDE_YARD_2_EXPECTED = "Minimum 1 MTR ";
 
     private static final String SUB_RULE_24_11 = "24(11)";
@@ -381,7 +381,7 @@ public class Rule24 extends GeneralRule {
         if (max >= SIDE2MINIMUM_DISTANCE.doubleValue())
             valid2 = true;
 
-        if (buildingHeight.intValue() <= 7) {
+        if (buildingHeight.compareTo(BigDecimal.valueOf(7)) <= 0) {
 
             if (min >= 1)
             {
@@ -406,7 +406,7 @@ public class Rule24 extends GeneralRule {
                     } 
             }
 
-        } else if (buildingHeight.intValue() > 7 && buildingHeight.intValue() <= 10) {
+        } else if (buildingHeight.compareTo(BigDecimal.valueOf(7)) > 0 && buildingHeight.compareTo(BigDecimal.valueOf(10)) <=0) {
             side1Expected = SIDE_YARD_1_EXPECTED;
             if (min >= 1) {
                 valid1 = true;
@@ -503,7 +503,7 @@ public class Rule24 extends GeneralRule {
         boolean valid1 = false;
         boolean valid2 = false;
 
-        if (buildingHeight.intValue() <= 7) {
+        if (buildingHeight.compareTo(BigDecimal.valueOf(7)) <= 0) {
             
             expectedMin = REAR_YARD_EXPECTED_MIN;
             expectedMean = REAR_YARD_EXPECTED_MEAN;
@@ -538,7 +538,7 @@ public class Rule24 extends GeneralRule {
             }  
             }
 
-        } else if (buildingHeight.intValue() > 7 && buildingHeight.intValue() <= 10) {
+        } else if (buildingHeight.compareTo(BigDecimal.valueOf(7)) > 0 && buildingHeight.compareTo(BigDecimal.valueOf(10)) <=0) {
             expectedMin = REAR_YARD_EXPECTED_MIN_ABOVE_7;
             expectedMean = REAR_YARD_EXPECTED_MEAN_ABOVE_7;
             if (min >= 1) {
