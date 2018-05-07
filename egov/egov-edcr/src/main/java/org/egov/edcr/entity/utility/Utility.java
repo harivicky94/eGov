@@ -1,5 +1,6 @@
 package org.egov.edcr.entity.utility;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,6 +14,39 @@ public class Utility extends Measurement {
     
     private List<WellUtility> wells= new ArrayList<>();
     private List<RoadOutput> wellDistance=new ArrayList<>();
+    private List<RainWaterHarvesting> rainWaterHarvest= new ArrayList<>();
+    private List<Solar> solar= new ArrayList<>();
+    private BigDecimal raintWaterHarvestingTankCapacity;
+
+    public BigDecimal getRaintWaterHarvestingTankCapacity() {
+        return raintWaterHarvestingTankCapacity;
+    }
+    public void setRaintWaterHarvestingTankCapacity(BigDecimal raintWaterHarvestingTankCapacity) {
+        this.raintWaterHarvestingTankCapacity = raintWaterHarvestingTankCapacity;
+    }
+    public void addRainWaterHarvest(RainWaterHarvesting rwh) {
+        rainWaterHarvest.add(rwh);
+
+    }
+    public void addSolar(Solar solarsystem) {
+        solar.add(solarsystem);
+
+    }
+    public List<RainWaterHarvesting> getRainWaterHarvest() {
+        return rainWaterHarvest;
+    }
+
+    public void setRainWaterHarvest(List<RainWaterHarvesting> rainWaterHarvest) {
+        this.rainWaterHarvest = rainWaterHarvest;
+    }
+
+    public List<Solar> getSolar() {
+        return solar;
+    }
+
+    public void setSolar(List<Solar> solar) {
+        this.solar = solar;
+    }
 
     public List<WasteDisposal> getWasteDisposalUnits() {
         return wasteDisposalUnits;

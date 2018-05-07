@@ -49,6 +49,8 @@ public class PlanRuleService {
                 planRules.append(",63");
                 planRules.append(",64");
                 planRules.append(",104");
+                planRules.append(",109");
+
 
             } else {
                 planRules.append(",24"); // interior or exterior
@@ -68,6 +70,7 @@ public class PlanRuleService {
                 planRules.append(",33");// access to plot
                 planRules.append(",34");// Parking
                 planRules.append(",104");
+                planRules.append(",109"); 
 
 
             }

@@ -1,5 +1,8 @@
 package org.egov.edcr.service;
 
+import static org.egov.edcr.constants.DxfFileConstants.RAINWATER_HARWESTING;
+import static org.egov.edcr.constants.DxfFileConstants.RWH_CAPACITY_L;
+
 import java.io.File;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -35,6 +38,8 @@ import org.egov.edcr.entity.measurement.NonNotifiedRoad;
 import org.egov.edcr.entity.measurement.NotifiedRoad;
 import org.egov.edcr.entity.measurement.WasteDisposal;
 import org.egov.edcr.entity.measurement.Yard;
+import org.egov.edcr.entity.utility.RainWaterHarvesting;
+import org.egov.edcr.entity.utility.Solar;
 import org.egov.edcr.entity.utility.WellUtility;
 import org.egov.edcr.utility.DcrConstants;
 import org.egov.edcr.utility.Util;
@@ -841,15 +846,16 @@ public class DXFExtractService {
     private PlanDetail extractUtilities(DXFDocument doc, PlanDetail pl) {
         // Waste Disposal
         List<DXFLWPolyline> wasterDisposalPolyLines = Util.getPolyLinesByLayer(doc, DxfFileConstants.LAYER_NAME_WASTE_DISPOSAL);
-        if (wasterDisposalPolyLines.size() > 0)
+        if (!wasterDisposalPolyLines.isEmpty())
             for (DXFLWPolyline pline : wasterDisposalPolyLines) {
                 WasteDisposal disposal = new WasteDisposal();
                 disposal.setPresentInDxf(true);
                 disposal.setPolyLine(pline);
                 pl.getUtility().addWasteDisposal(disposal);
             }
+        // Well
         List<DXFCircle> wellCircle = Util.getPolyCircleByLayer(doc, DxfFileConstants.LAYER_NAME_WELL);
-        if (wellCircle.size() > 0)
+        if (!wellCircle.isEmpty())
             for (DXFCircle circle : wellCircle) {
                 WellUtility well = new WellUtility();
                 well.setPresentInDxf(true);
@@ -861,10 +867,48 @@ public class DXFExtractService {
                 DxfFileConstants.DIST_WELL);
         List<RoadOutput> distFrmWellWithColor  = extractDistanceWithColourCode(doc, distanceFromWell  );
 
-        if (distFrmWellWithColor.size()>0) {
+        if (!distFrmWellWithColor.isEmpty()) {
             pl.getUtility().setWellDistance(distFrmWellWithColor);
         }
         
+        //Rain water harvest
+        List<DXFLWPolyline> rainWaterHarvesting = Util.getPolyLinesByLayer(doc, DxfFileConstants.RAINWATER_HARWESTING);
+        if (!rainWaterHarvesting.isEmpty()){
+            for (DXFLWPolyline pline : rainWaterHarvesting) {
+                RainWaterHarvesting rwh = new RainWaterHarvesting();
+                rwh.setPresentInDxf(true);
+                rwh.setPolyLine(pline);
+                pl.getUtility().addRainWaterHarvest(rwh);
+            }
+        }
+        
+        String tankCapacity = Util.getMtextByLayerName(doc, RAINWATER_HARWESTING, RWH_CAPACITY_L);
+        if (tankCapacity != null){
+            try {
+                
+                if (tankCapacity.contains(";")) {
+                    tankCapacity = tankCapacity.split(";")[1];
+                }
+                if (tankCapacity != null) {
+                    tankCapacity = tankCapacity.replaceAll("[^\\d.]", "");
+                    BigDecimal tankCapacityInLtr = BigDecimal.valueOf(Double.parseDouble(tankCapacity));
+                    pl.getUtility().setRaintWaterHarvestingTankCapacity(tankCapacityInLtr);
+                }
+            } catch (NumberFormatException e) {
+                pl.addError(RAINWATER_HARWESTING,
+                        "Rain water Harwesting tank capity value contains non numeric character.");
+            }
+        }
+        
+        // Solar
+        List<DXFLWPolyline> solarPolyline = Util.getPolyLinesByLayer(doc, DxfFileConstants.SOLAR);
+        if (!solarPolyline.isEmpty())
+            for (DXFLWPolyline pline : solarPolyline) {
+                Solar solar = new Solar();
+                solar.setPresentInDxf(true);
+                solar.setPolyLine(pline);
+                pl.getUtility().addSolar(solar);
+            }
         return pl;
 
     }
@@ -897,7 +941,7 @@ public class DXFExtractService {
 
         // }
 
-        String voltage = Util.getMtextByLayerName(doc, "VOLTAGE");
+        String voltage = Util.getMtextByLayerName(doc, "VOLTAGE",null);
         if (voltage != null)
             try {
                 voltage = voltage.replaceAll("[^\\d.]", "");

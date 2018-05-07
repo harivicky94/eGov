@@ -395,7 +395,7 @@ public class Util {
 
     }
 
-    public static String getMtextByLayerName(DXFDocument doc, String name) {
+    public static String getMtextByLayerName(DXFDocument doc, String name,String textName) {
         if (name == null)
             return null;
         String param = null;
@@ -443,12 +443,13 @@ public class Util {
                         text = (DXFText) iterator.next();
                         // if(LOG.isDebugEnabled()) LOG.debug("Mtext :"+text.getText());
                         if (text != null && text.getText() != null) {
-                            param = text.getText();
-                            /*
-                             * if(new Float(param).isNaN()) { throw new RuntimeException("Texts in the layer" + layerName
-                             * +"Does not follow standard "); }
-                             */
-
+                            
+                            if(textName!=null && textName.equalsIgnoreCase(text.getText())){
+                                param = text.getText();
+                                break;
+                            }else
+                                param = text.getText();
+                      
                             param = param.replace("VOLTS", "").trim();
                         }
                     }

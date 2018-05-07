@@ -28,6 +28,7 @@ public class DcrConstants {
     public static final String RULE24 = "RULE24";
     public static final String RULE34 = "RULE34";
     public static final String RULE104 = "RULE104";
+    public static final String RULE109 = "RULE109";
 
     public static final String OBJECTDEFINED_DESC = " Defined in the plan.";
     public static final String WASTEDISPOSAL_DEFINED_KEY = "WASTEDISPOSAL_DEFINED";
@@ -118,5 +119,12 @@ public class DcrConstants {
     public static final String LANE_ROAD = "Lane road ";
     public static final String WELL = "Well";
     public static final String WELL_DISTANCE_FROMROAD = "Minimum distance between street boundary and the well ";
+    public static final String RAINWATER_HARVES_TANKCAPACITY = "Rain Water Harvesting system storage tank capacity ";
+    public static final String SOLAR_SYSTEM = "Solar assisted water heating/lighting system ";
+    public static final String RAINWATER_HARVESTING= "Rain Water Harvesting";
+    public static final String SOLAR = "Solar";
+
+
+
 
 }
