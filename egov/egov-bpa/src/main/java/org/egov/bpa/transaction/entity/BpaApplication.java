@@ -241,6 +241,8 @@ public class BpaApplication extends StateAware<Position> {
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinTable(name = "egbpa_ts_inspn_documents", joinColumns = @JoinColumn(name = "application"), inverseJoinColumns = @JoinColumn(name = "fileStoreId"))
 	private Set<FileStoreMapper> tsInspnSupportDocs = Collections.emptySet();
+	@OneToMany(mappedBy = "application", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private List<DCRDocument> dcrDocuments = new ArrayList<>(0);
 
 	private transient MultipartFile[] files;
 	private transient Long approvalDepartment;
@@ -254,6 +256,7 @@ public class BpaApplication extends StateAware<Position> {
 	private transient List<ApplicationPermitConditions> rejectionReasonsTemp = new ArrayList<>(0);
 	private transient List<ApplicationPermitConditions> additionalPermitConditionsTemp = new ArrayList<>(0);
 	private transient List<ServiceType> applicationAmenityTemp = new ArrayList<>(0);
+
 
 	@Override
 	public Long getId() {
@@ -936,4 +939,11 @@ public class BpaApplication extends StateAware<Position> {
 		this.eDcrNumber = eDcrNumber;
 	}
 
+	public List<DCRDocument> getDcrDocuments() {
+		return dcrDocuments;
+	}
+
+	public void setDcrDocuments(List<DCRDocument> dcrDocuments) {
+		this.dcrDocuments = dcrDocuments;
+	}
 }

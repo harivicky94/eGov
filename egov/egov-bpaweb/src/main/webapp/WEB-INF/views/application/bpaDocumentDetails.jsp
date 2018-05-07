@@ -55,8 +55,6 @@
 <div class="panel-heading custom_form_panel_heading">
 	<div class="panel-title">
 		<spring:message code="lbl.encloseddocuments" />
-		-
-		<spring:message code="lbl.checklist" />
 	</div>
 </div>
 <div class="panel-body">
@@ -92,13 +90,6 @@
 					<form:hidden id="applicationDocument${status.index}checklistDetail"
 						path="applicationDocument[${status.index}].checklistDetail"
 						value="${docs.checklistDetail.id}" />
-					<form:hidden id="applicationDocument${status.index}checklistDetail"
-						path="applicationDocument[${status.index}].checklistDetail.isMandatory"
-						value="${docs.checklistDetail.isMandatory}" />
-					<form:hidden
-						id="applicationDocument${status.index}checklistDetail.description"
-						path="applicationDocument[${status.index}].checklistDetail.description"
-						value="${docs.checklistDetail.description}" />
 				</div>
 
 				<%--<div class="col-sm-2 add-margin">

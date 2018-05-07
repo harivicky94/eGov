@@ -40,8 +40,6 @@
 package org.egov.bpa.transaction.entity;
 
 import org.egov.bpa.master.entity.CheckListDetail;
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.web.multipart.MultipartFile;
@@ -53,14 +51,13 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.Collections;
 import java.util.Comparator;
@@ -69,40 +66,32 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Entity
-@Table(name = "egbpa_application_document")
-@SequenceGenerator(name = ApplicationDocument.SEQ_APPLICATION_DOCUMENT, sequenceName = ApplicationDocument.SEQ_APPLICATION_DOCUMENT, allocationSize = 1)
-public class ApplicationDocument extends AbstractAuditable {
+@Table(name = "egbpa_application_dcr_document")
+@SequenceGenerator(name = DCRDocument.SEQ_APPLN_DCR_DOCUMENT, sequenceName = DCRDocument.SEQ_APPLN_DCR_DOCUMENT, allocationSize = 1)
+public class DCRDocument extends AbstractAuditable {
 
-	public static final String SEQ_APPLICATION_DOCUMENT = "seq_egbpa_application_document";
-	private static final long serialVersionUID = 511172192589137332L;
-
+	public static final String SEQ_APPLN_DCR_DOCUMENT = "seq_egbpa_application_dcr_document";
+	private static final long serialVersionUID = -753308478955937552L;
 	@Id
-	@GeneratedValue(generator = SEQ_APPLICATION_DOCUMENT, strategy = GenerationType.SEQUENCE)
+	@GeneratedValue(generator = SEQ_APPLN_DCR_DOCUMENT, strategy = GenerationType.SEQUENCE)
 	private Long id;
-
-	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	@JoinTable(name = "egbpa_document", joinColumns = @JoinColumn(name = "applicationdocumentid"), inverseJoinColumns = @JoinColumn(name = "filestoreid"))
-	private Set<FileStoreMapper> supportDocs = Collections.emptySet();
-
-	private transient MultipartFile[] files;
 	@ManyToOne
 	@NotNull
-	@JoinColumn(name = "checklistDetail", nullable = false)
-	private CheckListDetail checklistDetail;
+	@JoinColumn(name = "checklistDtl", nullable = false)
+	private CheckListDetail checklistDtl;
 	@ManyToOne(cascade = CascadeType.ALL)
-	@Valid
 	@NotNull
 	@JoinColumn(name = "application", nullable = false)
 	private BpaApplication application;
 	@Temporal(value = TemporalType.DATE)
 	private Date submissionDate;
-	private Boolean issubmitted;
-
-	@ManyToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "createduser")
-	private User createduser;
+	private Boolean isSubmitted;
 	@Length(min = 1, max = 256)
 	private String remarks;
+	@OrderBy("id ASC")
+	@OneToMany(mappedBy = "dcrDocument", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private Set<StoreDCRFiles> dcrAttachments = Collections.emptySet();
+	private transient MultipartFile[] files;
 
 	@Override
 	public Long getId() {
@@ -110,79 +99,65 @@ public class ApplicationDocument extends AbstractAuditable {
 	}
 
 	@Override
-	public void setId(final Long id) {
+	public void setId(Long id) {
 		this.id = id;
 	}
 
-	public MultipartFile[] getFiles() {
-		return files;
+	public CheckListDetail getChecklistDtl() {
+		return checklistDtl;
 	}
 
-	public void setFiles(final MultipartFile[] files) {
-		this.files = files;
-	}
-
-	public Date getSubmissionDate() {
-		return submissionDate;
-	}
-
-	public void setSubmissionDate(final Date submissionDate) {
-		this.submissionDate = submissionDate;
-	}
-
-	public Boolean getIssubmitted() {
-		return issubmitted;
-	}
-
-	public void setIssubmitted(final Boolean issubmitted) {
-		this.issubmitted = issubmitted;
-	}
-
-	public User getCreateduser() {
-		return createduser;
-	}
-
-	public void setCreateduser(final User createduser) {
-		this.createduser = createduser;
-	}
-
-	public String getRemarks() {
-		return remarks;
-	}
-
-	public void setRemarks(final String remarks) {
-		this.remarks = remarks;
+	public void setChecklistDtl(CheckListDetail checklistDtl) {
+		this.checklistDtl = checklistDtl;
 	}
 
 	public BpaApplication getApplication() {
 		return application;
 	}
 
-	public void setApplication(final BpaApplication application) {
+	public void setApplication(BpaApplication application) {
 		this.application = application;
 	}
 
-	public CheckListDetail getChecklistDetail() {
-		return checklistDetail;
+	public String getRemarks() {
+		return remarks;
 	}
 
-	public void setChecklistDetail(final CheckListDetail checklistDetail) {
-		this.checklistDetail = checklistDetail;
+	public void setRemarks(String remarks) {
+		this.remarks = remarks;
 	}
 
-	public Set<FileStoreMapper> getSupportDocs() {
-		return supportDocs;
+	public Date getSubmissionDate() {
+		return submissionDate;
 	}
 
-	public void setSupportDocs(final Set<FileStoreMapper> supportDocs) {
-		this.supportDocs = supportDocs;
+	public void setSubmissionDate(Date submissionDate) {
+		this.submissionDate = submissionDate;
 	}
 
-	public Set<FileStoreMapper> getOrderedSupportDocs() {
-		return this.supportDocs
-				.stream()
-				.sorted(Comparator.comparing(FileStoreMapper::getId))
-				.collect(Collectors.toSet());
+	public Boolean getSubmitted() {
+		return isSubmitted;
 	}
 
+	public void setSubmitted(Boolean submitted) {
+		isSubmitted = submitted;
+	}
+
+	public Set<StoreDCRFiles> getDcrAttachments() {
+		return this.dcrAttachments.stream()
+								  .sorted(Comparator.comparing(StoreDCRFiles::getId))
+								  .collect(Collectors.toSet());
+	}
+
+	public void setDcrAttachments(Set<StoreDCRFiles> dcrAttachments) {
+		this.dcrAttachments = dcrAttachments;
+	}
+
+	public MultipartFile[] getFiles() {
+		return files;
+	}
+
+	public void setFiles(MultipartFile[] files) {
+		this.files = files;
+	}
 }

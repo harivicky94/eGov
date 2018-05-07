@@ -46,14 +46,13 @@
 <div class="panel-heading custom_form_panel_heading">
 	<div class="panel-title">
 		<spring:message code="lbl.encloseddocuments" />
-		-
-		<spring:message code="lbl.checklist" />
 	</div>
 </div>
 
 <table class="table">
 	<thead>
 		<tr>
+			<th><spring:message code="lbl.srl.no" /></th>
 			<th><spring:message code="lbl.documentname" /></th>
 			<%--<th><spring:message code="lbl.issubmitted" /></th>--%>
 			<th><spring:message code="lbl.remarks" /></th>
@@ -66,6 +65,7 @@
 				<c:forEach items="${bpaApplication.applicationDocument}" var="docs"
 					varStatus="status">
 					<tr>
+						<td><c:out value="${status.index+1}" /></td>
 						<td><c:out value="${docs.checklistDetail.description}"
 								default="N/A" /></td>
 						<%--<td><c:out value="${docs.issubmitted ? 'Yes' : 'No'}"

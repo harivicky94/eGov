@@ -258,6 +258,11 @@
 				</div>
 				<div id="document-info" class="tab-pane fade">
 					<div class="panel panel-primary" data-collapsed="0">
+						<c:if test="${bpaApplication.serviceType.code eq '01'}">
+							<div class="dcrDocuments">
+								<jsp:include page="bpa-dcr-documents.jsp"></jsp:include>
+							</div>
+						</c:if>
 						<jsp:include page="bpaDocumentDetails.jsp"></jsp:include>
 					</div>
 				</div>

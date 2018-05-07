@@ -52,7 +52,7 @@ $(document).ready(function() {
 	removeMandatoryForExistingBuildingDetails();
 	$('.show-hide').hide();
 	$('.totalPlintArea').show();
-	
+    $('.dcrDocuments').hide();
 	
 	roundOfDecimalPlaces();
 	function roundOfDecimalPlaces() {
@@ -615,10 +615,15 @@ $(document).ready(function() {
             $('#eDcrNumber').attr('required', true);
         	$('#eDcrNumber').show();
             $('.edcrApplnDetails').show();
+            $('.dcrDocuments').show();
+            $('div.mandatory-dcr-doc').attr('required','required');
         } else {
             $('#eDcrNumber').removeAttr('required');
             $('#eDcrNumber').hide();
+            $('#eDcrNumber').val('');
             $('.edcrApplnDetails').hide();
+            $('.dcrDocuments').hide();
+            $('.files-upload-container').removeAttr('required');
         }
 	}
 	function showOnePermitOnPageLoad() {

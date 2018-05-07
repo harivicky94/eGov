@@ -48,6 +48,7 @@ import org.egov.bpa.transaction.entity.ApplicationDocument;
 import org.egov.bpa.transaction.entity.ApplicationNocDocument;
 import org.egov.bpa.transaction.entity.ApplicationStakeHolder;
 import org.egov.bpa.transaction.entity.BpaApplication;
+import org.egov.bpa.transaction.entity.DCRDocument;
 import org.egov.bpa.transaction.entity.enums.ApplicantMode;
 import org.egov.bpa.transaction.service.BuildingFloorDetailsService;
 import org.egov.bpa.transaction.service.collection.GenericBillGeneratorService;
@@ -74,6 +75,7 @@ import java.util.List;
 
 import static org.egov.bpa.utils.BpaConstants.CHECKLIST_TYPE;
 import static org.egov.bpa.utils.BpaConstants.CHECKLIST_TYPE_NOC;
+import static org.egov.bpa.utils.BpaConstants.DCR_CHECKLIST;
 import static org.egov.bpa.utils.BpaConstants.DISCLIMER_MESSAGE_ONEDAYPERMIT_ONSAVE;
 import static org.egov.bpa.utils.BpaConstants.DISCLIMER_MESSAGE_ONSAVE;
 import static org.egov.bpa.utils.BpaConstants.ST_CODE_01;
@@ -114,7 +116,7 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
 
 	private static final String BPAAPPLICATION_CITIZEN = "citizen_suceess";
 
-        private static final String COMMON_ERROR = "common-error";
+	private static final String COMMON_ERROR = "common-error";
 
 	@Autowired
 	private ServiceTypeService serviceTypeService;
@@ -141,15 +143,15 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
 	}
 
 	private String loadNewForm(final BpaApplication bpaApplication, final Model model, String serviceCode) {
-	        User user = securityUtils.getCurrentUser();
-	        if(user != null){
-	           StakeHolder stkHldr = stakeHolderService.findById(user.getId());
-	           if(stkHldr != null && stkHldr.getBuildingLicenceExpiryDate().before(stakeHolderService.resetFromDateTimeStamp(new Date()))){
-	                model.addAttribute(MESSAGE,
-	                        messageSource.getMessage("msg.stakeholder.expiry.reached", new String[] {user.getName()}, null));
-	                return COMMON_ERROR;
-	           }
-	        }
+		User user = securityUtils.getCurrentUser();
+		if(user != null){
+			StakeHolder stkHldr = stakeHolderService.findById(user.getId());
+			if(stkHldr != null && stkHldr.getBuildingLicenceExpiryDate().before(stakeHolderService.resetFromDateTimeStamp(new Date()))){
+				model.addAttribute(MESSAGE,
+						messageSource.getMessage("msg.stakeholder.expiry.reached", new String[] {user.getName()}, null));
+				return COMMON_ERROR;
+			}
+		}
 		prepareFormData(model);
 		bpaApplication.setApplicationDate(new Date());
 		prepareCommonModelAttribute(model, bpaApplication);
@@ -170,6 +172,17 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
 			appdoc.setChecklistDetail(checkdet);
 			appDocList.add(appdoc);
 		}
+		List<CheckListDetail> dcrCheckListDetail = checkListDetailService
+				.findActiveCheckListByServiceType(bpaApplication.getServiceType().getId(), DCR_CHECKLIST);
+		if(bpaApplication.getDcrDocuments().isEmpty()) {
+			for (CheckListDetail dcrChkDetails : dcrCheckListDetail) {
+				DCRDocument dcrDocument = new DCRDocument();
+				dcrDocument.setApplication(bpaApplication);
+				dcrDocument.setChecklistDtl(dcrChkDetails);
+				bpaApplication.getDcrDocuments().add(dcrDocument);
+			}
+		}
+
 		if (bpaApplication.getApplicationNOCDocument().isEmpty()) {
 			for (CheckListDetail chckListDetail : checkListDetailService
 					.findActiveCheckListByServiceType(bpaApplication.getServiceType().getId(), CHECKLIST_TYPE_NOC)) {

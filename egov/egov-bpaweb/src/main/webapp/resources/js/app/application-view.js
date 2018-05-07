@@ -43,9 +43,11 @@ jQuery(document)
 					if($('#eDcrNumber').val()) {
                         $('#eDcrNumber').show();
                         $('.edcrApplnDetails').show();
+                        $('.dcrDocuments').show();
 					} else {
                         $('#eDcrNumber').hide();
                         $('.edcrApplnDetails').hide();
+                        $('.dcrDocuments').hide();
 					}
 					//To show notification to business user/citizen on application open
 					if($('#appointmentDateRes').val() && $('#appointmentTimeRes').val() && $('#appointmentTitle').val()) {

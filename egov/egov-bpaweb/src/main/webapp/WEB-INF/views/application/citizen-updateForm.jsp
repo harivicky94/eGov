@@ -50,7 +50,7 @@
 			id="editCitizenApplicationform"
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
-			<form:hidden path="" id="workFlowAction" name="workFlowAction"/>	
+			<form:hidden path="" id="workFlowAction" name="workFlowAction"/>
 			<form:hidden path="" id="onlinePaymentEnable" name="onlinePaymentEnable" value="${onlinePaymentEnable}" />
 			<form:hidden path="" id="wfstateDesc" value="${bpaApplication.state.value}" />
 			<input type="hidden" name="citizenOrBusinessUser" id="citizenOrBusinessUser" value="${citizenOrBusinessUser}">
@@ -69,11 +69,16 @@
 					code='lbl.noc.doc.details' /></a></li>
 			</ul>
 		<div class="tab-content">
-				<div id="document-info" class="tab-pane fade">
-					<div class="panel panel-primary" data-collapsed="0">
-						<jsp:include page="bpaDocumentDetails.jsp"></jsp:include>
-					</div>
+			<div id="document-info" class="tab-pane fade">
+				<div class="panel panel-primary" data-collapsed="0">
+					<c:if test="${bpaApplication.serviceType.code eq '01'}">
+						<div class="dcrDocuments">
+							<jsp:include page="bpa-dcr-documents.jsp"></jsp:include>
+						</div>
+					</c:if>
+					<jsp:include page="bpaDocumentDetails.jsp"></jsp:include>
 				</div>
+			</div>
 				<div id="appliccation-info" class="tab-pane fade in active">
 					<div class="panel panel-primary" data-collapsed="0">
 						<jsp:include page="applicationDetails.jsp"></jsp:include>

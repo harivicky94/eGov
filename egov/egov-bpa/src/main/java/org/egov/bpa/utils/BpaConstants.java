@@ -47,7 +47,12 @@
 package org.egov.bpa.utils;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 public class BpaConstants {
     // service type constants
@@ -156,6 +161,7 @@ public class BpaConstants {
     public static final String FILESTORE_MODULECODE = "BPA";
     public static final String CHECKLIST_TYPE = "DOCUMENTATION";
     public static final String LP_CHECKLIST = "LTP";
+    public static final String DCR_CHECKLIST = "BPADCRDOCUMENTS";
     // Sms And Email config constants
     public static final String SENDSMSFORBPA = "SENDSMSFROOMBPAMODULE";
     public static final String SENDEMAILFORBPA = "SENDEMAILFROOMBPAMODULE";
