@@ -623,7 +623,7 @@ $(document).ready(function() {
             $('#eDcrNumber').val('');
             $('.edcrApplnDetails').hide();
             $('.dcrDocuments').hide();
-            $('.files-upload-container').removeAttr('required');
+            $('div.mandatory-dcr-doc').removeAttr('required');
         }
 	}
 	function showOnePermitOnPageLoad() {
