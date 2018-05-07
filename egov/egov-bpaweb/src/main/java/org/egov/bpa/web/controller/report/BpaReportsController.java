@@ -71,6 +71,7 @@ import static org.egov.infra.utils.JsonUtils.*;
 public class BpaReportsController extends BpaGenericApplicationController {
     private static final String SEARCH_BPA_APPLICATION_FORM = "searchBpaApplicationForm";
     private static final String FAILURE_IN_SCHEDULER_REPORT = "search-scheduler-failure-records-report";
+    private static final String PERSONAL_REGISTER_REPORT = "personal-register-report";
     private static final String DATA = "{ \"data\":";
 
     @Autowired
@@ -215,7 +216,7 @@ public class BpaReportsController extends BpaGenericApplicationController {
                 .append("}")
                 .toString();
     }
-    
+
     @RequestMapping(value = "/failureinscheduler", method = RequestMethod.GET)
     public String getFailureInSchedulerRecordsForm(final Model model) {
         List<Boundary> employeeMappedZone = getEmployeeMappedZone();
@@ -253,4 +254,27 @@ public class BpaReportsController extends BpaGenericApplicationController {
         return employeeMappedZone;
     }
 
+
+
+    @RequestMapping(value = "/personalregister", method = RequestMethod.GET)
+    public String searchPersonalRegisterForm(final Model model) {
+        prepareFormData(model);
+        model.addAttribute(SEARCH_BPA_APPLICATION_FORM, new SearchBpaApplicationForm());
+        return PERSONAL_REGISTER_REPORT;
+    }
+
+    @RequestMapping(value = "/personalregister", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    @ResponseBody
+    public String getPersonalRegisterResult(final Model model,
+                                                    @ModelAttribute final SearchBpaApplicationForm searchBpaApplicationForm) {
+
+        final List<PersonalRegisterHelper> searchResultList = searchBpaApplicationService.searchPersonalRegisterDetail(searchBpaApplicationForm);
+
+        return new StringBuilder(DATA)
+                .append(toJSON(searchResultList, PersonalRegisterHelper.class, SearchPersonalRegisterAdaptor.class))
+                .append("}")
+                .toString();
+    }
+
 }
+

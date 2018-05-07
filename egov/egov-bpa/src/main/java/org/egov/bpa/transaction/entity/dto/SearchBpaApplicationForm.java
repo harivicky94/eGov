@@ -50,6 +50,7 @@ public class SearchBpaApplicationForm {
     private String applicantType;
     private String serviceType;
     private String occupancy;
+    private Long occupancyId;
     private Long serviceTypeId;
     private String serviceCode;
     private String status;
@@ -391,5 +392,13 @@ public class SearchBpaApplicationForm {
 
     public void setScheduleType(String scheduleType) {
         this.scheduleType = scheduleType;
+    }
+
+    public Long getOccupancyId() {
+        return occupancyId;
+    }
+
+    public void setOccupancyId(Long occupancyId) {
+        this.occupancyId = occupancyId;
     }
 }

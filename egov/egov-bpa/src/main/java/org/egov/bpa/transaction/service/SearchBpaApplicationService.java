@@ -40,8 +40,8 @@
 package org.egov.bpa.transaction.service;
 
 import org.egov.bpa.master.entity.enums.ApplicationType;
-import org.egov.bpa.transaction.entity.BpaApplication;
-import org.egov.bpa.transaction.entity.SlotApplication;
+import org.egov.bpa.transaction.entity.*;
+import org.egov.bpa.transaction.entity.dto.PersonalRegisterHelper;
 import org.egov.bpa.transaction.entity.dto.SearchBpaApplicationForm;
 import org.egov.bpa.transaction.entity.enums.ScheduleAppointmentType;
 import org.egov.bpa.transaction.service.collection.BpaDemandService;
@@ -146,14 +146,14 @@ public class SearchBpaApplicationService {
 		if (!bpaApplication.getSiteDetail().isEmpty() && bpaApplication.getSiteDetail().get(0) != null) {
 			searchBpaApplicationForm
 					.setElectionWard(bpaApplication.getSiteDetail().get(0).getElectionBoundary() == null
-									 ? EMPTY : bpaApplication.getSiteDetail().get(0).getElectionBoundary().getName());
+							? EMPTY : bpaApplication.getSiteDetail().get(0).getElectionBoundary().getName());
 			searchBpaApplicationForm.setWard(bpaApplication.getSiteDetail().get(0).getAdminBoundary() == null
-											 ? EMPTY : bpaApplication.getSiteDetail().get(0).getAdminBoundary().getName());
+					? EMPTY : bpaApplication.getSiteDetail().get(0).getAdminBoundary().getName());
 			searchBpaApplicationForm
 					.setZone(bpaApplication.getSiteDetail().get(0).getAdminBoundary().getParent() == null
-							 ? EMPTY : bpaApplication.getSiteDetail().get(0).getAdminBoundary().getParent().getName());
+							? EMPTY : bpaApplication.getSiteDetail().get(0).getAdminBoundary().getParent().getName());
 			searchBpaApplicationForm.setLocality(bpaApplication.getSiteDetail().get(0).getLocationBoundary() == null
-												 ? EMPTY : bpaApplication.getSiteDetail().get(0).getLocationBoundary().getName());
+					? EMPTY : bpaApplication.getSiteDetail().get(0).getLocationBoundary().getName());
 			searchBpaApplicationForm.setReSurveyNumber(bpaApplication.getSiteDetail().get(0).getReSurveyNumber());
 		}
 		searchBpaApplicationForm.setFeeCollected(bpaDemandService.checkAnyTaxIsPendingToCollect(bpaApplication));
@@ -162,7 +162,7 @@ public class SearchBpaApplicationService {
 		searchBpaApplicationForm.setRescheduledByEmployee(bpaApplication.getIsRescheduledByEmployee());
 		searchBpaApplicationForm.setOnePermitApplication(bpaApplication.getIsOneDayPermitApplication());
 		if (BpaConstants.APPLICATION_STATUS_RESCHEDULED.equals(bpaApplication.getStatus().getCode())
-			|| BpaConstants.APPLICATION_STATUS_SCHEDULED.equals(bpaApplication.getStatus().getCode())) {
+				|| BpaConstants.APPLICATION_STATUS_SCHEDULED.equals(bpaApplication.getStatus().getCode())) {
 			Optional<SlotApplication> slotApplication = bpaApplication.getSlotApplications().stream().reduce((slotApp1, slotApp2) -> slotApp2);
 			if (slotApplication.isPresent()) {
 				searchBpaApplicationForm.setAppointmentDate(slotApplication.get().getSlotDetail().getSlot().getAppointmentDate());
@@ -322,5 +322,54 @@ public class SearchBpaApplicationService {
 		}
 		return searchBpaApplicationFormList;
 	}
+
+	public List<PersonalRegisterHelper> searchPersonalRegisterDetail(
+			final SearchBpaApplicationForm bpaApplicationForm) {
+		final Criteria criteria = buildSearchCriteria(bpaApplicationForm);
+		return buildPersonalRegisterResponse(criteria);
+	}
+
+	private List<PersonalRegisterHelper> buildPersonalRegisterResponse(final Criteria criteria) {
+		List<PersonalRegisterHelper> personalRegisterHelperList = new ArrayList<>();
+		for(BpaApplication application : (List<BpaApplication>)criteria.list()) {
+
+			PersonalRegisterHelper personalRegister = new PersonalRegisterHelper();
+
+			personalRegister.setApplicationNumber(application.getApplicationNumber());
+			personalRegister.setApplicantName(application.getOwner().getName());
+			personalRegister.setPermitType(application.getServiceType().getDescription().toString());
+			personalRegister.setCurrentStatus(application.getStatus().getDescription());
+			personalRegister.setDateOfAdmission(application.getApplicationDate());
+			personalRegister.setFar(application.getOccupancy().getPermissibleAreaInPercentage());
+			if(application.getIsOneDayPermitApplication() == true) {
+				personalRegister.setApplicationType(ApplicationType.valueOf("ONE_DAY_PERMIT").applicationTypeVal.toString());
+			}else{
+				personalRegister.setApplicationType(ApplicationType.valueOf("ALL_OTHER_SERVICES").applicationTypeVal.toString());
+			}
+
+			for(SiteDetail siteDetail : application.getSiteDetail()) {
+				personalRegister.setSurveyNo(siteDetail.getReSurveyNumber());
+				personalRegister.setAddress1(siteDetail.getStreetaddress1());
+				personalRegister.setAddress2(siteDetail.getStreetaddress2());
+				personalRegister.setAddress3(siteDetail.getCitytown());
+				personalRegister.setVillage(siteDetail.getLocationBoundary().getName());
+				personalRegister.setElectionWard(siteDetail.getElectionBoundary().getName());
+				personalRegister.setRevenueWard(siteDetail.getAdminBoundary().getName());
+				personalRegister.setNatureOfOccupancy(siteDetail.getNatureofOwnership());
+			}
+			for(BuildingDetail buildingDetail : application.getBuildingDetail()) {
+				personalRegister.setNoOfFloors(buildingDetail.getFloorCount());
+
+				for(ApplicationFloorDetail floorDetail: buildingDetail.getApplicationFloorDetails()){
+					personalRegister.setTotalFloarArea(floorDetail.getFloorArea());
+
+				}
+			}
+
+			personalRegisterHelperList.add(personalRegister);
+		}
+		return personalRegisterHelperList;
+	}
+
 
 }

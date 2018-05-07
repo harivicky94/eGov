@@ -462,4 +462,10 @@
 		<put-attribute name="body"
 			value="/WEB-INF/views/stakeholder/stakeholder-remarks.jsp" />
 	</definition>
+	<definition name="personal-register-report" extends="base_layout">
+		<put-attribute name="page-title" value="title.report.personal.reg"
+					   cascade="true" />
+		<put-attribute name="body"
+					   value="/WEB-INF/views/reports/personal-register-report.jsp" />
+	</definition>
 </tiles-definitions>
