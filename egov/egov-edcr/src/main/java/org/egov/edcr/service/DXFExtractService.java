@@ -1,7 +1,9 @@
 package org.egov.edcr.service;
 
+import static org.egov.edcr.constants.DxfFileConstants.LAYER_NAME_WELL;
 import static org.egov.edcr.constants.DxfFileConstants.RAINWATER_HARWESTING;
 import static org.egov.edcr.constants.DxfFileConstants.RWH_CAPACITY_L;
+import static org.egov.edcr.constants.DxfFileConstants.SOLAR;
 
 import java.io.File;
 import java.math.BigDecimal;
@@ -854,23 +856,26 @@ public class DXFExtractService {
                 pl.getUtility().addWasteDisposal(disposal);
             }
         // Well
-        List<DXFCircle> wellCircle = Util.getPolyCircleByLayer(doc, DxfFileConstants.LAYER_NAME_WELL);
-        if (!wellCircle.isEmpty())
-            for (DXFCircle circle : wellCircle) {
-                WellUtility well = new WellUtility();
-                well.setPresentInDxf(true);
-                well.setCircle(circle);
-                pl.getUtility().addWells(well);
+        if (doc.containsDXFLayer(LAYER_NAME_WELL)) {
+            List<DXFCircle> wellCircle = Util.getPolyCircleByLayer(doc, LAYER_NAME_WELL);
+            if (!wellCircle.isEmpty())
+                for (DXFCircle circle : wellCircle) {
+                    WellUtility well = new WellUtility();
+                    well.setPresentInDxf(true);
+                    well.setCircle(circle);
+                    pl.getUtility().addWells(well);
+                }
+
+            List<DXFDimension> distanceFromWell = Util.getDimensionsByLayer(doc,
+                    DxfFileConstants.DIST_WELL);
+            if (!distanceFromWell.isEmpty()) {
+                List<RoadOutput> distFrmWellWithColor = extractDistanceWithColourCode(doc, distanceFromWell);
+
+                if (!distFrmWellWithColor.isEmpty()) {
+                    pl.getUtility().setWellDistance(distFrmWellWithColor);
+                }
             }
-
-        List<DXFDimension> distanceFromWell = Util.getDimensionsByLayer(doc,
-                DxfFileConstants.DIST_WELL);
-        List<RoadOutput> distFrmWellWithColor  = extractDistanceWithColourCode(doc, distanceFromWell  );
-
-        if (!distFrmWellWithColor.isEmpty()) {
-            pl.getUtility().setWellDistance(distFrmWellWithColor);
         }
-        
         //Rain water harvest
         List<DXFLWPolyline> rainWaterHarvesting = Util.getPolyLinesByLayer(doc, DxfFileConstants.RAINWATER_HARWESTING);
         if (!rainWaterHarvesting.isEmpty()){
@@ -881,27 +886,29 @@ public class DXFExtractService {
                 pl.getUtility().addRainWaterHarvest(rwh);
             }
         }
-        
-        String tankCapacity = Util.getMtextByLayerName(doc, RAINWATER_HARWESTING, RWH_CAPACITY_L);
-        if (tankCapacity != null){
-            try {
-                
-                if (tankCapacity.contains(";")) {
-                    tankCapacity = tankCapacity.split(";")[1];
+
+        if (doc.containsDXFLayer(RAINWATER_HARWESTING)) {
+            String tankCapacity = Util.getMtextByLayerName(doc, RAINWATER_HARWESTING, RWH_CAPACITY_L);
+            if (tankCapacity != null) {
+                try {
+
+                    if (tankCapacity.contains(";")) {
+                        tankCapacity = tankCapacity.split(";")[1];
+                    }
+                    if (tankCapacity != null) {
+                        tankCapacity = tankCapacity.replaceAll("[^\\d.]", "");
+                        BigDecimal tankCapacityInLtr = BigDecimal.valueOf(Double.parseDouble(tankCapacity));
+                        pl.getUtility().setRaintWaterHarvestingTankCapacity(tankCapacityInLtr);
+                    }
+                } catch (NumberFormatException e) {
+                    pl.addError(RAINWATER_HARWESTING,
+                            "Rain water Harwesting tank capity value contains non numeric character.");
                 }
-                if (tankCapacity != null) {
-                    tankCapacity = tankCapacity.replaceAll("[^\\d.]", "");
-                    BigDecimal tankCapacityInLtr = BigDecimal.valueOf(Double.parseDouble(tankCapacity));
-                    pl.getUtility().setRaintWaterHarvestingTankCapacity(tankCapacityInLtr);
-                }
-            } catch (NumberFormatException e) {
-                pl.addError(RAINWATER_HARWESTING,
-                        "Rain water Harwesting tank capity value contains non numeric character.");
             }
         }
-        
         // Solar
-        List<DXFLWPolyline> solarPolyline = Util.getPolyLinesByLayer(doc, DxfFileConstants.SOLAR);
+        if (doc.containsDXFLayer(SOLAR)) { 
+        List<DXFLWPolyline> solarPolyline = Util.getPolyLinesByLayer(doc, SOLAR);
         if (!solarPolyline.isEmpty())
             for (DXFLWPolyline pline : solarPolyline) {
                 Solar solar = new Solar();
@@ -909,6 +916,7 @@ public class DXFExtractService {
                 solar.setPolyLine(pline);
                 pl.getUtility().addSolar(solar);
             }
+        }
         return pl;
 
     }
