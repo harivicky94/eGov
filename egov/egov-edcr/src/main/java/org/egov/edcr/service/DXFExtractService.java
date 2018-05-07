@@ -244,6 +244,7 @@ public class DXFExtractService {
 
         DXFLayer layer = new DXFLayer();
         int floorNo = -1;
+        BigDecimal totalOpenSpace =  BigDecimal.ZERO;
         while (layer != null) {
             floorNo++;
             String floorName = DxfFileConstants.FLOOR_NAME_PREFIX + floorNo;
@@ -268,15 +269,27 @@ public class DXFExtractService {
                     if (dxflwPolyline.getColor() == DxfFileConstants.FLOOR_EXTERIOR_WALL_COLOR) {
                         Exterior extWall = new Exterior();
                         extWall.setPolyLine(dxflwPolyline);
+                        BigDecimal extWallArea = Util.getPolyLineArea(dxflwPolyline);
+                        extWall.setArea(extWallArea);
                         floor.setExterior(extWall);
                     }
                     if (dxflwPolyline.getColor() == DxfFileConstants.FLOOR_OPENSPACE_COLOR) {
                         OpenSpace openSpace = new OpenSpace();
                         openSpace.setPolyLine(dxflwPolyline);
+                        BigDecimal openSpaceArea = Util.getPolyLineArea(dxflwPolyline);
+                        openSpace.setArea(openSpaceArea);
                         openSpace.setFloor(floor);
                         floor.getOpenSpaces().add(openSpace);
+                        totalOpenSpace.add(openSpace.getArea());
                     }
+
                 }
+
+                if (floor != null && floor.getExterior() !=null) {
+                    BigDecimal  floorArea = floor.getExterior().getArea().subtract(totalOpenSpace);
+                    floor.setArea(floorArea);
+                }
+
             if(!floor.getHabitableRooms().isEmpty() ||  !floor.getOpenSpaces().isEmpty() || floor.getExterior()!=null)
                 pl.getBuilding().getFloors().add(floor);
 
