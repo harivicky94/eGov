@@ -100,14 +100,14 @@ public class Rule109 extends GeneralRule {
                         .add(buildRuleOutputWithSubRule(rule, subRule, subRuleDesc,
                                 RAINWATER_HARVESTING,
                                 exptectedTankCapacity.toString(),
-                                planDetail.getUtility().getRaintWaterHarvestingTankCapacity().toString(),
+                                planDetail.getUtility().getRaintWaterHarvestingTankCapacity().toString() + DcrConstants.IN_LETER,
                                 Result.Accepted, RAINWATER_HARVESTING));
             } else {
                 planDetail.reportOutput
                         .add(buildRuleOutputWithSubRule(rule, subRule, subRuleDesc,
                                 RAINWATER_HARVESTING,
                                 exptectedTankCapacity.toString(),
-                                planDetail.getUtility().getRaintWaterHarvestingTankCapacity().toString(),
+                                planDetail.getUtility().getRaintWaterHarvestingTankCapacity().toString() + DcrConstants.IN_LETER,
                                 Result.Not_Accepted, RAINWATER_HARVESTING));
             }
         }

@@ -123,6 +123,7 @@ public class DcrConstants {
     public static final String SOLAR_SYSTEM = "Solar assisted water heating/lighting system ";
     public static final String RAINWATER_HARVESTING= "Rain Water Harvesting";
     public static final String SOLAR = "Solar";
+    public static final String IN_LETER = " L "; 
 
 
 
