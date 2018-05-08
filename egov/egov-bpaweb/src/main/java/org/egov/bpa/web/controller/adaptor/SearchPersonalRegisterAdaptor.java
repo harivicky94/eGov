@@ -44,8 +44,6 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 import org.egov.bpa.transaction.entity.dto.PersonalRegisterHelper;
-import org.egov.bpa.transaction.entity.dto.SearchBpaApplicationForm;
-import org.egov.bpa.utils.BpaConstants;
 import org.egov.infra.utils.DateUtils;
 
 import java.lang.reflect.Type;

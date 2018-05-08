@@ -39,12 +39,19 @@
  */
 package org.egov.bpa.web.controller.report;
 
-import org.egov.bpa.transaction.entity.dto.*;
-import org.egov.bpa.transaction.service.*;
-import org.egov.bpa.transaction.service.report.*;
-import org.egov.bpa.utils.*;
-import org.egov.bpa.web.controller.adaptor.*;
-import org.egov.bpa.web.controller.transaction.*;
+import org.egov.bpa.transaction.entity.dto.PersonalRegisterHelper;
+import org.egov.bpa.transaction.entity.dto.SearchBpaApplicationForm;
+import org.egov.bpa.transaction.entity.dto.SearchBpaApplicationReport;
+import org.egov.bpa.transaction.entity.dto.SlotDetailsHelper;
+import org.egov.bpa.transaction.service.FailureInSchedulerService;
+import org.egov.bpa.transaction.service.SearchBpaApplicationService;
+import org.egov.bpa.transaction.service.report.BpaReportsService;
+import org.egov.bpa.utils.BpaConstants;
+import org.egov.bpa.web.controller.adaptor.SearchBpaApplicationFormAdaptor;
+import org.egov.bpa.web.controller.adaptor.SearchBpaApplicationReportAdaptor;
+import org.egov.bpa.web.controller.adaptor.SearchPersonalRegisterAdaptor;
+import org.egov.bpa.web.controller.adaptor.SlotDetailsAdaptor;
+import org.egov.bpa.web.controller.transaction.BpaGenericApplicationController;
 import org.egov.eis.entity.Employee;
 import org.egov.eis.entity.Jurisdiction;
 import org.egov.eis.service.EmployeeService;
@@ -52,19 +59,19 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.service.BoundaryTypeService;
 import org.egov.infra.admin.master.service.CrossHierarchyService;
-import org.egov.infra.utils.*;
-import org.springframework.beans.factory.annotation.*;
-import org.springframework.http.*;
-import org.springframework.stereotype.*;
-import org.springframework.ui.*;
+import org.egov.infra.utils.DateUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
-import static org.egov.bpa.utils.BpaConstants.BOUNDARY_TYPE_CITY;
-import static org.egov.bpa.utils.BpaConstants.REVENUE_HIERARCHY_TYPE;
-import static org.egov.bpa.utils.BpaConstants.WARD;
-import static org.egov.infra.utils.JsonUtils.*;
+import static org.egov.bpa.utils.BpaConstants.*;
+import static org.egov.infra.utils.JsonUtils.toJSON;
 
 @Controller
 @RequestMapping(value = "/reports")
@@ -254,8 +261,6 @@ public class BpaReportsController extends BpaGenericApplicationController {
         return employeeMappedZone;
     }
 
-
-
     @RequestMapping(value = "/personalregister", method = RequestMethod.GET)
     public String searchPersonalRegisterForm(final Model model) {
         prepareFormData(model);
@@ -265,11 +270,8 @@ public class BpaReportsController extends BpaGenericApplicationController {
 
     @RequestMapping(value = "/personalregister", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
-    public String getPersonalRegisterResult(final Model model,
-                                                    @ModelAttribute final SearchBpaApplicationForm searchBpaApplicationForm) {
-
+    public String getPersonalRegisterResult(final Model model, @ModelAttribute final SearchBpaApplicationForm searchBpaApplicationForm) {
         final List<PersonalRegisterHelper> searchResultList = searchBpaApplicationService.searchPersonalRegisterDetail(searchBpaApplicationForm);
-
         return new StringBuilder(DATA)
                 .append(toJSON(searchResultList, PersonalRegisterHelper.class, SearchPersonalRegisterAdaptor.class))
                 .append("}")

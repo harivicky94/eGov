@@ -47,14 +47,6 @@ $(document)
             });
 
             function callAjaxSearch() {
-                /*var serviceType = $('#serviceTypeId').val();
-                var serviceType = $('#serviceTypeId').val();
-                var from = $('#fromDate').val();
-                var to = $('#toDate').val();
-                var wardId = $('#ward').val();
-                var electionWardId = $('#electionBoundary').val();
-                var zoneId = $('#zone').val();*/
-
                 $('.report-section').removeClass('display-hide');
                 $("#personalRegisterReportTable")
                     .dataTable(

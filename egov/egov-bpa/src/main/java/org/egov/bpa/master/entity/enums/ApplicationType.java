@@ -42,7 +42,7 @@ package org.egov.bpa.master.entity.enums;
 public enum ApplicationType {
 	ALL_OTHER_SERVICES("Regular"), ONE_DAY_PERMIT("One day permit");
     
-    public final String applicationTypeVal;
+    private final String applicationTypeVal;
 
     ApplicationType(String aTypeVal) {
         this.applicationTypeVal = aTypeVal;

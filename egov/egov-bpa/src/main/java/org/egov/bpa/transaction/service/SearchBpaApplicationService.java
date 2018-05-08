@@ -59,11 +59,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
@@ -329,47 +325,39 @@ public class SearchBpaApplicationService {
 		return buildPersonalRegisterResponse(criteria);
 	}
 
-	private List<PersonalRegisterHelper> buildPersonalRegisterResponse(final Criteria criteria) {
-		List<PersonalRegisterHelper> personalRegisterHelperList = new ArrayList<>();
-		for(BpaApplication application : (List<BpaApplication>)criteria.list()) {
+    private List<PersonalRegisterHelper> buildPersonalRegisterResponse(final Criteria criteria) {
+        List<PersonalRegisterHelper> personalRegisterHelperList = new ArrayList<>();
+        for (BpaApplication application : (List<BpaApplication>) criteria.list()) {
 
-			PersonalRegisterHelper personalRegister = new PersonalRegisterHelper();
+            PersonalRegisterHelper personalRegister = new PersonalRegisterHelper();
+            personalRegister.setApplicationNumber(application.getApplicationNumber());
+            personalRegister.setApplicantName(application.getOwner().getName());
+            personalRegister.setPermitType(application.getServiceType().getDescription().toString());
+            personalRegister.setCurrentStatus(application.getStatus().getDescription());
+            personalRegister.setDateOfAdmission(application.getApplicationDate());
+            personalRegister.setFar(application.getOccupancy().getPermissibleAreaInPercentage());
+            personalRegister.setApplicationType(application.getIsOneDayPermitApplication() ? ApplicationType.ONE_DAY_PERMIT.getApplicationTypeVal() : ApplicationType.ALL_OTHER_SERVICES.getApplicationTypeVal());
 
-			personalRegister.setApplicationNumber(application.getApplicationNumber());
-			personalRegister.setApplicantName(application.getOwner().getName());
-			personalRegister.setPermitType(application.getServiceType().getDescription().toString());
-			personalRegister.setCurrentStatus(application.getStatus().getDescription());
-			personalRegister.setDateOfAdmission(application.getApplicationDate());
-			personalRegister.setFar(application.getOccupancy().getPermissibleAreaInPercentage());
-			if(application.getIsOneDayPermitApplication() == true) {
-				personalRegister.setApplicationType(ApplicationType.valueOf("ONE_DAY_PERMIT").applicationTypeVal.toString());
-			}else{
-				personalRegister.setApplicationType(ApplicationType.valueOf("ALL_OTHER_SERVICES").applicationTypeVal.toString());
-			}
+            for (SiteDetail siteDetail : application.getSiteDetail()) {
+                personalRegister.setSurveyNo(siteDetail.getReSurveyNumber());
+                personalRegister.setAddress1(siteDetail.getStreetaddress1());
+                personalRegister.setAddress2(siteDetail.getStreetaddress2());
+                personalRegister.setAddress3(siteDetail.getCitytown());
+                personalRegister.setVillage(siteDetail.getLocationBoundary().getName());
+                personalRegister.setElectionWard(siteDetail.getElectionBoundary().getName());
+                personalRegister.setRevenueWard(siteDetail.getAdminBoundary().getName());
+                personalRegister.setNatureOfOccupancy(siteDetail.getNatureofOwnership());
+            }
+            for (BuildingDetail buildingDetail : application.getBuildingDetail()) {
+                personalRegister.setNoOfFloors(buildingDetail.getFloorCount());
 
-			for(SiteDetail siteDetail : application.getSiteDetail()) {
-				personalRegister.setSurveyNo(siteDetail.getReSurveyNumber());
-				personalRegister.setAddress1(siteDetail.getStreetaddress1());
-				personalRegister.setAddress2(siteDetail.getStreetaddress2());
-				personalRegister.setAddress3(siteDetail.getCitytown());
-				personalRegister.setVillage(siteDetail.getLocationBoundary().getName());
-				personalRegister.setElectionWard(siteDetail.getElectionBoundary().getName());
-				personalRegister.setRevenueWard(siteDetail.getAdminBoundary().getName());
-				personalRegister.setNatureOfOccupancy(siteDetail.getNatureofOwnership());
-			}
-			for(BuildingDetail buildingDetail : application.getBuildingDetail()) {
-				personalRegister.setNoOfFloors(buildingDetail.getFloorCount());
+                for (ApplicationFloorDetail floorDetail : buildingDetail.getApplicationFloorDetails()) {
+                    personalRegister.setTotalFloarArea(floorDetail.getFloorArea());
 
-				for(ApplicationFloorDetail floorDetail: buildingDetail.getApplicationFloorDetails()){
-					personalRegister.setTotalFloarArea(floorDetail.getFloorArea());
-
-				}
-			}
-
-			personalRegisterHelperList.add(personalRegister);
-		}
-		return personalRegisterHelperList;
-	}
-
-
+                }
+            }
+            personalRegisterHelperList.add(personalRegister);
+        }
+        return personalRegisterHelperList;
+    }
 }

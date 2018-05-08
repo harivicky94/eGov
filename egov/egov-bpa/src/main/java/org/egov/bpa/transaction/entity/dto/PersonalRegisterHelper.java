@@ -70,6 +70,7 @@ public class PersonalRegisterHelper {
     private Double far;
     private String fromWhom;
     private String currentStatus;
+    private Date dateAndTime;
 
     public String getApplicationNumber() {
         return applicationNumber;
@@ -183,8 +184,6 @@ public class PersonalRegisterHelper {
         this.totalFloorArea = totalFloarArea;
     }
 
-
-
     public Double getFar() {
         return far;
     }
@@ -216,8 +215,6 @@ public class PersonalRegisterHelper {
     public void setDateAndTime(Date dateAndTime) {
         this.dateAndTime = dateAndTime;
     }
-
-    private Date dateAndTime;
 
     public Integer getNoOfFloors() {
         return noOfFloors;
